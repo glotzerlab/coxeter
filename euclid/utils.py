@@ -576,3 +576,36 @@ def fanTriangles(vertices, faces=None):
             yield (vertices[i], vertices[j], vertices[k])
 
 ### end MS
+
+# This function is for quickly finding unique rows (respects ordering)
+# of a numpy array. Cribbed from stack exchange:
+# http://stackoverflow.com/questions/31097247/remove-duplicate-rows-of-a-numpy-array
+def unique_rows(a):
+    a = np.ascontiguousarray(a)
+    unique_a = np.unique(a.view([('', a.dtype)]*a.shape[1]))
+    return unique_a.view(a.dtype).reshape((unique_a.shape[0], a.shape[1]))
+
+# Given a set of vertices, Delaunay triangulate and
+# pair down to unique bonds between points
+def minimum_bonds(verts, maxdist=None):
+    tri = Delaunay(verts)
+    bond_list = []
+    for i in range(verts.shape[0]):
+        # All the simplices with the given vertex
+        simps = tri.simplices[np.where(tri.simplices==i)[0],:].flatten()
+        for s in simps[simps!=i]:
+            bond_list.append((i,s))
+
+    # Sort the rows to remove flipped duplicates
+    b = [np.sort(bond) for bond in bond_list]
+
+    a = unique_rows(b)
+
+    if maxdist is not None:
+        c = []
+        for bond in a:
+            if np.linalg.norm(verts[bond[0]]-verts[bond[1]]) < maxdist:
+                c.append(bond)
+        return np.asarray(c)
+    else:
+        return a
