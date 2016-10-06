@@ -21,26 +21,19 @@ class Shape(object):
 
         # Change the volume of the shape
         if content is not None:
-            self.content = self.normalizeContent(self, vertices, content)
+            self.vertices = self.normalizeContent(self, vertices, content)
+            self.content = content
         else:
-            self.content = self.git Content(self, vertices)
-        else:
-            self.verts = np.asarray(vertices)
-            if self.is_sphero:
-                self.content = utils.spheropolyhedra_volume(vertices, R=radius)
-            else:
-                self.content = ConvexHull(vertices).volume()
+            self.vertices = vertices
+            self.content = self.getContent(self, vertices)
 
-
-        self.hull = ConvexHull(vertices)
+        self.hull = ConvexHull(self.vertices)
 
     # A function for normalizing the content of a shape
     def normalizeContent(self, vertices, content):
         vol = self.getContent(self, vertices)
         self.content = content
-        self.vertices = vertices/np.power(vol,1/self.ndims)
-
-        return None
+        return vertices/np.power(vol,1/self.ndims)
 
 
     # a function for finding the content of a shape
