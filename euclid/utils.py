@@ -609,3 +609,10 @@ def minimum_bonds(verts, maxdist=None):
         return np.asarray(c)
     else:
         return a
+
+# Gets the outsphere radius of a collection
+# of points. Does NOT center the points on
+# zero, this is assumed to already be done
+def get_outsphere_radius(verts):
+    verts = np.asarray(verts)
+    return np.amax(np.power(np.power(verts,2).sum(axis=1),0.5))
