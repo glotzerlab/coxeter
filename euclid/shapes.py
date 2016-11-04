@@ -121,3 +121,14 @@ def rhombic_dodecahedron(a = 1):
                      [-2.0*a,0.0,0.0],[0.0,2.0*a,0.0],[0.0,-2.0*a,0.0],
                      [0.0,0.0,2.0*a],[0.0,0.0,-2.0*a]])
 
+# A triangular prisim function
+# Assumes isosceles triangle faces
+# b is base width, h is height. h points in x direction
+def triPrisim(b, h, l):
+    return np.array([[-h/3,    b/2,   l/2],
+                     [-h/3,    -b/2,  l/2],
+                     [2*h/3,   0,     l/2],
+                     [-h/3,    b/2,   -l/2],
+                     [-h/3,    -b/2,  -l/2],
+                     [2*h/3,   0,     -l/2]])
+

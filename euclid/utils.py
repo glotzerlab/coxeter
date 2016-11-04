@@ -616,3 +616,20 @@ def minimum_bonds(verts, maxdist=None):
 def get_outsphere_radius(verts):
     verts = np.asarray(verts)
     return np.amax(np.power(np.power(verts,2).sum(axis=1),0.5))
+
+# Contributed by Erin Teich
+def rtoConvexHull(vertices):
+    """Compute the convex hull of a set of points, just like scipy.spatial.ConvexHull.
+    Ensure that the given simplices are in right-handed order."""
+    hull = ConvexHull(vertices)
+    expanded = hull.points[hull.simplices]
+
+    crossProduct = np.cross(expanded[:, 1, :] - expanded[:, 0, :], expanded[:, 2, :] - expanded[:, 0, :])
+    faceNormals = crossProduct/np.sqrt(np.sum(crossProduct**2, axis=-1))[:, np.newaxis]
+    flipped = np.sum(faceNormals*np.mean(expanded, axis=1), axis=-1) < 0
+    temp = hull.simplices[flipped, 0].copy()
+    hull.simplices[flipped, 0] = hull.simplices[flipped, 1]
+    hull.simplices[flipped, 1] = temp
+
+    return hull
+
