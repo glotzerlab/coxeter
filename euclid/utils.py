@@ -633,3 +633,52 @@ def rtoConvexHull(vertices):
 
     return hull
 
+# finds the height and width of an isoceles triangle that would fit
+# with tangent sides within a larger isoceles triangle that was decorated
+# with circles of radius radius. point is the endpoint of one of the sides
+# of the large triangle ([0,0]->point). sigma is from the WCA potential,
+# it further reduces the size of the triangle
+#
+# Will fail if the long edge of the triangle is longer than twice the radius
+# Contributed by BVS
+def find_triangle(point, radius, sigma=0):
+    point = np.array(point)
+            
+    # Projected overlap of the circles
+    t = np.linalg.norm(point) - 2*radius
+                        
+    # The director that points towards the face normal of the inner triangle
+    n2 = np.array([1, np.tan((np.arctan(point[1]/point[0]) - np.arccos((2*radius + t/2)/(2*radius)))/2)])
+    n2 = n2/np.linalg.norm(n2)
+
+    # a perpendicular vector, this is the circle tangent or side of the triangle
+    s2 = 1/n2
+    s2[0] = -s2[0]
+    s2 = s2/np.linalg.norm(s2)
+                                                        
+    # This is the tangent point for the diagonal side of the triangle
+    s2p = (radius + (sigma/2)*2**(1/6))*n2
+
+    # This is the tangent point for the base side of the triangle
+    s1p = np.array([point[0], point[1] - radius - (sigma/2)*2**(1/6)])
+
+    # Solve for the point of intersection of the midline and the long side
+    midn = np.array([0,1])
+    midp = np.array([point[0],0])
+
+    sol2 = np.linalg.solve(np.array([s2, -midn]).T, midp-s2p)
+    point2 = midp + midn*sol2[1]
+
+    height = (s1p - point2)[1]
+
+    # solve for the point of intersection of the base and the long side
+    s1 = np.array([1,0])
+    sol1 = np.linalg.solve(np.array([s2, -s1]).T, s1p-s2p)
+    point1 = s1p + s1*sol1[1]
+
+    width = 2*(s1p - point1)[0]
+                                                                                                                        
+    # the center of mass of the triangle points
+    center = np.array([point[0],point2[1]+2*height/3])
+    
+    return (height, width, center)
