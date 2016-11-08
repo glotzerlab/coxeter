@@ -639,23 +639,22 @@ def rtoConvexHull(vertices):
 # of the large triangle ([0,0]->point). sigma is from the WCA potential,
 # it further reduces the size of the triangle
 #
-# Will fail if the long edge of the triangle is longer than twice the radius
 # Contributed by BVS
 def find_triangle(point, radius, sigma=0):
     point = np.array(point)
-            
     # Projected overlap of the circles
     t = np.linalg.norm(point) - 2*radius
-                        
     # The director that points towards the face normal of the inner triangle
-    n2 = np.array([1, np.tan((np.arctan(point[1]/point[0]) - np.arccos((2*radius + t/2)/(2*radius)))/2)])
+    cos_term = np.arccos((2*radius + t/2)/(2*radius))
+    if np.isnan(cos_term):
+        cos_term = 0
+    n2 = np.array([1, np.tan((np.arctan(point[1]/point[0]) - cos_term)/2)])
     n2 = n2/np.linalg.norm(n2)
 
     # a perpendicular vector, this is the circle tangent or side of the triangle
     s2 = 1/n2
     s2[0] = -s2[0]
     s2 = s2/np.linalg.norm(s2)
-                                                        
     # This is the tangent point for the diagonal side of the triangle
     s2p = (radius + (sigma/2)*2**(1/6))*n2
 
@@ -677,8 +676,7 @@ def find_triangle(point, radius, sigma=0):
     point1 = s1p + s1*sol1[1]
 
     width = 2*(s1p - point1)[0]
-                                                                                                                        
     # the center of mass of the triangle points
     center = np.array([point[0],point2[1]+2*height/3])
-    
+
     return (height, width, center)
