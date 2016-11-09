@@ -205,7 +205,9 @@ def simplex_area(verts):
 
     return areas
 
-def spheropolyhedra_volume(verts, R=1.0):
+# Must be convex. return_area flag triggers return of (volume, area)
+# tuple
+def spheropolyhedra_volume(verts, R=1.0, return_area=False):
     assert(R>=0)
     hull = ConvexHull(verts)
     # Base volume
@@ -214,11 +216,19 @@ def spheropolyhedra_volume(verts, R=1.0):
     rect_vol = hull.area*R
     # Cylinder cap volume
     cyl_vol = 0
+    cyl_area = 0
     for (ang, length) in cylinder_caps(verts):
         cyl_vol += R**2*length*np.pi*(ang/(2*np.pi))
+        cyl_area += 2*np.pi*R*length*(ang/(2*np.pi))
 
     assert((convex_vol>=0)*(rect_vol>=0)*(cyl_vol>=0))
-    return convex_vol + rect_vol + cyl_vol + 4*np.pi*R**3/3
+    vol = convex_vol + rect_vol + cyl_vol + (4*np.pi*R**3)/3
+    area = hull.area + cyl_area + 4*np.pi*R**2
+    if return_area:
+        return (vol, area)
+    else:
+        return vol
+
 
 # Returns rescaled vertices and a rounding radius that
 # can be used to create a spheropolyhedron consistent
@@ -616,3 +626,67 @@ def minimum_bonds(verts, maxdist=None):
 def get_outsphere_radius(verts):
     verts = np.asarray(verts)
     return np.amax(np.power(np.power(verts,2).sum(axis=1),0.5))
+
+# Contributed by Erin Teich
+def rtoConvexHull(vertices):
+    """Compute the convex hull of a set of points, just like scipy.spatial.ConvexHull.
+    Ensure that the given simplices are in right-handed order."""
+    hull = ConvexHull(vertices)
+    expanded = hull.points[hull.simplices]
+
+    crossProduct = np.cross(expanded[:, 1, :] - expanded[:, 0, :], expanded[:, 2, :] - expanded[:, 0, :])
+    faceNormals = crossProduct/np.sqrt(np.sum(crossProduct**2, axis=-1))[:, np.newaxis]
+    flipped = np.sum(faceNormals*np.mean(expanded, axis=1), axis=-1) < 0
+    temp = hull.simplices[flipped, 0].copy()
+    hull.simplices[flipped, 0] = hull.simplices[flipped, 1]
+    hull.simplices[flipped, 1] = temp
+
+    return hull
+
+# finds the height and width of an isoceles triangle that would fit
+# with tangent sides within a larger isoceles triangle that was decorated
+# with circles of radius radius. point is the endpoint of one of the sides
+# of the large triangle ([0,0]->point). sigma is from the WCA potential,
+# it further reduces the size of the triangle
+#
+# Contributed by BVS
+def find_triangle(point, radius, sigma=0):
+    point = np.array(point)
+    # Projected overlap of the circles
+    t = np.linalg.norm(point) - 2*radius
+    # The director that points towards the face normal of the inner triangle
+    cos_term = np.arccos((2*radius + t/2)/(2*radius))
+    if np.isnan(cos_term):
+        cos_term = 0
+    n2 = np.array([1, np.tan((np.arctan(point[1]/point[0]) - cos_term)/2)])
+    n2 = n2/np.linalg.norm(n2)
+
+    # a perpendicular vector, this is the circle tangent or side of the triangle
+    s2 = 1/n2
+    s2[0] = -s2[0]
+    s2 = s2/np.linalg.norm(s2)
+    # This is the tangent point for the diagonal side of the triangle
+    s2p = (radius + (sigma/2)*2**(1/6))*n2
+
+    # This is the tangent point for the base side of the triangle
+    s1p = np.array([point[0], point[1] - radius - (sigma/2)*2**(1/6)])
+
+    # Solve for the point of intersection of the midline and the long side
+    midn = np.array([0,1])
+    midp = np.array([point[0],0])
+
+    sol2 = np.linalg.solve(np.array([s2, -midn]).T, midp-s2p)
+    point2 = midp + midn*sol2[1]
+
+    height = (s1p - point2)[1]
+
+    # solve for the point of intersection of the base and the long side
+    s1 = np.array([1,0])
+    sol1 = np.linalg.solve(np.array([s2, -s1]).T, s1p-s2p)
+    point1 = s1p + s1*sol1[1]
+
+    width = 2*(s1p - point1)[0]
+    # the center of mass of the triangle points
+    center = np.array([point[0],point2[1]+2*height/3])
+
+    return (height, width, center)
