@@ -205,7 +205,9 @@ def simplex_area(verts):
 
     return areas
 
-def spheropolyhedra_volume(verts, R=1.0):
+# Must be convex. return_area flag triggers return of (volume, area)
+# tuple
+def spheropolyhedra_volume(verts, R=1.0, return_area=False):
     assert(R>=0)
     hull = ConvexHull(verts)
     # Base volume
@@ -214,11 +216,19 @@ def spheropolyhedra_volume(verts, R=1.0):
     rect_vol = hull.area*R
     # Cylinder cap volume
     cyl_vol = 0
+    cyl_area = 0
     for (ang, length) in cylinder_caps(verts):
         cyl_vol += R**2*length*np.pi*(ang/(2*np.pi))
+        cyl_area += 2*np.pi*R*length*np.pi(ang/(2*np.pi))
 
     assert((convex_vol>=0)*(rect_vol>=0)*(cyl_vol>=0))
-    return convex_vol + rect_vol + cyl_vol + 4*np.pi*R**3/3
+    vol = convex_vol + rect_vol + cyl_vol + (4*np.pi*R**3)/3
+    area = hull.area + cyl_area + 4*np.pi*R**2
+    if return_area:
+        return (vol, area)
+    else:
+        return vol
+
 
 # Returns rescaled vertices and a rounding radius that
 # can be used to create a spheropolyhedron consistent
