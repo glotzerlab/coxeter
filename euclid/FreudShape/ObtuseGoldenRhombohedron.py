@@ -1,10 +1,10 @@
 from __future__ import division
 from numpy import sqrt
 import numpy
-from freud.shape import ConvexPolyhedron
+from euclid.FreudShape import ConvexPolyhedron
 
 # Example:
-# from freud.shape.ObtuseGoldenRhombohedron import shape
+# from euclid.FreudShape.ObtuseGoldenRhombohedron import shape
 points = [ 
           (-0.9472135954999579, 0.08541019662496847, 0.2628655560595668),
           (-0.5, -0.8090169943749475, 0.2628655560595668),

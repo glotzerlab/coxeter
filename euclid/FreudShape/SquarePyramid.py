@@ -1,10 +1,10 @@
 from __future__ import division
 from numpy import sqrt
 import numpy
-from freud.shape import ConvexPolyhedron
+from euclid.FreudShape import ConvexPolyhedron
 
 # Example:
-# from freud.shape.SquarePyramid import shape
+# from euclid.FreudShape.SquarePyramid import shape
 points = [ 
           (0, 0, 1/sqrt(2)),
           (0, -(1/sqrt(2)), 0),

@@ -1,10 +1,10 @@
 from __future__ import division
 from numpy import sqrt
 import numpy
-from freud.shape import ConvexPolyhedron
+from euclid.FreudShape import ConvexPolyhedron
 
 # Example:
-# from freud.shape.TruncatedOctahedron import shape as truncOct
+# from euclid.FreudShape.TruncatedOctahedron import shape as truncOct
 
 points = [  [-(3/2), -(1/2), 0],
             [-(3/2), 1/2, 0],

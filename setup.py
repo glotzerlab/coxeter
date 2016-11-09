@@ -7,5 +7,6 @@ setup(name = 'euclid',
         author = 'Bryan VanSaders',
         author_email = 'bvansade@umich.edu',
         license = 'None',
-        packages = ['euclid'],
+        packages = ['euclid','euclid.FreudShape'],
+        install_requires=['numpy', 'scipy'],
         zip_safe = False)

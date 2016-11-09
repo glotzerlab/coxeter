@@ -1,10 +1,10 @@
 from __future__ import division
 from numpy import sqrt
 import numpy
-from freud.shape import ConvexPolyhedron
+from euclid.FreudShape import ConvexPolyhedron
 
 # Example:
-# from freud.shape.Dodecahedron import shape
+# from euclid.FreudShape.Dodecahedron import shape
 
 phi = (1. + sqrt(5.))/2.
 inv = 2./(1. + sqrt(5.))

@@ -24,12 +24,12 @@ outfile = open(name+'.py', 'w')
 header = """from __future__ import division
 from numpy import sqrt
 import numpy
-from freud.shape import ConvexPolyhedron
+from euclid.FreudShape import ConvexPolyhedron
 
 # Example:
 """
 
-example = "# from freud.shape.{0} import shape\n".format(name)
+example = "# from euclid.FreudShape.{0} import shape\n".format(name)
 
 footer = """         ]
 

@@ -5,11 +5,11 @@ try:
     from scipy.spatial import ConvexHull
 except ImportError:
     ConvexHull = None
-    msg = 'scipy.spatial.ConvexHull is not available, so freud.shape.ConvexPolyhedron is not available.'
+    msg = 'scipy.spatial.ConvexHull is not available, so euclid.FreudShape.ConvexPolyhedron is not available.'
     logger.warning(msg)
     #raise ImportWarning(msg)
 
-## \package freud.shape
+## \package euclid.FreudShape
 #
 # Classes to manage shape data.
 #
@@ -31,7 +31,7 @@ except ImportError:
 #
 # Example:
 # Some shapes are already provided in the module
-# >>> from freud.shape.Cube import shape
+# >>> from euclid.FreudShape.Cube import shape
 # these are the vertices for a cube
 # >>> shape.points
 # array([
@@ -419,7 +419,7 @@ class Polyhedron:
     # The index of neighbor b also corresponds to the index of the first of two right-hand-ordered vertices of the shared edge
     # \returns the index of b in the neighbor list of a or None if they are not neighbors
     # \par Example
-    # from freud.shape.Cube import shape
+    # from euclid.FreudShape.Cube import shape
     # a, b = 0, 1
     # edge_i = shape.getSharedEdge(a,b)
     # edge_j = (edge_i + 1) % shape.nverts[a]
@@ -536,7 +536,7 @@ class Polyhedron:
 
 ## Store and compute data associated with a convex polyhedron, calculated as the convex hull of a set of input points.
 # ConvexPolyhedron objects are a modification to the scipy.spatial.ConvexHull object with data in a form more useful to operations involving polyhedra.
-# \note freud.shape.ConvexPolyhedron requires scipy.spatil.ConvexHull (as of scipy 0.12.0).
+# \note euclid.FreudShape.ConvexPolyhedron requires scipy.spatil.ConvexHull (as of scipy 0.12.0).
 #
 # Inherits from class Polyhedron
 #
