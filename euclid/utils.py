@@ -219,7 +219,7 @@ def spheropolyhedra_volume(verts, R=1.0, return_area=False):
     cyl_area = 0
     for (ang, length) in cylinder_caps(verts):
         cyl_vol += R**2*length*np.pi*(ang/(2*np.pi))
-        cyl_area += 2*np.pi*R*length*np.pi(ang/(2*np.pi))
+        cyl_area += 2*np.pi*R*length*(ang/(2*np.pi))
 
     assert((convex_vol>=0)*(rect_vol>=0)*(cyl_vol>=0))
     vol = convex_vol + rect_vol + cyl_vol + (4*np.pi*R**3)/3
