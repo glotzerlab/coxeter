@@ -102,6 +102,76 @@ def mapInertiaTensor(tetrahedron) :
 
 ### Functions contributed by Bryan van Saders
 
+# Creates a list of convex hulls that are the facets of the given hull
+# extruded outwards by the given r
+def extrude_facets(hull, r):
+    hull_list = []
+    for i in range(len(hull.equations)):
+        eq = hull.equations[i]
+        verts = hull.points[hull.simplices[i]]
+        exverts = verts + r*eq[0:3]/np.linalg.norm(eq[0:3])
+        hull_list.append(ConvexHull(np.append(verts,exverts,axis=0)))
+    return hull_list
+
+# line should be given as two points
+def line_point_distance(line, points):
+    return np.linalg.norm(np.cross(points-line[0], points-line[1]),axis=1)/np.linalg.norm(line[1]-line[0])
+
+# Returns the indices of points that are inside the convex hull
+# rp is the radius of the point, for sphere checking
+def find_in_idx(points, hull, rp=0):
+    in_idx = np.arange(points.shape[0])
+    for plane in hull.equations:
+        truth = (np.dot(points[in_idx,0:3], np.reshape(plane[0:3],(3,1)))+plane[3]<=rp).flatten()
+        in_idx = in_idx[truth]
+    return in_idx
+
+# Find the indices of points which lie within a convex sphero polyhedron
+# hull: convex hull of the core polyhedron
+# r: rounding radius of the spheropolyhedron
+# points: points to check against (Nx3)
+# rp: radius of the points (sphere check)
+# Returns a list of row indices of points that are inside the shape
+def find_idx_hull_overlap(hull, r, points, rp=0):
+    # Speed things up by only keeping points that
+    # overlap with the bounding convex polyhedra
+    suspect_idx = find_in_idx(points, hull, rp=rp+r)
+    orig_idx = np.arange(points.shape[0])[suspect_idx]
+    suspects = points[suspect_idx,:]
+
+    # Check the base shape
+    idx = orig_idx[find_in_idx(suspects, hull, rp=rp)]
+    if r>0:
+        # Check the face segments
+        face_hulls = extrude_facets(hull, r)
+        for fhull in face_hulls:
+            idx = np.append(idx,orig_idx[find_in_idx(suspects,fhull,rp=rp)],axis=0)
+
+        # Check the cylinders around the ridges
+        for i in range(len(hull.simplices)):
+            verts = hull.points[hull.simplices[i]]
+            lines = np.array([[verts[0],verts[1]],
+                              [verts[1],verts[2]],
+                              [verts[2],verts[0]]])
+            planes = np.array([line[1]-line[0] for line in lines])
+            planes = planes/np.linalg.norm(planes, axis=1)
+
+            otherplanes = -np.copy(planes)
+            planes = np.append(planes, -((planes*lines[:,0]).sum(axis=1)).reshape((-1,1)), axis=1)
+            otherplanes = np.append(otherplanes, -((otherplanes*lines[:,1]).sum(axis=1)).reshape((-1,1)), axis=1)
+
+            for line, plane, oplane in zip(lines, planes, otherplanes):
+                cond = ((line_point_distance(line, suspects)<=r+rp)*
+                        ((np.dot(suspects[:,0:3], np.reshape(plane[0:3],(3,1)))+plane[3]>=rp).flatten())*
+                        ((np.dot(suspects[:,0:3], np.reshape(oplane[0:3],(3,1)))+oplane[3]>=rp).flatten()))
+                idx = np.append(idx, orig_idx[cond])
+
+        # Check the vertex caps
+        for vertex in hull.vertices:
+            idx = np.append(idx, orig_idx[(np.linalg.norm(hull.points[vertex]-suspects, axis=1)<=r+rp).flatten()], axis=0)
+
+    return idx
+
 # Plots a frame of lines based on the simplicies of a set of verts. ax is a
 # matplotlib axis object, and color should be a string or vector interpretable by matplotlib
 # as a plot color for the lines
