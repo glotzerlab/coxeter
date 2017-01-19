@@ -722,13 +722,7 @@ def rtoConvexHull(vertices):
 # Contributed by BVS
 def find_triangle(point, radius, sigma=0):
     point = np.array(point)
-    # Find the minimum strain on the triangle vector to enable a
-    # disk of radius sigma*2**(1/6) inside
-    alpha = (2*point[1]*(radius+sigma*2**(1/6)))/((point**2).sum())
-    if alpha > 1:
-        print('The minimum strain possible for this sigma value is {a}'.format(a=alpha))
-        point = alpha*point
-    # Projected overlap of the circles
+        # Projected overlap of the circles
     t = np.linalg.norm(point) - 2*radius
     # The director that points towards the face normal of the inner triangle
     cos_term = np.arccos((2*radius + t/2)/(2*radius))
