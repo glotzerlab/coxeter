@@ -132,3 +132,19 @@ def triPrisim(b, h, l):
                      [-h/3,    -b/2,  -l/2],
                      [2*h/3,   0,     -l/2]])
 
+# makes a helix
+# diameter: diameter of the spiral
+# length: cylinder length of the spiral
+# pitch: turns per unit length in the spiral
+# num_points: how many points are in the returned representation
+# returns
+# points: points on the spiral
+# segments: indices of points that are ajacent (connectivity information)
+def helix(diameter, length, pitch, num_points):
+    t = np.linspace(-0.5, 0.5, num=num_points, endpoint=True)
+    x = diameter*np.cos(length*pitch*2*np.pi*t)
+    y = diameter*np.sin(length*pitch*2*np.pi*t)
+    z = t*length
+    points = np.append(np.append(x.reshape((-1,1)), y.reshape((-1,1)), axis=1), z.reshape((-1,1)), axis=1)
+    segments = [[i,i+1] for i in range(len(points)-1)]
+    return points, segments
