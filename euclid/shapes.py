@@ -142,8 +142,8 @@ def triPrisim(b, h, l):
 # segments: indices of points that are ajacent (connectivity information)
 def helix(diameter, length, pitch, num_points):
     t = np.linspace(-0.5, 0.5, num=num_points, endpoint=True)
-    x = diameter*np.cos(length*pitch*2*np.pi*t)
-    y = diameter*np.sin(length*pitch*2*np.pi*t)
+    x = (diameter/2)*np.cos(length*pitch*2*np.pi*t)
+    y = (diameter/2)*np.sin(length*pitch*2*np.pi*t)
     z = t*length
     points = np.append(np.append(x.reshape((-1,1)), y.reshape((-1,1)), axis=1), z.reshape((-1,1)), axis=1)
     segments = [[i,i+1] for i in range(len(points)-1)]
