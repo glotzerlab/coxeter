@@ -257,7 +257,7 @@ def cylinder_caps(verts):
                 eq1 = hull.equations[i][0:3]
                 eq2 = hull.equations[j][0:3]
                 # Angle of the cylindrical edge
-                angle = np.arccos(np.dot(eq1, eq2)/(np.linalg.norm(eq1)*np.linalg.norm(eq2)))
+                angle = np.arccos(np.clip(np.dot(_normalize(eq1), _normalize(eq2)), -1.0, 1.0))
                 # Shared points of the neighboring simplices
                 shared = np.intersect1d(hull.simplices[i], hull.simplices[j])
                 # Length of the cylindrical edge
