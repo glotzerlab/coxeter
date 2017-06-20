@@ -91,6 +91,22 @@ def cube(side_length = 1):
 		[side_length/2,-side_length/2,-side_length/2],
 		[-side_length/2,-side_length/2,-side_length/2]])
 
+# v1,v2,v3 should be flat arrays
+def parallelepiped(v1, v2, v2):
+     v1 = np.array(v1)
+     v2 = np.array(v2)
+     v3 = np.array(v3)
+     points = np.array([[0,0,0],
+                        v1,
+                        v2,
+                        v3,
+                        v1+v2,
+                        v1+v3,
+                        v2+v3,
+                        v1+v2+v3])
+     com = points.mean(axis=0)
+     return points - com
+
 def rectangle(a, b, c):
 	return np.asarray([[a/2,b/2,c/2],
 		[-a/2,b/2,c/2],
