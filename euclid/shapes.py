@@ -92,7 +92,7 @@ def cube(side_length = 1):
 		[-side_length/2,-side_length/2,-side_length/2]])
 
 # v1,v2,v3 should be flat arrays
-def parallelepiped(v1, v2, v2):
+def parallelepiped(v1, v2, v3):
      v1 = np.array(v1)
      v2 = np.array(v2)
      v3 = np.array(v3)
