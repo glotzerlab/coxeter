@@ -1,5 +1,5 @@
-R"""
-Calculates form factors of shapes.
+"""Calculates Fourier transforms of collections of delta peaks, spheres, and
+(convex) polyhedra at specified k-space vectors.
 
 Ported from freud.kspace by Bradley Dice.
 Original authors: Eric Irrgang, Jens Glaser.
@@ -7,7 +7,7 @@ Original authors: Eric Irrgang, Jens Glaser.
 
 import numpy as np
 from .utils import convert_array
-from .quaternion_tools import *
+from .quaternion_tools import qrotate, qinverse
 
 
 class _FTbase:
