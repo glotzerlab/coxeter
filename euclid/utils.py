@@ -1,7 +1,10 @@
-from . import np
+import numpy as np
 from . import ConvexHull, Delaunay
 from collections import Counter, defaultdict, deque, namedtuple
 from itertools import chain
+import logging
+
+logger = logging.getLogger(__name__)
 
 thresh = 1e-5
 
@@ -760,3 +763,43 @@ def find_triangle(point, radius, sigma=0):
     center = np.array([point[0],point2[1]+2*height/3])
 
     return (height, width, center)
+
+def convert_array(array, dimensions, dtype=None,
+                  contiguous=True, array_name=None):
+    """Function which takes a given array, checks the dimensions,
+    and converts to a supplied dtype and/or makes the array
+    contiguous as required by the user.
+
+    .. moduleauthor:: Eric Harper <harperic@umich.edu>
+
+    Args:
+        array (:class:`numpy.ndarray`): Array to check and convert.
+        dimensions (int): Expected dimensions of the array.
+        dtype: code:`dtype` to convert the array to if :code:`array.dtype`
+            is different. If `None`, :code:`dtype` will not be changed.
+            (Default value = None).
+        contiguous (bool): Whether to cast the array to a contiguous (Default
+            value = True).
+        array. Default behavior casts to a contiguous array.
+        array_name (str): Name of the array, used for errors (Default value =
+            None).
+
+    Returns:
+        py:class:`numpy.ndarray`: Array.
+    """
+    array = np.asarray(array)
+
+    if array.ndim != dimensions:
+        raise TypeError("{}.ndim = {}; expected ndim = {}".format(
+            array_name or "array", array.ndim, dimensions))
+    requirements = None
+    if contiguous:
+        if not array.flags.contiguous:
+            msg = 'Converting supplied array to contiguous.'
+            logger.info(msg)
+        requirements = ["C"]
+    if dtype is not None and dtype != array.dtype:
+        msg = 'Converting supplied array dtype {} to dtype {}.'.format(
+            array.dtype, dtype)
+        logger.info(msg)
+    return np.require(array, dtype=dtype, requirements=requirements)
