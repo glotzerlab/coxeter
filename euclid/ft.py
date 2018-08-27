@@ -160,8 +160,9 @@ class FTsphere(_FTbase):
                     f = (4./3. * np.pi * self.radius**3)
                 else:
                     kr = np.sqrt(k_sq) * self.radius
+                    # Note that np.sinc(x) gives sin(pi*x)/(pi*x)
                     f = 4. * np.pi * self.radius / k_sq * \
-                        (np.sin(kr)/kr - np.cos(kr))
+                        (np.sinc(kr / np.pi) - np.cos(kr))
                 self.S[i] += self.density * f * np.exp(-1j * np.dot(k, r))
 
     def set_radius(self, radius):
@@ -224,19 +225,20 @@ class FTpolyhedron(_FTbase):
                             n_verts = len(facet)
                             for edge_id in range(n_verts):
                                 r0 = self.verts[facet[edge_id]]
-                                r1 = self.verts[(facet[edge_id] + 1) % n_verts]
+                                r1 = self.verts[facet[(edge_id + 1) % n_verts]]
                                 edge_vec = r1 - r0
-                                edge_center = 0.5 * (r1 + r0)
+                                edge_center = 0.5 * (r0 + r1)
                                 edge_cross_k = np.cross(edge_vec, k_projected)
                                 k_dot_center = np.dot(k_projected, edge_center)
                                 k_dot_edge = np.dot(k_projected, edge_vec)
-                                # Note that np.sinc(x) gives sin(pi*x)/pi*x
+                                # Note that np.sinc(x) gives sin(pi*x)/(pi*x)
                                 f_n = np.dot(norm, edge_cross_k) * \
-                                    np.sinc(0.5 * k_dot_edge / np.pi) / k_sq
+                                    np.sinc(0.5 * k_dot_edge / np.pi) / \
+                                    k_projected_sq
                                 f_2D -= f_n * 1j * np.exp(-1j * k_dot_center)
                         d = self.d[facet_id]
                         exp_kr = np.exp(-1j * k_dot_norm * d)
-                        f -= k_dot_norm * (1j * f_2D * exp_kr)
+                        f += k_dot_norm * (1j * f_2D * exp_kr)
                     # end loop over facets
                     f /= k_sq
                 # end if/else, f is now calculated
@@ -380,7 +382,7 @@ class FTconvexPolyhedron(FTpolyhedron):
                 v0 = points[verts[j]]
                 edge = v1 - v0
                 centrum = np.array((v1 + v0) / 2.)
-                # Note that np.sinc(x) gives sin(pi*x)/pi*x
+                # Note that np.sinc(x) gives sin(pi*x)/(pi*x)
                 x = np.dot(k, edge) / np.pi
                 cpedgek = np.cross(edge, k)
                 S += np.dot(n, cpedgek) * np.exp(
