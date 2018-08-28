@@ -16,5 +16,5 @@ The package includes:
 From within the euclid folder, run
 
 ```bash
-pip install --user
+pip install . --user
 ```
