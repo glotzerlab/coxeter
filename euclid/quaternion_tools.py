@@ -3,7 +3,7 @@
 # This is a collection of quaternion manipulation tools
 # Conventions taken from www.lfd.uci.edu/~gohlke/code/transformations.py.html
 
-from . import np
+import numpy as np
 
 EPS = np.finfo(float).eps * 4  # A small number
 

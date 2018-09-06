@@ -1,5 +1,5 @@
-from . import qt
-from . import np
+import numpy as np
+from . import quaternion_tools as qt
 
 # Here some symmetry operators groups are defined
 # They have been given the name of space groups,

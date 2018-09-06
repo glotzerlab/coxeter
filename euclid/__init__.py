@@ -1,11 +1,6 @@
-import numpy as np
-from scipy.spatial import ConvexHull, Delaunay
-import json
-import collections
-
-from euclid import shapes
-from euclid import utils
-from euclid import damasceno
-from euclid import quaternion_tools as qt
-from euclid import symmetry
-from euclid import ft
+from . import shapes
+from . import utils
+from . import damasceno
+from . import quaternion_tools as qt
+from . import symmetry
+from . import ft

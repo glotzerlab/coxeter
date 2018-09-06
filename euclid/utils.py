@@ -1,5 +1,5 @@
 import numpy as np
-from . import ConvexHull, Delaunay
+from scipy.spatial import ConvexHull, Delaunay
 from collections import Counter, defaultdict, deque, namedtuple
 from itertools import chain
 import logging
