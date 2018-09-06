@@ -68,6 +68,9 @@ class TestFormFactors(unittest.TestCase):
                                 dtype=np.float)
         ft.set_rq(positions, orientations)
         ft.compute()
+        npt.assert_almost_equal(ft.S,
+            [6., 5.08060461, 5.08060461, 3.16770633, 5.08060461, 5.08060461,
+             -1.73167405, -1.20254791])
 
         if FREUD_KSPACE:
             ks = kspace.FTdelta()
@@ -87,6 +90,9 @@ class TestFormFactors(unittest.TestCase):
         ft.set_rq(positions, orientations)
         ft.compute()
         npt.assert_equal(ft.S[0], 4./3. * np.pi * ft.get_radius()**3)
+        npt.assert_almost_equal(ft.S,
+            [0.52359878, 0.51062514, 0.51062514, 0.47307465,
+             0.51062514, 0.51062514, 0.36181941, 0.11702976])
 
         if FREUD_KSPACE:
             ks = kspace.FTsphere()
@@ -105,6 +111,9 @@ class TestFormFactors(unittest.TestCase):
                                 dtype=np.float)
         ft.set_rq(positions, orientations)
         ft.compute()
+        npt.assert_almost_equal(ft.S,
+            [3.14159265, 2.59428445, 2.59428445, 1.49856158, 2.59428445,
+             2.59428445, -0.62655329, -0.14073389])
 
         if FREUD_KSPACE:
             ks = kspace.FTsphere()
@@ -126,6 +135,9 @@ class TestFormFactors(unittest.TestCase):
         ft.set_rq(positions, orientations)
         ft.compute()
         npt.assert_almost_equal(ft.S[0], 8, decimal=6)
+        npt.assert_almost_equal(ft.S,
+            [8., 6.73176788, 6.73176788, 3.63718971, 6.73176788, 6.73176788,
+             0.14397014, 0.1169148])
 
         if FREUD_KSPACE:
             ks = kspace.FTconvexPolyhedron(cube)
