@@ -1,6 +1,6 @@
 # For calling up commonly used shapes
-from . import np
-from . import ConvexHull
+import numpy as np
+from scipy.spatial import ConvexHull
 from . import utils
 
 # Base class for shapes. It really doesn't work for 2D stuff yet
