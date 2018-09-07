@@ -10,7 +10,7 @@ from .utils import convert_array
 from .quaternion_tools import qrotate, qinverse
 
 
-class _FTbase:
+class _FTbase(object):
     """Compute the Fourier transform of a set of delta peaks at a list of
     :math:`K` points.
 
@@ -131,7 +131,7 @@ class FTdelta(_FTbase):
     """
 
     def __init__(self):
-        super().__init__()
+        super(FTdelta, self).__init__()
 
     def _computeFT(self):
         self.S = np.zeros((len(self.K),), dtype=np.complex128)
@@ -148,7 +148,7 @@ class FTsphere(_FTbase):
     """
 
     def __init__(self):
-        super().__init__()
+        super(FTsphere, self).__init__()
         self.radius = 0.5
 
     def _computeFT(self):
@@ -194,7 +194,7 @@ class FTpolyhedron(_FTbase):
     """
 
     def __init__(self):
-        super().__init__()
+        super(FTpolyhedron, self).__init__()
 
     def _computeFT(self):
         self.S = np.zeros((len(self.K),), dtype=np.complex128)
@@ -320,7 +320,7 @@ class FTconvexPolyhedron(FTpolyhedron):
     """
 
     def __init__(self, hull):
-        super().__init__()
+        super(FTconvexPolyhedron, self).__init__()
         self.hull = hull
 
         # set convex hull geometry
