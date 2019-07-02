@@ -11,25 +11,6 @@ EPS = np.finfo(float).eps * 4  # A small number
 # rotate the first into the second
 
 
-def find_quat(v1, v2):
-    v = np.array(v1)/np.linalg.norm(v1)
-    t = np.array(v2)/np.linalg.norm(v2)
-
-    axis = np.cross(v, t)
-    if np.linalg.norm(axis) < EPS:
-        axis = v
-    norm = np.linalg.norm(v)
-    if norm > EPS:
-        acos = np.dot(v, t) / np.linalg.norm(v)
-        if np.absolute(np.absolute(acos) - 1) < EPS:
-            angle = 0
-        else:
-            angle = np.arccos(acos)
-    else:
-        angle = 0
-    q = build_quat(axis, angle)
-    return qinverse(q)
-
 # This function takes a vector and an angle in radians and makes a
 # quaternion of that rotation about that vector (positive is clockwise)
 def build_quat(axis, angle):
