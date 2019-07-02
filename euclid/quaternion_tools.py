@@ -30,43 +30,14 @@ def find_quat(v1, v2):
     q = build_quat(axis, angle)
     return qinverse(q)
 
-# This function produces a quaternion which re-orients vx along [100] and
-# vy along [010]  (as projected along the [100] plane)
-
-
-def find_xyquat(vx, vy):
-    tx = np.array([1, 0, 0])
-    ty = np.array([0, 1, 0])
-    vx = np.array(vx)
-    vy = np.array(vy)
-
-    qx = find_quat(vx, tx)
-    vy_rot = qrotate(qx, vy)
-    y_inplane = vy_rot - np.dot(vy_rot, tx) * tx
-    qy = find_quat(y_inplane, ty)
-
-    return qproduct(qy, qx)
-
 # This function takes a vector and an angle in radians and makes a
 # quaternion of that rotation about that vector (positive is clockwise)
-
-
 def build_quat(axis, angle):
     q = np.array([0, axis[0], axis[1], axis[2]])
     norm = np.linalg.norm(q)
     q = q * np.sin(angle / 2.0) / norm
     q[0] = np.cos(angle / 2.0)
     return q
-
-# Old product function that I am phasing out
-def _qproduct(q1, q2):
-    a1, b1, c1, d1 = q1
-    a2, b2, c2, d2 = q2
-
-    return np.array([-b2 * b1 - c2 * c1 - d2 * d1 + a2 * a1,
-                     b2 * a1 + c2 * d1 - d2 * c1 + a2 * b1,
-                     -b2 * d1 + c2 * a1 + d2 * b1 + a2 * c1,
-                     b2 * c1 - c2 * b1 + d2 * a1 + a2 * d1])
 
 # New product function that can handle arrays
 def qproduct(q1, q2):
@@ -126,36 +97,3 @@ def qrotate(q, v):
         vf = vf[1:]
 
     return vf
-
-# A reflection quaternion has the form [0,nx,ny,nz],
-# where [nx,ny,nz] is the normal of the mirror plane
-def qreflect(q,v):
-    v = np.array(v).reshape((-1,3))
-    qv = np.zeros((v.shape[0],4))
-    qv[:,1:] = v
-
-    q = np.array(q).reshape((-1,4))
-    q = q/np.linalg.norm(q)
-    q = np.tile(q, (v.shape[0],1))
-
-    v2 = qproduct(q, qv)
-    vf = qproduct(v2, q)
-    vf = vf[:,1:]
-    if vf.shape[0] == 1:
-        vf = vf[0]
-    return vf
-
-# Taken from here: http://planning.cs.uiuc.edu/node198.html
-def qrandom(num=1):
-    u = np.random.rand(num,3)
-    q = np.zeros((num,4))
-    q[:,0] = np.sqrt(1-u[:,0])*np.sin(2*np.pi*u[:,1])
-    q[:,1] = np.sqrt(1-u[:,0])*np.cos(2*np.pi*u[:,1])
-    q[:,2] = np.sqrt(u[:,0])*np.sin(2*np.pi*u[:,2])
-    q[:,3] = np.sqrt(u[:,0])*np.cos(2*np.pi*u[:,2])
-
-    if num == 1:
-        q = q[0]
-
-    return q
-
