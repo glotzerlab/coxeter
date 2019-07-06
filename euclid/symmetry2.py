@@ -108,20 +108,26 @@ picodi = -np.pi/2 + np.arctan(2)  # pi/2 - the dihedral angle
 # a face vector that will be used a lot
 face1 = [np.cos(picodi), 0, -np.sin(picodi)]
 # the vector to the crown edges
-lat_edge = rowan.rotate(rowan.from_axis_angle(axes=[0, 1, 0], angles=icodi/2))
+lat_edge = rowan.rotate(rowan.from_axis_angle(axes=[0, 1, 0], angles=icodi/2),
+                        [0, 0, 1])
 # the vector to the mid-latitude edges
-crown_edge = rowan.rotate(rowan.from_axis_angle(
-    axes=face1,  angle=2*2*np.pi/5), lat_edge)
+crown_edge = rowan.rotate(rowan.from_axis_angle(axes=face1,
+                                                angles=2*2*np.pi/5),
+                          lat_edge)
 crown_vert = [-0.850651, 0., 1.11352]  # A vertex in the top pentagon
-equi_vert = (rowan.from_axis_angle(axes=face1,  angle=1*2*np.pi/5), crown_vert)
+equi_vert = rowan.rotate(rowan.from_axis_angle(axes=face1,
+                                               angles=1*2*np.pi/5),
+                         crown_vert)
 
 Icosohedral = [
     (1, [1, 0, 0]),
-    (5, [0, 0, 1]),  # first face pair
+    # first face pair
+    (5, [0, 0, 1]),
     (5/2, [0, 0, 1]),
     (5/3, [0, 0, 1]),
     (5/4, [0, 0, 1]),
-    (5, face1),  # second face pair
+    # second face pair
+    (5, face1),
     (5/2, face1),
     (5/3, face1),
     (5/4, face1),
@@ -153,7 +159,7 @@ Icosohedral = [
                        face1)),
     # Fifth face pair
     (5, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                           angle=3*2*np.pi/5),
+                                           angles=3*2*np.pi/5),
                      face1)),
     (5/2, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
                                              angles=3 * 2*np.pi/5),
@@ -166,7 +172,7 @@ Icosohedral = [
                        face1)),
     # Sixth face pair
     (5, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                           angle=4*2*np.pi/5),
+                                           angles=4*2*np.pi/5),
                      face1)),
     (5/2, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
                                              angles=4 * 2*np.pi/5),
@@ -177,7 +183,8 @@ Icosohedral = [
     (5/4, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
                                              angles=4 * 2*np.pi/5),
                        face1)),
-    (2, [0, 1, 0]),  # equitorial band of edges
+    # equitorial band of edges
+    (2, [0, 1, 0]),
     (2, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
                                            angles=1*2 * np.pi/10),
                      [0, 1, 0])),
@@ -205,16 +212,16 @@ Icosohedral = [
                      crown_edge)),
     (2, lat_edge),  # mid latitude edges
     (2, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                           angle=1*2*np.pi/5),
+                                           angles=1*2*np.pi/5),
                      lat_edge)),
     (2, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                           angle=2*2*np.pi/5),
+                                           angles=2*2*np.pi/5),
                      lat_edge)),
     (2, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                           angle=3*2*np.pi/5),
+                                           angles=3*2*np.pi/5),
                      lat_edge)),
     (2, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                           angle=4*2*np.pi/5),
+                                           angles=4*2*np.pi/5),
                      lat_edge)),
     (3, crown_vert),  # The vertices in the top pentagon
     (-3, crown_vert),
@@ -242,28 +249,29 @@ Icosohedral = [
     (-3, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
                                             angles=4 * 2*np.pi/5),
                       crown_vert)),
-    (3, equi_vert),  # the equitorial vertices
+    # the equitorial vertices
+    (3, equi_vert),
     (-3, equi_vert),
     (3, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                           angle=1*2*np.pi/5),
+                                           angles=1*2*np.pi/5),
                      equi_vert)),
     (-3, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
                                             angles=1 * 2*np.pi/5),
                       equi_vert)),
     (3, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                           angle=2*2*np.pi/5),
+                                           angles=2*2*np.pi/5),
                      equi_vert)),
     (-3, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
                                             angles=2 * 2*np.pi/5),
                       equi_vert)),
     (3, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                           angle=3*2*np.pi/5),
+                                           angles=3*2*np.pi/5),
                      equi_vert)),
     (-3, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
                                             angles=3 * 2*np.pi/5),
                       equi_vert)),
     (3, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                           angle=4*2*np.pi/5),
+                                           angles=4*2*np.pi/5),
                      equi_vert)),
     (-3, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
                                             angles=4 * 2 * np.pi / 5),
@@ -281,7 +289,7 @@ def gen_sym_quats(group):
     quats = []
     for operation in operations:
         qtemp = rowan.from_axis_angle(axes=operation[1],
-                                      angle=2*np.pi/operation[0])
+                                      angles=2*np.pi/operation[0])
         quats.append(qtemp.tolist())
         quats.append(rowan.multiply([-1, 0, 0, 0], qtemp).tolist())
 
