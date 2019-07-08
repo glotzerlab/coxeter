@@ -7,7 +7,7 @@ Original authors: Eric Irrgang, Jens Glaser.
 
 import numpy as np
 from .utils import convert_array
-from .quaternion_tools import qrotate, qinverse
+import rowan
 
 
 class _FTbase(object):
@@ -208,7 +208,7 @@ class FTpolyhedron(_FTbase):
                 represented by a quaternion is the conjugate of the quaternion,
                 found by inverting the sign of the imaginary components.
                 """
-                k = qrotate(qinverse(q), k)
+                k = rowan.rotate(rowan.inverse(q), k)
                 f = 0
                 if k_sq == 0:
                     f = self.volume
@@ -244,7 +244,7 @@ class FTpolyhedron(_FTbase):
                 # end if/else, f is now calculated
                 # S += rho * f * exp(-i k r)
                 self.S[i] += self.density * f * \
-                    np.exp(-1j * np.dot(k, qrotate(qinverse(q), r)))
+                    np.exp(-1j * np.dot(k, rowan.rotate(rowan.inverse(q), r)))
 
     def set_params(self, verts, facets, norms, d, areas, volume):
         """Set polyhedron geometry.
