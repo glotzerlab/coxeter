@@ -1,7 +1,10 @@
+import sys
+from pathlib import Path
+sys.path.append(Path('..').resolve().__str__())
 import unittest
 import numpy as np
 import numpy.testing as npt
-import euclid
+import euclid.ft
 import euclid.FreudShape
 import euclid.FreudShape.Cube
 try:
