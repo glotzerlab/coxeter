@@ -1,17 +1,16 @@
-from __future__ import division
 from numpy import sqrt
 import numpy
-from euclid.FreudShape import ConvexPolyhedron
+from euclid.polyhedron import ConvexPolyhedron
 
 # Example:
-# from euclid.FreudShape.SquarePyramid import shape
-points = [ 
-          (0, 0, 1/sqrt(2)),
-          (0, -(1/sqrt(2)), 0),
-          (0, 1/sqrt(2), 0),
-          (-(1/sqrt(2)), 0, 0),
-          (1/sqrt(2), 0, 0),
-         ]
+# from euclid.polyhedron.SquarePyramid import shape
+points = [
+    (0, 0, 1/sqrt(2)),
+    (0, -(1/sqrt(2)), 0),
+    (0, 1/sqrt(2), 0),
+    (-(1/sqrt(2)), 0, 0),
+    (1/sqrt(2), 0, 0),
+]
 
 # The origin is on the surface of the above hull
 # We don't necessarily need the origin to be the centroid, but it is convenient for
