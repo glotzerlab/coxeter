@@ -1,60 +1,12 @@
 import numpy as np
 from scipy.spatial import ConvexHull, Delaunay
-from collections import Counter, defaultdict, deque, namedtuple
-from itertools import chain
+from collections import defaultdict, namedtuple
+from .polyhedron import ConvexPolyhedron, ConvexSpheropolyhedron
 import logging
 
 logger = logging.getLogger(__name__)
 
 thresh = 1e-5
-
-### Functions contributed by Carl Simon Adorf
-
-def getEdges(normal,vertices) :
-  # take the normal to be the z axis
-  n = np.array(normal)
-  n /= np.sqrt(np.dot(n,n))
-
-  _edges = []
-
-  # for each of the vertices
-  for v in vertices :
-    for w in vertices :
-      # pick the first two vertices in the list and define them as an x axis
-      diff = w-v
-      dmag = np.sqrt(np.dot(diff,diff))
-      if dmag > thresh :
-        diff /= dmag
-        # compute the y axis by taking the cross-product with the normal
-        yhat = np.cross(n,diff)
-
-        # loop over all of the vertices and check whether they are in the upper
-        # half-plane
-        okay = True
-        for x in vertices :
-          ddiff = x-v
-          ddmag = np.sqrt(np.dot(ddiff,ddiff))
-          if ddmag > thresh :
-            okay = okay and (np.dot(yhat,ddiff)/ddmag > -thresh )
-        # if they all do, then append this edge
-        if okay :
-          _edges.append((v,w))
-
-  #  sort the edges
-  __edges = [_edges[0]]
-  _edges.remove(_edges[0])
-  while  len(_edges) > 0 :
-    for e in range(len(_edges)) :
-      if np.dot(_edges[e][0]-__edges[-1][1],_edges[e][0]-__edges[-1][1])\
-          < thresh :
-        break
-    __edges.append(_edges[e])
-    del _edges[e]
-
-  # return the sorted list
-  return __edges
-
-### end CSA
 
 ### Functions contributed by Bryan van Saders
 
