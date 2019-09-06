@@ -41,58 +41,6 @@ def _normalize(vector):
     """Returns a normalized version of a numpy vector."""
     return vector/np.sqrt(np.dot(vector, vector));
 
-def spheroArea(vertices, radius=1., factor=1.):
-    """Computes the area of a spheropolygon.
-
-    Args:
-        vertices (list): List of (x, y) coordinates, in right-handed (counterclockwise) order
-        radius (float): Rounding radius of the disk to expand the polygon by
-        factor (float): Factor to scale the resulting area by
-
-    """
-    vertices = list(vertices);
-
-    if not len(vertices) or len(vertices) == 1:
-        return np.pi*radius*radius;
-
-    # adjust for concave vertices
-    adjustment = 0.;
-    shifted = vertices[1:] + [vertices[0]];
-    delta = [(x2 - x1, y2 - y1) for ((x1, y1), (x2, y2)) in zip(vertices, shifted)];
-    lastDelta = [delta[-1]] + delta[:-1];
-    thetas = [np.arctan2(y, x) for (x, y) in delta];
-    dthetas = [(theta2 - theta1)%(2*np.pi) for (theta1, theta2) in
-               zip([thetas[-1]] + thetas[:-1], thetas)];
-
-    # non-rounded component of the given polygon + sphere
-    polygonSkeleton = [];
-
-    for ((x, y), dtheta, dr1, dr2) in zip(vertices, dthetas, lastDelta, delta):
-
-        if dtheta > np.pi: # this is a concave vertex
-            # subtract the rounded segment we'll add later
-            theta = dtheta - np.pi;
-            adjustment += radius*radius*theta/2;
-
-            # add a different point to the skeleton
-            h = radius/np.sin(theta/2);
-
-            bisector = _negBisector(dr1, (-dr2[0], -dr2[1]));
-            point = (x + bisector[0]*h, y + bisector[1]*h);
-            polygonSkeleton.append(point);
-
-        else:
-            (dr1, dr2) = _normalize(dr1), _normalize(dr2);
-
-            polygonSkeleton.append((x + dr1[1]*radius, y - dr1[0]*radius));
-            polygonSkeleton.append((x, y));
-            polygonSkeleton.append((x + dr2[1]*radius, y - dr2[0]*radius));
-
-    # Contribution from rounded corners
-    sphereContribution = (sum([theta % np.pi for theta in dthetas]))/2.*radius**2;
-
-    return (area(polygonSkeleton) + sphereContribution - adjustment)*factor;
-
 def rmax(vertices, radius=0., factor=1.):
     """Compute the maximum distance among a set of vertices
 
