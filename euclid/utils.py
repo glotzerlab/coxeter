@@ -41,25 +41,6 @@ def _normalize(vector):
     """Returns a normalized version of a numpy vector."""
     return vector/np.sqrt(np.dot(vector, vector));
 
-def _polygonNormal(vertices):
-    """Returns the unit normal vector of a planar set of vertices."""
-    return -_normalize(np.cross(vertices[1] - vertices[0], vertices[0] - vertices[-1]));
-
-def area(vertices, factor=1.):
-    """Computes the signed area of a polygon in 2 or 3D.
-
-    Args:
-        vertices (list): (x, y) or (x, y, z) coordinates for each vertex
-        factor (float): Factor to scale the resulting area by
-
-    """
-    vertices = np.asarray(vertices);
-    shifted = np.roll(vertices, -1, axis=0);
-
-    crosses = np.sum(np.cross(vertices, shifted), axis=0);
-
-    return np.abs(np.dot(crosses, _polygonNormal(vertices))*factor/2);
-
 def spheroArea(vertices, radius=1., factor=1.):
     """Computes the area of a spheropolygon.
 
