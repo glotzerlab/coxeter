@@ -10,51 +10,6 @@ thresh = 1e-5
 
 ### Functions contributed by Bryan van Saders
 
-# Returns a list of tuples of cap angles and lengths (angle, length)
-def cylinder_caps(verts):
-    cap_list = []
-    hull = ConvexHull(verts)
-    for i in range(hull.simplices.shape[0]):
-        neighbor_list = np.argwhere(hull.neighbors==i)
-        for j in neighbor_list[:,0]:
-            if j>i:
-                eq1 = hull.equations[i][0:3]
-                eq2 = hull.equations[j][0:3]
-                # Angle of the cylindrical edge
-                angle = np.arccos(np.clip(np.dot(_normalize(eq1), _normalize(eq2)), -1.0, 1.0))
-                # Shared points of the neighboring simplices
-                shared = np.intersect1d(hull.simplices[i], hull.simplices[j])
-                # Length of the cylindrical edge
-                length = np.linalg.norm(hull.points[shared[0]]-hull.points[shared[1]])
-                if angle<2*np.pi:
-                    cap_list.append((angle, length))
-    return cap_list
-
-# Must be convex. return_area flag triggers return of (volume, area)
-# tuple
-def spheropolyhedra_volume(verts, R=1.0, return_area=False):
-    assert(R>=0)
-    hull = ConvexHull(verts)
-    # Base volume
-    convex_vol = hull.volume
-    # Rectangular section volume
-    rect_vol = hull.area*R
-    # Cylinder cap volume
-    cyl_vol = 0
-    cyl_area = 0
-    for (ang, length) in cylinder_caps(verts):
-        cyl_vol += R**2*length*np.pi*(ang/(2*np.pi))
-        cyl_area += 2*np.pi*R*length*(ang/(2*np.pi))
-
-    assert((convex_vol>=0)*(rect_vol>=0)*(cyl_vol>=0))
-    vol = convex_vol + rect_vol + cyl_vol + (4*np.pi*R**3)/3
-    area = hull.area + cyl_area + 4*np.pi*R**2
-    if return_area:
-        return (vol, area)
-    else:
-        return vol
-
-
 # Returns rescaled vertices and a rounding radius that
 # can be used to create a spheropolyhedron consistent
 # with the s parameter [0,1) and target volume.
@@ -63,19 +18,20 @@ def sphero_shape(verts, s, target_vol=1):
 
     # Find the rounding amout by finding the equivilent radius of a sphere
     # with equal volume
-    initial_vol = ConvexHull(verts).volume
-    r_eq = np.power(3*initial_vol/(4*np.pi),1/3)
+    poly = ConvexPolyhedron(verts) if type(verts) != ConvexPolyhedron else verts
+    initial_vol = poly.getVolume()
+    r_eq = np.power(3*initial_vol/(4*np.pi), 1/3)
 
     sphero_rounding = r_eq*s/(1-s)
 
-    vol = spheropolyhedra_volume(verts, R=sphero_rounding)
+    vol = ConvexSpheropolyhedron(poly.points, R=sphero_rounding).getVolume()
 
     factor = target_vol/vol
 
-    final_shape = verts*np.power(factor, 1/3)
+    final_shape = poly.points * np.power(factor, 1/3)
     final_rounding = sphero_rounding*np.power(factor, 1/3)
 
-    return final_shape, final_rounding
+    return ConvexSpheropolyhedron(final_shape, R=final_rounding)
 
 ### end BVS
 
