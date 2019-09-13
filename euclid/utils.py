@@ -5,15 +5,12 @@ from .polyhedron import ConvexPolyhedron, ConvexSpheropolyhedron
 import logging
 
 logger = logging.getLogger(__name__)
-
-thresh = 1e-5
-
-### Functions contributed by Bryan van Saders
-
 # Returns rescaled vertices and a rounding radius that
 # can be used to create a spheropolyhedron consistent
 # with the s parameter [0,1) and target volume.
 # s = 0.0 is a polyhedron, s = 1.0 is a sphere
+
+
 def sphero_shape(verts, s, target_vol=1):
 
     # Find the rounding amout by finding the equivilent radius of a sphere
@@ -33,23 +30,11 @@ def sphero_shape(verts, s, target_vol=1):
 
     return ConvexSpheropolyhedron(final_shape, R=final_rounding)
 
-### end BVS
-
-### Functions contributed by Matthew Spellings
 
 def _normalize(vector):
     """Returns a normalized version of a numpy vector."""
     return vector/np.sqrt(np.dot(vector, vector));
 
-def rmax(vertices, radius=0., factor=1.):
-    """Compute the maximum distance among a set of vertices
-
-    Args:
-        vertices (list): list of (x, y) or (x, y, z) coordinates
-        factor (float): Factor to scale the result by
-
-    """
-    return (np.sqrt(np.max(np.sum(np.asarray(vertices)*vertices, axis=1))) + radius)*factor;
 
 def _fanTriangles(vertices, faces=None):
     """Create triangles by fanning out from vertices. Returns a
@@ -69,6 +54,7 @@ def _fanTriangles(vertices, faces=None):
             for tri in ((vertices[face[0]], vertices[i], vertices[j]) for (i, j) in
                         zip(face[1:], face[2:])):
                 yield tri;
+
 
 def massProperties(vertices, faces=None, factor=1.):
     """Compute the mass, center of mass, and inertia tensor of a polygon or polyhedron
@@ -164,178 +150,6 @@ def massProperties(vertices, faces=None, factor=1.):
 
     return mass*factor, com, moment*factor;
 
-def center(vertices, faces=None):
-    """Centers shapes in 2D or 3D.
-
-    Args:
-        vertices (list): List of (x, y) or (x, y, z) coordinates in 2D or 3D, respectively
-        faces (list): List of vertex indices for 3D polyhedra, or None for 2D. Faces should be in right-hand order.
-
-    Returns a list of vertices shifted to have the center of mass of
-    the given points at the origin. Shapes should be specified in
-    right-handed order. If the input shape has no mass, return the
-    input.
-
-    .. warning::
-        All faces should be specified in right-handed order.
-
-    """
-    (mass, COM, _) = massProperties(vertices, faces);
-    if mass > 1e-6:
-        return np.asarray(vertices) - COM[np.newaxis, :];
-    else:
-        return np.asarray(vertices);
-
-def _negBisector(p1, p2):
-    """Return the negative bisector of an angle given by points p1 and p2"""
-    return -_normalize(_normalize(p1) + _normalize(p2));
-
-def convexHull(vertices, tol=1e-6):
-    """Compute the 3D convex hull of a set of vertices and merge coplanar faces.
-
-    Args:
-        vertices (list): List of (x, y, z) coordinates
-        tol (float): Floating point tolerance for merging coplanar faces
-
-
-    Returns an array of vertices and a list of faces (vertex
-    indices) for the convex hull of the given set of vertice.
-
-    .. note::
-        This method uses scipy's quickhull wrapper and therefore requires scipy.
-
-    """
-    from scipy.spatial import cKDTree, ConvexHull;
-    from scipy.sparse.csgraph import connected_components;
-
-    hull = ConvexHull(vertices);
-    # Triangles in the same face will be defined by the same linear equalities
-    dist = cKDTree(hull.equations);
-    trianglePairs = dist.query_pairs(tol);
-
-    connectivity = np.zeros((len(hull.simplices), len(hull.simplices)), dtype=np.int32);
-
-    for (i, j) in trianglePairs:
-        connectivity[i, j] = connectivity[j, i] = 1;
-
-    # connected_components returns (number of faces, cluster index for each input)
-    (_, joinTarget) = connected_components(connectivity, directed=False);
-    faces = defaultdict(list);
-    norms = defaultdict(list);
-    for (idx, target) in enumerate(joinTarget):
-        faces[target].append(idx);
-        norms[target] = hull.equations[idx][:3];
-
-    # a list of sets of all vertex indices in each face
-    faceVerts = [set(hull.simplices[faces[faceIndex]].flat) for faceIndex in sorted(faces)];
-    # normal vector for each face
-    faceNorms = [norms[faceIndex] for faceIndex in sorted(faces)];
-
-    # polygonal faces
-    polyFaces = [];
-    for (norm, faceIndices) in zip(faceNorms, faceVerts):
-        face = np.array(list(faceIndices), dtype=np.uint32);
-        N = len(faceIndices);
-
-        r = hull.points[face];
-        rcom = np.mean(r, axis=0);
-
-        # plane_{a, b}: basis vectors in the plane
-        plane_a = r[0] - rcom;
-        plane_a /= np.sqrt(np.sum(plane_a**2));
-        plane_b = np.cross(norm, plane_a);
-
-        dr = r - rcom[np.newaxis, :];
-
-        thetas = np.arctan2(dr.dot(plane_b), dr.dot(plane_a));
-
-        sortidx = np.argsort(thetas);
-
-        face = face[sortidx];
-        polyFaces.append(face);
-
-    return (hull.points, polyFaces);
-
-ConvexDecomposition = namedtuple('ConvexDecomposition', ['vertices', 'edges', 'faces'])
-
-def convexDecomposition(vertices):
-    """Decompose a convex polyhedron specified by a list of vertices into
-    vertices, faces, and edges. Returns a ConvexDecomposition object.
-    """
-    (vertices, faces) = convexHull(vertices)
-    edges = set()
-
-    for face in faces:
-        for (i, j) in zip(face, np.roll(face, -1)):
-            edges.add((min(i, j), max(i, j)))
-
-    return ConvexDecomposition(vertices, edges, faces)
-
-def fanTriangleIndices(faces):
-    """Returns the indices needed to break the faces of a polyhedron into
-    a set of triangle faces"""
-    for face in faces:
-        for (i, j) in zip(face[1:], face[2:]):
-            yield (face[0], i, j)
-
-def fanTriangles(vertices, faces=None):
-    """Create triangles by fanning out from vertices. Returns a
-    generator for vertex triplets. If faces is None, assume that
-    vertices are planar and indicate a polygon; otherwise, use the
-    face indices given in faces."""
-    vertices = np.asarray(vertices)
-
-    if faces is None:
-        if len(vertices) < 3:
-            return
-        for tri in ((vertices[0], verti, vertj) for (verti, vertj) in
-                    zip(vertices[1:], vertices[2:])):
-            yield tri
-    else:
-        for (i, j, k) in fanTriangleIndices(faces):
-            yield (vertices[i], vertices[j], vertices[k])
-
-### end MS
-
-# This function is for quickly finding unique rows (respects ordering)
-# of a numpy array. Cribbed from stack exchange:
-# http://stackoverflow.com/questions/31097247/remove-duplicate-rows-of-a-numpy-array
-def unique_rows(a):
-    a = np.ascontiguousarray(a)
-    unique_a = np.unique(a.view([('', a.dtype)]*a.shape[1]))
-    return unique_a.view(a.dtype).reshape((unique_a.shape[0], a.shape[1]))
-
-# Given a set of vertices, Delaunay triangulate and
-# pair down to unique bonds between points
-def minimum_bonds(verts, maxdist=None):
-    tri = Delaunay(verts)
-    bond_list = []
-    for i in range(verts.shape[0]):
-        # All the simplices with the given vertex
-        simps = tri.simplices[np.where(tri.simplices==i)[0],:].flatten()
-        for s in simps[simps!=i]:
-            bond_list.append((i,s))
-
-    # Sort the rows to remove flipped duplicates
-    b = [np.sort(bond) for bond in bond_list]
-
-    a = unique_rows(b)
-
-    if maxdist is not None:
-        c = []
-        for bond in a:
-            if np.linalg.norm(verts[bond[0]]-verts[bond[1]]) < maxdist:
-                c.append(bond)
-        return np.asarray(c)
-    else:
-        return a
-
-# Gets the outsphere radius of a collection
-# of points. Does NOT center the points on
-# zero, this is assumed to already be done
-def get_outsphere_radius(verts):
-    verts = np.asarray(verts)
-    return np.amax(np.power(np.power(verts,2).sum(axis=1),0.5))
 
 # Contributed by Erin Teich
 def rtoConvexHull(vertices):
@@ -352,91 +166,3 @@ def rtoConvexHull(vertices):
     hull.simplices[flipped, 1] = temp
 
     return hull
-
-# finds the height and width of an isoceles triangle that would fit
-# with tangent sides within a larger isoceles triangle that was decorated
-# with circles of radius radius. point is the endpoint of one of the sides
-# of the large triangle ([0,0]->point). sigma is from the WCA potential,
-# it further reduces the size of the triangle
-#
-# Contributed by BVS
-def find_triangle(point, radius, sigma=0):
-    point = np.array(point)
-        # Projected overlap of the circles
-    t = np.linalg.norm(point) - 2*radius
-    # The director that points towards the face normal of the inner triangle
-    cos_term = np.arccos((2*radius + t/2)/(2*radius))
-    if np.isnan(cos_term):
-        cos_term = 0
-    n2 = np.array([1, np.tan((np.arctan(point[1]/point[0]) - cos_term)/2)])
-    n2 = n2/np.linalg.norm(n2)
-
-    # a perpendicular vector, this is the circle tangent or side of the triangle
-    s2 = 1/n2
-    s2[0] = -s2[0]
-    s2 = s2/np.linalg.norm(s2)
-    # This is the tangent point for the diagonal side of the triangle
-    s2p = (radius + (sigma/2)*2**(1/6))*n2
-
-    # This is the tangent point for the base side of the triangle
-    s1p = np.array([point[0], point[1] - radius - (sigma/2)*2**(1/6)])
-
-    # Solve for the point of intersection of the midline and the long side
-    midn = np.array([0,1])
-    midp = np.array([point[0],0])
-
-    sol2 = np.linalg.solve(np.array([s2, -midn]).T, midp-s2p)
-    point2 = midp + midn*sol2[1]
-
-    height = (s1p - point2)[1]
-
-    # solve for the point of intersection of the base and the long side
-    s1 = np.array([1,0])
-    sol1 = np.linalg.solve(np.array([s2, -s1]).T, s1p-s2p)
-    point1 = s1p + s1*sol1[1]
-
-    width = 2*(s1p - point1)[0]
-    # the center of mass of the triangle points
-    center = np.array([point[0],point2[1]+2*height/3])
-
-    return (height, width, center)
-
-def convert_array(array, dimensions, dtype=None,
-                  contiguous=True, array_name=None):
-    """Function which takes a given array, checks the dimensions,
-    and converts to a supplied dtype and/or makes the array
-    contiguous as required by the user.
-
-    .. moduleauthor:: Eric Harper <harperic@umich.edu>
-
-    Args:
-        array (:class:`numpy.ndarray`): Array to check and convert.
-        dimensions (int): Expected dimensions of the array.
-        dtype: code:`dtype` to convert the array to if :code:`array.dtype`
-            is different. If `None`, :code:`dtype` will not be changed.
-            (Default value = None).
-        contiguous (bool): Whether to cast the array to a contiguous (Default
-            value = True).
-        array. Default behavior casts to a contiguous array.
-        array_name (str): Name of the array, used for errors (Default value =
-            None).
-
-    Returns:
-        py:class:`numpy.ndarray`: Array.
-    """
-    array = np.asarray(array)
-
-    if array.ndim != dimensions:
-        raise TypeError("{}.ndim = {}; expected ndim = {}".format(
-            array_name or "array", array.ndim, dimensions))
-    requirements = None
-    if contiguous:
-        if not array.flags.contiguous:
-            msg = 'Converting supplied array to contiguous.'
-            logger.info(msg)
-        requirements = ["C"]
-    if dtype is not None and dtype != array.dtype:
-        msg = 'Converting supplied array dtype {} to dtype {}.'.format(
-            array.dtype, dtype)
-        logger.info(msg)
-    return np.require(array, dtype=dtype, requirements=requirements)
