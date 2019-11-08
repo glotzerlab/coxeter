@@ -74,10 +74,10 @@ workflows:
   test:
     jobs:
       - style-check
-      - test-3.6:
+      - test-3.6
 #          requires:
 #            - style-check
-      - test-3.7:
+      - test-3.7
 #          requires:
 #            - style-check
 #      - test-deploy-pypi:
