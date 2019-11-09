@@ -8,5 +8,9 @@ setup(
     author='Bryan VanSaders',
     author_email='bvansade@umich.edu',
     packages=['euclid','euclid.FreudShape'],
-    install_requires=['numpy', 'scipy'],
+    install_requires=[
+        'numpy',
+        'rowan>=1.2',
+        'scipy'
+    ],
     zip_safe=False)
