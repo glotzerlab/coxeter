@@ -7,6 +7,6 @@ setup(
     url='https://github.com/glotzerlab/euclid',
     author='Bryan VanSaders',
     author_email='bvansade@umich.edu',
-    packages=['euclid','euclid.FreudShape'],
+    packages=['euclid'],
     install_requires=['numpy', 'scipy'],
     zip_safe=False)
