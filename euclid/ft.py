@@ -6,7 +6,6 @@ Original authors: Eric Irrgang, Jens Glaser.
 """
 
 import numpy as np
-from .utils import convert_array
 import rowan
 
 
@@ -53,8 +52,7 @@ class _FTbase(object):
             K((:math:`N_{K}`, 3) :class:`numpy.ndarray`):
                 :math:`K` values to evaluate.
         """
-        K = convert_array(
-            K, 2, dtype=np.float32, contiguous=True, array_name="K")
+        K = np.asarray(K)
         if K.shape[1] != 3:
             raise TypeError('K should be an Nx3 array')
 
@@ -86,12 +84,8 @@ class _FTbase(object):
             orientation ((:math:`N_{particles}`, 4) :class:`numpy.ndarray`):
                 Particle orientation quaternions.
         """
-        position = convert_array(
-            position, 2, dtype=np.float32, contiguous=True,
-            array_name="position")
-        orientation = convert_array(
-            orientation, 2, dtype=np.float32, contiguous=True,
-            array_name="orientation")
+        position = np.asarray(position)
+        orientation = np.asarray(orientation)
         if position.shape[1] != 3:
             raise TypeError('position should be an Nx3 array')
         if orientation.shape[1] != 4:
@@ -263,8 +257,7 @@ class FTpolyhedron(_FTbase):
             volume (:class:`numpy.float64`):
                 Polyhedron volume.
         """
-        verts = convert_array(
-            verts, 2, dtype=np.float32, contiguous=True, array_name="verts")
+        verts = np.asarray(verts)
         if verts.shape[1] != 3:
             raise TypeError('verts should be an Nx3 array')
 
@@ -272,23 +265,17 @@ class FTpolyhedron(_FTbase):
         for i, f in enumerate(facets):
             facet_offs[i + 1] = facet_offs[i] + len(f)
 
-        facet_offs = convert_array(
-            facet_offs, 1, dtype=np.uint32, contiguous=True,
-            array_name="facet_offs")
+        facet_offs = np.asarray(facet_offs)
 
-        facets = convert_array(
-            facets, 2, dtype=np.uint32, contiguous=True, array_name="facets")
+        facets = np.asarray(facets)
 
-        norms = convert_array(
-            norms, 2, dtype=np.float32, contiguous=True, array_name="norms")
+        norms = np.asarray(norms)
         if norms.shape[1] != 3:
             raise TypeError('norms should be an Nx3 array')
 
-        d = convert_array(
-            d, 1, dtype=np.float32, contiguous=True, array_name="d")
+        d = np.asarray(d)
 
-        areas = convert_array(
-            areas, 1, dtype=np.float32, contiguous=True, array_name="area")
+        areas = np.asarray(areas)
 
         if norms.shape[0] != facet_offs.shape[0] - 1:
             raise RuntimeError(

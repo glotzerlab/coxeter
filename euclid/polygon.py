@@ -1,3 +1,6 @@
+import numpy as np
+
+
 class Polygon:
     '''Compute basic properties of a polygon, stored as a list of adjacent vertices
 
