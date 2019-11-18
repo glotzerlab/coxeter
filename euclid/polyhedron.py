@@ -115,7 +115,16 @@ class Polyhedron:
         \param simplicial_equations (Nsf, ndim+1) hyperplane equation coefficients for simplicial facets
     '''
 
-    def __init__(self, points, nverts, facets, neighbors, equations, simplicial_facets=None, simplicial_neighbors=None, simplicial_equations=None):
+    def __init__(
+            self,
+            points,
+            nverts,
+            facets,
+            neighbors,
+            equations,
+            simplicial_facets=None,
+            simplicial_neighbors=None,
+            simplicial_equations=None):
         self.points = np.array(points)
         self.npoints = len(self.points)
         pshape = points.shape
@@ -138,7 +147,7 @@ class Polyhedron:
                 simplicial_neighbors is None):
             nfacets = len(simplicial_facets)
             self.simplicial = Polyhedron(points,
-                                         [self.ndim]*nfacets,
+                                         [self.ndim] * nfacets,
                                          simplicial_facets,
                                          simplicial_neighbors,
                                          simplicial_equations)
@@ -184,7 +193,8 @@ class Polyhedron:
             # and the z unit vector.
             nhat = np.asarray(normal, dtype=np.float64)
             zhat = np.array([0., 0., 1.], dtype=np.float64)
-            # check if normal is antialigned with zhat, in which case we'll just rotate around xhat
+            # check if normal is antialigned with zhat, in which case we'll
+            # just rotate around xhat
             if np.dot(zhat, nhat) + 1.0 < 1e-12:
                 u = np.array([1., 0., 0.], dtype=np.float64)
             else:
@@ -192,7 +202,7 @@ class Polyhedron:
                 vmag2 = np.dot(v, v)
                 u = v / np.sqrt(vmag2)
             q = np.concatenate(
-                ([np.cos(np.pi/2)], np.sin(np.pi/2)*u))
+                ([np.cos(np.pi / 2)], np.sin(np.pi / 2) * u))
             # Rotate the points and drop the z dimension to get a set of 2D
             # points
             p3D = [rowan.rotate(q, p) for p in points]
@@ -257,7 +267,7 @@ class Polyhedron:
                 Nf -= 1
                 # Deal with changed indices for merge_list and neighbors
                 # update merge_list
-                for i in range(m+1, len(merge_list)):
+                for i in range(m + 1, len(merge_list)):
                     if merge_list[i] > merged_neighbor:
                         merge_list[i] -= 1
                 # update neighbors
@@ -321,7 +331,7 @@ class Polyhedron:
             cp = np.cross(n, z)
             k = cp / np.sqrt(np.dot(cp, cp))
             q = np.concatenate(
-                ([np.cos(theta/2.)], np.sin(theta/2.) * k))
+                ([np.cos(theta / 2.)], np.sin(theta / 2.) * k))
         vertices = points[facet]  # 3D vertices
         for i in range(Ni):
             v = vertices[i]
@@ -343,7 +353,7 @@ class Polyhedron:
                 if a <= a_srt[j]:
                     break
                 else:
-                    new_i = j+1
+                    new_i = j + 1
             idx_srt.insert(new_i, facet[i])
             a_srt.insert(new_i, a)
         return np.array(idx_srt)
@@ -370,7 +380,7 @@ class Polyhedron:
         new_neighbors = list()
         for i in range(Ni):
             # Check each pair of edge points in turn
-            edge = set([facet[i], facet[i+1]])
+            edge = set([facet[i], facet[i + 1]])
             for j in range(len(neighbor_verts)):
                 # If edge points are also in neighboring face then we have
                 # found the corresponding neighbor
@@ -400,9 +410,9 @@ class Polyhedron:
             # print(n)
             Ni = self.nverts[i]  # number of points on the facet)
             # for each triangle on the face
-            for j in range(1, Ni-1):
+            for j in range(1, Ni - 1):
                 r1 = self.points[face[j]] - self.points[face[0]]
-                r2 = self.points[face[j+1]] - self.points[face[0]]
+                r2 = self.points[face[j + 1]] - self.points[face[0]]
                 cp = np.cross(r1, r2)
                 # print(cp)
                 A += abs(np.dot(cp, n)) / 2.0
@@ -457,8 +467,9 @@ class Polyhedron:
         self.equations[:, 3] = self.originalequations[:, 3] * scale_factor
         if self.simplicial is not None:
             self.simplicial.points = self.simplicial.originalpoints * scale_factor
-            self.simplicial.equations[:, 3] = self.simplicial.originalequations[:, 3] * \
-                scale_factor
+            self.simplicial.equations[:,
+                                      3] = self.simplicial.originalequations[:,
+                                                                             3] * scale_factor
 
     def setInsphereRadius(self, radius):
         '''Scale polyhedron to fit a given circumsphere radius
@@ -471,8 +482,9 @@ class Polyhedron:
         self.equations[:, 3] = self.originalequations[:, 3] * scale_factor
         if self.simplicial is not None:
             self.simplicial.points = self.simplicial.originalpoints * scale_factor
-            self.simplicial.equations[:, 3] = self.simplicial.originalequations[:, 3] * \
-                scale_factor
+            self.simplicial.equations[:,
+                                      3] = self.simplicial.originalequations[:,
+                                                                             3] * scale_factor
 
     def isInside(self, point):
         '''Test if a point is inside the shape
@@ -531,7 +543,7 @@ class Polyhedron:
         # e1 -> e2 are in the left-handed direction of a while e2 -> e3 are in
         # the right-handed direction of b.  Denote the path as
         # points p0 -> p1 -> p2 -> p3
-        nextk = k+1
+        nextk = k + 1
         if nextk >= self.nverts[a]:
             nextk = 0
         nextnextk = nextk + 1
@@ -572,12 +584,12 @@ class Polyhedron:
         R = 0.0
         # check each pair of faces i,j such that i < j
         nfacets = self.nfacets
-        for i in range(nfacets-1):
-            for j in range(i+1, nfacets):
+        for i in range(nfacets - 1):
+            for j in range(i + 1, nfacets):
                 # get the length of the shared edge, if there is one
                 k = self.getSharedEdge(i, j)  # index of first vertex
                 if k is not None:
-                    nextk = k+1  # index of second vertex
+                    nextk = k + 1  # index of second vertex
                     if nextk == self.nverts[i]:
                         nextk = 0
                     # get point indices corresponding to vertex indices
@@ -589,8 +601,8 @@ class Polyhedron:
                     Li = np.sqrt(np.dot(r, r))
                     # get the dihedral angle
                     phi = self.getDihedral(i, j)
-                    R += Li*(np.pi - phi)
-        R /= 8*np.pi
+                    R += Li * (np.pi - phi)
+        R /= 8 * np.pi
         return R
 
     def getAsphericity(self):
@@ -603,7 +615,7 @@ class Polyhedron:
         R = self.getMeanCurvature()
         S = self.getArea()
         V = self.getVolume()
-        return R*S/(3*V)
+        return R * S / (3 * V)
 
     def getQ(self):
         '''Get isoperimetric quotient
@@ -614,7 +626,7 @@ class Polyhedron:
         '''
         V = self.getVolume()
         S = self.getArea()
-        Q = np.pi * 36 * V*V / (S*S*S)
+        Q = np.pi * 36 * V * V / (S * S * S)
         return Q
 
     def getTau(self):
@@ -679,7 +691,8 @@ class ConvexPolyhedron(Polyhedron):
 
         # mergeFacets does not merge all coplanar facets when there are a lot of neighboring coplanar facets,
         # but repeated calls will do the job.
-        # If performance is ever an issue, this should really all be replaced with our own qhull wrapper...
+        # If performance is ever an issue, this should really all be replaced
+        # with our own qhull wrapper...
         if mergeFacets:
             old_nfacets = 0
             new_nfacets = self.nfacets
@@ -725,19 +738,19 @@ class ConvexSpheropolyhedron(ConvexPolyhedron):
             n = self.equations[i, 0:3]
             Ni = self.nverts[i]  # number of points on the facet)
             # for each triangle on the face, sum up the area
-            for j in range(1, Ni-1):
+            for j in range(1, Ni - 1):
                 r1 = self.points[face[j]] - self.points[face[0]]
-                r2 = self.points[face[j+1]] - self.points[face[0]]
+                r2 = self.points[face[j + 1]] - self.points[face[0]]
                 cp = np.cross(r1, r2)
                 Aface += abs(np.dot(cp, n)) / 2.0
             # for each edge on the face get length and dihedral to calculate
             # cylinder contribution
             for j in range(0, Ni):
                 p1 = self.points[face[j]]
-                if j >= Ni-1:
+                if j >= Ni - 1:
                     p2 = self.points[face[0]]
                 else:
-                    p2 = self.points[face[j+1]]
+                    p2 = self.points[face[j + 1]]
                 edge = p2 - p1
                 edge_length = np.sqrt(np.dot(edge, edge))
                 angle = np.pi - self.getDihedral(i, self.neighbors[i, j])
@@ -762,13 +775,14 @@ class ConvexSpheropolyhedron(ConvexPolyhedron):
             Vpoly += d * A / 3.0
             # add volume for the polygonal plate due to R
             Vpoly += R * A
-            # for each edge on the face get length and dihedral to calculate cylinder contribution
+            # for each edge on the face get length and dihedral to calculate
+            # cylinder contribution
             for j in range(0, Ni):
                 p1 = self.points[face[j]]
-                if j >= Ni-1:
+                if j >= Ni - 1:
                     p2 = self.points[face[0]]
                 else:
-                    p2 = self.points[face[j+1]]
+                    p2 = self.points[face[j + 1]]
                 edge = p2 - p1
                 edge_length = np.sqrt(np.dot(edge, edge))
                 angle = np.pi - self.getDihedral(i, self.neighbors[i, j])
@@ -831,7 +845,9 @@ class ConvexSpheropolyhedron(ConvexPolyhedron):
         self.equations[:, 3] = self.originalequations[:, 3] * scale_factor
         self.R = self.originalR * scale_factor
         self.simplicial.points = self.simplicial.originalpoints * scale_factor
-        self.simplicial.equations[:, 3] = self.simplicial.originalequations[:, 3] * scale_factor
+        self.simplicial.equations[:,
+                                  3] = self.simplicial.originalequations[:,
+                                                                         3] * scale_factor
 
     def setInsphereRadius(self, radius):
         '''Scale polyhedron to fit a given circumsphere radius
@@ -845,7 +861,8 @@ class ConvexSpheropolyhedron(ConvexPolyhedron):
         self.R = self.originalR * scale_factor
         self.simplicial.points = self.simplicial.originalpoints * scale_factor
         self.simplicial.equations[:,
-                                  3] = self.simplicial.originalequations[:, 3] * scale_factor
+                                  3] = self.simplicial.originalequations[:,
+                                                                         3] * scale_factor
 
     def isInside(self, point):
         '''Test if a point is inside the shape
@@ -864,5 +881,3 @@ class ConvexSpheropolyhedron(ConvexPolyhedron):
 
     def getAsphericity(self):
         raise RuntimeError("Not implemented")
-
-

@@ -10,6 +10,7 @@ Shape = collections.namedtuple(
     'Shape', ['id', 'shape_class', 'ShortName', 'Name',
               'AlternativeName', 'vertices', 'Comment'])
 
+
 def reserved(_id):
     return Shape(_id, 'RESERVED', 'RES', 'RESERVED', '', [], '')
 
@@ -25,9 +26,9 @@ def _damasceno_science_2012():
     for shape_id in sorted((int(k) for k in DAMASCENO_SCIENCE_2012.keys())):
         yield shape_id, DAMASCENO_SCIENCE_2012[str(shape_id)]
 
-SHAPES = \
-    [Shape(shape_class='convex_polyhedron', id=id, **data) for id, data in _damasceno_science_2012()] +\
-    [reserved(_id) for _id in range(146, 151)]
+
+SHAPES = [Shape(shape_class='convex_polyhedron', id=id, **data)
+          for id, data in _damasceno_science_2012()] + [reserved(_id) for _id in range(146, 151)]
 
 
 def make_filter(shape):
