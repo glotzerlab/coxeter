@@ -58,7 +58,7 @@ class TestFormFactors(unittest.TestCase):
         npt.assert_almost_equal(
             ft.S,
             [6., 5.08060461, 5.08060461, 3.16770633, 5.08060461, 5.08060461,
-             -1.73167405, -1.20254791])
+             -1.73167405, -1.20254791], decimal=6)
 
     def test_FTsphere(self):
         ft = euclid.ft.FTsphere()
