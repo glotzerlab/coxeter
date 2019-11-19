@@ -1,18 +1,9 @@
-import sys
-from pathlib import Path
-sys.path.append(Path('..').resolve().__str__())
 import unittest
 import numpy as np
 import numpy.testing as npt
 import euclid.ft
-import euclid.FreudShape
-import euclid.FreudShape.Cube
-try:
-    from freud import kspace
-    # Regression tests against freud.kspace if present
-    FREUD_KSPACE = True
-except ImportError:
-    FREUD_KSPACE = False
+from euclid.FreudShape import Cube
+
 
 class TestFormFactors(unittest.TestCase):
 
@@ -54,13 +45,6 @@ class TestFormFactors(unittest.TestCase):
         ft.compute()
         npt.assert_array_equal(ft.S, np.ones(len(self.K)))
 
-        if FREUD_KSPACE:
-            ks = kspace.FTdelta()
-            ks.set_K(self.K)
-            ks.set_rq(positions, orientations)
-            ks.compute()
-            npt.assert_almost_equal(ft.S, ks.S)
-
         positions = np.array([[1, 0, 0],
                               [-1, 0, 0],
                               [0, 1, 0],
@@ -71,16 +55,10 @@ class TestFormFactors(unittest.TestCase):
                                 dtype=np.float)
         ft.set_rq(positions, orientations)
         ft.compute()
-        npt.assert_almost_equal(ft.S,
+        npt.assert_almost_equal(
+            ft.S,
             [6., 5.08060461, 5.08060461, 3.16770633, 5.08060461, 5.08060461,
              -1.73167405, -1.20254791])
-
-        if FREUD_KSPACE:
-            ks = kspace.FTdelta()
-            ks.set_K(self.K)
-            ks.set_rq(positions, orientations)
-            ks.compute()
-            npt.assert_almost_equal(ft.S, ks.S)
 
     def test_FTsphere(self):
         ft = euclid.ft.FTsphere()
@@ -93,16 +71,10 @@ class TestFormFactors(unittest.TestCase):
         ft.set_rq(positions, orientations)
         ft.compute()
         npt.assert_equal(ft.S[0], 4./3. * np.pi * ft.get_radius()**3)
-        npt.assert_almost_equal(ft.S,
+        npt.assert_almost_equal(
+            ft.S,
             [0.52359878, 0.51062514, 0.51062514, 0.47307465,
              0.51062514, 0.51062514, 0.36181941, 0.11702976])
-
-        if FREUD_KSPACE:
-            ks = kspace.FTsphere()
-            ks.set_K(self.K)
-            ks.set_rq(positions, orientations)
-            ks.compute()
-            npt.assert_almost_equal(ft.S, ks.S, decimal=6)
 
         positions = np.array([[1, 0, 0],
                               [-1, 0, 0],
@@ -114,20 +86,14 @@ class TestFormFactors(unittest.TestCase):
                                 dtype=np.float)
         ft.set_rq(positions, orientations)
         ft.compute()
-        npt.assert_almost_equal(ft.S,
+        npt.assert_almost_equal(
+            ft.S,
             [3.14159265, 2.59428445, 2.59428445, 1.49856158, 2.59428445,
              2.59428445, -0.62655329, -0.14073389])
 
-        if FREUD_KSPACE:
-            ks = kspace.FTsphere()
-            ks.set_K(self.K)
-            ks.set_rq(positions, orientations)
-            ks.compute()
-            npt.assert_almost_equal(ft.S, ks.S, decimal=6)
-
     def test_FTconvexPolyhedron(self):
         # TODO: Currently using this to test FTpolyhedron indirectly
-        cube = euclid.FreudShape.Cube.shape
+        cube = Cube.shape
         npt.assert_almost_equal(cube.getVolume(), 8)
         ft = euclid.ft.FTconvexPolyhedron(cube)
         ft.set_K(self.K)
@@ -138,16 +104,10 @@ class TestFormFactors(unittest.TestCase):
         ft.set_rq(positions, orientations)
         ft.compute()
         npt.assert_almost_equal(ft.S[0], 8, decimal=6)
-        npt.assert_almost_equal(ft.S,
+        npt.assert_almost_equal(
+            ft.S,
             [8., 6.73176788, 6.73176788, 3.63718971, 6.73176788, 6.73176788,
              0.14397014, 0.1169148])
-
-        if FREUD_KSPACE:
-            ks = kspace.FTconvexPolyhedron(cube)
-            ks.set_K(self.K)
-            ks.set_rq(positions, orientations)
-            ks.compute()
-            npt.assert_almost_equal(ft.S, ks.S, decimal=6)
 
 
 if __name__ == '__main__':

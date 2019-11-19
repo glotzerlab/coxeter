@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from euclid.poly import ConvexPolyhedron, ConvexSpheropolyhedron
+from euclid.polyhedron import ConvexPolyhedron, ConvexSpheropolyhedron
 
 tetrahedron = np.array([[0.5, -0.5, -0.5], [0.5, 0.5, 0.5],
                         [-0.5, 0.5, -0.5], [-0.5, -0.5, 0.5]])
@@ -11,6 +11,7 @@ tolerance = 1e-6
 
 class TestShape(unittest.TestCase):
     pass
+
 
 class TestConvexPolyhedron(unittest.TestCase):
 
