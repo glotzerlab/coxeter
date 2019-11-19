@@ -40,7 +40,7 @@ class Shape(object):
 
     def getContent(self, vertices):
         if self.is_sphero:
-            vol = utils.spheropolyhedra_volume(vertices, R=radius)
+            vol = utils.spheropolyhedra_volume(vertices, R=self.radius)
         else:
             vol = ConvexHull(vertices).volume()
 
@@ -55,33 +55,38 @@ def octahedron(side_length=1, truncation=0):
 
         trunc_value = truncation * np.sqrt(2) * side_length / 4
 
-        return np.asarray([[pre * side_length - trunc_value, trunc_value, 0],
-                           [pre * side_length - trunc_value, -trunc_value, 0],
-                           [pre * side_length - trunc_value, 0, trunc_value],
-                           [pre * side_length - trunc_value, 0, -trunc_value],
-                           [-pre * side_length + trunc_value, trunc_value, 0],
-                           [-pre * side_length + trunc_value, -trunc_value, 0],
-                           [-pre * side_length + trunc_value, 0, trunc_value],
-                           [-pre * side_length + trunc_value, 0, -trunc_value],
-                           [0, pre * side_length - trunc_value, trunc_value],
-                           [0, pre * side_length - trunc_value, -trunc_value],
-                           [trunc_value, pre * side_length - trunc_value, 0],
-                           [-trunc_value, pre * side_length - trunc_value, 0],
-                           [0, -pre * side_length + trunc_value, trunc_value],
-                           [0, -pre * side_length + trunc_value, -trunc_value],
-                           [trunc_value, -pre * side_length + trunc_value, 0],
-                           [-trunc_value, -pre * side_length + trunc_value, 0],
-                           [0, trunc_value, pre * side_length - trunc_value],
-                           [0, -trunc_value, pre * side_length - trunc_value],
-                           [trunc_value, 0, pre * side_length - trunc_value],
-                           [-trunc_value, 0, pre * side_length - trunc_value],
-                           [0, trunc_value, -pre * side_length + trunc_value],
-                           [0, -trunc_value, -pre * side_length + trunc_value],
-                           [trunc_value, 0, -pre * side_length + trunc_value],
-                           [-trunc_value, 0, -pre * side_length + trunc_value]])
+        return np.asarray(
+            [[pre * side_length - trunc_value, trunc_value, 0],
+             [pre * side_length - trunc_value, -trunc_value, 0],
+             [pre * side_length - trunc_value, 0, trunc_value],
+             [pre * side_length - trunc_value, 0, -trunc_value],
+             [-pre * side_length + trunc_value, trunc_value, 0],
+             [-pre * side_length + trunc_value, -trunc_value, 0],
+             [-pre * side_length + trunc_value, 0, trunc_value],
+             [-pre * side_length + trunc_value, 0, -trunc_value],
+             [0, pre * side_length - trunc_value, trunc_value],
+             [0, pre * side_length - trunc_value, -trunc_value],
+             [trunc_value, pre * side_length - trunc_value, 0],
+             [-trunc_value, pre * side_length - trunc_value, 0],
+             [0, -pre * side_length + trunc_value, trunc_value],
+             [0, -pre * side_length + trunc_value, -trunc_value],
+             [trunc_value, -pre * side_length + trunc_value, 0],
+             [-trunc_value, -pre * side_length + trunc_value, 0],
+             [0, trunc_value, pre * side_length - trunc_value],
+             [0, -trunc_value, pre * side_length - trunc_value],
+             [trunc_value, 0, pre * side_length - trunc_value],
+             [-trunc_value, 0, pre * side_length - trunc_value],
+             [0, trunc_value, -pre * side_length + trunc_value],
+             [0, -trunc_value, -pre * side_length + trunc_value],
+             [trunc_value, 0, -pre * side_length + trunc_value],
+             [-trunc_value, 0, -pre * side_length + trunc_value]])
     else:
-        return np.asarray([[pre * side_length, 0, 0], [-pre * side_length, 0, 0], [0, pre * side_length, 0],
-                           [0, -pre * side_length, 0], [0, 0, pre * side_length], [0, 0, -pre * side_length]])
+        return np.asarray([[pre * side_length, 0, 0],
+                           [-pre * side_length, 0, 0],
+                           [0, pre * side_length, 0],
+                           [0, -pre * side_length, 0],
+                           [0, 0, pre * side_length],
+                           [0, 0, -pre * side_length]])
 
 
 def cube(side_length=1):
@@ -128,7 +133,6 @@ def rectangle(a, b, c):
 
 
 def poly_sphere(radius=1, points=100):
-    stype = 'polyedral sphere'
     pts = []
     inc = np.pi * (3 - np.sqrt(5))
     off = 2 / float(points)
@@ -144,8 +148,9 @@ def rhombic_dodecahedron(a=1):
     return np.array([[a, a, a], [-a, a, a], [a, -a, a],
                      [a, a, -a], [a, -a, -a], [-a, a, -a],
                      [-a, -a, a], [-a, -a, -a], [2.0 * a, 0.0, 0.0],
-                     [-2.0 * a, 0.0, 0.0], [0.0, 2.0 * a, 0.0], [0.0, -2.0 * a, 0.0],
-                     [0.0, 0.0, 2.0 * a], [0.0, 0.0, -2.0 * a]])
+                     [-2.0 * a, 0.0, 0.0], [0.0, 2.0 * a, 0.0],
+                     [0.0, -2.0 * a, 0.0], [0.0, 0.0, 2.0 * a],
+                     [0.0, 0.0, -2.0 * a]])
 
 # A triangular prisim function
 # Assumes isosceles triangle faces
@@ -175,7 +180,9 @@ def helix(diameter, length, pitch, num_points):
     x = (diameter / 2) * np.cos(length * pitch * 2 * np.pi * t)
     y = (diameter / 2) * np.sin(length * pitch * 2 * np.pi * t)
     z = t * length
-    points = np.append(np.append(x.reshape((-1, 1)),
-                                 y.reshape((-1, 1)), axis=1), z.reshape((-1, 1)), axis=1)
+    points = np.append(
+        np.append(
+            x.reshape((-1, 1)), y.reshape((-1, 1)), axis=1),
+        z.reshape((-1, 1)), axis=1)
     segments = [[i, i + 1] for i in range(len(points) - 1)]
     return points, segments

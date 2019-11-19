@@ -2,7 +2,8 @@ import numpy as np
 
 
 class Polygon:
-    '''Compute basic properties of a polygon, stored as a list of adjacent vertices
+    '''Compute basic properties of a polygon, stored as a list of adjacent
+    vertices.
 
     Attributes:
         vertices nx2 numpy array of adjacent vertices
@@ -90,14 +91,14 @@ class Polygon:
 
         # Now interleave the pieces
         result = []
-        for (end, curve, start, vert, dtheta) in zip(absEnds, curves, np.roll(
-                absStarts, -1, axis=0), np.roll(self.vertices, -1, axis=0), dthetas):
+        for (end, curve, start, vert, dtheta) in zip(
+                absEnds, curves, np.roll(absStarts, -1, axis=0),
+                np.roll(self.vertices, -1, axis=0), dthetas):
             # Don't round a vertex if it is degenerate
             skip = dtheta < 1e-6 or np.abs(2 * np.pi - dtheta) < 1e-6
 
-            # convex case: add the end of the last straight line
-            # segment, the curved edge, then the start of the next
-            # straight line segment.
+            # convex case: add the end of the last straight line segment, the
+            # curved edge, then the start of the next straight line segment.
             if dtheta <= np.pi and not skip:
                 result.append(end)
                 result.append(curve)
@@ -105,7 +106,7 @@ class Polygon:
             # concave case: don't use the curved region, just find the
             # intersection and add that point.
             elif not skip:
-                l = radius / np.cos(dtheta / 2)
+                l = radius / np.cos(dtheta / 2)  # noqa: E741
                 p = 2 * vert - start - end
                 p /= np.sqrt(np.dot(p, p))
                 result.append(vert + p * l)

@@ -304,5 +304,5 @@ def gen_sym_quats(group):
 
     return quats
 
-# This is a json loadable string that has the quaternions that bring the shape definitions of Damsceno into alignment with the
-# above symmetry definitions
+# This is a json loadable string that has the quaternions that bring the shape
+# definitions of Damsceno into alignment with the above symmetry definitions

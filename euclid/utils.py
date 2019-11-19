@@ -1,6 +1,5 @@
 import numpy as np
-from scipy.spatial import ConvexHull, Delaunay
-from collections import defaultdict, namedtuple
+from scipy.spatial import ConvexHull
 from .polyhedron import ConvexPolyhedron, ConvexSpheropolyhedron
 import logging
 
@@ -9,6 +8,33 @@ logger = logging.getLogger(__name__)
 # can be used to create a spheropolyhedron consistent
 # with the s parameter [0,1) and target volume.
 # s = 0.0 is a polyhedron, s = 1.0 is a sphere
+
+
+def _normalize(vector):
+    """Returns a normalized version of a numpy vector."""
+    return vector/np.sqrt(np.dot(vector, vector))
+
+
+def _polygonNormal(vertices):
+    """Returns the unit normal vector of a planar set of vertices."""
+    return -_normalize(np.cross(vertices[1] - vertices[0],
+                                vertices[0] - vertices[-1]))
+
+
+def area(vertices, factor=1.):
+    """Computes the signed area of a polygon in 2 or 3D.
+
+    Args:
+        vertices (list): (x, y) or (x, y, z) coordinates for each vertex
+        factor (float): Factor to scale the resulting area by
+
+    """
+    vertices = np.asarray(vertices)
+    shifted = np.roll(vertices, -1, axis=0)
+
+    crosses = np.sum(np.cross(vertices, shifted), axis=0)
+
+    return np.abs(np.dot(crosses, _polygonNormal(vertices))*factor/2)
 
 
 def sphero_shape(verts, s, target_vol=1):
@@ -32,11 +58,6 @@ def sphero_shape(verts, s, target_vol=1):
     return ConvexSpheropolyhedron(final_shape, R=final_rounding)
 
 
-def _normalize(vector):
-    """Returns a normalized version of a numpy vector."""
-    return vector / np.sqrt(np.dot(vector, vector))
-
-
 def _fanTriangles(vertices, faces=None):
     """Create triangles by fanning out from vertices. Returns a
     generator for vertex triplets. If faces is None, assume that
@@ -58,19 +79,8 @@ def _fanTriangles(vertices, faces=None):
 
 
 def massProperties(vertices, faces=None, factor=1.):
-    """Compute the mass, center of mass, and inertia tensor of a polygon or polyhedron
-
-    Args:
-        vertices (list): List of (x, y) or (x, y, z) coordinates in 2D or 3D, respectively
-        faces (list): List of vertex indices for 3D polyhedra, or None for 2D. Faces should be in right-hand order.
-        factor (float): Factor to scale the resulting results by
-
-    Returns (mass, center of mass, moment of inertia tensor in (xx,
-    xy, xz, yy, yz, zz) order) specified by the given list of vertices
-    and faces. Note that the faces must be listed in a consistent
-    order so that normals are all pointing in the correct direction
-    from the face. If given a list of 2D vertices, return the same but
-    for the 2D polygon specified by the vertices.
+    """Compute the mass, center of mass, and inertia tensor of a polygon or
+    polyhedron
 
     .. warning::
         All faces should be specified in right-handed order.
@@ -80,6 +90,22 @@ def massProperties(vertices, faces=None, factor=1.):
 
     http://www.geometrictools.com/Documentation/PolyhedralMassProperties.pdf
 
+    Args:
+        vertices (list):
+            List of (x, y) or (x, y, z) coordinates in 2D or 3D, respectively
+        faces (list):
+            List of vertex indices for 3D polyhedra, or None for 2D. Faces
+            should be in right-hand order.
+        factor (float):
+            Factor to scale the resulting results by
+
+    Returns:
+        (mass, center of mass, moment of inertia tensor in (xx, xy, xz, yy, yz,
+        zz) order) specified by the given list of vertices and faces. Note that
+        the faces must be listed in a consistent order so that normals are all
+        pointing in the correct direction from the face. If given a list of 2D
+        vertices, return the same but for the 2D polygon specified by the
+        vertices.
     """
     vertices = np.array(vertices, dtype=np.float64)
 
@@ -95,16 +121,18 @@ def massProperties(vertices, faces=None, factor=1.):
         vertices -= COM
 
         shifted = list(vertices[1:]) + [vertices[0]]
-        def f(x1, x2): return x1 * x1 + x1 * x2 + x2 * x2
+
+        def f(x1, x2):
+            return x1 * x1 + x1 * x2 + x2 * x2
         Ixyfs = [(f(y1, y2), f(x1, x2)) for ((x1, y1), (x2, y2))
                  in zip(vertices, shifted)]
 
         Ix = sum(I * a for ((I, _), a) in zip(Ixyfs, a_s)) / 12.
         Iy = sum(I * a for ((_, I), a) in zip(Ixyfs, a_s)) / 12.
 
-        I = np.array([Ix, 0, 0, Iy, 0, Ix + Iy])
+        moi = np.array([Ix, 0, 0, Iy, 0, Ix + Iy])
 
-        return area(vertices) * factor, COM, factor * I
+        return area(vertices) * factor, COM, factor * moi
 
     # multiplicative factors
     factors = 1. / np.array([6, 24, 24, 24, 60, 60, 60, 120, 120, 120])
@@ -154,8 +182,9 @@ def massProperties(vertices, faces=None, factor=1.):
 
 # Contributed by Erin Teich
 def rtoConvexHull(vertices):
-    """Compute the convex hull of a set of points, just like scipy.spatial.ConvexHull.
-    Ensure that the given simplices are in right-handed order."""
+    """Compute the convex hull of a set of points, just like
+    :class:scipy.spatial.ConvexHull`.  Ensure that the given simplices are in
+    right-handed order."""
     hull = ConvexHull(vertices)
     expanded = hull.points[hull.simplices]
 
