@@ -17,7 +17,7 @@ jobs:
           name: style-check
           command: |
             pip install --user -U flake8==3.7.1
-            python -m flake8 --show-source euclid/
+            python -m flake8 --show-source euclid/ tests/
 
 
   test-3.7: &test-template
