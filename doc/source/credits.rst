@@ -46,7 +46,7 @@ Vyas Ramasubramani
 
 Carl Simon Adorf
 
-* Original implementation of the damasceno module.
+* Implementation of the damasceno module.
 
 Matthew Spellings
 
