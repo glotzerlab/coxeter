@@ -1,23 +1,23 @@
 #!/usr/bin/env python
-# convert input stream of polyhedron vertices from Mathematica to freud shape definition file
-# argument: name of shape
+# convert input stream of polyhedron vertices from Mathematica to freud shape
+# definition file argument: name of shape
 #
 # Mathematice data is obtained with calls like
-# ExportString[PolyhedronData["Cube", "VertexCoordinates"], "Table", "FieldSeparators" -> ", "]
-# or
-# ExportString[PolyhedronData[{"Prism", 6}, "VertexCoordinates"], "Table", "FieldSeparators" -> ", "]
-# and the results cut and pasted to terminal input to this script.
-# Input is terminated with a newline and end-of-file character, i.e. CTRL-D
+# ExportString[PolyhedronData["Cube", "VertexCoordinates"], "Table",
+# "FieldSeparators" -> ", "] or ExportString[PolyhedronData[{"Prism", 6},
+# "VertexCoordinates"], "Table", "FieldSeparators" -> ", "] and the results cut
+# and pasted to terminal input to this script.  Input is terminated with a
+# newline and end-of-file character, i.e. CTRL-D
 #
-# Numeric interpretation of Mathematica data may be necessary where translation to Python isn't as easy.
-# E.g.
-# ExportString[N[PolyhedronData["ObtuseGoldenRhombohedron", "VertexCoordinates"]], "Table", "FieldSeparators" -> ", "]
-#
+# Numeric interpretation of Mathematica data may be necessary where translation
+# to Python isn't as easy.  E.g.
+# ExportString[N[PolyhedronData["ObtuseGoldenRhombohedron",
+# "VertexCoordinates"]], "Table", "FieldSeparators" -> ", "]
 
 # open the output file for writing
 import sys
 name = sys.argv[1]
-outfile = open(name+'.py', 'w')
+outfile = open(name + '.py', 'w')
 
 # Set up some boiler plate
 
@@ -48,12 +48,12 @@ instring = instring.replace('\\\n', '')
 lines = instring.splitlines()
 for line in lines:
     # Turn Mathematica syntax into Python syntax
-    line = line.replace('Sqrt','sqrt')
-    line = line.replace('[','(').replace(']',')')
-    line = line.replace('^','**')
+    line = line.replace('Sqrt', 'sqrt')
+    line = line.replace('[', '(').replace(']', ')')
+    line = line.replace('^', '**')
     # get string values of x,y,z
-    x,y,z = line.split(', ')
-    pstring = "          ({x}, {y}, {z}),\n".format(x=x,y=y,z=z)
+    x, y, z = line.split(', ')
+    pstring = "          ({x}, {y}, {z}),\n".format(x=x, y=y, z=z)
     pstrings.append(pstring)
 
 # Write the output

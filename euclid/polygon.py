@@ -2,7 +2,8 @@ import numpy as np
 
 
 class Polygon:
-    '''Compute basic properties of a polygon, stored as a list of adjacent vertices
+    '''Compute basic properties of a polygon, stored as a list of adjacent
+    vertices.
 
     Attributes:
         vertices nx2 numpy array of adjacent vertices
@@ -28,9 +29,10 @@ class Polygon:
         # be sufficient for common use cases. Non-simple polygons can
         # still sneak in clockwise vertices.
         if self.area() < 0:
-            raise RuntimeError("Polygon was given with some clockwise vertices, "
-                               "but it requires that vertices be listed in "
-                               "counter-clockwise order")
+            raise RuntimeError(
+                "Polygon was given with some clockwise vertices, "
+                "but it requires that vertices be listed in "
+                "counter-clockwise order")
 
     def area(self):
         """Calculate and return the signed area of the polygon with
@@ -38,10 +40,10 @@ class Polygon:
         shifted = np.roll(self.vertices, -1, axis=0)
 
         # areas is twice the signed area of each triangle in the shape
-        areas = self.vertices[:, 0]*shifted[:, 1] - \
-            shifted[:, 0]*self.vertices[:, 1]
+        areas = self.vertices[:, 0] * shifted[:, 1] - \
+            shifted[:, 0] * self.vertices[:, 1]
 
-        return np.sum(areas)/2
+        return np.sum(areas) / 2
 
     def center(self):
         """Center this polygon around (0, 0)"""
@@ -52,12 +54,12 @@ class Polygon:
         corners. Returns a new Polygon object."""
         # Make 3D unit vectors drs from each vertex i to its neighbor i+1
         drs = np.roll(self.vertices, -1, axis=0) - self.vertices
-        drs /= np.sqrt(np.sum(drs*drs, axis=1))[:, np.newaxis]
+        drs /= np.sqrt(np.sum(drs * drs, axis=1))[:, np.newaxis]
         drs = np.hstack([drs, np.zeros((drs.shape[0], 1))])
 
         # relStarts and relEnds are the offsets relative to the first and
         # second point of each line segment in the polygon.
-        rvec = np.array([[0, 0, -1]])*radius
+        rvec = np.array([[0, 0, -1]]) * radius
         relStarts = np.cross(rvec, drs)[:, :2]
         relEnds = np.cross(rvec, drs)[:, :2]
 
@@ -73,7 +75,7 @@ class Polygon:
         # vertex from an end of a line segment to a beginning of the next
         theta1s = np.arctan2(relEnds[:, 1], relEnds[:, 0])
         theta2s = np.arctan2(relStarts[:, 1], relStarts[:, 0])
-        dthetas = (theta2s - theta1s) % (2*np.pi)
+        dthetas = (theta2s - theta1s) % (2 * np.pi)
 
         # thetas are the angles at which we'll place points for each
         # vertex; curves are the points on the approximate curves on the
@@ -89,18 +91,14 @@ class Polygon:
 
         # Now interleave the pieces
         result = []
-        for (end, curve, start, vert, dtheta) in zip(absEnds, curves,
-                                                     np.roll(
-                                                         absStarts, -1, axis=0),
-                                                     np.roll(
-                                                         self.vertices, -1, axis=0),
-                                                     dthetas):
+        for (end, curve, start, vert, dtheta) in zip(
+                absEnds, curves, np.roll(absStarts, -1, axis=0),
+                np.roll(self.vertices, -1, axis=0), dthetas):
             # Don't round a vertex if it is degenerate
-            skip = dtheta < 1e-6 or np.abs(2*np.pi - dtheta) < 1e-6
+            skip = dtheta < 1e-6 or np.abs(2 * np.pi - dtheta) < 1e-6
 
-            # convex case: add the end of the last straight line
-            # segment, the curved edge, then the start of the next
-            # straight line segment.
+            # convex case: add the end of the last straight line segment, the
+            # curved edge, then the start of the next straight line segment.
             if dtheta <= np.pi and not skip:
                 result.append(end)
                 result.append(curve)
@@ -108,10 +106,10 @@ class Polygon:
             # concave case: don't use the curved region, just find the
             # intersection and add that point.
             elif not skip:
-                l = radius/np.cos(dtheta/2)
-                p = 2*vert - start - end
+                l = radius / np.cos(dtheta / 2)  # noqa: E741
+                p = 2 * vert - start - end
                 p /= np.sqrt(np.dot(p, p))
-                result.append(vert + p*l)
+                result.append(vert + p * l)
 
         result = np.vstack(result)
 
@@ -155,13 +153,13 @@ class Polygon:
             for vert in (remaining[-1], remaining[1]):
                 arms1 = remaining[2:-2] - vert
                 arms2 = vert - remaining[3:-1]
-                signs.append(np.sign(arms1[:, 1]*arms2[:, 0] -
-                                     arms2[:, 1]*arms1[:, 0]))
+                signs.append(np.sign(arms1[:, 1] * arms2[:, 0] -
+                                     arms2[:, 1] * arms1[:, 0]))
             for rest in (remaining[2:-2], remaining[3:-1]):
                 arms1 = remaining[-1] - rest
                 arms2 = rest - remaining[1]
-                signs.append(np.sign(arms1[:, 1]*arms2[:, 0] -
-                                     arms2[:, 1]*arms1[:, 0]))
+                signs.append(np.sign(arms1[:, 1] * arms2[:, 0] -
+                                     arms2[:, 1] * arms1[:, 0]))
 
             cross = np.any(np.bitwise_and(signs[0] != signs[1],
                                           signs[2] != signs[3]))
@@ -181,8 +179,8 @@ class Polygon:
         shiftedBack = np.roll(vertices, -1, axis=0) - vertices
 
         # signed area for each triangle (i-1, i, i+1) for vertex i
-        areas = shiftedBack[:, 1]*shiftedUp[:, 0] - \
-            shiftedUp[:, 1]*shiftedBack[:, 0]
+        areas = shiftedBack[:, 1] * shiftedUp[:, 0] - \
+            shiftedUp[:, 1] * shiftedBack[:, 0]
 
         concave = np.where(areas < 0.)[0]
 
@@ -224,24 +222,25 @@ class ConvexSpheropolygon:
         counterclockwise shapes having positive area"""
         # circle
         if (self.n <= 1):
-            return np.pi*(self.radius**2)
+            return np.pi * (self.radius**2)
         # circly-rod
         elif (self.n == 2):
-            dr = self.vertices[0]-self.vertices[1]
-            return np.pi*(self.radius**2) + np.sqrt(np.dot(dr, dr))*self.radius*2.0
+            dr = self.vertices[0] - self.vertices[1]
+            return np.pi * (self.radius**2) + \
+                np.sqrt(np.dot(dr, dr)) * self.radius * 2.0
         # proper spheropolygon
         else:
             # first calculate the area of the underlying polygon
             shifted = np.roll(self.vertices, -1, axis=0)
             # areas is twice the signed area of each triangle in the shape
-            areas = self.vertices[:, 0]*shifted[:, 1] - \
-                shifted[:, 0]*self.vertices[:, 1]
+            areas = self.vertices[:, 0] * shifted[:, 1] - \
+                shifted[:, 0] * self.vertices[:, 1]
 
-            poly_area = np.sum(areas)/2
+            poly_area = np.sum(areas) / 2
 
-            drs = shifted-self.vertices
+            drs = shifted - self.vertices
             edge_area = np.sum(np.sqrt(np.diag(
-                np.dot(drs, drs.transpose()))))*self.radius
+                np.dot(drs, drs.transpose())))) * self.radius
             # add edge, poly and vertex area
             return poly_area + edge_area + np.pi * self.radius**2
 
@@ -288,13 +287,13 @@ class ConvexSpheropolygon:
             for vert in (remaining[-1], remaining[1]):
                 arms1 = remaining[2:-2] - vert
                 arms2 = vert - remaining[3:-1]
-                signs.append(np.sign(arms1[:, 1]*arms2[:, 0] -
-                                     arms2[:, 1]*arms1[:, 0]))
+                signs.append(np.sign(arms1[:, 1] * arms2[:, 0] -
+                                     arms2[:, 1] * arms1[:, 0]))
             for rest in (remaining[2:-2], remaining[3:-1]):
                 arms1 = remaining[-1] - rest
                 arms2 = rest - remaining[1]
-                signs.append(np.sign(arms1[:, 1]*arms2[:, 0] -
-                                     arms2[:, 1]*arms1[:, 0]))
+                signs.append(np.sign(arms1[:, 1] * arms2[:, 0] -
+                                     arms2[:, 1] * arms1[:, 0]))
 
             cross = np.any(np.bitwise_and(signs[0] != signs[1],
                                           signs[2] != signs[3]))
@@ -314,8 +313,8 @@ class ConvexSpheropolygon:
         shiftedBack = np.roll(vertices, -1, axis=0) - vertices
 
         # signed area for each triangle (i-1, i, i+1) for vertex i
-        areas = shiftedBack[:, 1]*shiftedUp[:, 0] - \
-            shiftedUp[:, 1]*shiftedBack[:, 0]
+        areas = shiftedBack[:, 1] * shiftedUp[:, 0] - \
+            shiftedUp[:, 1] * shiftedBack[:, 0]
 
         concave = np.where(areas < 0.)[0]
 
@@ -334,4 +333,4 @@ def twiceTriangleArea(p0, p1, p2):
     2D numpy points (p0, p1, p2)."""
     p1 = p1 - p0
     p2 = p2 - p0
-    return p1[0]*p2[1] - p2[0]*p1[1]
+    return p1[0] * p2[1] - p2[0] * p1[1]

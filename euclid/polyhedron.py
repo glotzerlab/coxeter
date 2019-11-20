@@ -1,10 +1,10 @@
-'''\package euclid.FreudShape
+R'''euclid.FreudShape
 
 Classes to manage shape data.
 
 
-Provides data structures and calculation methods for working with polyhedra with
-nice data structures.
+Provides data structures and calculation methods for working with polyhedra
+with nice data structures.
 
 Attributes:
 
@@ -19,7 +19,7 @@ Attributes:
    face. values for neighbors[i, k > nverts[i] - 1] are undefined
  - equations (nfacets, ndim+1) [n, d] for corresponding facet where n is the 3D
    normal vector and d the offset from the origin.
-   Satisfies the hyperplane equation \f$ \bar v \cdot \hat n + d < 0 \f$ for
+   Satisfies the hyperplane equation :math:`\bar{v} \cdot \hat{n} + d < 0` for
    points v enclosed by the surface.
  - simplicial referece to another Polygon object containing data based on
    simplicial facets
@@ -98,24 +98,34 @@ except ImportError:
 
 
 class Polyhedron:
-    '''Create a Polyhedron object from precalculated data structures.
+    R'''Create a Polyhedron object from precalculated data structures.
+
      Args:
-        \param points (Np, 3) list of vertices ordered such that indices are
-            used by other data structures
-        \param nverts (Nf,) list of numbers of vertices for correspondingly indexed facet
-        \param facets (Nf, max(nverts)) array of vertex indices associated with each facet
-        \param neighbors (Nf, max(nverts)) array of facet neighbor information. For
-            neighbors[i,k], neighbor k shares points[[k, k+1]] with facet i.
-        \param equations (Nf, ndim + 1) list of lists of hyperplane parameters of the
-            form [[n[0], n[1], n[2], d], ...] where n, d satisfy the hyperplane
-            equation \f$ \bar v \cdot \hat n + d < 0 \f$ for points v enclosed by
-            the surface.
-        \param simplicial_facets (Nsf, 3) List of simplices (triangular facets in 3D)
-        \param simplicial_neighbors (Nsf, 3) List of neighboring simplices for each simplicial facet
-        \param simplicial_equations (Nsf, ndim+1) hyperplane equation coefficients for simplicial facets
+        points (Np, 3):
+            List of vertices ordered such that indices are used by other data
+            structures
+        nverts (Nf,):
+            List of numbers of vertices for correspondingly indexed facet
+        facets (Nf, max(nverts)):
+            Array of vertex indices associated with each facet
+        neighbors (Nf, max(nverts)):
+            Array of facet neighbor information. For neighbors[i,k], neighbor k
+            shares points[[k, k+1]] with facet i.
+        equations (Nf, ndim + 1):
+            List of lists of hyperplane parameters of the form [[n[0], n[1],
+            n[2], d], ...] where n, d satisfy the hyperplane equation \f$ \bar
+            v \cdot \hat n + d < 0 \f$ for points v enclosed by the surface.
+        simplicial_facets (Nsf, 3):
+            List of simplices (triangular facets in 3D)
+        simplicial_neighbors (Nsf, 3):
+            List of neighboring simplices for each simplicial facet
+        simplicial_equations (Nsf, ndim+1):
+            Hyperplane equation coefficients for simplicial facets
     '''
 
-    def __init__(self, points, nverts, facets, neighbors, equations, simplicial_facets=None, simplicial_neighbors=None, simplicial_equations=None):
+    def __init__(self, points, nverts, facets, neighbors, equations,
+                 simplicial_facets=None, simplicial_neighbors=None,
+                 simplicial_equations=None):
         self.points = np.array(points)
         self.npoints = len(self.points)
         pshape = points.shape
@@ -138,27 +148,27 @@ class Polyhedron:
                 simplicial_neighbors is None):
             nfacets = len(simplicial_facets)
             self.simplicial = Polyhedron(points,
-                                         [self.ndim]*nfacets,
+                                         [self.ndim] * nfacets,
                                          simplicial_facets,
                                          simplicial_neighbors,
                                          simplicial_equations)
         else:
             self.simplicial = None
 
-    def mergeFacets(self):
+    def mergeFacets(self):  # noqa: C901
         '''Merge coplanar simplicial facets
 
         Requires multiple iterations when many non-adjacent coplanar facets
         exist.
 
-        Example:
-        \code
-        old_nfacets = 0
-        new_nfacets = self.nfacets
-        while new_nfacets != old_nfacets:
-        mypoly.mergeFacets()
-        old_nfacets = new_nfacets
-        new_nfacets = mypoly.nfacets
+        Example::
+
+            old_nfacets = 0
+            new_nfacets = self.nfacets
+            while new_nfacets != old_nfacets:
+            mypoly.mergeFacets()
+            old_nfacets = new_nfacets
+            new_nfacets = mypoly.nfacets
         '''
         # If performance is ever an issue, this should really all be replaced
         # with our own qhull wrapper...
@@ -170,13 +180,20 @@ class Polyhedron:
             return
 
         def convexPolygon3D(normal, points):
-            '''Helper function to identify the exterior points of a convex polygon.
+            '''Helper function to identify the exterior points of a convex
+            polygon.
 
-            Projects the input points onto a plane and finds the 2D convex hull.
-            \param normal the normal vector defining the plane of the face
-            \param points list of 3D points (presumed to be) in the plane of the
-                face
-            \returns indices of points on the exterior of the polygon
+            Projects the input points onto a plane and finds the 2D convex
+            hull.
+
+            Args:
+                normal:
+                    The normal vector defining the plane of the face
+                points:
+                    List of 3D points (presumed to be) in the plane of the face
+
+            Returns:
+                Indices of points on the exterior of the polygon
             '''
             # Rotate the plane and points to be parallel to the x,y plane
             # The easiest way to do this is to find the quaternion that rotates
@@ -184,7 +201,8 @@ class Polyhedron:
             # and the z unit vector.
             nhat = np.asarray(normal, dtype=np.float64)
             zhat = np.array([0., 0., 1.], dtype=np.float64)
-            # check if normal is antialigned with zhat, in which case we'll just rotate around xhat
+            # check if normal is antialigned with zhat, in which case we'll
+            # just rotate around xhat
             if np.dot(zhat, nhat) + 1.0 < 1e-12:
                 u = np.array([1., 0., 0.], dtype=np.float64)
             else:
@@ -192,7 +210,7 @@ class Polyhedron:
                 vmag2 = np.dot(v, v)
                 u = v / np.sqrt(vmag2)
             q = np.concatenate(
-                ([np.cos(np.pi/2)], np.sin(np.pi/2)*u))
+                ([np.cos(np.pi / 2)], np.sin(np.pi / 2) * u))
             # Rotate the points and drop the z dimension to get a set of 2D
             # points
             p3D = [rowan.rotate(q, p) for p in points]
@@ -202,6 +220,7 @@ class Polyhedron:
             # Collect the indices of the exterior points and return the list of
             # indices
             return hull.vertices
+
         Nf = self.nfacets
         facet_verts = [set(self.facets[i, 0:self.nverts[i]])
                        for i in range(self.nfacets)]
@@ -257,7 +276,7 @@ class Polyhedron:
                 Nf -= 1
                 # Deal with changed indices for merge_list and neighbors
                 # update merge_list
-                for i in range(m+1, len(merge_list)):
+                for i in range(m + 1, len(merge_list)):
                     if merge_list[i] > merged_neighbor:
                         merge_list[i] -= 1
                 # update neighbors
@@ -301,7 +320,9 @@ class Polyhedron:
         '''Use a list of vertices and a outward face normal and return a
         right-handed ordered list of vertex indices.
 
-        \param iface index of facet to process
+        Args:
+            iface:
+                index of facet to process
         '''
         # n = np.asarray(normal)
         Ni = self.nverts[iface]  # number of vertices in facet
@@ -321,7 +342,7 @@ class Polyhedron:
             cp = np.cross(n, z)
             k = cp / np.sqrt(np.dot(cp, cp))
             q = np.concatenate(
-                ([np.cos(theta/2.)], np.sin(theta/2.) * k))
+                ([np.cos(theta / 2.)], np.sin(theta / 2.) * k))
         vertices = points[facet]  # 3D vertices
         for i in range(Ni):
             v = vertices[i]
@@ -343,7 +364,7 @@ class Polyhedron:
                 if a <= a_srt[j]:
                     break
                 else:
-                    new_i = j+1
+                    new_i = j + 1
             idx_srt.insert(new_i, facet[i])
             a_srt.insert(new_i, a)
         return np.array(idx_srt)
@@ -352,7 +373,9 @@ class Polyhedron:
         '''Use the list of vertices for a face to order a list of neighbors,
         given their vertices.
 
-        \param iface index of facet to process
+        Args:
+            iface:
+                index of facet to process
         '''
         Ni = self.nverts[iface]
         facet = list(self.facets[iface, 0:Ni])
@@ -370,7 +393,7 @@ class Polyhedron:
         new_neighbors = list()
         for i in range(Ni):
             # Check each pair of edge points in turn
-            edge = set([facet[i], facet[i+1]])
+            edge = set([facet[i], facet[i + 1]])
             for j in range(len(neighbor_verts)):
                 # If edge points are also in neighboring face then we have
                 # found the corresponding neighbor
@@ -384,8 +407,10 @@ class Polyhedron:
     def getArea(self, iface=None):
         '''Find surface area of polyhedron or a face
 
-        \param iface index of facet to calculate area of (default sum all facet
-            area)
+        Args:
+            iface:
+                index of facet to calculate area of (default sum all facet
+                area)
         '''
         if iface is None:
             facet_list = range(self.nfacets)
@@ -400,9 +425,9 @@ class Polyhedron:
             # print(n)
             Ni = self.nverts[i]  # number of points on the facet)
             # for each triangle on the face
-            for j in range(1, Ni-1):
+            for j in range(1, Ni - 1):
                 r1 = self.points[face[j]] - self.points[face[0]]
-                r2 = self.points[face[j+1]] - self.points[face[0]]
+                r2 = self.points[face[j + 1]] - self.points[face[0]]
                 cp = np.cross(r1, r2)
                 # print(cp)
                 A += abs(np.dot(cp, n)) / 2.0
@@ -421,8 +446,10 @@ class Polyhedron:
     def getCircumsphereRadius(self, original=False):
         '''Get circumsphere radius
 
-        \param original True means to retrieve the original points before any
-        subsequent rescaling (default False)
+        Args:
+            original:
+                True means to retrieve the original points before any
+                subsequent rescaling (default False)
         '''
         # get R2[i] = dot(points[i], points[i]) by getting the diagonal (i=j)
         # of the array of dot products dot(points[i], points[j])
@@ -436,8 +463,10 @@ class Polyhedron:
     def getInsphereRadius(self, original=False):
         '''Get insphere radius
 
-        \param original True means to retrieve the original points before any
-            subsequent rescaling (default False)
+        Args:
+            original:
+                True means to retrieve the original points before any
+                subsequent rescaling (default False)
         '''
         if original:
             equations = self.originalequations
@@ -448,7 +477,10 @@ class Polyhedron:
 
     def setCircumsphereRadius(self, radius):
         '''Scale polyhedron to fit a given circumsphere radius
-        \param radius new circumsphere radius
+
+        Args:
+            radius:
+                new circumsphere radius
         '''
         # use unscaled data from original to avoid accumulated errors
         oradius = Polyhedron.getCircumsphereRadius(self, original=True)
@@ -456,28 +488,34 @@ class Polyhedron:
         self.points = self.originalpoints * scale_factor
         self.equations[:, 3] = self.originalequations[:, 3] * scale_factor
         if self.simplicial is not None:
-            self.simplicial.points = self.simplicial.originalpoints * scale_factor
-            self.simplicial.equations[:, 3] = self.simplicial.originalequations[:, 3] * \
+            self.simplicial.points = self.simplicial.originalpoints * \
                 scale_factor
+            self.simplicial.equations[:, 3] = \
+                self.simplicial.originalequations[:, 3] * scale_factor
 
     def setInsphereRadius(self, radius):
         '''Scale polyhedron to fit a given circumsphere radius
 
-        \param radius new insphere radius
+        Args:
+            radius:
+                new insphere radius
         '''
         oradius = Polyhedron.getInsphereRadius(self, original=True)
         scale_factor = radius / oradius
         self.points = self.originalpoints * scale_factor
         self.equations[:, 3] = self.originalequations[:, 3] * scale_factor
         if self.simplicial is not None:
-            self.simplicial.points = self.simplicial.originalpoints * scale_factor
-            self.simplicial.equations[:, 3] = self.simplicial.originalequations[:, 3] * \
+            self.simplicial.points = self.simplicial.originalpoints * \
                 scale_factor
+            self.simplicial.equations[:, 3] = \
+                self.simplicial.originalequations[:, 3] * scale_factor
 
     def isInside(self, point):
         '''Test if a point is inside the shape
 
-        \param point 3D coordinates of test point
+        Args:
+            point:
+                3D coordinates of test point
         '''
         v = np.asarray(point)
         for i in range(self.nfacets):
@@ -492,15 +530,18 @@ class Polyhedron:
         The index of neighbor b also corresponds to the index of the first of
         two right-hand-ordered vertices of the shared edge
 
-        \returns the index of b in the neighbor list of a or None if they are
-        not neighbors
+        Returns:
+            The index of b in the neighbor list of a or None if they are not
+            neighbors
 
-        \par Example
-        from euclid.FreudShape.Cube import shape
-        a, b = 0, 1
-        edge_i = shape.getSharedEdge(a,b)
-        edge_j = (edge_i + 1) % shape.nverts[a]
-        point_coords = shape.points[[shape.facets[a, edge_i], shape.facets[a, edge_j]]]
+        Example::
+
+            from euclid.FreudShape.Cube import shape
+            a, b = 0, 1
+            edge_i = shape.getSharedEdge(a,b)
+            edge_j = (edge_i + 1) % shape.nverts[a]
+            point_coords = shape.points[[shape.facets[a, edge_i],
+                                         shape.facets[a, edge_j]]]
         '''
         # Note that facet only has as many neighbors as it does vertices
         neighbors = list(self.neighbors[a, 0:self.nverts[a]])
@@ -517,9 +558,14 @@ class Polyhedron:
         implies faces a and b are parallel. Theta == 2 pi implies faces a and b
         form a concave blade.
 
-        \param a index of first facet
-        \param b index of second facet (must be a neighbor of a)
-        \returns theta angle on [0, 2 pi)
+        Args:
+            a:
+                index of first facet
+            b:
+                index of second facet (must be a neighbor of a)
+
+        Returns:
+            theta angle on [0, 2 pi)
         '''
         # Find which neighbor b is
         k = self.getSharedEdge(a, b)
@@ -531,7 +577,7 @@ class Polyhedron:
         # e1 -> e2 are in the left-handed direction of a while e2 -> e3 are in
         # the right-handed direction of b.  Denote the path as
         # points p0 -> p1 -> p2 -> p3
-        nextk = k+1
+        nextk = k + 1
         if nextk >= self.nverts[a]:
             nextk = 0
         nextnextk = nextk + 1
@@ -562,22 +608,24 @@ class Polyhedron:
         return np.arctan2(x1, x2)
 
     def getMeanCurvature(self):
-        '''Get the mean curvature
+        R'''Get the mean curvature
 
         Mean curvature R for a polyhedron is determined from the edge lengths
-        L_i and dihedral angles \phi_i and is given by $\sum_i (1/2) L_i (\pi -
-        \phi_i) / (4 \pi)$
-        \returns R
+        :math:`L_i` and dihedral angles :math:`\phi_i` and is given by
+        :math:`\sum_i (1/2) L_i (\pi - \phi_i) / (4 \pi)`
+
+        Returns:
+            Mean curvature R.
         '''
         R = 0.0
         # check each pair of faces i,j such that i < j
         nfacets = self.nfacets
-        for i in range(nfacets-1):
-            for j in range(i+1, nfacets):
+        for i in range(nfacets - 1):
+            for j in range(i + 1, nfacets):
                 # get the length of the shared edge, if there is one
                 k = self.getSharedEdge(i, j)  # index of first vertex
                 if k is not None:
-                    nextk = k+1  # index of second vertex
+                    nextk = k + 1  # index of second vertex
                     if nextk == self.nverts[i]:
                         nextk = 0
                     # get point indices corresponding to vertex indices
@@ -589,8 +637,8 @@ class Polyhedron:
                     Li = np.sqrt(np.dot(r, r))
                     # get the dihedral angle
                     phi = self.getDihedral(i, j)
-                    R += Li*(np.pi - phi)
-        R /= 8*np.pi
+                    R += Li * (np.pi - phi)
+        R /= 8 * np.pi
         return R
 
     def getAsphericity(self):
@@ -598,32 +646,37 @@ class Polyhedron:
 
         Asphericity alpha is defined as RS/3V where R is the mean curvature, S
         is surface area, V is volume
-        \returns alpha
+
+        Returns:
+            Asphericity alpha.
         '''
         R = self.getMeanCurvature()
         S = self.getArea()
         V = self.getVolume()
-        return R*S/(3*V)
+        return R * S / (3 * V)
 
     def getQ(self):
-        '''Get isoperimetric quotient
+        R'''Get isoperimetric quotient
 
-        Isoperimetric quotient is a unitless measure of sphericity defined as Q
-        = 36 \pi \frac{V^2}{S^3}
-        \returns isoperimetric quotient
+        Isoperimetric quotient is a unitless measure of sphericity defined as
+        :math:`Q = 36 \pi \frac{V^2}{S^3}`
+
+        Returns:
+            isoperimetric quotient
         '''
         V = self.getVolume()
         S = self.getArea()
-        Q = np.pi * 36 * V*V / (S*S*S)
+        Q = np.pi * 36 * V * V / (S * S * S)
         return Q
 
     def getTau(self):
-        '''Get tau = 4\pi R^2 / S (ref: Naumann and Leland)
+        R'''Get :math:`tau = 4\pi R^2 / S` (ref: Naumann and Leland)
 
         Tau is a measure of asphericity that appears to be relevant to the
         third and fourth virial coefficients
 
-        \returns tau
+        Returns:
+            tau
         '''
         R = self.getMeanCurvature()
         S = self.getArea()
@@ -636,21 +689,26 @@ class ConvexPolyhedron(Polyhedron):
 
     Store and compute data associated with a convex polyhedron, calculated as
     the convex hull of a set of input points.  ConvexPolyhedron objects are a
-    modification to the scipy.spatial.ConvexHull object with data in a form more
-    useful to operations involving polyhedra.
+    modification to the scipy.spatial.ConvexHull object with data in a form
+    more useful to operations involving polyhedra.
 
-    \note euclid.FreudShape.ConvexPolyhedron requires scipy.spatil.ConvexHull
-    (as of scipy 0.12.0).
+    .. note::
+        :class:`euclid.FreudShape.ConvexPolyhedron` requires
+        :class:`scipy.spatial.ConvexHull`.
 
-     \param points Nx3 list of vertices from which to construct the convex hull
-     \param mergeFacets automatically try to merge coplanar simplicial facets
-        (default True)
+     Args:
+         points:
+             Nx3 list of vertices from which to construct the convex hull
+         mergeFacets:
+             Automatically try to merge coplanar simplicial facets (default
+             True)
     '''
 
     def __init__(self, points, mergeFacets=True):
         if ConvexHull is None:
             logger.error(
-                'Cannot initialize ConvexPolyhedron because scipy.spatial.ConvexHull is not available.')
+                'Cannot initialize ConvexPolyhedron because '
+                'scipy.spatial.ConvexHull is not available.')
 
         simplicial = ConvexHull(points)
         facets = simplicial.simplices
@@ -677,9 +735,10 @@ class ConvexPolyhedron(Polyhedron):
                             neighbors,
                             equations)
 
-        # mergeFacets does not merge all coplanar facets when there are a lot of neighboring coplanar facets,
-        # but repeated calls will do the job.
-        # If performance is ever an issue, this should really all be replaced with our own qhull wrapper...
+        # mergeFacets does not merge all coplanar facets when there are a lot
+        # of neighboring coplanar facets, but repeated calls will do the job.
+        # If performance is ever an issue, this should really all be replaced
+        # with our own qhull wrapper...
         if mergeFacets:
             old_nfacets = 0
             new_nfacets = self.nfacets
@@ -699,12 +758,17 @@ class ConvexPolyhedron(Polyhedron):
 # as the convex hull of a set of input points plus a rounding radius.
 # Inherits from ConvexPolyhedron but replaces several methods.
 class ConvexSpheropolyhedron(ConvexPolyhedron):
-    '''Create a ConvexPolyhedron object from a list of points and a rounding radius.
+    '''Create a ConvexPolyhedron object from a list of points and a rounding
+    radius.
 
-     \param points Nx3 list of vertices from which to construct the convex hull
-     \param R rounding radius by which to extend the polyhedron boundary
-     \param mergeFacets automatically try to merge coplanar simplicial facets
-        of the polyhedron (default True)
+     Args:
+         points:
+             Nx3 list of vertices from which to construct the convex hull
+         R:
+            rounding radius by which to extend the polyhedron boundary
+         mergeFacets:
+            automatically try to merge coplanar simplicial facets of the
+            polyhedron (default True)
      '''
 
     def __init__(self, points, R=0.0, mergeFacets=True):
@@ -725,19 +789,19 @@ class ConvexSpheropolyhedron(ConvexPolyhedron):
             n = self.equations[i, 0:3]
             Ni = self.nverts[i]  # number of points on the facet)
             # for each triangle on the face, sum up the area
-            for j in range(1, Ni-1):
+            for j in range(1, Ni - 1):
                 r1 = self.points[face[j]] - self.points[face[0]]
-                r2 = self.points[face[j+1]] - self.points[face[0]]
+                r2 = self.points[face[j + 1]] - self.points[face[0]]
                 cp = np.cross(r1, r2)
                 Aface += abs(np.dot(cp, n)) / 2.0
             # for each edge on the face get length and dihedral to calculate
             # cylinder contribution
             for j in range(0, Ni):
                 p1 = self.points[face[j]]
-                if j >= Ni-1:
+                if j >= Ni - 1:
                     p2 = self.points[face[0]]
                 else:
-                    p2 = self.points[face[j+1]]
+                    p2 = self.points[face[j + 1]]
                 edge = p2 - p1
                 edge_length = np.sqrt(np.dot(edge, edge))
                 angle = np.pi - self.getDihedral(i, self.neighbors[i, j])
@@ -762,13 +826,14 @@ class ConvexSpheropolyhedron(ConvexPolyhedron):
             Vpoly += d * A / 3.0
             # add volume for the polygonal plate due to R
             Vpoly += R * A
-            # for each edge on the face get length and dihedral to calculate cylinder contribution
+            # for each edge on the face get length and dihedral to calculate
+            # cylinder contribution
             for j in range(0, Ni):
                 p1 = self.points[face[j]]
-                if j >= Ni-1:
+                if j >= Ni - 1:
                     p2 = self.points[face[0]]
                 else:
-                    p2 = self.points[face[j+1]]
+                    p2 = self.points[face[j + 1]]
                 edge = p2 - p1
                 edge_length = np.sqrt(np.dot(edge, edge))
                 angle = np.pi - self.getDihedral(i, self.neighbors[i, j])
@@ -783,8 +848,10 @@ class ConvexSpheropolyhedron(ConvexPolyhedron):
         get R2[i] = dot(points[i], points[i]) by getting the diagonal (i=j) of
         the array of dot products dot(points[i], points[j])
 
-        \param original True means to retrieve the original points before any
-        subsequent rescaling (default False)
+        Args:
+            original:
+                True means to retrieve the original points before any
+                subsequent rescaling (default False)
         '''
         if original:
             points = self.originalpoints
@@ -801,8 +868,10 @@ class ConvexSpheropolyhedron(ConvexPolyhedron):
     def getInsphereRadius(self, original=False):
         '''Get insphere radius
 
-        \param original True means to retrieve the original points before any
-        subsequent rescaling (default False)
+        Args:
+            original:
+                True means to retrieve the original points before any
+                subsequent rescaling (default False)
         '''
         if original:
             equations = self.originalequations
@@ -819,9 +888,12 @@ class ConvexSpheropolyhedron(ConvexPolyhedron):
     def setCircumsphereRadius(self, radius):
         '''Scale spheropolyhedron to fit a given circumsphere radius.
 
-        \param radius new circumsphere radius
-            Scales points and R. To scale just the underlying polyhedron, use
-            the base class method.
+        Scales points and R. To scale just the underlying polyhedron, use the
+        base class method.
+
+        Args:
+            radius:
+                new circumsphere radius
         '''
         # use unscaled data from original to avoid accumulated errors
         oradius = ConvexSpheropolyhedron.getCircumsphereRadius(
@@ -831,12 +903,15 @@ class ConvexSpheropolyhedron(ConvexPolyhedron):
         self.equations[:, 3] = self.originalequations[:, 3] * scale_factor
         self.R = self.originalR * scale_factor
         self.simplicial.points = self.simplicial.originalpoints * scale_factor
-        self.simplicial.equations[:, 3] = self.simplicial.originalequations[:, 3] * scale_factor
+        self.simplicial.equations[:, 3] = \
+            self.simplicial.originalequations[:, 3] * scale_factor
 
     def setInsphereRadius(self, radius):
         '''Scale polyhedron to fit a given circumsphere radius
 
-        \param radius new insphere radius
+        Args:
+            radius:
+                new insphere radius
         '''
         oradius = ConvexSpheropolyhedron.getInsphereRadius(self, original=True)
         scale_factor = radius / oradius
@@ -844,13 +919,15 @@ class ConvexSpheropolyhedron(ConvexPolyhedron):
         self.equations[:, 3] = self.originalequations[:, 3] * scale_factor
         self.R = self.originalR * scale_factor
         self.simplicial.points = self.simplicial.originalpoints * scale_factor
-        self.simplicial.equations[:,
-                                  3] = self.simplicial.originalequations[:, 3] * scale_factor
+        self.simplicial.equations[:, 3] = \
+            self.simplicial.originalequations[:, 3] * scale_factor
 
     def isInside(self, point):
         '''Test if a point is inside the shape
 
-        \param point 3D coordinates of test point
+        Args:
+            point:
+                3D coordinates of test point
         '''
         v = np.asarray(point)
         for i in range(self.nfacets):
@@ -864,5 +941,3 @@ class ConvexSpheropolyhedron(ConvexPolyhedron):
 
     def getAsphericity(self):
         raise RuntimeError("Not implemented")
-
-

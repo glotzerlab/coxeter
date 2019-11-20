@@ -133,6 +133,7 @@ class FTdelta(_FTbase):
             for r in self.position:
                 self.S[i] += self.density * np.exp(-1j * np.dot(k, r))
 
+
 class FTsphere(_FTbase):
     """
     .. moduleauthor:: Jens Glaser <jsglaser@umich.edu>
@@ -151,7 +152,7 @@ class FTsphere(_FTbase):
             for r in self.position:
                 k_sq = np.dot(k, k)
                 if k_sq == 0:
-                    f = (4./3. * np.pi * self.radius**3)
+                    f = (4. / 3. * np.pi * self.radius**3)
                 else:
                     kr = np.sqrt(k_sq) * self.radius
                     # Note that np.sinc(x) gives sin(pi*x)/(pi*x)
