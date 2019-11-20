@@ -38,7 +38,7 @@ M. Eric Irrgang
 
 * Bugfixes to imports.
 * Implemented core shape classes.
-* Implemented of the ft module.
+* Implemented the ft module.
 
 Vyas Ramasubramani
 
@@ -47,7 +47,7 @@ Vyas Ramasubramani
 
 Carl Simon Adorf
 
-* Implemented of the damasceno module.
+* Implemented the damasceno module.
 
 Matthew Spellings
 
