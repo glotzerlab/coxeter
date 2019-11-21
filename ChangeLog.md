@@ -13,6 +13,7 @@ and this project adheres to
 ### Changed
 
 * Moved core shape classes from euclid.FreudShape into top-level package namespace.
+* Moved common shape definitions into common\_shapes subpackage.
 * Shapes from Damasceno science 2012 paper are now stored in a JSON file that is loaded in the damasceno module.
 
 ### Fixed
@@ -23,7 +24,7 @@ and this project adheres to
 
 * Various unused or redundant functions in the utils module.
 * The quaternion\_tools module (uses rowan for quaternion math instead).
-* Remove shapelib.
+* The shapelib module.
 
 ## v0.1.0
 
