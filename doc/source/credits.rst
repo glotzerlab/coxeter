@@ -25,6 +25,8 @@ Bradley Dice
 Brandon Butler
 
 * Removed old quat\_tools module and modified modules to use rowan.
+* Moved logic in FreudShape module to top-level package namespace.
+* Moved all common shape definitions into a common\_shapes module.
 
 Eric Harper
 
@@ -44,6 +46,8 @@ Vyas Ramasubramani
 
 * Created documentation pages.
 * Formalized contribution guidelines and contributor agreement.
+* Cleaned up damasceno module and separated out shape information into a JSON file that is read on demand.
+* Fixed code formatting to conform to PEP8 requirements.
 
 Carl Simon Adorf
 
@@ -53,3 +57,7 @@ Matthew Spellings
 
 * Added some methods to the utils module.
 * Triangulation of core shape classes.
+
+William Zygmunt
+
+* Helped clean up utils module.
