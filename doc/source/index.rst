@@ -9,7 +9,8 @@ The package works with both two- and three-dimensional shapes such as polygons a
    :maxdepth: 2
    :caption: Contents:
 
-    package-euclid
+   package-euclid
+   credits
 
 
 Getting Started

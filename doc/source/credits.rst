@@ -2,7 +2,7 @@ Credits
 =======
 
 euclid Developers
-----------------
+-----------------
 
 The following people contributed to the development of euclid.
 
