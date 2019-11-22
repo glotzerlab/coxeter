@@ -1,8 +1,6 @@
 import numpy
 from euclid.polyhedron import ConvexPolyhedron
 
-# Example:
-# from euclid.polyhedron.ObtuseGoldenRhombohedron import shape
 points = [
     (-0.9472135954999579, 0.08541019662496847, 0.2628655560595668),
     (-0.5, -0.8090169943749475, 0.2628655560595668),

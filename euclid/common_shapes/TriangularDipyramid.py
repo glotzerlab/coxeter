@@ -2,8 +2,6 @@ from numpy import sqrt
 import numpy
 from euclid.polyhedron import ConvexPolyhedron
 
-# Example:
-# from euclid.polyhedron.TriangularDipyramid import shape
 points = [
     (0, 0, -sqrt(2 / 3)),
     (0, 0, sqrt(2 / 3)),

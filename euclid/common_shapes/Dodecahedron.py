@@ -2,9 +2,6 @@ from numpy import sqrt
 import numpy
 from euclid.polyhedron import ConvexPolyhedron
 
-# Example:
-# from euclid.polyhedron.Dodecahedron import shape
-
 phi = (1. + sqrt(5.)) / 2.
 inv = 2. / (1. + sqrt(5.))
 points = [
