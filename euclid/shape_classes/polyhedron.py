@@ -1,5 +1,7 @@
+from scipy.spatial import ConvexHull
+
 class Polyhedron(object):
-    def __init__(self, vertices, faces=None):
+    def __init__(self, vertices, facets=None):
         """A general polyhedron.
 
         If only vertices are passed in, the result is a convex polyhedron
@@ -9,13 +11,19 @@ class Polyhedron(object):
         The polyhedron is assumed to be of unit mass and constant density.
 
         """
-        pass
+        self._vertices = vertices
+        if facets is None:
+            hull = ConvexHull(vertices)
+            self._facets = [facet for facet in hull.simplices]
+        else:
+            self._facets = facets
 
-    def merge_faces(self, tolerance=1e-6):
-        """Merge faces of a polyhedron.
 
-        For convex polyhedra, faces will automatically be merged to an
-        appropriate degree.  However, the merging of faces must be based on a
+    def merge_facets(self, tolerance=1e-6):
+        """Merge facets of a polyhedron.
+
+        For convex polyhedra, facets will automatically be merged to an
+        appropriate degree.  However, the merging of facets must be based on a
         tolerance (we may need to provide two such parameters depending on how
         we perform the merge), so we need to expose this method to allow the
         user to redo the merge with a different tolerance."""
@@ -23,10 +31,12 @@ class Polyhedron(object):
     @property
     def vertices(self):
         """Get the vertices of the polyhedron."""
+        return self._vertices
 
     @property
-    def faces(self):
-        """Get the polyhedron's faces."""
+    def facets(self):
+        """Get the polyhedron's facets."""
+        self._facets
 
     @property
     def volume(self):
@@ -35,9 +45,28 @@ class Polyhedron(object):
     @volume.setter
     def volume(self, value):
 
+    def get_facet_area(self, facets=None):
+        """Get the total surface area of a set of facets.
+
+        Args:
+            facets (int, sequence, or None):
+                The index of a facet or a set of facet indices for which to
+                find the area. If None, finds the area of all facets (Default
+                value: None).
+
+        Returns:
+            list: The area of each facet.
+        """
+        if facets is None:
+            facets = range(len(self.facets))
+
+        for facet_index in facets:
+            facet = self.facets[facet_index]
+
     @property
     def surface_area(self):
         """The surface area."""
+        return get_facet_area(None)
 
     @property
     def moment_inertia(self):
@@ -84,9 +113,9 @@ class Polyhedron(object):
         https://www.sciencedirect.com/science/article/pii/0378381284800199."""
 
     @property
-    def face_neighbors(self):
+    def facet_neighbors(self):
         """An Nx2 NumPy array containing indices of pairs of neighboring
-        faces."""
+        facets."""
 
     @property
     def vertex_neighbors(self):
