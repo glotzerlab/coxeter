@@ -1,4 +1,5 @@
 from scipy.spatial import ConvexHull
+import numpy as np
 
 class Polyhedron(object):
     def __init__(self, vertices, facets=None):
@@ -79,9 +80,11 @@ class Polyhedron(object):
     @property
     def center(self):
         """Get or set the polyhedron's centroid (setting rescales vertices)."""
+        return np.mean(self.vertices, axis=0)
 
     @center.setter
     def center(self, value):
+        self.vertices += (np.asarray(value) - self.center)
 
     @property
     def insphere_radius(self):
