@@ -18,3 +18,14 @@ def test_reordering():
 
     square.reorder_verts(True)
     npt.assert_equal(square.vertices, points)
+
+
+def test_area():
+    """Test area calculation."""
+    # Original vertices are clockwise, so they'll be flipped on construction.
+    points = [[0, 0, 0],
+              [0, 1, 0],
+              [1, 1, 0],
+              [1, 0, 0]]
+    square = Polygon(points)
+    assert square.area == 1
