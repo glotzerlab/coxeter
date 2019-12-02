@@ -25,7 +25,7 @@ class Polygon(object):
                 #(Default value: [True, True, True]).
 
         """
-        vertices = np.asarray(vertices)
+        vertices = np.asarray(vertices, dtype=np.float64)
         if len(vertices.shape) != 2 or vertices.shape[1] != 3:
             raise ValueError(
                 "Vertices must be specified as an Nx3 array.")
@@ -153,7 +153,7 @@ class Polygon(object):
 
     @center.setter
     def center(self, value):
-        self.vertices += (np.asarray(value) - self.center)
+        self._vertices += (np.asarray(value) - self.center)
 
     @property
     def incircle_radius(self):

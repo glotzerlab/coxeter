@@ -37,3 +37,15 @@ def test_area():
     square.reorder_verts(True)
     assert square.signed_area == -1
     assert square.area == 1
+
+
+def test_center():
+    """Test centering the polygon."""
+    points = [[0, 0, 0],
+              [0, 1, 0],
+              [1, 1, 0],
+              [1, 0, 0]]
+    square = Polygon(points)
+    assert np.all(square.center == np.mean(points, axis=0))
+    square.center = [0, 0, 0]
+    assert np.all(square.center == [0, 0, 0])
