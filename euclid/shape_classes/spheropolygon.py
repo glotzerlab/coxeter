@@ -43,6 +43,28 @@ class ConvexSpheropolygon(object):
         _check_convex(vertices)
         self._radius = radius
 
+    def reorder_verts(self, clockwise=False, ref_index=0,
+                      increasing_length=True):
+        """Sort the vertices such that the polygon is oriented with respect to
+        the normal.
+
+        For more information see
+        :meth:`euclid.shape_classes.polygon.Polygon.reorder_verts`.
+
+        Args:
+            clockwise (bool):
+                If True, sort in clockwise order (Default value: False).
+            ref_index (int):
+                Index indicating which vertex should be placed first in the
+                sorted list (Default value: 0).
+            increasing_length (bool):
+                If two vertices are at the same angle relative to the
+                center, when this flag is True the point closer to the center
+                comes first, otherwise the point further away comes first
+                (Default value: True).
+        """
+        self.polygon.reorder_verts(clockwise, ref_index, increasing_length)
+
     @property
     def radius(self):
         """The rounding radius."""
