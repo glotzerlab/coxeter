@@ -36,7 +36,13 @@ class Polygon(object):
         self._vertices = vertices
         self._normal = normal
 
-    def reorder_verts(self, clockwise=False, ref_index=0):
+        # The polygon must be oriented in order for the area calculation to
+        # work, so we always sort on construction. Users can alter the sorting
+        # later if desired, but we cannot have unsorted vertices.
+        self.reorder_verts()
+
+    def reorder_verts(self, clockwise=False, ref_index=0,
+                      increasing_length=True):
         """Sort the vertices such that the polygon is oriented with respect to
         the normal.
 
@@ -45,13 +51,12 @@ class Polygon(object):
         note that clockwise ordering will result in a negative signed area of
         the polygon.
 
-        Algorithm:
-            The reordering is performed by rotating the polygon onto the
-            :math:`xy` plane, then computing the angles of all vertices. The
-            vertices are then sorted by this angle.  Note that if two points
-            are at the same angle, the ordering is arbitrary and determined by
-            the output of :func:`numpy.argsort`, which using an unstable
-            quicksort algorithm by default.
+        The reordering is performed by rotating the polygon onto the :math:`xy`
+        plane, then computing the angles of all vertices. The vertices are then
+        sorted by this angle.  Note that if two points are at the same angle,
+        the ordering is arbitrary and determined by the output of
+        :func:`numpy.argsort`, which using an unstable quicksort algorithm by
+        default.
 
         Args:
             clockwise (bool):
@@ -59,6 +64,11 @@ class Polygon(object):
             ref_index (int):
                 Index indicating which vertex should be placed first in the
                 sorted list (Default value: 0).
+            increasing_length (bool):
+                If two vertices are at the same angle relative to the
+                center, when this flag is True the point closer to the center
+                comes first, otherwise the point further away comes first
+                (Default value: True).
         """
         # Center vertices at the origin.
         verts = self._vertices - self.center
@@ -69,12 +79,16 @@ class Polygon(object):
 
         # Compute the angle of each vertex, shift so that the chosen
         # reference_index has a value of zero, then move into the [0, 2pi]
-        # range.
+        # range. The secondary sorting level is in terms of distance from the
+        # origin.
         angles = np.arctan2(verts[:, 1], verts[:, 0])
         angles = np.mod(angles - angles[ref_index], 2*np.pi)
-        vert_order = np.argsort(angles)
+        distances = np.linalg.norm(verts, axis=1)
+        if not increasing_length:
+            distances *= -1
         if clockwise:
-            vert_order *= -1
+            angles = np.mod(2*np.pi - angles, 2*np.pi)
+        vert_order = np.lexsort((angles, distances))
         self._vertices = self._vertices[vert_order, :]
 
     @property
