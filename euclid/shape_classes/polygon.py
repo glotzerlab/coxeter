@@ -155,8 +155,9 @@ class Polygon(object):
         return np.abs(self.signed_area)
 
     @area.setter
-    def area(self, value):
-        pass
+    def area(self, new_area):
+        scale_factor = np.sqrt(new_area/self.area)
+        self._vertices *= scale_factor
 
     @property
     def planar_moments_inertia(self):
@@ -244,23 +245,3 @@ class Polygon(object):
     @center.setter
     def center(self, value):
         self._vertices += (np.asarray(value) - self.center)
-
-    @property
-    def incircle_radius(self):
-        """Get or set the polyhedron's insphere radius (setting rescales
-        vertices)."""
-        pass
-
-    @incircle_radius.setter
-    def incircle_radius(self, value):
-        pass
-
-    @property
-    def circumcircle_radius(self):
-        """Get or set the polyhedron's circumsphere radius (setting rescales
-        vertices)."""
-        pass
-
-    @circumcircle_radius.setter
-    def circumcircle_radius(self, value):
-        pass

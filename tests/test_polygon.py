@@ -54,6 +54,12 @@ def test_area(square_points):
     assert square.area == 1
 
 
+def test_set_area(square):
+    """Test setting area."""
+    square.area = 2
+    assert np.isclose(square.area, 2)
+
+
 def test_center(square, square_points):
     """Test centering the polygon."""
     assert np.all(square.center == np.mean(square_points, axis=0))
