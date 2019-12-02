@@ -36,13 +36,25 @@ class Polygon(object):
         self._vertices = vertices
         self._normal = normal
 
-    def reorder_verts(self, cw=False, ref_index=0):
-        """Sort the vertices in order with respect to the normal.
+    def reorder_verts(self, clockwise=False, ref_index=0):
+        """Sort the vertices such that the polygon is oriented with respect to
+        the normal.
 
-        The default ordering is counterclockwise.
+        The default ordering is counterclockwise and preserves the vertex in
+        the 0th position. A different ordering may be requested; however,
+        note that clockwise ordering will result in a negative signed area of
+        the polygon.
+
+        Algorithm:
+            The reordering is performed by rotating the polygon onto the
+            :math:`xy` plane, then computing the angles of all vertices. The
+            vertices are then sorted by this angle.  Note that if two points
+            are at the same angle, the ordering is arbitrary and determined by
+            the output of :func:`numpy.argsort`, which using an unstable
+            quicksort algorithm by default.
 
         Args:
-            cw (bool):
+            clockwise (bool):
                 If True, sort in clockwise order (Default value: False).
             ref_index (int):
                 Index indicating which vertex should be placed first in the
@@ -61,7 +73,7 @@ class Polygon(object):
         angles = np.arctan2(verts[:, 1], verts[:, 0])
         angles = np.mod(angles - angles[ref_index], 2*np.pi)
         vert_order = np.argsort(angles)
-        if cw:
+        if clockwise:
             vert_order *= -1
         self._vertices = self._vertices[vert_order, :]
 
