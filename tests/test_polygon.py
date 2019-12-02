@@ -49,3 +49,15 @@ def test_center():
     assert np.all(square.center == np.mean(points, axis=0))
     square.center = [0, 0, 0]
     assert np.all(square.center == [0, 0, 0])
+
+
+def test_moment_inertia():
+    """Test moment of inertia calculation."""
+    points = [[0, 0, 0],
+              [0, 1, 0],
+              [1, 1, 0],
+              [1, 0, 0]]
+    square = Polygon(points)
+    square.center = [0, 0, 0]
+    assert square.planar_moments_inertia == (1/12, 1/12, 0)
+    assert square.polar_moment_inertia == 1/6

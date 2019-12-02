@@ -6,8 +6,6 @@ class Polygon(object):
     def __init__(self, vertices, normal=[0, 0, 1]):
         """A simple (i.e. non-self-overlapping) polygon.
 
-        The polygon is assumed to be of constant unit density.
-
         The polygon may be embedded in 3-dimensions, in which case the normal
         vector determines which way is "up". Note that the precise normal
         vector is not important to the winding number because the winding
@@ -138,13 +136,82 @@ class Polygon(object):
         pass
 
     @property
-    def moment_inertia(self):
-        """The moment of inertia.
+    def planar_moments_inertia(self):
+        R"""Get the planar moments with respect to the x and y axis as well as
+        the product of inertia.
 
-        Compute using the method described in
-        https://www.tandfonline.com/doi/abs/10.1080/2151237X.2006.10129220
+        The `planar moments <https://en.wikipedia.org/wiki/Polar_moment_of_inertia>`_
+        and the
+        `product moment <https://en.wikipedia.org/wiki/Second_moment_of_area#Product_moment_of_area>`_
+        are defined by the formulas:
+
+        .. math::
+            \begin{align}
+                I_x &= {\int \int}_A y^2 dA \\
+                I_y &= {\int \int}_A z^2 dA
+                I_{xy} &= {\int \int}_A xy dA
+            \end{align}
+
+        To compute this for a polygon, we discretize the sum:
+
+        .. math::
+            \begin{align}
+                I_x &= \frac{1}{12} \sum_{i=1}^N (x_i y_{i+1} - x_{i+1} y_i) (y_i^2 + y_i*y_{i+1} + y_{i+1}^2) \\
+                I_y &= \frac{1}{12} \sum_{i=1}^N (x_i y_{i+1} - x_{i+1} y_i) (x_i^2 + x_i*x_{i+1} + x_{i+1}^2) \\
+                I_xy &= \frac{1}{12} \sum_{i=1}^N (x_i y_{i+1} - x_{i+1} y_i) (x_i y_{i+1} + 2 x_i y_i + 2 x_{i+1} y_{i+1} + x_{i+1} y_i) \\
+            \end{align}
+
+        These formulas can be derived as described
+        `here <https://physics.stackexchange.com/questions/493736/moment-of-inertia-for-a-random-polygon>`_.
+
+        Note that the moments are always calculated about an axis perpendicular
+        to the polygon, i.e. the normal vector is aligned with the z axis
+        before the moments are calculated. This alignment should be
+        considered when computing the moments for polygons embedded in
+        three-dimensional space that are rotated out of the :math:`xy` plane,
+        since the planar moments are invariant to this orientation.
+        """  # noqa: E501
+        # Rotate shape so that normal vector coincides with z-axis
+        rotation, _ = rowan.mapping.kabsch(self._normal, [0, 0, 1])
+        verts = np.dot(self._vertices, rotation.T)
+
+        shifted_verts = np.roll(verts, shift=-1, axis=0)
+
+        xi_yip1 = verts[:, 0] * shifted_verts[:, 1]
+        xip1_yi = verts[:, 1] * shifted_verts[:, 0]
+
+        areas = xi_yip1 - xip1_yi
+
+        # These are the terms in the formulas for Ix and Iy, which are computed
+        # simulataneously since they're identical except that they use either
+        # the x or y coordinates.
+        sv_sq = shifted_verts**2
+        verts_sq = verts**2
+        prod = verts * shifted_verts
+
+        # This accounts for the x_i*y_{i+1} and x_{i+1}*y_i terms in Ixy.
+        xi_yi = verts[:, 0] * verts[:, 1]
+        xip1_yip1 = shifted_verts[:, 0] * shifted_verts[:, 1]
+
+        diag_sums = areas[:, np.newaxis]*(verts_sq + prod + sv_sq)
+        Iy, Ix, _ = np.sum(diag_sums, axis=0)/12
+
+        xy_sums = areas*(xi_yip1 + 2*(xi_yi + xip1_yip1) + xip1_yi)
+        Ixy = np.sum(xy_sums)/24
+
+        return Ix, Iy, Ixy
+
+    @property
+    def polar_moment_inertia(self):
+        """The `polar moment of inertia <https://en.wikipedia.org/wiki/Polar_moment_of_inertia>`_.
+
+        The moment is always calculated about an axis perpendicular to the
+        polygon (i.e. the normal vector) placed at the centroid of the polygon.
+
+        The polar moment is computed as the sum of the two planar moments of inertia.
         """
-        pass
+        return np.sum(self.planar_moments_inertia[:2])
+
 
     @property
     def center(self):
