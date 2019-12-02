@@ -57,23 +57,16 @@ class ConvexSpheropolygon(object):
         """
         poly_area = self.polygon.signed_area
 
-        if poly_area < 0:
-            return poly_area - self._sphero_area
-        else:
-            return poly_area + self._sphero_area
-
-    @property
-    def _sphero_area(self):
-        """The area added to the core polygon area by the rounding radius.
-
-        The area is computed as the sum of area added to the edges and the area
-        of the circular caps.
-        """
         drs = self.polygon.vertices - np.roll(self.polygon.vertices,
                                               shift=-1, axis=0)
         edge_area = np.sum(np.linalg.norm(drs, axis=1)) * self.radius
         cap_area = np.pi * self.radius * self.radius
-        return edge_area + cap_area
+        sphero_area = edge_area + cap_area
+
+        if poly_area < 0:
+            return poly_area - sphero_area
+        else:
+            return poly_area + sphero_area
 
     @property
     def area(self):
