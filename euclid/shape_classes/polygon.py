@@ -1,4 +1,5 @@
 import numpy as np
+import rowan
 
 
 class Polygon(object):
@@ -47,7 +48,22 @@ class Polygon(object):
                 Index indicating which vertex should be placed first in the
                 sorted list (Default value: 0).
         """
-        pass
+        # Center vertices at the origin.
+        verts = self._vertices - self.center
+
+        # Rotate shape so that normal vector coincides with z-axis
+        rotation, _ = rowan.mapping.kabsch(self._normal, [0, 0, 1])
+        verts = np.dot(verts, rotation.T)
+
+        # Compute the angle of each vertex, shift so that the chosen
+        # reference_index has a value of zero, then move into the [0, 2pi]
+        # range.
+        angles = np.arctan2(verts[:, 1], verts[:, 0])
+        angles = np.mod(angles - angles[ref_index], 2*np.pi)
+        vert_order = np.argsort(angles)
+        if cw:
+            vert_order *= -1
+        self._vertices = self._vertices[vert_order, :]
 
     @property
     def vertices(self):
