@@ -3,7 +3,7 @@ import rowan
 
 
 class Polygon(object):
-    def __init__(self, vertices, normal=[0, 0, 1]):
+    def __init__(self, vertices, normal=None):
         """A simple (i.e. non-self-overlapping) polygon.
 
         The polygon may be embedded in 3-dimensions, in which case the normal
@@ -13,26 +13,45 @@ class Polygon(object):
         each component of the normal vector.
 
         Args:
-            vertices (:math:`(N, 3)` :class:`numpy.ndarray`):
+            vertices (:math:`(N, 3)` or :math:`(N, 2)` :class:`numpy.ndarray`):
                 The vertices of the polygon.
-            normal (list):
-                #Whether the normal vector is in the positive direction in each
-                #direction. Need to specify in all directions because the
-                #polygon could be on any of the xy, xz, and yz planes, in which
-                #case the orientation is degenerate with respect to that plane
-                #(Default value: [True, True, True]).
+            normal (sequence of length 3 or None):
+                The normal vector to the polygon. If :code:`None`, the normal
+                is computed by taking the cross product of the vectors formed
+                by the first three vertices :code:`np.cross(vertices[2, :] -
+                vertices[1, :], vertices[0, :] - vertices[1, :])`. Since this
+                arbitrary choice may not preserve the orientation of the
+                provided vertices, users may provide a normal instead
+                (Default value: None).
 
         """
-        vertices = np.asarray(vertices, dtype=np.float64)
-        if len(vertices.shape) != 2 or vertices.shape[1] != 3:
+        # Vertices are always copied to avoid unexpected changes to user data.
+        vertices = np.array(vertices, dtype=np.float64)
+        if len(vertices.shape) != 2 or vertices.shape[1] not in (2, 3):
             raise ValueError(
-                "Vertices must be specified as an Nx3 array.")
+                "Vertices must be specified as an Nx2 or Nx3 array.")
 
         if len(vertices) < 3:
             raise ValueError(
                 "A polygon must be composed of at least 3 vertices.")
-        self._vertices = vertices
-        self._normal = normal
+
+        # For convenience, we support providing vertices without z components,
+        # but the stored vertices are always Nx3.
+        if vertices.shape[1] == 2:
+            self._vertices = np.hstack((vertices,
+                                        np.zeros((vertices.shape[0], 1))))
+        else:
+            self._vertices = vertices
+
+        computed_normal = np.cross(vertices[2, :] - vertices[1, :],
+                                   vertices[0, :] - vertices[1, :])
+        if normal is None:
+            self._normal = computed_normal
+        else:
+            if not np.isclose(np.abs(np.dot(computed_normal, normal)), 1):
+                raise ValueError("The provided normal vector is not "
+                                 "orthogonal to the polygon.")
+            self._normal = np.asarray(normal, dtype=np.float64)
 
         # The polygon must be oriented in order for the area calculation to
         # work, so we always sort on construction. Users can alter the sorting
@@ -71,8 +90,12 @@ class Polygon(object):
         # Center vertices at the origin.
         verts = self._vertices - self.center
 
-        # Rotate shape so that normal vector coincides with z-axis
-        rotation, _ = rowan.mapping.kabsch(self._normal, [0, 0, 1])
+        # Rotate shape so that normal vector coincides with z-axis. Since we
+        # are considering just a single vector, to avoid getting a pure
+        # translation we need to consider mapping both the vector and its
+        # opposite (which defines an oriented coordinate system).
+        rotation, _ = rowan.mapping.kabsch([self._normal, -self._normal],
+                                           [[0, 0, 1], [0, 0, -1]])
         verts = np.dot(verts, rotation.T)
 
         # Compute the angle of each vertex, shift so that the chosen
@@ -193,11 +216,12 @@ class Polygon(object):
         xi_yi = verts[:, 0] * verts[:, 1]
         xip1_yip1 = shifted_verts[:, 0] * shifted_verts[:, 1]
 
+        # Need to take absolute values in case vertices are ordered clockwise.
         diag_sums = areas[:, np.newaxis]*(verts_sq + prod + sv_sq)
-        Iy, Ix, _ = np.sum(diag_sums, axis=0)/12
+        Iy, Ix, _ = np.abs(np.sum(diag_sums, axis=0)/12)
 
         xy_sums = areas*(xi_yip1 + 2*(xi_yi + xip1_yip1) + xip1_yi)
-        Ixy = np.sum(xy_sums)/24
+        Ixy = np.abs(np.sum(xy_sums)/24)
 
         return Ix, Iy, Ixy
 
@@ -209,9 +233,8 @@ class Polygon(object):
         polygon (i.e. the normal vector) placed at the centroid of the polygon.
 
         The polar moment is computed as the sum of the two planar moments of inertia.
-        """
+        """  # noqa: E501
         return np.sum(self.planar_moments_inertia[:2])
-
 
     @property
     def center(self):
