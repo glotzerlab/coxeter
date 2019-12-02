@@ -30,4 +30,10 @@ def test_area():
     # Shift to ensure that the negative areas are subtracted as needed.
     points = np.asarray(points) + 2
     square = Polygon(points)
+    assert square.signed_area == 1
+    assert square.area == 1
+
+    # Ensure that area is signed.
+    square.reorder_verts(True)
+    assert square.signed_area == -1
     assert square.area == 1

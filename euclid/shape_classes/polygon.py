@@ -97,8 +97,8 @@ class Polygon(object):
         return self._vertices
 
     @property
-    def area(self):
-        """Get or set the polygon's area (setting rescales vertices).
+    def signed_area(self):
+        """Get the polygon's area.
 
         To support polygons embedded in 3 dimensional space, we employ a
         projection- and rescaling-based algorithm described
@@ -123,6 +123,15 @@ class Polygon(object):
         ) * (an/(2*self._normal[proj_coord]))
 
         return area
+
+    @property
+    def area(self):
+        """Get or set the polygon's area (setting rescales vertices).
+
+        To get the area, we simply compute the signed area and take the
+        absolute value.
+        """
+        return np.abs(self.signed_area)
 
     @area.setter
     def area(self, value):
