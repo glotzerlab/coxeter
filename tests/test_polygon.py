@@ -27,5 +27,7 @@ def test_area():
               [0, 1, 0],
               [1, 1, 0],
               [1, 0, 0]]
+    # Shift to ensure that the negative areas are subtracted as needed.
+    points = np.asarray(points) + 2
     square = Polygon(points)
     assert square.area == 1

@@ -107,59 +107,20 @@ class Polygon(object):
         of the projected polygon is computed, then the area is rescaled by the
         component of the normal in the projected dimension.
         """
-        # Choose the dimension to project out based on the smallest component
-        # of the normal vector.
+        # Choose the dimension to project out based on the largest magnitude
+        # component of the normal vector.
         abs_norm = np.abs(self._normal)
-        # Should be able to replace the below logic with
-        # coord = np.argmax(abs_norm)
-        coord = 2
-        if abs_norm[0] > abs_norm[1]:
-            if abs_norm[0] > abs_norm[2]:
-                coord = 0
-        elif abs_norm[1] > abs_norm[2]:
-            coord = 1
-
+        proj_coord = np.argmax(abs_norm)
         an = np.linalg.norm(abs_norm)
 
-        area = 0
-        i = 1
-        j = 2
-        k = 0
+        coord1 = np.mod(proj_coord + 1, 3)
+        coord2 = np.mod(proj_coord + 2, 3)
 
-        num_verts = len(self.vertices)
-        if coord == 0:
-            while i < num_verts:
-                area += (self.vertices[i][1] * (
-                    self.vertices[np.mod(j, num_verts)][2] -
-                    self.vertices[k][2]))
-                i += 1
-                j += 1
-                k += 1
-            area += (self.vertices[0][1] * (self.vertices[1][2] -
-                                            self.vertices[-1][2]))
-            area *= (an/(2*self._normal[0]))
-        elif coord == 1:
-            while i < len(self.vertices):
-                area += (self.vertices[i][2] * (
-                    self.vertices[np.mod(j, num_verts)][0] -
-                    self.vertices[k][0]))
-                i += 1
-                j += 1
-                k += 1
-            area += (self.vertices[0][2] * (self.vertices[1][0] -
-                                            self.vertices[-1][0]))
-            area *= (an/(2*self._normal[1]))
-        elif coord == 2:
-            while i < len(self.vertices):
-                area += (self.vertices[i][0] * (
-                    self.vertices[np.mod(j, num_verts)][1] -
-                    self.vertices[k][1]))
-                i += 1
-                j += 1
-                k += 1
-            area += (self.vertices[0][0] * (self.vertices[1][1] -
-                                            self.vertices[-1][1]))
-            area *= (an/(2*self._normal[2]))
+        area = np.sum(
+            np.roll(self.vertices, shift=-1, axis=0)[:, coord1] * (
+                np.roll(self.vertices, shift=-2, axis=0)[:, coord2] -
+                self.vertices[:, coord2])
+        ) * (an/(2*self._normal[proj_coord]))
 
         return area
 
