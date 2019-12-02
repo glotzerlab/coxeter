@@ -72,3 +72,10 @@ def test_moment_inertia(square):
     square.center = [0, 0, 0]
     assert np.allclose(square.planar_moments_inertia, (1/12, 1/12, 0))
     assert np.isclose(square.polar_moment_inertia, 1/6)
+
+def test_nonplanar(square_points):
+    """Ensure that nonplanar vertices raise an error."""
+
+    with pytest.raises(ValueError):
+        square_points[0, 2] += 1
+        square = Polygon(square_points)

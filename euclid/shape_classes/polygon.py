@@ -6,11 +6,13 @@ class Polygon(object):
     def __init__(self, vertices, normal=None):
         """A simple (i.e. non-self-overlapping) polygon.
 
-        The polygon may be embedded in 3-dimensions, in which case the normal
-        vector determines which way is "up". Note that the precise normal
-        vector is not important to the winding number because the winding
-        number is invariant to projection, all we need to know is the sign of
-        each component of the normal vector.
+        The polygon is embedded in 3-dimensions, so the normal
+        vector determines which way is "up".
+
+        .. note::
+            This class is designed for polygons without self-intersections, so
+            the internal sorting will automatically result in such
+            intersections being removed.
 
         Args:
             vertices (:math:`(N, 3)` or :math:`(N, 2)` :class:`numpy.ndarray`):
@@ -19,11 +21,13 @@ class Polygon(object):
                 The normal vector to the polygon. If :code:`None`, the normal
                 is computed by taking the cross product of the vectors formed
                 by the first three vertices :code:`np.cross(vertices[2, :] -
-                vertices[1, :], vertices[0, :] - vertices[1, :])`. Since this
-                arbitrary choice may not preserve the orientation of the
-                provided vertices, users may provide a normal instead
+                vertices[1, :], vertices[0, :] - vertices[1, :])`. This choice
+                is made so that if the provided vertices are in the :math:`xy`
+                plane and are specified in counterclockwise order, the
+                resulting normal is the :math:`z` axis. Since this arbitrary
+                choice may not preserve the orientation of the provided
+                vertices, users may provide a normal instead
                 (Default value: None).
-
         """
         # Vertices are always copied to avoid unexpected changes to user data.
         vertices = np.array(vertices, dtype=np.float64)
@@ -52,6 +56,11 @@ class Polygon(object):
                 raise ValueError("The provided normal vector is not "
                                  "orthogonal to the polygon.")
             self._normal = np.asarray(normal, dtype=np.float64)
+
+        d = self._normal.dot(vertices[0, :])
+        for v in self.vertices:
+            if self._normal.dot(v) - d != 0:
+                raise ValueError("Not all vertices are coplanar.")
 
         # The polygon must be oriented in order for the area calculation to
         # work, so we always sort on construction. Users can alter the sorting
@@ -194,8 +203,8 @@ class Polygon(object):
         `here <https://physics.stackexchange.com/questions/493736/moment-of-inertia-for-a-random-polygon>`_.
 
         Note that the moments are always calculated about an axis perpendicular
-        to the polygon, i.e. the normal vector is aligned with the z axis
-        before the moments are calculated. This alignment should be
+        to the polygon, i.e. the normal vector is aligned with the :math:`z`
+        axis before the moments are calculated. This alignment should be
         considered when computing the moments for polygons embedded in
         three-dimensional space that are rotated out of the :math:`xy` plane,
         since the planar moments are invariant to this orientation.
