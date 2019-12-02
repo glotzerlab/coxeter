@@ -1,3 +1,6 @@
+import numpy as np
+
+
 class Polygon(object):
     def __init__(self, vertices, normal=[0, 0, 1]):
         """A simple (i.e. non-self-overlapping) polygon.
@@ -21,7 +24,16 @@ class Polygon(object):
                 #(Default value: [True, True, True]).
 
         """
-        pass
+        vertices = np.asarray(vertices)
+        if len(vertices.shape) != 2 or vertices.shape[1] != 3:
+            raise ValueError(
+                "Vertices must be specified as an Nx3 array.")
+
+        if len(vertices) < 3:
+            raise ValueError(
+                "A polygon must be composed of at least 3 vertices.")
+        self._vertices = vertices
+        self._normal = normal
 
     def reorder_verts(self, cw=False, ref_index=0):
         """Sort the vertices in order with respect to the normal.
@@ -40,7 +52,7 @@ class Polygon(object):
     @property
     def vertices(self):
         """Get the vertices of the polyhedron."""
-        pass
+        return self._vertices
 
     @property
     def area(self):
@@ -63,11 +75,11 @@ class Polygon(object):
     @property
     def center(self):
         """Get or set the polyhedron's centroid (setting rescales vertices)."""
-        pass
+        return np.mean(self.vertices, axis=0)
 
     @center.setter
     def center(self, value):
-        pass
+        self.vertices += (np.asarray(value) - self.center)
 
     @property
     def incircle_radius(self):
