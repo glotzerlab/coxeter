@@ -113,6 +113,11 @@ class Polygon(object):
         self._vertices = self._vertices[vert_order, :]
 
     @property
+    def normal(self):
+        """The normal vector."""
+        return self._normal
+
+    @property
     def vertices(self):
         """Get the vertices of the polyhedron."""
         return self._vertices
