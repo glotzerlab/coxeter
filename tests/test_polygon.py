@@ -3,11 +3,13 @@ import numpy as np
 import numpy.testing as npt
 from euclid.shape_classes.polygon import Polygon
 from scipy.spatial import ConvexHull
-from hypothesis import given, assume, example
+from hypothesis import given, example
 from hypothesis.strategies import floats
 from hypothesis.extra.numpy import arrays
 
 
+# Need to declare this outside the fixture so that it can be used in multiple
+# fixtures (pytest does not allow fixtures to be called).
 def get_square_points():
     return np.asarray([[0, 0, 0],
                        [0, 1, 0],
@@ -25,16 +27,15 @@ def square():
     return Polygon(get_square_points())
 
 
+@pytest.fixture
+def ones():
+    return np.ones((4, 2))
+
+
 def test_2d_verts(square_points):
     """Try creating object with 2D vertices."""
     square_points = square_points[:, :2]
     Polygon(square_points)
-
-
-
-@pytest.fixture
-def ones():
-    return np.ones((4, 2))
 
 
 def test_duplicate_points(square_points):
@@ -115,9 +116,22 @@ def test_moment_inertia(square):
     assert np.allclose(square.planar_moments_inertia, (1/12, 1/12, 0))
     assert np.isclose(square.polar_moment_inertia, 1/6)
 
+
 def test_nonplanar(square_points):
     """Ensure that nonplanar vertices raise an error."""
-
     with pytest.raises(ValueError):
         square_points[0, 2] += 1
-        square = Polygon(square_points)
+        Polygon(square_points)
+
+
+@given(arrays(np.float64, (4, 2), floats(-5, 5, width=64), unique=True))
+@example(np.array([[1.        , 1.        ],
+                   [1.        , 1.00041707],
+                   [2.78722762, 1.        ],
+                   [2.72755193, 1.32128906]]))
+def test_convex_area(points):
+    """Check the areas of various convex sets."""
+    hull = ConvexHull(points)
+    verts = points[hull.vertices]
+    poly = Polygon(verts)
+    assert np.isclose(hull.volume, poly.area)
