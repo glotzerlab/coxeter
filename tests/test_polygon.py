@@ -52,19 +52,6 @@ def test_identical_points(ones):
         Polygon(ones)
 
 
-@given(arrays(np.float64, (4, 2), floats(1, 5, width=64), unique=True))
-@example(np.array([[1, 1],
-                   [1, 1.00041707],
-                   [2.78722762, 1],
-                   [2.72755193, 1.32128906]]))
-def test_reordering_convex(points):
-    """Test that vertices can be reordered appropriately."""
-    hull = ConvexHull(points)
-    verts = points[hull.vertices]
-    poly = Polygon(verts)
-    assert np.all(poly.vertices[:, :2] == verts)
-
-
 def test_reordering(square_points, square):
     """Test that vertices can be reordered appropriately."""
     npt.assert_equal(square.vertices, square_points)
@@ -125,6 +112,19 @@ def test_nonplanar(square_points):
         Polygon(square_points)
 
 
+@given(arrays(np.float64, (4, 2), floats(1, 5, width=64), unique=True))
+@example(np.array([[1, 1],
+                   [1, 1.00041707],
+                   [2.78722762, 1],
+                   [2.72755193, 1.32128906]]))
+def test_reordering_convex(points):
+    """Test that vertices can be reordered appropriately."""
+    hull = ConvexHull(points)
+    verts = points[hull.vertices]
+    poly = Polygon(verts)
+    assert np.all(poly.vertices[:, :2] == verts)
+
+
 @given(arrays(np.float64, (4, 2), floats(-5, 5, width=64), unique=True))
 @example(np.array([[1, 1],
                    [1, 1.00041707],
@@ -149,3 +149,14 @@ def test_convex_signed_area(random_quat, square_points):
 
     poly.reorder_verts(clockwise=True)
     assert np.isclose(poly.signed_area, -1)
+
+
+@given(arrays(np.float64, (4, 2), floats(-5, 5, width=64), unique=True))
+def test_set_convex_area(points):
+    """Test setting area of arbitrary convex sets."""
+    hull = ConvexHull(points)
+    verts = points[hull.vertices]
+    poly = Polygon(verts)
+    original_area = poly.area
+    poly.area *= 2
+    assert np.isclose(poly.area, 2*original_area)
