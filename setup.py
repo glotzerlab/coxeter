@@ -1,5 +1,14 @@
 from setuptools import setup
 
+test_deps = [
+    'pytest',
+    'hypothesis[numpy]',
+]
+
+extras = {
+    'test': test_deps,
+}
+
 setup(
     name='euclid',
     version='0.1',
@@ -13,8 +22,6 @@ setup(
         'rowan>=1.2',
         'scipy'
     ],
-    tests_require=[
-        'pytest',
-        'hypothesis[numpy]',
-    ],
+    tests_require=test_deps,
+    extras_require=extras,
     zip_safe=False)
