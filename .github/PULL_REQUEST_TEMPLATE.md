@@ -22,4 +22,4 @@
 - [ ] I am familiar with the [**Contributing Guidelines**](https://github.com/glotzerlab/euclid/blob/master/CONTRIBUTING.md).
 - [ ] I agree with the terms of the [**Contributor Agreement**](https://github.com/glotzerlab/euclid/blob/master/ContributorAgreement.md).
 - [ ] The changes introduced by this pull request are covered by existing or newly introduced tests.
-- [ ] I have updated the [changelog](https://github.com/glotzerlab/euclid/blob/master/ChangeLog.txt).
+- [ ] I have updated the [changelog](https://github.com/glotzerlab/euclid/blob/master/ChangeLog.txt) and the [credits](https://github.com/glotzerlab/euclid/blob/master/doc/source/credits.rst).
