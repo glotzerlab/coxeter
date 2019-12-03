@@ -9,6 +9,7 @@ and this project adheres to
 ### Added
 
 * Continuous integrated testing on CircleCI.
+* New Polygon class with property-based API.
 
 ### Changed
 

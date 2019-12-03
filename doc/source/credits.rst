@@ -48,6 +48,7 @@ Vyas Ramasubramani
 * Formalized contribution guidelines and contributor agreement.
 * Cleaned up damasceno module and separated out shape information into a JSON file that is read on demand.
 * Fixed code formatting to conform to PEP8 requirements.
+* Implemented core Polygon class.
 
 Carl Simon Adorf
 
