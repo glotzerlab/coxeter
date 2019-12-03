@@ -54,16 +54,17 @@ class Polygon(object):
         computed_normal = np.cross(self.vertices[2, :] - self.vertices[1, :],
                                    self.vertices[0, :] - self.vertices[1, :])
         if normal is None:
-            self._normal = computed_normal
+            self._normal = computed_normal/np.linalg.norm(computed_normal)
         else:
             if not np.isclose(np.abs(np.dot(computed_normal, normal)), 1):
                 raise ValueError("The provided normal vector is not "
                                  "orthogonal to the polygon.")
             self._normal = np.asarray(normal, dtype=np.float64)
+            self._normal /= np.linalg.norm(self._normal)
 
         d = self._normal.dot(self.vertices[0, :])
         for v in self.vertices:
-            if self._normal.dot(v) - d != 0:
+            if not np.isclose(self._normal.dot(v) - d, 0):
                 raise ValueError("Not all vertices are coplanar.")
 
         # The polygon must be oriented in order for the area calculation to
