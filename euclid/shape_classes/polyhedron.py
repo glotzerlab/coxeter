@@ -1,10 +1,7 @@
 from scipy.spatial import ConvexHull
 import numpy as np
 
-"""
-Notes:
-    *. Need to make sure that vertices are not all planar.
-"""
+
 class Polyhedron(object):
     def __init__(self, vertices, facets=None):
         """A general polyhedron.
@@ -23,7 +20,6 @@ class Polyhedron(object):
         else:
             self._facets = facets
 
-
     def merge_facets(self, tolerance=1e-6):
         """Merge facets of a polyhedron.
 
@@ -32,6 +28,7 @@ class Polyhedron(object):
         tolerance (we may need to provide two such parameters depending on how
         we perform the merge), so we need to expose this method to allow the
         user to redo the merge with a different tolerance."""
+        pass
 
     @property
     def vertices(self):
@@ -46,9 +43,11 @@ class Polyhedron(object):
     @property
     def volume(self):
         """Get or set the polyhedron's volume (setting rescales vertices)."""
+        pass
 
     @volume.setter
     def volume(self, value):
+        pass
 
     def get_facet_area(self, facets=None):
         """Get the total surface area of a set of facets.
@@ -71,7 +70,7 @@ class Polyhedron(object):
     @property
     def surface_area(self):
         """The surface area."""
-        return np.sum(get_facet_area(None))
+        pass
 
     @property
     def inertia_tensor(self):
@@ -98,8 +97,8 @@ class Polyhedron(object):
             def compute(f):
                 return f(simplices[:, 0, :]) + f(simplices[:, 1, :]) + \
                     f(simplices[:, 2, :]) + f(simplices[:, 0, :] +
-                                                simplices[:, 1, :] +
-                                                simplices[:, 2, :])
+                                              simplices[:, 1, :] +
+                                              simplices[:, 2, :])
 
             Ixx = (compute(fxx)*volumes/20).sum()
             Ixy = (compute(fxy)*volumes/20).sum()
@@ -108,7 +107,7 @@ class Polyhedron(object):
             Iyz = (compute(fyz)*volumes/20).sum()
             Izz = (compute(fzz)*volumes/20).sum()
 
-            self._inertia_tensor= np.array([[Ixx, Ixy, Ixz],
+            self._inertia_tensor = np.array([[Ixx, Ixy, Ixz],
                                             [Ixy,   Iyy, Iyz],
                                             [Ixz,   Iyz,   Izz]])
 
@@ -127,8 +126,9 @@ class Polyhedron(object):
     def insphere_radius(self):
         """Get or set the polyhedron's insphere radius (setting rescales
         vertices)."""
+        pass
 
-    @insphere_radius.setter:
+    @insphere_radius.setter
     def insphere_radius(self, value):
         pass
 
@@ -136,6 +136,7 @@ class Polyhedron(object):
     def circumsphere_radius(self):
         """Get or set the polyhedron's circumsphere radius (setting rescales
         vertices)."""
+        pass
 
     @circumsphere_radius.setter
     def circumsphere_radius(self, value):
@@ -144,22 +145,27 @@ class Polyhedron(object):
     @property
     def asphericity(self):
         """The asphericity."""
+        pass
 
     @property
     def iq(self):
         """The isoperimetric quotient."""
+        pass
 
     @property
     def tau(self):
         """The sphericity measure defined in
         https://www.sciencedirect.com/science/article/pii/0378381284800199."""
+        pass
 
     @property
     def facet_neighbors(self):
         """An Nx2 NumPy array containing indices of pairs of neighboring
         facets."""
+        pass
 
     @property
     def vertex_neighbors(self):
         """An Nx2 NumPy array containing indices of pairs of neighboring
         vertex."""
+        pass
