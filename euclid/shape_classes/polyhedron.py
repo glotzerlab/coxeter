@@ -1,6 +1,10 @@
 from scipy.spatial import ConvexHull
 import numpy as np
 
+"""
+Notes:
+    *. Need to make sure that vertices are not all planar.
+"""
 class Polyhedron(object):
     def __init__(self, vertices, facets=None):
         """A general polyhedron.
@@ -67,15 +71,48 @@ class Polyhedron(object):
     @property
     def surface_area(self):
         """The surface area."""
-        return get_facet_area(None)
+        return np.sum(get_facet_area(None))
 
     @property
-    def moment_inertia(self):
-        """The moment of inertia.
+    def inertia_tensor(self):
+        """The inertia tensor.
 
-        Compute using the method described in
+        Computed using the method described in
         https://www.tandfonline.com/doi/abs/10.1080/2151237X.2006.10129220
         """
+        try:
+            return self._inertia_tensor
+        except AttributeError:
+            centered_vertices = self.vertices - self.center
+            simplices = centered_vertices[self.faces]
+
+            volumes = np.abs(np.linalg.det(simplices)/6)
+
+            fxx = lambda triangles: triangles[:, 1]**2 + triangles[:, 2]**2
+            fxy = lambda triangles: -triangles[:, 0]*triangles[:, 1]
+            fxz = lambda triangles: -triangles[:, 0]*triangles[:, 2]
+            fyy = lambda triangles: triangles[:, 0]**2 + triangles[:, 2]**2
+            fyz = lambda triangles: -triangles[:, 1]*triangles[:, 2]
+            fzz = lambda triangles: triangles[:, 0]**2 + triangles[:, 1]**2
+
+            def compute(f):
+                return f(simplices[:, 0, :]) + f(simplices[:, 1, :]) + \
+                    f(simplices[:, 2, :]) + f(simplices[:, 0, :] +
+                                                simplices[:, 1, :] +
+                                                simplices[:, 2, :])
+
+            Ixx = (compute(fxx)*volumes/20).sum()
+            Ixy = (compute(fxy)*volumes/20).sum()
+            Ixz = (compute(fxz)*volumes/20).sum()
+            Iyy = (compute(fyy)*volumes/20).sum()
+            Iyz = (compute(fyz)*volumes/20).sum()
+            Izz = (compute(fzz)*volumes/20).sum()
+
+            self._inertia_tensor= np.array([[Ixx, Ixy, Ixz],
+                                            [Ixy,   Iyy, Iyz],
+                                            [Ixz,   Iyz,   Izz]])
+
+            return self._inertia_tensor
 
     @property
     def center(self):
@@ -91,7 +128,8 @@ class Polyhedron(object):
         """Get or set the polyhedron's insphere radius (setting rescales
         vertices)."""
 
-    @insphere_radius.setter(self, value):
+    @insphere_radius.setter:
+    def insphere_radius(self, value):
         pass
 
     @property
@@ -99,7 +137,8 @@ class Polyhedron(object):
         """Get or set the polyhedron's circumsphere radius (setting rescales
         vertices)."""
 
-    @circumsphere_radius.setter(self, value):
+    @circumsphere_radius.setter
+    def circumsphere_radius(self, value):
         pass
 
     @property
