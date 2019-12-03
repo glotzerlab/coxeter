@@ -2,6 +2,10 @@ import pytest
 import numpy as np
 import numpy.testing as npt
 from euclid.shape_classes.polygon import Polygon
+from scipy.spatial import ConvexHull
+from hypothesis import given, assume, example
+from hypothesis.strategies import floats
+from hypothesis.extra.numpy import arrays
 
 
 def get_square_points():
@@ -44,6 +48,19 @@ def test_identical_points(ones):
     """Ensure that running with identical points produces an error."""
     with pytest.raises(ValueError):
         Polygon(ones)
+
+
+@given(arrays(np.float64, (4, 2), floats(1, 5, width=64), unique=True))
+@example(np.array([[1.        , 1.        ],
+                   [1.        , 1.00041707],
+                   [2.78722762, 1.        ],
+                   [2.72755193, 1.32128906]]))
+def test_reordering_convex(points):
+    """Test that vertices can be reordered appropriately."""
+    hull = ConvexHull(points)
+    verts = points[hull.vertices]
+    poly = Polygon(verts)
+    assert np.all(poly.vertices[:, :2] == verts)
 
 
 def test_reordering(square_points, square):

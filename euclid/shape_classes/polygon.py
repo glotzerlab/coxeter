@@ -122,7 +122,7 @@ class Polygon(object):
             distances *= -1
         if clockwise:
             angles = np.mod(2*np.pi - angles, 2*np.pi)
-        vert_order = np.lexsort((angles, distances))
+        vert_order = np.lexsort((distances, angles))
         self._vertices = self._vertices[vert_order, :]
 
     @property
