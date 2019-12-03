@@ -21,6 +21,31 @@ def square():
     return Polygon(get_square_points())
 
 
+def test_2d_verts(square_points):
+    """Try creating object with 2D vertices."""
+    square_points = square_points[:, :2]
+    Polygon(square_points)
+
+
+
+@pytest.fixture
+def ones():
+    return np.ones((4, 2))
+
+
+def test_duplicate_points(square_points):
+    """Ensure that running with any duplicate points produces a warning."""
+    square_points = np.vstack((square_points, square_points[[0]]))
+    with pytest.raises(ValueError):
+        Polygon(square_points)
+
+
+def test_identical_points(ones):
+    """Ensure that running with identical points produces an error."""
+    with pytest.raises(ValueError):
+        Polygon(ones)
+
+
 def test_reordering(square_points, square):
     """Test that vertices can be reordered appropriately."""
     npt.assert_equal(square.vertices, square_points)

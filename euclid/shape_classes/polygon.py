@@ -29,8 +29,12 @@ class Polygon(object):
                 vertices, users may provide a normal instead
                 (Default value: None).
         """
-        # Vertices are always copied to avoid unexpected changes to user data.
         vertices = np.array(vertices, dtype=np.float64)
+        _, indices = np.unique(vertices, axis=0, return_index=True)
+        if len(indices) != vertices.shape[0]:
+            raise ValueError("Found duplicate vertices.")
+
+        vertices = vertices[np.sort(indices), :]
         if len(vertices.shape) != 2 or vertices.shape[1] not in (2, 3):
             raise ValueError(
                 "Vertices must be specified as an Nx2 or Nx3 array.")
