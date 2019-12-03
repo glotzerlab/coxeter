@@ -13,4 +13,8 @@ setup(
         'rowan>=1.2',
         'scipy'
     ],
+    tests_require=[
+        'pytest',
+        'hypothesis[numpy]',
+    ],
     zip_safe=False)
