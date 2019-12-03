@@ -1,5 +1,6 @@
 from scipy.spatial import ConvexHull
 import numpy as np
+from .polygon import Polygon
 
 
 class Polyhedron(object):
@@ -38,7 +39,7 @@ class Polyhedron(object):
     @property
     def facets(self):
         """Get the polyhedron's facets."""
-        self._facets
+        return self._facets
 
     @property
     def volume(self):
@@ -64,13 +65,18 @@ class Polyhedron(object):
         if facets is None:
             facets = range(len(self.facets))
 
+        areas = []
         for facet_index in facets:
             facet = self.facets[facet_index]
+            poly = Polygon(self.vertices[facet])
+            areas.append(poly.area)
+
+        return areas
 
     @property
     def surface_area(self):
         """The surface area."""
-        pass
+        return np.sum(self.get_facet_area())
 
     @property
     def inertia_tensor(self):
@@ -87,12 +93,12 @@ class Polyhedron(object):
 
             volumes = np.abs(np.linalg.det(simplices)/6)
 
-            fxx = lambda triangles: triangles[:, 1]**2 + triangles[:, 2]**2
-            fxy = lambda triangles: -triangles[:, 0]*triangles[:, 1]
-            fxz = lambda triangles: -triangles[:, 0]*triangles[:, 2]
-            fyy = lambda triangles: triangles[:, 0]**2 + triangles[:, 2]**2
-            fyz = lambda triangles: -triangles[:, 1]*triangles[:, 2]
-            fzz = lambda triangles: triangles[:, 0]**2 + triangles[:, 1]**2
+            fxx = lambda triangles: triangles[:, 1]**2 + triangles[:, 2]**2 # noqa
+            fxy = lambda triangles: -triangles[:, 0]*triangles[:, 1] # noqa
+            fxz = lambda triangles: -triangles[:, 0]*triangles[:, 2] # noqa
+            fyy = lambda triangles: triangles[:, 0]**2 + triangles[:, 2]**2 # noqa
+            fyz = lambda triangles: -triangles[:, 1]*triangles[:, 2] # noqa
+            fzz = lambda triangles: triangles[:, 0]**2 + triangles[:, 1]**2 # noqa
 
             def compute(f):
                 return f(simplices[:, 0, :]) + f(simplices[:, 1, :]) + \
