@@ -40,7 +40,7 @@ class ConvexSpheropolygon(object):
         if radius < 0:
             raise ValueError("The radius must be positive.")
         self.polygon = Polygon(vertices, normal)
-        _check_convex(vertices)
+        _check_convex(self.vertices)
         self._radius = radius
 
     def reorder_verts(self, clockwise=False, ref_index=0,
@@ -66,6 +66,11 @@ class ConvexSpheropolygon(object):
         self.polygon.reorder_verts(clockwise, ref_index, increasing_length)
 
     @property
+    def vertices(self):
+        """Get the vertices of the spheropolygon."""
+        return self.polygon.vertices
+
+    @property
     def radius(self):
         """The rounding radius."""
         return self._radius
@@ -79,8 +84,8 @@ class ConvexSpheropolygon(object):
         """
         poly_area = self.polygon.signed_area
 
-        drs = self.polygon.vertices - np.roll(self.polygon.vertices,
-                                              shift=-1, axis=0)
+        drs = self.vertices - np.roll(self.vertices,
+                                      shift=-1, axis=0)
         edge_area = np.sum(np.linalg.norm(drs, axis=1)) * self.radius
         cap_area = np.pi * self.radius * self.radius
         sphero_area = edge_area + cap_area
