@@ -4,7 +4,7 @@ from .polygon import Polygon
 
 
 class Polyhedron(object):
-    def __init__(self, vertices, facets=None):
+    def __init__(self, vertices, facets=None, normals=None):
         """A general polyhedron.
 
         If only vertices are passed in, the result is a convex polyhedron
@@ -14,12 +14,33 @@ class Polyhedron(object):
         The polyhedron is assumed to be of unit mass and constant density.
 
         """
-        self._vertices = vertices
+        self._vertices = np.array(vertices, dtype=np.float64)
         if facets is None:
             hull = ConvexHull(vertices)
             self._facets = [facet for facet in hull.simplices]
         else:
+            # TODO: Add some sanity checks here.
             self._facets = facets
+
+        self._normals = normals
+
+        # For now, we're assuming convexity in determining the normal. Will
+        # need to relax this eventually with a ray-based algorithm. Note that
+        # we could use a cross product to compute the normal, but we have no
+        # way to determine the directionality with that approach.
+        # TODO: Stop assuming convexity.
+        # self._equations = np.empty((len(self.facets), 4))
+        # print("facet Shape: ", len(self.facets))
+        # print("Shape: ", self._equations.shape)
+        # for i, facet in enumerate(self.facets):
+            # # v0 = self.vertices[facet[0]]
+            # # v1 = self.vertices[facet[1]]
+            # # v2 = self.vertices[facet[2]]
+            # # normal = np.cross(v2 - v1, v1 - v1)
+            # normal = np.mean(self.vertices[facet]) - self.center
+            # print(normal)
+            # self._equations[i, :3] = normal / np.linalg.norm(normal)
+            # self._equations[i, 3] = normal.dot(self.vertices[facet[0]])
 
     def merge_facets(self, tolerance=1e-6):
         """Merge facets of a polyhedron.
@@ -44,7 +65,16 @@ class Polyhedron(object):
     @property
     def volume(self):
         """Get or set the polyhedron's volume (setting rescales vertices)."""
-        pass
+        # pass
+        # print("verts: ", self.vertices)
+        # print(self._equations[:, 3])
+        # print(self.get_facet_area())
+        # return np.sum(self._equations[:, 3]*self.get_facet_area())/3
+        # Arbitrary choice, use the first vertex in the face.
+        ds = np.sum(self._normals * self.vertices[self.facets[:, 0]], axis=1)
+        print("Areas: ", self.get_facet_area())
+        print("ds: ", ds)
+        return np.sum(ds*self.get_facet_area())/3
 
     @volume.setter
     def volume(self, value):
@@ -65,11 +95,11 @@ class Polyhedron(object):
         if facets is None:
             facets = range(len(self.facets))
 
-        areas = []
-        for facet_index in facets:
+        areas = np.empty(len(facets))
+        for i, facet_index in enumerate(facets):
             facet = self.facets[facet_index]
             poly = Polygon(self.vertices[facet])
-            areas.append(poly.area)
+            areas[i] = poly.area
 
         return areas
 
@@ -126,7 +156,7 @@ class Polyhedron(object):
 
     @center.setter
     def center(self, value):
-        self.vertices += (np.asarray(value) - self.center)
+        self._vertices += (np.asarray(value) - self.center)
 
     @property
     def insphere_radius(self):
