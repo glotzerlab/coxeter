@@ -47,8 +47,8 @@ class Polygon(object):
         else:
             self._vertices = vertices
 
-        computed_normal = np.cross(vertices[2, :] - vertices[1, :],
-                                   vertices[0, :] - vertices[1, :])
+        computed_normal = np.cross(self.vertices[2, :] - self.vertices[1, :],
+                                   self.vertices[0, :] - self.vertices[1, :])
         if normal is None:
             self._normal = computed_normal
         else:
@@ -57,7 +57,7 @@ class Polygon(object):
                                  "orthogonal to the polygon.")
             self._normal = np.asarray(normal, dtype=np.float64)
 
-        d = self._normal.dot(vertices[0, :])
+        d = self._normal.dot(self.vertices[0, :])
         for v in self.vertices:
             if self._normal.dot(v) - d != 0:
                 raise ValueError("Not all vertices are coplanar.")
