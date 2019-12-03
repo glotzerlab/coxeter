@@ -133,7 +133,7 @@ class Polygon(object):
 
     @property
     def vertices(self):
-        """Get the vertices of the polyhedron."""
+        """Get the vertices of the polygon."""
         return self._vertices
 
     @property
