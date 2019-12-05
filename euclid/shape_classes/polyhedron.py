@@ -23,10 +23,13 @@ class Polyhedron(object):
             self._facets = facets
 
         if normals is not None:
-            self._normals = normals
+            self._equations = np.empty((len(self.facets), 4))
+            for i, (facet, normal) in enumerate(zip(self.facets, normals)):
+                self._equations[i, :3] = normal
+                # Arbitrarily choose to use the first vertex of each facet.
+                self._equations[i, 3] = normal.dot(self.vertices[facet[0]])
         else:
             self._find_equations()
-            self._normals = self._equations[:, :3]
 
     def _find_equations(self):
         """Find equations of facets.
@@ -41,7 +44,6 @@ class Polyhedron(object):
             normal = np.cross(v2 - v1, v0 - v1)
             self._equations[i, :3] = normal / np.linalg.norm(normal)
             self._equations[i, 3] = normal.dot(self.vertices[facet[0]])
-        self._normals = self._equations[:, :3]
 
     def _find_neighbors(self):
         """Find neighbors of facets."""
@@ -96,7 +98,11 @@ class Polyhedron(object):
 
         self._facets = new_facets
         self._find_equations()
-        self._normals = self._equations[:, :3]
+
+    @property
+    def normals(self):
+        """The normal vectors to each facet."""
+        return self._equations[:, :3]
 
     def sort_facets(self):
         """Ensure that all facets are ordered such that the normals are
@@ -187,8 +193,7 @@ class Polyhedron(object):
         """Get or set the polyhedron's volume (setting rescales vertices)."""
         # Arbitrary choice, use the first vertex in the face to compute the
         # distance to the plane.
-        ds = np.sum(self._normals *
-                    self.vertices[[x[0] for x in self.facets]], axis=1)
+        ds = self._equations[:, 3]
         return np.sum(ds*self.get_facet_area())/3
 
     @volume.setter
