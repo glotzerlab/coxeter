@@ -22,7 +22,11 @@ class Polyhedron(object):
             # TODO: Add some sanity checks here.
             self._facets = facets
 
-        self._normals = normals
+        if normals is not None:
+            self._normals = normals
+        else:
+            self._find_equations()
+            self._normals = self._equations[:, :3]
 
         # For now, we're assuming convexity in determining the normal. Will
         # need to relax this eventually with a ray-based algorithm. Note that
@@ -52,9 +56,10 @@ class Polyhedron(object):
             v0 = self.vertices[facet[0]]
             v1 = self.vertices[facet[1]]
             v2 = self.vertices[facet[2]]
-            normal = np.cross(v2 - v1, v1 - v0)
+            normal = np.cross(v2 - v1, v0 - v1)
             self._equations[i, :3] = normal / np.linalg.norm(normal)
             self._equations[i, 3] = normal.dot(self.vertices[facet[0]])
+        self._normals = self._equations[:, :3]
 
     def _find_neighbors(self):
         """Find neighbors of facets."""
@@ -73,7 +78,8 @@ class Polyhedron(object):
             for j in range(i+1, num_facets):
                 if len(facet_edges[i].intersection(facet_edges[j])) > 0:
                     self._connectivity_graph[i, j] = 1
-                    # For symmetry
+                    # For symmetry, can be removed when no longer useful for
+                    # debugging.
                     # self._connectivity_graph[j, i] = 1
 
     def merge_facets(self, tolerance=1e-6):
@@ -100,11 +106,97 @@ class Polyhedron(object):
         remaining_facets = np.arange(merge_graph.shape[0]).tolist()
         for i in remaining_facets:
             cur_set = set(self.facets[i])
-            for j, in np.where(merge_graph[i]):
+            other_facets = np.where(merge_graph[i])[0]
+            for j in other_facets:
                 cur_set = cur_set.union(self.facets[j])
                 remaining_facets.remove(j)
             new_facets.append(np.array(list(cur_set)))
+
         self._facets = new_facets
+        self._find_equations()
+        self._normals = self._equations[:, :3]
+
+    def sort_facets(self):
+        """Ensure that all facets are ordered such that the normals are
+        counterclockwise and point outwards."""
+
+        # Finding neighbors does not require that facets be ordered the same
+        # way, but they do need to be ordered such that edges can be identified
+        # by consecutive vertices in the facet list. To generate the ordering,
+        # we simply construct a Polygon from the vertices in each facet.
+        for i in range(len(self.facets)):
+            poly = Polygon(self.vertices[self.facets[i]])
+            # Add the vertices in order.
+            new_facet = []
+            for vertex in poly.vertices:
+                vertex_id = np.where(np.all(self.vertices == vertex, axis=1))[0][0]
+                new_facet.append(vertex_id)
+            self._facets[i] = np.asarray(new_facet)
+
+        # Need to know which facets are neighbors for this to work.
+        self._find_neighbors()
+
+        visited_facets = []
+        current_facet_index = 0
+        remaining_facets = [current_facet_index]
+        # Use a while loop because we don't want to loop over an object whose
+        # size is changing (as we remove facets that still need to be
+        # reordered. The initial facet sets the orientation of all the others.
+        while len(visited_facets) < len(self.facets):
+            visited_facets.append(current_facet_index)
+            remaining_facets.remove(current_facet_index)
+
+            # Get all edges of the current facet
+            current_facet = self.facets[current_facet_index]
+            current_edges = [(current_facet[i], current_facet[(i+1) % len(current_facet)])
+                             for i in range(len(current_facet))]
+            # print("The bottom face")
+            # print(current_edges)
+
+            # Get all neighbors, then check each one to see if needs
+            # reordering (unless it has already been checked).
+            current_neighbor_indices = np.where(
+                self._connectivity_graph[current_facet_index])[0]
+            # print(self.facets)
+            for neighbor in current_neighbor_indices:
+                # Any neighbor that has not itself been reordered should be
+                # added to the queue of possible reordered vertices.
+                if neighbor in visited_facets:
+                    continue
+                else:
+                    remaining_facets.append(neighbor)
+                neighbor_facet = self.facets[neighbor]
+                neighbor_facet = np.concatenate((neighbor_facet, neighbor_facet[[0]]))
+                # if neighbor == 2:
+                    # print("This one (the left face) fails.")
+                    # print(neighbor_facet)
+
+                # Two facets can only share a single edge (otherwise they would
+                # be coplanar), so we can break as soon as we find the
+                # neighbor.
+                for i in range(len(neighbor_facet)-1):
+                    edge = (neighbor_facet[i], neighbor_facet[i+1])
+                    # if neighbor == 2:
+                        # print("Testing {}".format(edge))
+                    if edge in current_edges:
+                        # This requires a flip
+                        self._facets[neighbor] = self._facets[neighbor][::-1]
+                        break
+                    elif edge[::-1] in current_edges:
+                        # This is the desired orientation
+                        break
+                visited_facets.append(neighbor)
+
+            if len(remaining_facets):
+                current_facet_index = remaining_facets[0]
+
+        # Now compute the signed area and flip all the orderings if the area is
+        # negative.
+        self._find_equations()
+        if self.volume < 0:
+            for i in range(len(self.facets)):
+                self._facets[i] = self._facets[i][::-1]
+        self._find_equations()
 
     @property
     def vertices(self):
@@ -210,6 +302,7 @@ class Polyhedron(object):
     @center.setter
     def center(self, value):
         self._vertices += (np.asarray(value) - self.center)
+        self._find_equations()
 
     @property
     def insphere_radius(self):

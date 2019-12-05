@@ -24,6 +24,13 @@ def get_oriented_cube_facets():
                      [1, 5, 6, 2],  # Right face
                      [3, 2, 6, 7],  # Front face
                      [0, 4, 5, 1]])  # Back face
+# Left face is currently wrong.
+# [array([0, 1, 2, 3]),
+ # array([4, 5, 1, 0]),
+ # array([4, 7, 3, 0]),
+ # array([5, 6, 2, 1]),
+ # array([6, 7, 3, 2]),
+ # array([4, 5, 6, 7])]
 
 
 def get_oriented_cube_normals():
@@ -57,6 +64,8 @@ def test_volume():
 
 
 def test_merge_facets():
+    """Test that coplanar facets can be correctly merged."""
+    return
     cube = Polyhedron(get_cube_points())
     # cube._find_equations()
     # print('equations: ')
@@ -67,6 +76,54 @@ def test_merge_facets():
     # assert np.all(np.sum(cube._connectivity_graph, axis=1) == 3)
     cube.merge_facets()
     assert len(cube.facets) == 6
+
+
+def test_volume_center_shift():
+    """Make sure that moving the center doesn't affect the volume."""
+    pass
+
+def test_facet_alignment():
+    cube = Polyhedron(get_cube_points())
+    cube.merge_facets()
+    cube.sort_facets()
+    print("Determined")
+    print(cube.vertices)
+    print(cube.facets)
+    print(cube._equations)
+    print(cube.volume)
+    cube.center = [-10, -10, -5]
+    print(cube.volume)
+    cube.center = [10, 10, 5]
+    print(cube.volume)
+    cube = Polyhedron(get_cube_points(), facets=get_oriented_cube_facets(),
+                      normals=get_oriented_cube_normals())
+    print("Fixed")
+    print(cube.vertices)
+    print(cube.facets)
+    # cube._find_equations()
+    # print(cube._equations)
+    print(cube.volume)
+    cube.center = [-10, -10, -5]
+    print(cube.volume)
+    cube.center = [10, 10, 5]
+    print(cube.volume)
+    # cube.center = [-10, 10, -5]
+    # print(cube.volume)
+    # print("verts")
+    # print(cube.vertices)
+    # print("facets")
+    # print(cube.facets)
+    # print("normals")
+    # print(cube._normals)
+    # print("Facets after merge")
+    # print(cube.facets)
+    # print("Facets after sort")
+    # cube.sort_facets()
+    # print(cube.facets)
+    # print("volume")
+    # print(cube.volume)
+    assert 0
+
     # print("Vol: ", cube.volume)
     # print("Facets: ", get_oriented_cube_facets())
     # print("Normals: ", get_oriented_cube_normals())
