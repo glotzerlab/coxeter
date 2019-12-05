@@ -27,7 +27,7 @@ def get_oriented_cube_facets():
 
 
 def get_oriented_cube_normals():
-    return -np.asarray([[0, 0, -1],
+    return np.asarray([[0, 0, -1],
                        [0, 0, 1],
                        [0, -1, 0],
                        [0, 1, 0],
@@ -53,13 +53,27 @@ def test_surface_area(cube):
 def test_volume():
     cube = Polyhedron(get_cube_points(), facets=get_oriented_cube_facets(),
                       normals=get_oriented_cube_normals())
-    print("Vol: ", cube.volume)
-    print("Facets: ", get_oriented_cube_facets())
-    print("Normals: ", get_oriented_cube_normals())
-    c2 = ConvexPolyhedron(get_cube_points())
-    print("Computed facets: ", c2.facets)
-    print("Computed normals: ", c2.equations[:, :3])
-    assert 0
+    assert cube.volume == 1
+
+
+def test_merge_facets():
+    cube = Polyhedron(get_cube_points())
+    # cube._find_equations()
+    # print('equations: ')
+    # print(cube._equations)
+    # cube._find_neighbors()
+    # print('neighbors: ')
+    # print(cube._connectivity_graph)
+    # assert np.all(np.sum(cube._connectivity_graph, axis=1) == 3)
+    cube.merge_facets()
+    assert len(cube.facets) == 6
+    # print("Vol: ", cube.volume)
+    # print("Facets: ", get_oriented_cube_facets())
+    # print("Normals: ", get_oriented_cube_normals())
+    # c2 = ConvexPolyhedron(get_cube_points())
+    # print("Computed facets: ", c2.facets)
+    # print("Computed normals: ", c2.equations[:, :3])
+    # assert 0
 # def test_volume(cube_points):
     # """Test volume calculation."""
     # faces =

@@ -42,6 +42,40 @@ class Polyhedron(object):
             # self._equations[i, :3] = normal / np.linalg.norm(normal)
             # self._equations[i, 3] = normal.dot(self.vertices[facet[0]])
 
+    def _find_equations(self):
+        """Find equations of facets.
+
+        This function makes no guarantees about the direction of the normal it
+        chooses."""
+        self._equations = np.empty((len(self.facets), 4))
+        for i, facet in enumerate(self.facets):
+            v0 = self.vertices[facet[0]]
+            v1 = self.vertices[facet[1]]
+            v2 = self.vertices[facet[2]]
+            normal = np.cross(v2 - v1, v1 - v0)
+            self._equations[i, :3] = normal / np.linalg.norm(normal)
+            self._equations[i, 3] = normal.dot(self.vertices[facet[0]])
+
+    def _find_neighbors(self):
+        """Find neighbors of facets."""
+        # First enumerate all edges of each neighbor. We include both
+        # directions of the edges for comparison.
+        facet_edges = []
+        for facet in self.facets:
+            forward_edges = set(zip(*np.stack((facet, np.roll(facet, 1)))))
+            reverse_edges = set(zip(*np.stack((facet, np.roll(facet, -1)))))
+            facet_edges.append(forward_edges.union(reverse_edges))
+
+        # Find any facets that share neighbors.
+        num_facets = len(facet_edges)
+        self._connectivity_graph = np.zeros((num_facets, num_facets))
+        for i in range(num_facets):
+            for j in range(i+1, num_facets):
+                if len(facet_edges[i].intersection(facet_edges[j])) > 0:
+                    self._connectivity_graph[i, j] = 1
+                    # For symmetry
+                    # self._connectivity_graph[j, i] = 1
+
     def merge_facets(self, tolerance=1e-6):
         """Merge facets of a polyhedron.
 
@@ -50,7 +84,27 @@ class Polyhedron(object):
         tolerance (we may need to provide two such parameters depending on how
         we perform the merge), so we need to expose this method to allow the
         user to redo the merge with a different tolerance."""
-        pass
+        self._find_equations()
+        self._find_neighbors()
+
+        # Test if these are coplanar.
+        num_facets = len(self.facets)
+        merge_graph = np.zeros((num_facets, num_facets))
+        for i, j in zip(*np.where(self._connectivity_graph)):
+            if np.allclose(self._equations[i, :], self._equations[j, :]) or \
+                    np.allclose(self._equations[i, :], -self._equations[j, :]):
+                merge_graph[i, j] = 1
+
+        # Merge selected facets.
+        new_facets = []
+        remaining_facets = np.arange(merge_graph.shape[0]).tolist()
+        for i in remaining_facets:
+            cur_set = set(self.facets[i])
+            for j, in np.where(merge_graph[i]):
+                cur_set = cur_set.union(self.facets[j])
+                remaining_facets.remove(j)
+            new_facets.append(np.array(list(cur_set)))
+        self._facets = new_facets
 
     @property
     def vertices(self):
@@ -71,9 +125,8 @@ class Polyhedron(object):
         # print(self.get_facet_area())
         # return np.sum(self._equations[:, 3]*self.get_facet_area())/3
         # Arbitrary choice, use the first vertex in the face.
-        ds = np.sum(self._normals * self.vertices[self.facets[:, 0]], axis=1)
-        print("Areas: ", self.get_facet_area())
-        print("ds: ", ds)
+        ds = np.sum(self._normals *
+                    self.vertices[[x[0] for x in self.facets]], axis=1)
         return np.sum(ds*self.get_facet_area())/3
 
     @volume.setter
