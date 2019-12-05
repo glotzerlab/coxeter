@@ -2,6 +2,9 @@ import pytest
 import numpy as np
 from euclid.shape_classes.polyhedron import Polyhedron
 from euclid.polyhedron import ConvexPolyhedron
+from hypothesis import given, example, assume
+from hypothesis.strategies import floats
+from hypothesis.extra.numpy import arrays
 
 
 # Need to declare this outside the fixture so that it can be used in multiple
@@ -24,13 +27,6 @@ def get_oriented_cube_facets():
                      [1, 5, 6, 2],  # Right face
                      [3, 2, 6, 7],  # Front face
                      [0, 4, 5, 1]])  # Back face
-# Left face is currently wrong.
-# [array([0, 1, 2, 3]),
- # array([4, 5, 1, 0]),
- # array([4, 7, 3, 0]),
- # array([5, 6, 2, 1]),
- # array([6, 7, 3, 2]),
- # array([4, 5, 6, 7])]
 
 
 def get_oriented_cube_normals():
@@ -65,75 +61,37 @@ def test_volume():
 
 def test_merge_facets():
     """Test that coplanar facets can be correctly merged."""
-    return
     cube = Polyhedron(get_cube_points())
-    # cube._find_equations()
-    # print('equations: ')
-    # print(cube._equations)
-    # cube._find_neighbors()
-    # print('neighbors: ')
-    # print(cube._connectivity_graph)
-    # assert np.all(np.sum(cube._connectivity_graph, axis=1) == 3)
     cube.merge_facets()
     assert len(cube.facets) == 6
 
 
-def test_volume_center_shift():
+@given(arrays(np.float64, (3, ), floats(-10, 10, width=64)))
+def test_volume_center_shift(new_center):
     """Make sure that moving the center doesn't affect the volume."""
-    pass
-
-def test_facet_alignment():
     cube = Polyhedron(get_cube_points())
     cube.merge_facets()
     cube.sort_facets()
-    print("Determined")
-    print(cube.vertices)
-    print(cube.facets)
-    print(cube._equations)
-    print(cube.volume)
-    cube.center = [-10, -10, -5]
-    print(cube.volume)
-    cube.center = [10, 10, 5]
-    print(cube.volume)
-    cube = Polyhedron(get_cube_points(), facets=get_oriented_cube_facets(),
-                      normals=get_oriented_cube_normals())
-    print("Fixed")
-    print(cube.vertices)
-    print(cube.facets)
-    # cube._find_equations()
-    # print(cube._equations)
-    print(cube.volume)
-    cube.center = [-10, -10, -5]
-    print(cube.volume)
-    cube.center = [10, 10, 5]
-    print(cube.volume)
-    # cube.center = [-10, 10, -5]
-    # print(cube.volume)
-    # print("verts")
-    # print(cube.vertices)
-    # print("facets")
-    # print(cube.facets)
-    # print("normals")
-    # print(cube._normals)
-    # print("Facets after merge")
-    # print(cube.facets)
-    # print("Facets after sort")
-    # cube.sort_facets()
-    # print(cube.facets)
-    # print("volume")
-    # print(cube.volume)
-    assert 0
+    cube.center = new_center
+    assert np.isclose(cube.volume, 1)
 
-    # print("Vol: ", cube.volume)
-    # print("Facets: ", get_oriented_cube_facets())
-    # print("Normals: ", get_oriented_cube_normals())
-    # c2 = ConvexPolyhedron(get_cube_points())
-    # print("Computed facets: ", c2.facets)
-    # print("Computed normals: ", c2.equations[:, :3])
-    # assert 0
-# def test_volume(cube_points):
-    # """Test volume calculation."""
-    # faces =
-# def test_volume(cube):
-    # """Test volume calculation."""
-    # assert cube.volume == 1
+def test_facet_alignment():
+    """Make sure that facets are constructed correctly given vertices."""
+    cube = Polyhedron(get_cube_points())
+    cube.merge_facets()
+    cube.sort_facets()
+
+    def facet_to_string(facet):
+        # Convenience function to create a string of vertex ids, which is the
+        # easiest way to test for sequences that are cyclically equal.
+        return ''.join([str(c) for c in facet])
+
+    reference_facets = []
+    for facet in get_oriented_cube_facets():
+        reference_facets.append(facet_to_string(facet)*2)
+
+    assert len(cube.facets) == len(reference_facets)
+
+    for facet in cube.facets:
+        str_facet = facet_to_string(facet)
+        assert any([str_facet in ref for ref in reference_facets])

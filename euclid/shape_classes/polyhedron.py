@@ -28,24 +28,6 @@ class Polyhedron(object):
             self._find_equations()
             self._normals = self._equations[:, :3]
 
-        # For now, we're assuming convexity in determining the normal. Will
-        # need to relax this eventually with a ray-based algorithm. Note that
-        # we could use a cross product to compute the normal, but we have no
-        # way to determine the directionality with that approach.
-        # TODO: Stop assuming convexity.
-        # self._equations = np.empty((len(self.facets), 4))
-        # print("facet Shape: ", len(self.facets))
-        # print("Shape: ", self._equations.shape)
-        # for i, facet in enumerate(self.facets):
-            # # v0 = self.vertices[facet[0]]
-            # # v1 = self.vertices[facet[1]]
-            # # v2 = self.vertices[facet[2]]
-            # # normal = np.cross(v2 - v1, v1 - v1)
-            # normal = np.mean(self.vertices[facet]) - self.center
-            # print(normal)
-            # self._equations[i, :3] = normal / np.linalg.norm(normal)
-            # self._equations[i, 3] = normal.dot(self.vertices[facet[0]])
-
     def _find_equations(self):
         """Find equations of facets.
 
@@ -150,14 +132,11 @@ class Polyhedron(object):
             current_facet = self.facets[current_facet_index]
             current_edges = [(current_facet[i], current_facet[(i+1) % len(current_facet)])
                              for i in range(len(current_facet))]
-            # print("The bottom face")
-            # print(current_edges)
 
             # Get all neighbors, then check each one to see if needs
             # reordering (unless it has already been checked).
             current_neighbor_indices = np.where(
                 self._connectivity_graph[current_facet_index])[0]
-            # print(self.facets)
             for neighbor in current_neighbor_indices:
                 # Any neighbor that has not itself been reordered should be
                 # added to the queue of possible reordered vertices.
@@ -167,17 +146,12 @@ class Polyhedron(object):
                     remaining_facets.append(neighbor)
                 neighbor_facet = self.facets[neighbor]
                 neighbor_facet = np.concatenate((neighbor_facet, neighbor_facet[[0]]))
-                # if neighbor == 2:
-                    # print("This one (the left face) fails.")
-                    # print(neighbor_facet)
 
                 # Two facets can only share a single edge (otherwise they would
                 # be coplanar), so we can break as soon as we find the
                 # neighbor.
                 for i in range(len(neighbor_facet)-1):
                     edge = (neighbor_facet[i], neighbor_facet[i+1])
-                    # if neighbor == 2:
-                        # print("Testing {}".format(edge))
                     if edge in current_edges:
                         # This requires a flip
                         self._facets[neighbor] = self._facets[neighbor][::-1]
@@ -211,12 +185,8 @@ class Polyhedron(object):
     @property
     def volume(self):
         """Get or set the polyhedron's volume (setting rescales vertices)."""
-        # pass
-        # print("verts: ", self.vertices)
-        # print(self._equations[:, 3])
-        # print(self.get_facet_area())
-        # return np.sum(self._equations[:, 3]*self.get_facet_area())/3
-        # Arbitrary choice, use the first vertex in the face.
+        # Arbitrary choice, use the first vertex in the face to compute the
+        # distance to the plane.
         ds = np.sum(self._normals *
                     self.vertices[[x[0] for x in self.facets]], axis=1)
         return np.sum(ds*self.get_facet_area())/3
