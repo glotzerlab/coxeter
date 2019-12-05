@@ -62,9 +62,6 @@ class Polyhedron(object):
             for j in range(i+1, num_facets):
                 if len(facet_edges[i].intersection(facet_edges[j])) > 0:
                     self._connectivity_graph[i, j] = 1
-                    # For symmetry, can be removed when no longer useful for
-                    # debugging.
-                    # self._connectivity_graph[j, i] = 1
 
     def merge_facets(self, tolerance=1e-6):
         """Merge facets of a polyhedron.
@@ -74,7 +71,6 @@ class Polyhedron(object):
         tolerance (we may need to provide two such parameters depending on how
         we perform the merge), so we need to expose this method to allow the
         user to redo the merge with a different tolerance."""
-        self._find_equations()
         self._find_neighbors()
 
         # Test if these are coplanar.
@@ -176,7 +172,7 @@ class Polyhedron(object):
         if self.volume < 0:
             for i in range(len(self.facets)):
                 self._facets[i] = self._facets[i][::-1]
-        self._find_equations()
+            self._find_equations()
 
     @property
     def vertices(self):
