@@ -1,6 +1,12 @@
 from scipy.spatial import ConvexHull
 import numpy as np
 from .polygon import Polygon
+from scipy.sparse.csgraph import connected_components
+
+
+def _facet_to_edges(facet, reverse=False):
+    shift = 1 if reverse else -1
+    return list(zip(*np.stack((facet, np.roll(facet, shift)))))
 
 
 class Polyhedron(object):
@@ -32,28 +38,23 @@ class Polyhedron(object):
             self._find_equations()
 
     def _find_equations(self):
-        """Find equations of facets.
-
-        This function makes no guarantees about the direction of the normal it
-        chooses."""
+        """Find equations of facets."""
         self._equations = np.empty((len(self.facets), 4))
         for i, facet in enumerate(self.facets):
-            v0 = self.vertices[facet[0]]
-            v1 = self.vertices[facet[1]]
-            v2 = self.vertices[facet[2]]
-            normal = np.cross(v2 - v1, v0 - v1)
+            # The direction of the normal is selected such that vertices that
+            # are already ordered counterclockwise will point outward.
+            normal = np.cross(
+                self.vertices[facet[2]] - self.vertices[facet[1]],
+                self.vertices[facet[0]] - self.vertices[facet[1]])
             self._equations[i, :3] = normal / np.linalg.norm(normal)
             self._equations[i, 3] = normal.dot(self.vertices[facet[0]])
 
     def _find_neighbors(self):
-        """Find neighbors of facets."""
+        """Find neighbors of facets (assumes facets are ordered)."""
         # First enumerate all edges of each neighbor. We include both
         # directions of the edges for comparison.
-        facet_edges = []
-        for facet in self.facets:
-            forward_edges = set(zip(*np.stack((facet, np.roll(facet, 1)))))
-            reverse_edges = set(zip(*np.stack((facet, np.roll(facet, -1)))))
-            facet_edges.append(forward_edges.union(reverse_edges))
+        facet_edges = [set(_facet_to_edges(f) +
+                           _facet_to_edges(f, True)) for f in self.facets]
 
         # Find any facets that share neighbors.
         self._neighbors = [[] for _ in range(self.num_facets)]
@@ -73,7 +74,8 @@ class Polyhedron(object):
         user to redo the merge with a different tolerance."""
         self._find_neighbors()
 
-        # Test if these are coplanar.
+        # Construct a graph where connectivity indicates merging, then identify
+        # connected components to merge.
         merge_graph = np.zeros((self.num_facets, self.num_facets))
         for i in range(self.num_facets):
             for j in self._neighbors[i]:
@@ -81,18 +83,13 @@ class Polyhedron(object):
                         np.allclose(self._equations[i, :], -self._equations[j, :]):
                     merge_graph[i, j] = 1
 
-        # Merge selected facets.
-        new_facets = []
-        remaining_facets = np.arange(merge_graph.shape[0]).tolist()
-        for i in remaining_facets:
-            cur_set = set(self.facets[i])
-            other_facets = np.where(merge_graph[i])[0]
-            for j in other_facets:
-                cur_set = cur_set.union(self.facets[j])
-                remaining_facets.remove(j)
-            new_facets.append(np.array(list(cur_set)))
+        _, labels = connected_components(merge_graph, directed=False,
+                                         return_labels=True)
+        new_facets = [set() for _ in range(len(np.unique(labels)))]
+        for i, facet in enumerate(self.facets):
+            new_facets[labels[i]].update(facet)
 
-        self._facets = new_facets
+        self._facets = [np.asarray(list(f)) for f in new_facets]
         self._find_equations()
 
     @property
@@ -116,68 +113,54 @@ class Polyhedron(object):
 
     def sort_facets(self):
         """Ensure that all facets are ordered such that the normals are
-        counterclockwise and point outwards."""
+        counterclockwise and point outwards.
 
-        # Finding neighbors does not require that facets be ordered the same
-        # way, but they do need to be ordered such that edges can be identified
-        # by consecutive vertices in the facet list. To generate the ordering,
-        # we simply construct a Polygon from the vertices in each facet.
-        for i in range(len(self.facets)):
-            poly = Polygon(self.vertices[self.facets[i]])
-            # Add the vertices in order.
-            new_facet = []
-            for vertex in poly.vertices:
-                vertex_id = np.where(np.all(self.vertices == vertex, axis=1))[0][0]
-                new_facet.append(vertex_id)
-            self._facets[i] = np.asarray(new_facet)
+        This algorithm proceeds in three steps. First, it ensures that each
+        facet is ordered in either clockwise or counterclockwise order such
+        that edges can be found from the sequence of the vertices in each
+        facet. Next, it calls the neighbor finding routine to establish with
+        facets are neighbors. Then, it performs a breadth-first search,
+        reorienting facets to match the orientation of the first facet.
+        Finally, it computes the signed volume to determine whether or not all
+        the normals need to be flipped.
+        """
+        # We first ensure that facet vertices are sequentially ordered by
+        # constructing a Polygon and updating the facet (in place), which
+        # enables finding neighbors.
+        for facet in self.facets:
+            facet[:] = np.asarray([
+                np.where(np.all(self.vertices == vertex, axis=1))[0][0]
+                    for vertex in Polygon(self.vertices[facet]).vertices
+            ])
 
-        # Need to know which facets are neighbors for this to work.
         self._find_neighbors()
 
+        # The initial facet sets the order of the others.
         visited_facets = []
-        current_facet_index = 0
-        remaining_facets = [current_facet_index]
-        # Use a while loop because we don't want to loop over an object whose
-        # size is changing (as we remove facets that still need to be
-        # reordered. The initial facet sets the orientation of all the others.
-        while len(visited_facets) < len(self.facets):
-            visited_facets.append(current_facet_index)
-            remaining_facets.remove(current_facet_index)
+        remaining_facets = [0]
+        while len(remaining_facets):
+            current_facet = remaining_facets[0]
+            visited_facets.append(current_facet)
+            remaining_facets.remove(current_facet)
 
-            # Get all edges of the current facet
-            current_facet = self.facets[current_facet_index]
-            current_edges = [(current_facet[i], current_facet[(i+1) % len(current_facet)])
-                             for i in range(len(current_facet))]
-
-            # Get all neighbors, then check each one to see if needs
-            # reordering (unless it has already been checked).
-            current_neighbor_indices = self._neighbors[current_facet_index]
-            for neighbor in current_neighbor_indices:
-                # Any neighbor that has not itself been reordered should be
-                # added to the queue of possible reordered vertices.
+            # Search for common edges between pairs of facets, then check the
+            # ordering of the edge to determine relative facet orientation.
+            current_edges = _facet_to_edges(self.facets[current_facet])
+            for neighbor in self._neighbors[current_facet]:
                 if neighbor in visited_facets:
                     continue
-                else:
-                    remaining_facets.append(neighbor)
-                neighbor_facet = self.facets[neighbor]
-                neighbor_facet = np.concatenate((neighbor_facet, neighbor_facet[[0]]))
+                remaining_facets.append(neighbor)
 
                 # Two facets can only share a single edge (otherwise they would
                 # be coplanar), so we can break as soon as we find the
-                # neighbor.
-                for i in range(len(neighbor_facet)-1):
-                    edge = (neighbor_facet[i], neighbor_facet[i+1])
+                # neighbor. Flip the neighbor if the edges are identical.
+                for edge in _facet_to_edges(self.facets[neighbor]):
                     if edge in current_edges:
-                        # This requires a flip
                         self._facets[neighbor] = self._facets[neighbor][::-1]
                         break
                     elif edge[::-1] in current_edges:
-                        # This is the desired orientation
                         break
                 visited_facets.append(neighbor)
-
-            if len(remaining_facets):
-                current_facet_index = remaining_facets[0]
 
         # Now compute the signed area and flip all the orderings if the area is
         # negative.
@@ -185,7 +168,7 @@ class Polyhedron(object):
         if self.volume < 0:
             for i in range(len(self.facets)):
                 self._facets[i] = self._facets[i][::-1]
-            self._find_equations()
+                self._equations[i] *= -1
 
     @property
     def vertices(self):
