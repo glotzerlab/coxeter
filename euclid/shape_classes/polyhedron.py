@@ -79,8 +79,8 @@ class Polyhedron(object):
         merge_graph = np.zeros((self.num_facets, self.num_facets))
         for i in range(self.num_facets):
             for j in self._neighbors[i]:
-                if np.allclose(self._equations[i, :], self._equations[j, :]) or \
-                        np.allclose(self._equations[i, :], -self._equations[j, :]):
+                if np.allclose(self._equations[i], self._equations[j]) or \
+                        np.allclose(self._equations[i], -self._equations[j]):
                     merge_graph[i, j] = 1
 
         _, labels = connected_components(merge_graph, directed=False,
@@ -130,7 +130,7 @@ class Polyhedron(object):
         for facet in self.facets:
             facet[:] = np.asarray([
                 np.where(np.all(self.vertices == vertex, axis=1))[0][0]
-                    for vertex in Polygon(self.vertices[facet]).vertices
+                for vertex in Polygon(self.vertices[facet]).vertices
             ])
 
         self._find_neighbors()
@@ -232,18 +232,18 @@ class Polyhedron(object):
 
         volumes = np.abs(np.linalg.det(simplices)/6)
 
-        fxx = lambda triangles: triangles[:, 1]**2 + triangles[:, 2]**2 # noqa
-        fxy = lambda triangles: -triangles[:, 0]*triangles[:, 1] # noqa
-        fxz = lambda triangles: -triangles[:, 0]*triangles[:, 2] # noqa
-        fyy = lambda triangles: triangles[:, 0]**2 + triangles[:, 2]**2 # noqa
-        fyz = lambda triangles: -triangles[:, 1]*triangles[:, 2] # noqa
-        fzz = lambda triangles: triangles[:, 0]**2 + triangles[:, 1]**2 # noqa
+        def fxx(triangles): triangles[:, 1]**2 + triangles[:, 2]**2 # noqa
+        def fxy(triangles): -triangles[:, 0]*triangles[:, 1] # noqa
+        def fxz(triangles): -triangles[:, 0]*triangles[:, 2] # noqa
+        def fyy(triangles): triangles[:, 0]**2 + triangles[:, 2]**2 # noqa
+        def fyz(triangles): -triangles[:, 1]*triangles[:, 2] # noqa
+        def fzz(triangles): triangles[:, 0]**2 + triangles[:, 1]**2 # noqa
 
         def compute(f):
             return f(simplices[:, 0, :]) + f(simplices[:, 1, :]) + \
                 f(simplices[:, 2, :]) + f(simplices[:, 0, :] +
-                                            simplices[:, 1, :] +
-                                            simplices[:, 2, :])
+                                          simplices[:, 1, :] +
+                                          simplices[:, 2, :])
 
         Ixx = (compute(fxx)*volumes/20).sum()
         Ixy = (compute(fxy)*volumes/20).sum()
