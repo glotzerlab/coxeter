@@ -139,7 +139,7 @@ def test_convex_area(points):
 
 
 @given(random_quat=arrays(np.float64, (4, ), floats(-1, 1, width=64)))
-def test_convex_signed_area(random_quat, square_points):
+def test_rotation_signed_area(random_quat, square_points):
     """Ensure that rotating does not change the signed area."""
     assume(not np.all(random_quat == 0))
     random_quat = rowan.normalize(random_quat)
