@@ -56,12 +56,12 @@ class Polyhedron(object):
             facet_edges.append(forward_edges.union(reverse_edges))
 
         # Find any facets that share neighbors.
-        num_facets = len(facet_edges)
-        self._connectivity_graph = np.zeros((num_facets, num_facets))
-        for i in range(num_facets):
-            for j in range(i+1, num_facets):
+        self._neighbors = [[] for _ in range(self.num_facets)]
+        for i in range(self.num_facets):
+            for j in range(i+1, self.num_facets):
                 if len(facet_edges[i].intersection(facet_edges[j])) > 0:
-                    self._connectivity_graph[i, j] = 1
+                    self._neighbors[i].append(j)
+            self._neighbors[i] = np.array(self._neighbors[i])
 
     def merge_facets(self, tolerance=1e-6):
         """Merge facets of a polyhedron.
@@ -74,12 +74,12 @@ class Polyhedron(object):
         self._find_neighbors()
 
         # Test if these are coplanar.
-        num_facets = len(self.facets)
-        merge_graph = np.zeros((num_facets, num_facets))
-        for i, j in zip(*np.where(self._connectivity_graph)):
-            if np.allclose(self._equations[i, :], self._equations[j, :]) or \
-                    np.allclose(self._equations[i, :], -self._equations[j, :]):
-                merge_graph[i, j] = 1
+        merge_graph = np.zeros((self.num_facets, self.num_facets))
+        for i in range(self.num_facets):
+            for j in self._neighbors[i]:
+                if np.allclose(self._equations[i, :], self._equations[j, :]) or \
+                        np.allclose(self._equations[i, :], -self._equations[j, :]):
+                    merge_graph[i, j] = 1
 
         # Merge selected facets.
         new_facets = []
@@ -96,9 +96,23 @@ class Polyhedron(object):
         self._find_equations()
 
     @property
+    def neighbors(self):
+        """The neighbors of each facet. Facets are defined to be neighbors if
+        they share an edge."""
+        return self._neighbors
+
+    @property
     def normals(self):
         """The normal vectors to each facet."""
         return self._equations[:, :3]
+
+    @property
+    def num_vertices(self):
+        return self.vertices.shape[0]
+
+    @property
+    def num_facets(self):
+        return len(self.facets)
 
     def sort_facets(self):
         """Ensure that all facets are ordered such that the normals are
@@ -137,8 +151,7 @@ class Polyhedron(object):
 
             # Get all neighbors, then check each one to see if needs
             # reordering (unless it has already been checked).
-            current_neighbor_indices = np.where(
-                self._connectivity_graph[current_facet_index])[0]
+            current_neighbor_indices = self._neighbors[current_facet_index]
             for neighbor in current_neighbor_indices:
                 # Any neighbor that has not itself been reordered should be
                 # added to the queue of possible reordered vertices.
@@ -231,39 +244,36 @@ class Polyhedron(object):
         Computed using the method described in
         https://www.tandfonline.com/doi/abs/10.1080/2151237X.2006.10129220
         """
-        try:
-            return self._inertia_tensor
-        except AttributeError:
-            centered_vertices = self.vertices - self.center
-            simplices = centered_vertices[self.faces]
+        centered_vertices = self.vertices - self.center
+        simplices = centered_vertices[self.faces]
 
-            volumes = np.abs(np.linalg.det(simplices)/6)
+        volumes = np.abs(np.linalg.det(simplices)/6)
 
-            fxx = lambda triangles: triangles[:, 1]**2 + triangles[:, 2]**2 # noqa
-            fxy = lambda triangles: -triangles[:, 0]*triangles[:, 1] # noqa
-            fxz = lambda triangles: -triangles[:, 0]*triangles[:, 2] # noqa
-            fyy = lambda triangles: triangles[:, 0]**2 + triangles[:, 2]**2 # noqa
-            fyz = lambda triangles: -triangles[:, 1]*triangles[:, 2] # noqa
-            fzz = lambda triangles: triangles[:, 0]**2 + triangles[:, 1]**2 # noqa
+        fxx = lambda triangles: triangles[:, 1]**2 + triangles[:, 2]**2 # noqa
+        fxy = lambda triangles: -triangles[:, 0]*triangles[:, 1] # noqa
+        fxz = lambda triangles: -triangles[:, 0]*triangles[:, 2] # noqa
+        fyy = lambda triangles: triangles[:, 0]**2 + triangles[:, 2]**2 # noqa
+        fyz = lambda triangles: -triangles[:, 1]*triangles[:, 2] # noqa
+        fzz = lambda triangles: triangles[:, 0]**2 + triangles[:, 1]**2 # noqa
 
-            def compute(f):
-                return f(simplices[:, 0, :]) + f(simplices[:, 1, :]) + \
-                    f(simplices[:, 2, :]) + f(simplices[:, 0, :] +
-                                              simplices[:, 1, :] +
-                                              simplices[:, 2, :])
+        def compute(f):
+            return f(simplices[:, 0, :]) + f(simplices[:, 1, :]) + \
+                f(simplices[:, 2, :]) + f(simplices[:, 0, :] +
+                                            simplices[:, 1, :] +
+                                            simplices[:, 2, :])
 
-            Ixx = (compute(fxx)*volumes/20).sum()
-            Ixy = (compute(fxy)*volumes/20).sum()
-            Ixz = (compute(fxz)*volumes/20).sum()
-            Iyy = (compute(fyy)*volumes/20).sum()
-            Iyz = (compute(fyz)*volumes/20).sum()
-            Izz = (compute(fzz)*volumes/20).sum()
+        Ixx = (compute(fxx)*volumes/20).sum()
+        Ixy = (compute(fxy)*volumes/20).sum()
+        Ixz = (compute(fxz)*volumes/20).sum()
+        Iyy = (compute(fyy)*volumes/20).sum()
+        Iyz = (compute(fyz)*volumes/20).sum()
+        Izz = (compute(fzz)*volumes/20).sum()
 
-            self._inertia_tensor = np.array([[Ixx, Ixy, Ixz],
-                                            [Ixy,   Iyy, Iyz],
-                                            [Ixz,   Iyz,   Izz]])
+        self._inertia_tensor = np.array([[Ixx, Ixy, Ixz],
+                                        [Ixy,   Iyy, Iyz],
+                                        [Ixz,   Iyz,   Izz]])
 
-            return self._inertia_tensor
+        return self._inertia_tensor
 
     @property
     def center(self):
