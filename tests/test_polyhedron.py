@@ -49,6 +49,12 @@ def cube():
     return Polyhedron(get_cube_points())
 
 
+@pytest.fixture
+def oriented_cube():
+    return Polyhedron(get_cube_points(), get_oriented_cube_facets(),
+                      get_oriented_cube_normals())
+
+
 def test_surface_area(cube):
     """Test surface area calculation."""
     assert cube.surface_area == 6
@@ -60,25 +66,22 @@ def test_volume():
     assert cube.volume == 1
 
 
-def test_merge_facets():
+def test_merge_facets(cube):
     """Test that coplanar facets can be correctly merged."""
-    cube = Polyhedron(get_cube_points())
     cube.merge_facets()
     assert len(cube.facets) == 6
 
 
-@given(arrays(np.float64, (3, ), floats(-10, 10, width=64)))
-def test_volume_center_shift(new_center):
+@given(new_center=arrays(np.float64, (3, ), floats(-10, 10, width=64)))
+def test_volume_center_shift(cube, new_center):
     """Make sure that moving the center doesn't affect the volume."""
-    cube = Polyhedron(get_cube_points())
     cube.merge_facets()
     cube.sort_facets()
     cube.center = new_center
     assert np.isclose(cube.volume, 1)
 
-def test_facet_alignment():
+def test_facet_alignment(cube):
     """Make sure that facets are constructed correctly given vertices."""
-    cube = Polyhedron(get_cube_points())
     cube.merge_facets()
     cube.sort_facets()
 
