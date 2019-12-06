@@ -5,6 +5,8 @@ from scipy.sparse.csgraph import connected_components
 
 
 def _facet_to_edges(facet, reverse=False):
+    """Convert a facet (a sequence of vertices) into a sequence of edges
+    (tuples)."""
     shift = 1 if reverse else -1
     return list(zip(*np.stack((facet, np.roll(facet, shift)))))
 
@@ -46,7 +48,8 @@ class Polyhedron(object):
             normal = np.cross(
                 self.vertices[facet[2]] - self.vertices[facet[1]],
                 self.vertices[facet[0]] - self.vertices[facet[1]])
-            self._equations[i, :3] = normal / np.linalg.norm(normal)
+            normal /= np.linalg.norm(normal)
+            self._equations[i, :3] = normal
             self._equations[i, 3] = normal.dot(self.vertices[facet[0]])
 
     def _find_neighbors(self):
@@ -115,7 +118,7 @@ class Polyhedron(object):
         """Ensure that all facets are ordered such that the normals are
         counterclockwise and point outwards.
 
-        This algorithm proceeds in three steps. First, it ensures that each
+        This algorithm proceeds in four steps. First, it ensures that each
         facet is ordered in either clockwise or counterclockwise order such
         that edges can be found from the sequence of the vertices in each
         facet. Next, it calls the neighbor finding routine to establish with
@@ -132,16 +135,15 @@ class Polyhedron(object):
                 np.where(np.all(self.vertices == vertex, axis=1))[0][0]
                 for vertex in Polygon(self.vertices[facet]).vertices
             ])
-
         self._find_neighbors()
 
         # The initial facet sets the order of the others.
         visited_facets = []
         remaining_facets = [0]
         while len(remaining_facets):
-            current_facet = remaining_facets[0]
+            current_facet = remaining_facets[-1]
             visited_facets.append(current_facet)
-            remaining_facets.remove(current_facet)
+            remaining_facets.pop()
 
             # Search for common edges between pairs of facets, then check the
             # ordering of the edge to determine relative facet orientation.
@@ -183,8 +185,6 @@ class Polyhedron(object):
     @property
     def volume(self):
         """Get or set the polyhedron's volume (setting rescales vertices)."""
-        # Arbitrary choice, use the first vertex in the face to compute the
-        # distance to the plane.
         ds = self._equations[:, 3]
         return np.sum(ds*self.get_facet_area())/3
 

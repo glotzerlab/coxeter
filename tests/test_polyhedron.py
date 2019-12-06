@@ -2,8 +2,7 @@ import pytest
 import numpy as np
 from euclid.shape_classes.polyhedron import Polyhedron
 from scipy.spatial import ConvexHull
-from euclid.polyhedron import ConvexPolyhedron
-from hypothesis import given, example, assume
+from hypothesis import given
 from hypothesis.strategies import floats
 from hypothesis.extra.numpy import arrays
 
@@ -101,35 +100,16 @@ def test_facet_alignment(cube):
         assert any([str_facet in ref for ref in reference_facets])
 
 
-# @given(arrays(np.float64, (5, 3), floats(-10, 10, width=64), unique=True))
-# @example(points=np.array([[1.        , 1.0005    , 1.0015    ],
-                          # [1.0025    , 1.0045    , 1.0055    ],
-                          # [1.0065    , 1.00750053, 1.12304688],
-                          # [1.15429688, 1.15625   , 1.16210938],
-                          # [1.00390625, 1.20373154, 1.24704742]]))
-# @example(points=np.array([[1.0351543 , 1.        , 1.0005    ],
-                       # [1.0015    , 1.0025    , 1.0035    ],
-                       # [1.0045    , 1.0055    , 1.00683504],
-                       # [1.00781354, 1.00859256, 1.08362384],
-                       # [1.00976737, 1.24999805, 1.25050087]]))
-# @example(points=np.array([[0.00000000e+00, 5.00000000e-04, 1.50000000e-03],
-                          # [2.50000000e-03, 3.50000000e-03, 4.50000000e-03],
-                          # [5.50000000e-03, 1.95258026e-02, 1.24999455e+00],
-                          # [1.25050000e+00, 9.76017761e-03, 3.90619553e-01],
-                          # [8.12499794e+00, 8.12692097e+00, 8.33251408e+00]]))
-# @example(points=np.array([[5.00000000e-04, 1.50000000e-03, 2.50000000e-03],
-                          # [3.50000000e-03, 4.50000000e-03, 5.50000000e-03],
-                          # [6.50000000e-03, 7.50000000e-03, 6.13777472e-01],
-                          # [8.50000000e-03, 8.08292465e+00, 0.00000000e+00],
-                          # [1.21515936e+00, 9.50000000e-03, 1.05000000e-02]]))
-# def test_convex_volume(points):
-    # """Check the volumes of various convex sets."""
-    # assume(points.size == np.unique(np.round(points, 3)).size)
-    # hull = ConvexHull(points)
-    # assume(hull.volume > 1)
-    # verts = points[hull.vertices]
-    # poly = Polyhedron(verts)
-    # assert np.isclose(hull.volume, poly.volume)
+@given(arrays(np.float64, (5, 3), floats(-10, 10, width=64), unique=True))
+def test_convex_volume(points):
+    """Check the volumes of various convex sets."""
+    hull = ConvexHull(points)
+    verts = points[hull.vertices]
+    poly = Polyhedron(verts)
+    poly.merge_facets()
+    poly.sort_facets()
+
+    assert np.isclose(hull.volume, poly.volume)
 
 
 @given(arrays(np.float64, (5, 3), floats(1, 5, width=64), unique=True))
@@ -138,4 +118,6 @@ def test_convex_surface_area(points):
     hull = ConvexHull(points)
     verts = points[hull.vertices]
     poly = Polyhedron(verts)
+    poly.merge_facets()
+    poly.sort_facets()
     assert np.isclose(hull.area, poly.surface_area)
