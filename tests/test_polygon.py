@@ -160,3 +160,8 @@ def test_set_convex_area(points):
     original_area = poly.area
     poly.area *= 2
     assert np.isclose(poly.area, 2*original_area)
+
+def test_triangulate(square):
+    triangles = [tri for tri in square.triangulate()]
+    assert len(triangles) == 2
+    assert tuple(triangles[0]) != tuple(triangles[1])

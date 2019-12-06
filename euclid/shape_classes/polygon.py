@@ -1,5 +1,6 @@
 import numpy as np
 import rowan
+from .. import polytri
 
 
 class Polygon(object):
@@ -264,3 +265,15 @@ class Polygon(object):
     @center.setter
     def center(self, value):
         self._vertices += (np.asarray(value) - self.center)
+
+    def triangulate(self):
+        """Generate a triangulation of the polygon.
+
+        Since the polygon may be embedded in 3D, we must rotate the polygon
+        into the plane to get a triangulation.
+        """
+        # vertices = np.dot(self.vertices, rotation.T)
+        # centered_vertices = vertices - self.center
+        list_verts = [tuple(vertex) for vertex in self.vertices]
+        for triangle in polytri.triangulate(self.vertices):
+            yield [list_verts.index(tuple(vertex)) for vertex in triangle]
