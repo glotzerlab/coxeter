@@ -232,34 +232,31 @@ class Polyhedron(object):
 
     @property
     def inertia_tensor(self):
-        """The inertia tensor.
+        """The inertia tensor computed about the center of mass.
 
         Computed using the method described in
         https://www.tandfonline.com/doi/abs/10.1080/2151237X.2006.10129220
         """
         simplices = np.array(list(self.triangulation())) - self.center
-
         volumes = np.abs(np.linalg.det(simplices)/6)
 
-        def fxx(triangles): return triangles[:, 1]**2 + triangles[:, 2]**2 # noqa
-        def fxy(triangles): return -triangles[:, 0]*triangles[:, 1] # noqa
-        def fxz(triangles): return -triangles[:, 0]*triangles[:, 2] # noqa
-        def fyy(triangles): return triangles[:, 0]**2 + triangles[:, 2]**2 # noqa
-        def fyz(triangles): return -triangles[:, 1]*triangles[:, 2] # noqa
-        def fzz(triangles): return triangles[:, 0]**2 + triangles[:, 1]**2 # noqa
-
         def compute(f):
-            return f(simplices[:, 0, :]) + f(simplices[:, 1, :]) + \
-                f(simplices[:, 2, :]) + f(simplices[:, 0, :] +
-                                          simplices[:, 1, :] +
-                                          simplices[:, 2, :])
+            R"""Integrate functions of the form :math:`\int\int\int f(x, y, z)
+            dx dy dz` over a set of triangles. Omits a factor of v/20."""
+            fv1 = f(simplices[:, 0, :])
+            fv2 = f(simplices[:, 1, :])
+            fv3 = f(simplices[:, 2, :])
+            fvsum = (f(simplices[:, 0, :] +
+                       simplices[:, 1, :] +
+                       simplices[:, 2, :]))
+            return np.sum((volumes/20)*(fv1 + fv2 + fv3 + fvsum))
 
-        Ixx = (compute(fxx)*volumes/20).sum()
-        Ixy = (compute(fxy)*volumes/20).sum()
-        Ixz = (compute(fxz)*volumes/20).sum()
-        Iyy = (compute(fyy)*volumes/20).sum()
-        Iyz = (compute(fyz)*volumes/20).sum()
-        Izz = (compute(fzz)*volumes/20).sum()
+        Ixx = compute(lambda t: t[:, 1]**2 + t[:, 2]**2)
+        Ixy = compute(lambda t: -t[:, 0]*t[:, 1])
+        Ixz = compute(lambda t: -t[:, 0]*t[:, 2])
+        Iyy = compute(lambda t: t[:, 0]**2 + t[:, 2]**2)
+        Iyz = compute(lambda t: -t[:, 1]*t[:, 2])
+        Izz = compute(lambda t: t[:, 0]**2 + t[:, 1]**2)
 
         return np.array([[Ixx, Ixy, Ixz],
                          [Ixy,   Iyy, Iyz],

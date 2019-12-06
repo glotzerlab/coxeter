@@ -65,7 +65,7 @@ class Polygon(object):
 
         d = self._normal.dot(self.vertices[0, :])
         for v in self.vertices:
-            if not np.isclose(self._normal.dot(v) - d, 0):
+            if not np.isclose(self._normal.dot(v), d):
                 raise ValueError("Not all vertices are coplanar.")
 
         # The polygon must be oriented in order for the area calculation to

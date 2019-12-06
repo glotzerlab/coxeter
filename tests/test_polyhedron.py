@@ -1,10 +1,12 @@
 import pytest
 import numpy as np
 from euclid.shape_classes.polyhedron import Polyhedron
+from euclid.polyhedron import ConvexPolyhedron
 from scipy.spatial import ConvexHull, Delaunay
 from hypothesis import given
 from hypothesis.strategies import floats
 from hypothesis.extra.numpy import arrays
+from euclid.damasceno import SHAPES
 
 
 # Need to declare this outside the fixture so that it can be used in multiple
@@ -124,7 +126,7 @@ def test_convex_surface_area(points):
     assert np.isclose(hull.area, poly.surface_area)
 
 
-def compute_inertia_mc(vertices, num_samples=1e4):
+def compute_inertia_mc(vertices, num_samples=1e7):
     """Use Monte Carlo integration to compute the moment of inertia."""
     mins = np.min(vertices, axis=0)
     maxs = np.max(vertices, axis=0)
@@ -142,6 +144,8 @@ def compute_inertia_mc(vertices, num_samples=1e4):
     Iyz = np.mean(-points[inside][:, 1] * points[inside][:, 2]**2)
 
     poly = Polyhedron(vertices)
+    poly.merge_facets()
+    poly.sort_facets()
 
     inertia_tensor = np.array([[Ixx, Ixy, Ixz],
                                [Ixy,   Iyy, Iyz],
@@ -154,3 +158,29 @@ def test_moment_inertia(cube):
     cube.merge_facets()
     cube.sort_facets()
     assert np.allclose(cube.inertia_tensor, np.diag([1/6]*3))
+
+
+def test_volume2():
+    for i in range(1, len(SHAPES)-1):
+        shape = SHAPES[i]
+        poly_new = Polyhedron(shape.vertices)
+        poly_new.merge_facets()
+        poly_new.sort_facets()
+        poly_old = ConvexPolyhedron(shape.vertices)
+        if not np.allclose(poly_new.volume, poly_old.getVolume(), atol=1e-3):
+            print("Not good for shape ", shape.Name,
+                  ", values were {} and {}".format(
+                      poly_new.volume, poly_old.getVolume(), atol=1e-3))
+        else:
+            print("Good for shape ", shape.Name)
+
+
+def test_moment_inertia_damasceno_shapes():
+    for i in range(1, len(SHAPES)-1):
+        shape = SHAPES[i]
+        poly = Polyhedron(shape.vertices)
+        poly.merge_facets()
+        poly.sort_facets()
+        assert np.allclose(poly.inertia_tensor,
+                           compute_inertia_mc(poly.vertices - poly.center),
+                           atol=1e-2)
