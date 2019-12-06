@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
 from euclid.shape_classes.polyhedron import Polyhedron
-from scipy.spatial import ConvexHull
+from scipy.spatial import ConvexHull, Delaunay
 from hypothesis import given
 from hypothesis.strategies import floats
 from hypothesis.extra.numpy import arrays
@@ -79,6 +79,7 @@ def test_volume_center_shift(cube, new_center):
     cube.center = new_center
     assert np.isclose(cube.volume, 1)
 
+
 def test_facet_alignment(cube):
     """Make sure that facets are constructed correctly given vertices."""
     cube.merge_facets()
@@ -112,7 +113,7 @@ def test_convex_volume(points):
     assert np.isclose(hull.volume, poly.volume)
 
 
-@given(arrays(np.float64, (5, 3), floats(1, 5, width=64), unique=True))
+@given(arrays(np.float64, (5, 3), floats(-10, 10, width=64), unique=True))
 def test_convex_surface_area(points):
     """Check the surface areas of various convex sets."""
     hull = ConvexHull(points)
@@ -121,3 +122,35 @@ def test_convex_surface_area(points):
     poly.merge_facets()
     poly.sort_facets()
     assert np.isclose(hull.area, poly.surface_area)
+
+
+def compute_inertia_mc(vertices, num_samples=1e4):
+    """Use Monte Carlo integration to compute the moment of inertia."""
+    mins = np.min(vertices, axis=0)
+    maxs = np.max(vertices, axis=0)
+
+    points = np.random.rand(int(num_samples), 3)*(maxs-mins)+mins
+
+    hull = Delaunay(vertices)
+    inside = hull.find_simplex(points) >= 0
+
+    Ixx = np.mean(points[inside][:, 1]**2 + points[inside][:, 2]**2)
+    Iyy = np.mean(points[inside][:, 0]**2 + points[inside][:, 2]**2)
+    Izz = np.mean(points[inside][:, 0]**2 + points[inside][:, 1]**2)
+    Ixy = np.mean(-points[inside][:, 0] * points[inside][:, 1]**2)
+    Ixz = np.mean(-points[inside][:, 0] * points[inside][:, 2]**2)
+    Iyz = np.mean(-points[inside][:, 1] * points[inside][:, 2]**2)
+
+    poly = Polyhedron(vertices)
+
+    inertia_tensor = np.array([[Ixx, Ixy, Ixz],
+                               [Ixy,   Iyy, Iyz],
+                               [Ixz,   Iyz,   Izz]]) * poly.volume
+
+    return inertia_tensor
+
+
+def test_moment_inertia(cube):
+    cube.merge_facets()
+    cube.sort_facets()
+    assert np.allclose(cube.inertia_tensor, np.diag([1/6]*3))

@@ -220,6 +220,16 @@ class Polyhedron(object):
         """The surface area."""
         return np.sum(self.get_facet_area())
 
+    def triangulation(self):
+        """Generate a triangulation of the surface of the polyhedron.
+
+        This algorithm constructs Polygons from each of the facets and then
+        triangulates each of these to provide a total triangulation.
+        """
+        for facet in self.facets:
+            poly = Polygon(self.vertices[facet])
+            yield from poly.triangulation()
+
     @property
     def inertia_tensor(self):
         """The inertia tensor.
@@ -227,17 +237,16 @@ class Polyhedron(object):
         Computed using the method described in
         https://www.tandfonline.com/doi/abs/10.1080/2151237X.2006.10129220
         """
-        centered_vertices = self.vertices - self.center
-        simplices = centered_vertices[self.faces]
+        simplices = np.array(list(self.triangulation())) - self.center
 
         volumes = np.abs(np.linalg.det(simplices)/6)
 
-        def fxx(triangles): triangles[:, 1]**2 + triangles[:, 2]**2 # noqa
-        def fxy(triangles): -triangles[:, 0]*triangles[:, 1] # noqa
-        def fxz(triangles): -triangles[:, 0]*triangles[:, 2] # noqa
-        def fyy(triangles): triangles[:, 0]**2 + triangles[:, 2]**2 # noqa
-        def fyz(triangles): -triangles[:, 1]*triangles[:, 2] # noqa
-        def fzz(triangles): triangles[:, 0]**2 + triangles[:, 1]**2 # noqa
+        def fxx(triangles): return triangles[:, 1]**2 + triangles[:, 2]**2 # noqa
+        def fxy(triangles): return -triangles[:, 0]*triangles[:, 1] # noqa
+        def fxz(triangles): return -triangles[:, 0]*triangles[:, 2] # noqa
+        def fyy(triangles): return triangles[:, 0]**2 + triangles[:, 2]**2 # noqa
+        def fyz(triangles): return -triangles[:, 1]*triangles[:, 2] # noqa
+        def fzz(triangles): return triangles[:, 0]**2 + triangles[:, 1]**2 # noqa
 
         def compute(f):
             return f(simplices[:, 0, :]) + f(simplices[:, 1, :]) + \
@@ -252,11 +261,9 @@ class Polyhedron(object):
         Iyz = (compute(fyz)*volumes/20).sum()
         Izz = (compute(fzz)*volumes/20).sum()
 
-        self._inertia_tensor = np.array([[Ixx, Ixy, Ixz],
-                                        [Ixy,   Iyy, Iyz],
-                                        [Ixz,   Iyz,   Izz]])
-
-        return self._inertia_tensor
+        return np.array([[Ixx, Ixy, Ixz],
+                         [Ixy,   Iyy, Iyz],
+                         [Ixz,   Iyz,   Izz]])
 
     @property
     def center(self):
