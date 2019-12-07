@@ -138,7 +138,8 @@ class Polyhedron(object):
         for facet in self.facets:
             facet[:] = np.asarray([
                 np.where(np.all(self.vertices == vertex, axis=1))[0][0]
-                for vertex in Polygon(self.vertices[facet]).vertices
+                for vertex in Polygon(self.vertices[facet],
+                                      planar_tolerance=1e-4).vertices
             ])
         self._find_neighbors()
 
@@ -215,7 +216,7 @@ class Polyhedron(object):
         areas = np.empty(len(facets))
         for i, facet_index in enumerate(facets):
             facet = self.facets[facet_index]
-            poly = Polygon(self.vertices[facet])
+            poly = Polygon(self.vertices[facet], planar_tolerance=1e-4)
             areas[i] = poly.area
 
         return areas
@@ -232,7 +233,7 @@ class Polyhedron(object):
         triangulates each of these to provide a total triangulation.
         """
         for facet in self.facets:
-            poly = Polygon(self.vertices[facet])
+            poly = Polygon(self.vertices[facet], planar_tolerance=1e-4)
             yield from poly.triangulation()
 
     @property
@@ -245,8 +246,8 @@ class Polyhedron(object):
         simplices = np.array(list(self.triangulation())) - self.center
         volumes = np.abs(np.linalg.det(simplices)/6)
 
-        def compute(f):
-            R"""Integrate functions of the form :math:`\int\int\int f(x, y, z)
+        def triangle_intgrate(f):
+            R"""Compute integrals of the form :math:`\int\int\int f(x, y, z)
             dx dy dz` over a set of triangles. Omits a factor of v/20."""
             fv1 = f(simplices[:, 0, :])
             fv2 = f(simplices[:, 1, :])
@@ -256,12 +257,12 @@ class Polyhedron(object):
                        simplices[:, 2, :]))
             return np.sum((volumes/20)*(fv1 + fv2 + fv3 + fvsum))
 
-        Ixx = compute(lambda t: t[:, 1]**2 + t[:, 2]**2)
-        Ixy = compute(lambda t: -t[:, 0]*t[:, 1])
-        Ixz = compute(lambda t: -t[:, 0]*t[:, 2])
-        Iyy = compute(lambda t: t[:, 0]**2 + t[:, 2]**2)
-        Iyz = compute(lambda t: -t[:, 1]*t[:, 2])
-        Izz = compute(lambda t: t[:, 0]**2 + t[:, 1]**2)
+        Ixx = triangle_intgrate(lambda t: t[:, 1]**2 + t[:, 2]**2)
+        Ixy = triangle_intgrate(lambda t: -t[:, 0]*t[:, 1])
+        Ixz = triangle_intgrate(lambda t: -t[:, 0]*t[:, 2])
+        Iyy = triangle_intgrate(lambda t: t[:, 0]**2 + t[:, 2]**2)
+        Iyz = triangle_intgrate(lambda t: -t[:, 1]*t[:, 2])
+        Izz = triangle_intgrate(lambda t: t[:, 0]**2 + t[:, 1]**2)
 
         return np.array([[Ixx, Ixy, Ixz],
                          [Ixy,   Iyy, Iyz],
