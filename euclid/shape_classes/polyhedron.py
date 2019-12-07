@@ -279,7 +279,6 @@ class Polyhedron(object):
                          [Ixy,   Iyy, Iyz],
                          [Ixz,   Iyz,   Izz]])
 
-
     @property
     def center(self):
         """Get or set the polyhedron's centroid (setting rescales vertices)."""
@@ -318,7 +317,9 @@ class Polyhedron(object):
     @property
     def iq(self):
         """The isoperimetric quotient."""
-        pass
+        V = self.volume
+        S = self.surface_area
+        return np.pi * 36 * V * V / (S * S * S)
 
     @property
     def tau(self):

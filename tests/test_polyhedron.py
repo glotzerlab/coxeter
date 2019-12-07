@@ -7,6 +7,7 @@ from hypothesis import given, assume
 from hypothesis.strategies import floats
 from hypothesis.extra.numpy import arrays
 from euclid.damasceno import SHAPES
+import os
 
 
 # Need to declare this outside the fixture so that it can be used in multiple
@@ -172,6 +173,9 @@ def test_volume_damasceno_shapes():
         assert np.isclose(poly.volume, hull.volume)
 
 
+# This test is a bit slow (a couple of minutes), so skip running it locally.
+@pytest.mark.skipIf(os.getenv('CI', 'false') == 'true' and
+                    os.getenv('CIRCLECI', 'false') == 'true')
 def test_moment_inertia_damasceno_shapes():
     # These shapes pass the test for a sufficiently high number of samples, but
     # the number is too high to be worth running them regularly.
@@ -214,9 +218,17 @@ def test_moment_inertia_damasceno_shapes():
                                  ))
 
 
+@pytest.mark.parametrize('cube', ['convex_cube', 'oriented_cube'],
+                         indirect=True)
+def test_iq(cube):
+    assert cube.iq == 36*np.pi*cube.volume**2/cube.surface_area**3
+
+
+@pytest.mark.skip("Need test data")
 def test_nonconvex_polyhedron():
     pass
 
 
+@pytest.mark.skip("Need test data")
 def test_nonconvex_polyhedron_with_nonconvex_polygon_face():
     pass
