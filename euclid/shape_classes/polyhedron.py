@@ -253,10 +253,16 @@ class Polyhedron(object):
         Computed using the method described in
         https://www.tandfonline.com/doi/abs/10.1080/2151237X.2006.10129220
         """
+        # There is some very subtle issue, probably with vertices that are too
+        # close to zero, that small rotations solve. Need to narrow down what
+        # it is.
+        import rowan
+        self._vertices = rowan.rotate(rowan.random.rand(1), self._vertices)
         simplices = np.array(list(self.triangulation())) - self.center
+
         volumes = np.abs(np.linalg.det(simplices)/6)
 
-        def triangle_intgrate(f):
+        def triangle_integrate(f):
             R"""Compute integrals of the form :math:`\int\int\int f(x, y, z)
             dx dy dz` over a set of triangles. Omits a factor of v/20."""
             fv1 = f(simplices[:, 0, :])
@@ -267,16 +273,17 @@ class Polyhedron(object):
                        simplices[:, 2, :]))
             return np.sum((volumes/20)*(fv1 + fv2 + fv3 + fvsum))
 
-        Ixx = triangle_intgrate(lambda t: t[:, 1]**2 + t[:, 2]**2)
-        Ixy = triangle_intgrate(lambda t: -t[:, 0]*t[:, 1])
-        Ixz = triangle_intgrate(lambda t: -t[:, 0]*t[:, 2])
-        Iyy = triangle_intgrate(lambda t: t[:, 0]**2 + t[:, 2]**2)
-        Iyz = triangle_intgrate(lambda t: -t[:, 1]*t[:, 2])
-        Izz = triangle_intgrate(lambda t: t[:, 0]**2 + t[:, 1]**2)
+        Ixx = triangle_integrate(lambda t: t[:, 1]**2 + t[:, 2]**2)
+        Ixy = triangle_integrate(lambda t: -t[:, 0]*t[:, 1])
+        Ixz = triangle_integrate(lambda t: -t[:, 0]*t[:, 2])
+        Iyy = triangle_integrate(lambda t: t[:, 0]**2 + t[:, 2]**2)
+        Iyz = triangle_integrate(lambda t: -t[:, 1]*t[:, 2])
+        Izz = triangle_integrate(lambda t: t[:, 0]**2 + t[:, 1]**2)
 
         return np.array([[Ixx, Ixy, Ixz],
                          [Ixy,   Iyy, Iyz],
                          [Ixz,   Iyz,   Izz]])
+
 
     @property
     def center(self):
