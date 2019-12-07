@@ -46,7 +46,7 @@ def cube_points():
 
 
 @pytest.fixture
-def cube():
+def convex_cube():
     return Polyhedron(get_cube_points())
 
 
@@ -56,22 +56,31 @@ def oriented_cube():
                       get_oriented_cube_normals())
 
 
+@pytest.fixture
+def cube(request):
+    return request.getfixturevalue(request.param)
+
+
+@pytest.mark.parametrize('cube', ['convex_cube', 'oriented_cube'],
+                         indirect=True)
 def test_surface_area(cube):
     """Test surface area calculation."""
     assert cube.surface_area == 6
 
 
-def test_volume():
-    cube = Polyhedron(get_cube_points(), facets=get_oriented_cube_facets(),
-                      normals=get_oriented_cube_normals())
+@pytest.mark.parametrize('cube', ['convex_cube', 'oriented_cube'],
+                         indirect=True)
+def test_volume(cube):
     assert cube.volume == 1
 
 
-def test_merge_facets(cube):
+def test_merge_facets(convex_cube):
     """Test that coplanar facets can be correctly merged."""
-    assert len(cube.facets) == 6
+    assert len(convex_cube.facets) == 6
 
 
+@pytest.mark.parametrize('cube', ['convex_cube', 'oriented_cube'],
+                         indirect=True)
 @given(new_center=arrays(np.float64, (3, ), floats(-10, 10, width=64)))
 def test_volume_center_shift(cube, new_center):
     """Make sure that moving the center doesn't affect the volume."""
@@ -79,7 +88,7 @@ def test_volume_center_shift(cube, new_center):
     assert np.isclose(cube.volume, 1)
 
 
-def test_facet_alignment(cube):
+def test_facet_alignment(convex_cube):
     """Make sure that facets are constructed correctly given vertices."""
     def facet_to_string(facet):
         # Convenience function to create a string of vertex ids, which is the
@@ -90,9 +99,9 @@ def test_facet_alignment(cube):
     for facet in get_oriented_cube_facets():
         reference_facets.append(facet_to_string(facet)*2)
 
-    assert len(cube.facets) == len(reference_facets)
+    assert len(convex_cube.facets) == len(reference_facets)
 
-    for facet in cube.facets:
+    for facet in convex_cube.facets:
         str_facet = facet_to_string(facet)
         assert any([str_facet in ref for ref in reference_facets])
 
@@ -148,6 +157,8 @@ def compute_inertia_mc(vertices, num_samples=1e7):
     return inertia_tensor
 
 
+@pytest.mark.parametrize('cube', ['convex_cube', 'oriented_cube'],
+                         indirect=True)
 def test_moment_inertia(cube):
     assert np.allclose(cube.inertia_tensor, np.diag([1/6]*3))
 
