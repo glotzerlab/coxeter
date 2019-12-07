@@ -2,7 +2,8 @@ import pytest
 import numpy as np
 from euclid.shape_classes.polyhedron import Polyhedron
 from scipy.spatial import ConvexHull, Delaunay
-from hypothesis import given
+from scipy.spatial.qhull import QhullError
+from hypothesis import given, assume
 from hypothesis.strategies import floats
 from hypothesis.extra.numpy import arrays
 from euclid.damasceno import SHAPES
@@ -105,7 +106,10 @@ def test_facet_alignment(cube):
 @given(arrays(np.float64, (5, 3), floats(-10, 10, width=64), unique=True))
 def test_convex_volume(points):
     """Check the volumes of various convex sets."""
-    hull = ConvexHull(points)
+    try:
+        hull = ConvexHull(points)
+    except QhullError:
+        assume(False)
     verts = points[hull.vertices]
     poly = Polyhedron(verts)
     poly.merge_facets()
@@ -117,7 +121,10 @@ def test_convex_volume(points):
 @given(arrays(np.float64, (5, 3), floats(-10, 10, width=64), unique=True))
 def test_convex_surface_area(points):
     """Check the surface areas of various convex sets."""
-    hull = ConvexHull(points)
+    try:
+        hull = ConvexHull(points)
+    except QhullError:
+        assume(False)
     verts = points[hull.vertices]
     poly = Polyhedron(verts)
     poly.merge_facets()
