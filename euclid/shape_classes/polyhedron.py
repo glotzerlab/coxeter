@@ -35,20 +35,22 @@ class Polyhedron(object):
                     UserWarning,
                     "Provided normals are ignored if facets are not provided, "
                     "they are instead inferred from the convex hull.")
+            self._find_equations()
+            self.merge_facets()
 
         else:
             # TODO: Add some sanity checks here.
             self._facets = facets
 
-        if normals is not None:
-            self._equations = np.empty((len(self.facets), 4))
-            for i, (facet, normal) in enumerate(zip(self.facets, normals)):
-                # TODO: Add check that normal is a unit vector.
-                self._equations[i, :3] = normal
-                # Arbitrarily choose to use the first vertex of each facet.
-                self._equations[i, 3] = normal.dot(self.vertices[facet[0]])
-        else:
-            self._find_equations()
+            if normals is not None:
+                self._equations = np.empty((len(self.facets), 4))
+                for i, (facet, normal) in enumerate(zip(self.facets, normals)):
+                    # TODO: Add check that normal is a unit vector.
+                    self._equations[i, :3] = normal
+                    # Arbitrarily choose to use the first vertex of each facet.
+                    self._equations[i, 3] = normal.dot(self.vertices[facet[0]])
+            else:
+                self._find_equations()
 
     def _find_equations(self):
         """Find equations of facets."""

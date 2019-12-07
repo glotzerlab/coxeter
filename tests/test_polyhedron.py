@@ -69,22 +69,18 @@ def test_volume():
 
 def test_merge_facets(cube):
     """Test that coplanar facets can be correctly merged."""
-    cube.merge_facets()
     assert len(cube.facets) == 6
 
 
 @given(new_center=arrays(np.float64, (3, ), floats(-10, 10, width=64)))
 def test_volume_center_shift(cube, new_center):
     """Make sure that moving the center doesn't affect the volume."""
-    cube.merge_facets()
     cube.center = new_center
     assert np.isclose(cube.volume, 1)
 
 
 def test_facet_alignment(cube):
     """Make sure that facets are constructed correctly given vertices."""
-    cube.merge_facets()
-
     def facet_to_string(facet):
         # Convenience function to create a string of vertex ids, which is the
         # easiest way to test for sequences that are cyclically equal.
@@ -110,7 +106,6 @@ def test_convex_volume(points):
         assume(False)
     verts = points[hull.vertices]
     poly = Polyhedron(verts)
-    poly.merge_facets()
 
     assert np.isclose(hull.volume, poly.volume)
 
@@ -124,7 +119,6 @@ def test_convex_surface_area(points):
         assume(False)
     verts = points[hull.vertices]
     poly = Polyhedron(verts)
-    poly.merge_facets()
     assert np.isclose(hull.area, poly.surface_area)
 
 
@@ -146,7 +140,6 @@ def compute_inertia_mc(vertices, num_samples=1e7):
     Iyz = np.mean(-points[inside][:, 1] * points[inside][:, 2]**2)
 
     poly = Polyhedron(vertices)
-    poly.merge_facets()
 
     inertia_tensor = np.array([[Ixx, Ixy, Ixz],
                                [Ixy,   Iyy, Iyz],
@@ -156,7 +149,6 @@ def compute_inertia_mc(vertices, num_samples=1e7):
 
 
 def test_moment_inertia(cube):
-    cube.merge_facets()
     assert np.allclose(cube.inertia_tensor, np.diag([1/6]*3))
 
 
@@ -166,7 +158,6 @@ def test_volume_damasceno_shapes():
         if shape.Name == 'RESERVED':
             break
         poly = Polyhedron(shape.vertices)
-        poly.merge_facets()
         hull = ConvexHull(shape.vertices)
         assert np.isclose(poly.volume, hull.volume)
 
@@ -176,7 +167,6 @@ def test_moment_inertia_damasceno_shapes():
     for i in range(1, len(SHAPES)-1):
         shape = SHAPES[i]
         poly = Polyhedron(shape.vertices)
-        poly.merge_facets()
         assert np.allclose(poly.inertia_tensor,
                            compute_inertia_mc(poly.vertices - poly.center),
                            atol=1e-2)
