@@ -69,6 +69,10 @@ class Polygon(object):
             self._normal /= np.linalg.norm(self._normal)
 
         d = self._normal.dot(self.vertices[0, :])
+        # If this simple check of coplanarity is not robust enough for a
+        # desired polygon, it might be necessary to implement more robust
+        # checks based on something like
+        # http://www.cs.cmu.edu/~quake/robust.html
         for v in self.vertices:
             if not np.isclose(self._normal.dot(v), d, planar_tolerance):
                 raise ValueError("Not all vertices are coplanar.")
