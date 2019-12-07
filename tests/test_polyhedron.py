@@ -160,21 +160,79 @@ def test_moment_inertia(cube):
     assert np.allclose(cube.inertia_tensor, np.diag([1/6]*3))
 
 
-def test_volume2():
+def test_volume_damasceno_shapes():
     for i in range(1, len(SHAPES)-1):
         shape = SHAPES[i]
+        print("Trying shape {}: {}".format(i, shape.Name))
+        poly = Polyhedron(shape.vertices)
+        poly.merge_facets()
+        poly.sort_facets()
+        hull = ConvexHull(shape.vertices)
+        assert np.isclose(poly.volume, hull.volume)
+
+
+@pytest.mark.skip
+def test_volume2():
+    # shape = SHAPES[1]
+    # poly = Polyhedron(shape.vertices)
+    # poly.merge_facets()
+    # print("Facets before")
+    # print(np.asarray(poly.facets))
+    # poly.merge_facets()
+    # poly.sort_facets()
+    # print("Facets after")
+    # print(np.asarray(poly.facets))
+    # print(poly.volume)
+    # print(poly.vertices)
+    # print(np.asarray(poly.facets))
+    # print(poly._equations)
+    """Currently the acute golden rhombohedron fails, and the reason is that
+    the second facet is oriented clockwise instead of counterclockwise. The
+    facets themselves are correct, so it's just an issue of one being
+    misordered."""
+    for i in range(1, len(SHAPES)-1):
+        shape = SHAPES[i]
+        # print()
+        # print(shape.vertices)
         poly_new = Polyhedron(shape.vertices)
+        # print("Original facets")
+        # print(np.asarray(poly_new.facets))
+        poly_new.merge_facets()
+        # print("New facets")
+        # print(np.asarray(poly_new.facets))
+        # print()
+        # print(np.asarray(poly_new.facets))
+        poly_new.sort_facets()
         poly_new.merge_facets()
         poly_new.sort_facets()
+        # print()
+        # print(np.asarray(poly_new.facets))
+        # print()
         poly_old = ConvexPolyhedron(shape.vertices)
+        # print("Before")
+        # print(poly_old.facets)
+        # poly_old.mergeFacets()
+        # print("After")
+        # print(poly_old.facets)
+        # print("The surface area is ", poly_new.surface_area)
+        # print("The surface area is ", poly_old.getArea())
+        # print(poly_new.get_facet_area()*poly_new._equations[:, 3])
+        hull = ConvexHull(shape.vertices)
+        # poly_new._equations = poly_old.equations
+        # print(poly_old.facets)
         if not np.allclose(poly_new.volume, poly_old.getVolume(), atol=1e-3):
             print("Not good for shape ", shape.Name,
-                  ", values were {} and {}".format(
-                      poly_new.volume, poly_old.getVolume(), atol=1e-3))
+                  ", values were {} and {}, {}".format(
+                      poly_new.volume, poly_old.getVolume(), hull.volume))
+            # poly_tmp = ConvexSpheropolyhedron(np.asarray(shape.vertices)/poly_tmp
+            # print("Scaled old volume: "
         else:
             print("Good for shape ", shape.Name)
+        import time
+        time.sleep(1)
 
 
+@pytest.mark.skip
 def test_moment_inertia_damasceno_shapes():
     for i in range(1, len(SHAPES)-1):
         shape = SHAPES[i]

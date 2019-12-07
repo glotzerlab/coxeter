@@ -22,6 +22,9 @@ class Polyhedron(object):
         The polyhedron is assumed to be of unit mass and constant density.
 
         """
+        # TODO: If facets are not provided, I should merge facets and sort
+        # (sorting should be automatically part of merging). If they are
+        # provided, should I even check if they are right-handed? I think not.
         self._vertices = np.array(vertices, dtype=np.float64)
         if facets is None:
             hull = ConvexHull(vertices)
@@ -33,6 +36,7 @@ class Polyhedron(object):
         if normals is not None:
             self._equations = np.empty((len(self.facets), 4))
             for i, (facet, normal) in enumerate(zip(self.facets, normals)):
+                # TODO: Add check that normal is a unit vector.
                 self._equations[i, :3] = normal
                 # Arbitrarily choose to use the first vertex of each facet.
                 self._equations[i, 3] = normal.dot(self.vertices[facet[0]])
@@ -65,6 +69,7 @@ class Polyhedron(object):
             for j in range(i+1, self.num_facets):
                 if len(facet_edges[i].intersection(facet_edges[j])) > 0:
                     self._neighbors[i].append(j)
+                    self._neighbors[j].append(i)
             self._neighbors[i] = np.array(self._neighbors[i])
 
     def merge_facets(self, tolerance=1e-6):
