@@ -106,6 +106,7 @@ class Polyhedron(object):
 
         self._facets = [np.asarray(list(f)) for f in new_facets]
         self._find_equations()
+        self.sort_facets()
 
     @property
     def neighbors(self):

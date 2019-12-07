@@ -77,7 +77,6 @@ def test_merge_facets(cube):
 def test_volume_center_shift(cube, new_center):
     """Make sure that moving the center doesn't affect the volume."""
     cube.merge_facets()
-    cube.sort_facets()
     cube.center = new_center
     assert np.isclose(cube.volume, 1)
 
@@ -85,7 +84,6 @@ def test_volume_center_shift(cube, new_center):
 def test_facet_alignment(cube):
     """Make sure that facets are constructed correctly given vertices."""
     cube.merge_facets()
-    cube.sort_facets()
 
     def facet_to_string(facet):
         # Convenience function to create a string of vertex ids, which is the
@@ -113,7 +111,6 @@ def test_convex_volume(points):
     verts = points[hull.vertices]
     poly = Polyhedron(verts)
     poly.merge_facets()
-    poly.sort_facets()
 
     assert np.isclose(hull.volume, poly.volume)
 
@@ -128,7 +125,6 @@ def test_convex_surface_area(points):
     verts = points[hull.vertices]
     poly = Polyhedron(verts)
     poly.merge_facets()
-    poly.sort_facets()
     assert np.isclose(hull.area, poly.surface_area)
 
 
@@ -151,7 +147,6 @@ def compute_inertia_mc(vertices, num_samples=1e7):
 
     poly = Polyhedron(vertices)
     poly.merge_facets()
-    poly.sort_facets()
 
     inertia_tensor = np.array([[Ixx, Ixy, Ixz],
                                [Ixy,   Iyy, Iyz],
@@ -162,7 +157,6 @@ def compute_inertia_mc(vertices, num_samples=1e7):
 
 def test_moment_inertia(cube):
     cube.merge_facets()
-    cube.sort_facets()
     assert np.allclose(cube.inertia_tensor, np.diag([1/6]*3))
 
 
@@ -173,7 +167,6 @@ def test_volume_damasceno_shapes():
             break
         poly = Polyhedron(shape.vertices)
         poly.merge_facets()
-        poly.sort_facets()
         hull = ConvexHull(shape.vertices)
         assert np.isclose(poly.volume, hull.volume)
 
@@ -184,7 +177,6 @@ def test_moment_inertia_damasceno_shapes():
         shape = SHAPES[i]
         poly = Polyhedron(shape.vertices)
         poly.merge_facets()
-        poly.sort_facets()
         assert np.allclose(poly.inertia_tensor,
                            compute_inertia_mc(poly.vertices - poly.center),
                            atol=1e-2)
