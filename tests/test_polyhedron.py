@@ -172,69 +172,51 @@ def test_volume_damasceno_shapes():
         assert np.isclose(poly.volume, hull.volume)
 
 
-def moment_inertia_raw(vertices):
-    """Compute the moment of inertia of a convex polyhedron."""
-    vertices = np.array(vertices)
-    vertices -= np.mean(vertices, axis=0)
-    poly = ConvexHull(vertices)
-    faces = poly.simplices
-    simplices = vertices[faces]
-
-    volumes = np.abs(np.linalg.det(simplices)/6)
-
-    fxx = lambda triangles: triangles[:, 1]**2 + triangles[:, 2]**2
-    fxy = lambda triangles: -triangles[:, 0]*triangles[:, 1]
-    fxz = lambda triangles: -triangles[:, 0]*triangles[:, 2]
-    fyy = lambda triangles: triangles[:, 0]**2 + triangles[:, 2]**2
-    fyz = lambda triangles: -triangles[:, 1]*triangles[:, 2]
-    fzz = lambda triangles: triangles[:, 0]**2 + triangles[:, 1]**2
-
-    def compute(f):
-        return f(simplices[:, 0, :]) + f(simplices[:, 1, :]) + f(simplices[:, 2, :]) + f(simplices[:, 0, :] + simplices[:, 1, :] + simplices[:, 2, :])
-
-    Ixx = (compute(fxx)*volumes/20).sum()
-    Ixy = (compute(fxy)*volumes/20).sum()
-    Ixz = (compute(fxz)*volumes/20).sum()
-    Iyy = (compute(fyy)*volumes/20).sum()
-    Iyz = (compute(fyz)*volumes/20).sum()
-    Izz = (compute(fzz)*volumes/20).sum()
-
-    I = np.array([[Ixx, Ixy, Ixz],
-                  [Ixy,   Iyy, Iyz],
-                  [Ixz,   Iyz,   Izz]])
-
-    return I
-
-
 def test_moment_inertia_damasceno_shapes():
+    # These shapes pass the test for a sufficiently high number of samples, but
+    # the number is too high to be worth running them regularly.
+    bad_shapes = [
+        'Augmented Truncated Dodecahedron',
+        'Deltoidal Hexecontahedron',
+        'Disdyakis Triacontahedron',
+        'Truncated Dodecahedron',
+        'Truncated Icosidodecahedron',
+        'Metabiaugmented Truncated Dodecahedron',
+        'Pentagonal Hexecontahedron',
+        'Paragyrate Diminished Rhombicosidodecahedron',
+        'Square Cupola',
+        'Triaugmented Truncated Dodecahedron',
+        'Parabiaugmented Truncated Dodecahedron',
+    ]
+    np.random.seed(0)
     for shape in SHAPES:
-        if shape.Name in ('RESERVED', 'Sphere'):
+        if shape.Name in ['RESERVED', 'Sphere'] + bad_shapes:
             continue
-        if shape.Name != 'Augmented Truncated Cube':
-            continue
-        print("Testing shape ", shape.Name)
+
         poly = Polyhedron(shape.vertices)
-        try:
-            x = poly.inertia_tensor
-            y = compute_inertia_mc(poly.vertices - poly.center)
-            assert np.allclose(x,
-                            y,
-                            atol=1e-2)
-        except AssertionError:
-            print("Mine")
-            print(x)
-            print("MC")
-            print(y)
-            print("Raw")
-            print(moment_inertia_raw(shape.vertices))
-            print("Failed")
+        num_samples = 1000
+        accept = False
+        # Loop over different sampling rates to minimize the test runtime.
+        while num_samples < 1e8:
+            try:
+                euclid_result = poly.inertia_tensor
+                mc_result = compute_inertia_mc(shape.vertices, num_samples)
+                assert np.allclose(euclid_result, mc_result, atol=1e-1)
+                accept = True
+                break
+            except AssertionError:
+                num_samples *= 10
+                continue
+        if not accept:
+            raise AssertionError("The test failed for shape {}.\nMC Result: "
+                                 "\n{}\neuclid result: \n{}".format(
+                                     shape.Name, mc_result, euclid_result
+                                 ))
 
 
-@pytest.mark.skip
 def test_nonconvex_polyhedron():
     pass
 
 
-@pytest.mark.skip
 def test_nonconvex_polyhedron_with_nonconvex_polygon_face():
     pass

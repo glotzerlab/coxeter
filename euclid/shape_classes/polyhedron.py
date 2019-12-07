@@ -253,11 +253,6 @@ class Polyhedron(object):
         Computed using the method described in
         https://www.tandfonline.com/doi/abs/10.1080/2151237X.2006.10129220
         """
-        # There is some very subtle issue, probably with vertices that are too
-        # close to zero, that small rotations solve. Need to narrow down what
-        # it is.
-        import rowan
-        self._vertices = rowan.rotate(rowan.random.rand(1), self._vertices)
         simplices = np.array(list(self.triangulation())) - self.center
 
         volumes = np.abs(np.linalg.det(simplices)/6)
