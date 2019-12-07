@@ -2,6 +2,7 @@ from scipy.spatial import ConvexHull
 import numpy as np
 from .polygon import Polygon
 from scipy.sparse.csgraph import connected_components
+import warnings
 
 
 def _facet_to_edges(facet, reverse=False):
@@ -29,6 +30,12 @@ class Polyhedron(object):
         if facets is None:
             hull = ConvexHull(vertices)
             self._facets = [facet for facet in hull.simplices]
+            if normals is not None:
+                warnings.warn(
+                    UserWarning,
+                    "Provided normals are ignored if facets are not provided, "
+                    "they are instead inferred from the convex hull.")
+
         else:
             # TODO: Add some sanity checks here.
             self._facets = facets
