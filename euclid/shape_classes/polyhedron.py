@@ -81,7 +81,7 @@ class Polyhedron(object):
                     self._neighbors[j].append(i)
             self._neighbors[i] = np.array(self._neighbors[i])
 
-    def merge_facets(self, tolerance=1e-6):
+    def merge_facets(self, atol=1e-8, rtol=1e-5):
         """Merge facets of a polyhedron.
 
         For convex polyhedra, facets will automatically be merged to an
@@ -96,8 +96,9 @@ class Polyhedron(object):
         merge_graph = np.zeros((self.num_facets, self.num_facets))
         for i in range(self.num_facets):
             for j in self._neighbors[i]:
-                if np.allclose(self._equations[i], self._equations[j]) or \
-                        np.allclose(self._equations[i], -self._equations[j]):
+                eq1, eq2 = self._equations[[i, j]]
+                if np.allclose(eq1, eq2, atol=atol, rtol=rtol) or \
+                        np.allclose(eq1, -eq2, atol=atol, rtol=rtol):
                     merge_graph[i, j] = 1
 
         _, labels = connected_components(merge_graph, directed=False,
@@ -320,6 +321,23 @@ class Polyhedron(object):
         V = self.volume
         S = self.surface_area
         return np.pi * 36 * V * V / (S * S * S)
+
+    def get_dihedral(self, a, b):
+        """Get the dihedral angle between a pair of facets.
+
+        The dihedral is computed from the dot product of the facet normals.
+
+        Args:
+            a (int):
+                The index of the first facet.
+            b (int):
+                The index of the secondfacet.
+
+        Returns:
+            float: The dihedral angle in radians.
+        """
+        n1, n2 = self._equations[[a, b], :3]
+        return np.arccos(np.dot(-n1, n2))
 
     @property
     def tau(self):

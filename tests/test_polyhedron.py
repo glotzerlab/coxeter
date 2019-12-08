@@ -174,8 +174,9 @@ def test_volume_damasceno_shapes():
 
 
 # This test is a bit slow (a couple of minutes), so skip running it locally.
-@pytest.mark.skipIf(os.getenv('CI', 'false') == 'true' and
-                    os.getenv('CIRCLECI', 'false') == 'true')
+@pytest.mark.skipif(os.getenv('CI', 'false') == 'true' and
+                    os.getenv('CIRCLECI', 'false') == 'true',
+                    reason="Test is too slow to run during rapid development")
 def test_moment_inertia_damasceno_shapes():
     # These shapes pass the test for a sufficiently high number of samples, but
     # the number is too high to be worth running them regularly.
@@ -222,6 +223,26 @@ def test_moment_inertia_damasceno_shapes():
                          indirect=True)
 def test_iq(cube):
     assert cube.iq == 36*np.pi*cube.volume**2/cube.surface_area**3
+
+
+def test_dihedrals():
+    known_shapes = {
+        'Tetrahedron': np.arccos(1/3),
+        'Cube': np.pi/2,
+        'Octahedron': np.pi - np.arccos(1/3),
+        'Dodecahedron':  np.pi - np.arctan(2),
+        'Icosahedron': np.pi - np.arccos(np.sqrt(5)/3),
+    }
+    for shape in SHAPES:
+        if shape.Name in known_shapes:
+            poly = Polyhedron(shape.vertices)
+            # The dodecahedron in SHAPES needs a slightly more expansive merge
+            # to get all the facets joined.
+            poly.merge_facets(rtol=1e-4)
+            for i in range(poly.num_facets):
+                for j in poly.neighbors[i]:
+                    assert np.isclose(poly.get_dihedral(i, j),
+                                      known_shapes[shape.Name])
 
 
 @pytest.mark.skip("Need test data")
