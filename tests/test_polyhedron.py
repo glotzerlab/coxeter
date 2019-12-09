@@ -245,6 +245,23 @@ def test_dihedrals():
                                       known_shapes[shape.Name])
 
 
+def test_curvature():
+    """Regression test against values computed with older method."""
+    known_shapes = {
+        'Cube': 0.75,
+        'Dodecahedron': 1.3215637405498626,
+        'Icosahedron': 0.8710482367460449,
+        'Octahedron': 0.5877400099213849,
+        'Tetrahedron': 0.4561299069097583,
+    }
+
+    for shape in SHAPES:
+        if shape.Name in known_shapes:
+            assert np.isclose(
+                Polyhedron(shape.vertices).mean_curvature,
+                known_shapes[shape.Name])
+
+
 @pytest.mark.skip("Need test data")
 def test_nonconvex_polyhedron():
     pass

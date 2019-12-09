@@ -285,3 +285,8 @@ class Polygon(object):
         into the plane to get a triangulation.
         """
         yield from polytri.triangulate(self.vertices)
+
+    @property
+    def iq(self):
+        """The isopermietric quotient."""
+        pass
