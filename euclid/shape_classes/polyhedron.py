@@ -293,18 +293,6 @@ class Polyhedron(object):
         self._find_equations()
 
     @property
-    def insphere_radius(self):
-        """Get or set the polyhedron's insphere radius (setting rescales
-        vertices)."""
-        return np.abs(equations[:, 3]).max()
-
-    @insphere_radius.setter
-    def insphere_radius(self, new_radius):
-        scale_factor = new_radius/self.insphere_radius
-        self._vertices *= scale_factor
-        self._equations[:, 3] *= scale_factor
-
-    @property
     def circumsphere_radius(self):
         """Get or set the polyhedron's circumsphere radius (setting rescales
         vertices)."""
@@ -315,11 +303,6 @@ class Polyhedron(object):
         scale_factor = new_radius/self.circumsphere_radius
         self._vertices *= scale_factor
         self._equations[:, 3] *= scale_factor
-
-    @property
-    def asphericity(self):
-        """The asphericity."""
-        return self.mean_curvature*self.surface_area/(3*self.volume)
 
     @property
     def iq(self):
@@ -347,18 +330,7 @@ class Polyhedron(object):
         n1, n2 = self._equations[[a, b], :3]
         return np.arccos(np.dot(-n1, n2))
 
-    @property
-    def tau(self):
-        R"""The :math:`tau` parameter of aspheriity.
-
-        The quantity :math:`tau = \frac{S}{4\pi R^2}` is defined in
-        :cite:`Naumann19841` that is closely related to the Pitzer acentric
-        factor. This quantity appears relevant to the third and fourth virial
-        coefficient for hard polyhedron fluids.
-        """
-        R = self.mean_curvature
-        return 4*np.pi*R*R/self.surface_area
-
+class ConvexPolyhedron(Polyhedron):
     @property
     def mean_curvature(self):
         R"""The mean curvature of the polyhedron.
@@ -386,3 +358,35 @@ class Polyhedron(object):
                 length = np.linalg.norm(edge_vert)
                 R += length * (np.pi - phi)
         return R / (8 * np.pi)
+
+    @property
+    def tau(self):
+        R"""The :math:`tau` parameter of aspheriity.
+
+        The quantity :math:`tau = \frac{S}{4\pi R^2}` is defined in
+        :cite:`Naumann19841` that is closely related to the Pitzer acentric
+        factor. This quantity appears relevant to the third and fourth virial
+        coefficient for hard polyhedron fluids.
+        """
+        R = self.mean_curvature
+        return 4*np.pi*R*R/self.surface_area
+
+    @property
+    def asphericity(self):
+        """The asphericity as defined in :cite:`Irrgang2017`."""
+        return self.mean_curvature*self.surface_area/(3*self.volume)
+
+    # WARNING: The insphere radius calculation provided here is only valid for
+    # regular polyhedra. We should be careful indicating what we're providing
+    # here.
+    @property
+    def insphere_radius(self):
+        """Get or set the polyhedron's insphere radius (setting rescales
+        vertices)."""
+        return np.abs(equations[:, 3]).max()
+
+    @insphere_radius.setter
+    def insphere_radius(self, new_radius):
+        scale_factor = new_radius/self.insphere_radius
+        self._vertices *= scale_factor
+        self._equations[:, 3] *= scale_factor
