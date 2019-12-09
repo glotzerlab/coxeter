@@ -209,7 +209,7 @@ class Polyhedron(object):
     def volume(self, new_volume):
         scale_factor = (new_volume/self.volume)**(1/3)
         self._vertices *= scale_factor
-        self._find_equations()
+        self._equations[:, 3] *= scale_factor
 
     def get_facet_area(self, facets=None):
         """Get the total surface area of a set of facets.
