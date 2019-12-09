@@ -75,6 +75,14 @@ def test_volume(cube):
     assert cube.volume == 1
 
 
+@pytest.mark.parametrize('cube', ['convex_cube', 'oriented_cube'],
+                         indirect=True)
+def test_set_volume(cube):
+    """Test setting volume."""
+    cube.volume = 2
+    assert np.isclose(cube.volume, 2)
+
+
 def test_merge_facets(convex_cube):
     """Test that coplanar facets can be correctly merged."""
     assert len(convex_cube.facets) == 6

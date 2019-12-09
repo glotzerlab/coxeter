@@ -206,8 +206,10 @@ class Polyhedron(object):
         return np.sum(ds*self.get_facet_area())/3
 
     @volume.setter
-    def volume(self, value):
-        pass
+    def volume(self, new_volume):
+        scale_factor = (new_volume/self.volume)**(1/3)
+        self._vertices *= scale_factor
+        self._find_equations()
 
     def get_facet_area(self, facets=None):
         """Get the total surface area of a set of facets.
@@ -352,18 +354,6 @@ class Polyhedron(object):
         """
         R = self.mean_curvature
         return 4*np.pi*R*R/self.surface_area
-
-    @property
-    def facet_neighbors(self):
-        """An Nx2 NumPy array containing indices of pairs of neighboring
-        facets."""
-        pass
-
-    @property
-    def vertex_neighbors(self):
-        """An Nx2 NumPy array containing indices of pairs of neighboring
-        vertex."""
-        pass
 
     @property
     def mean_curvature(self):
