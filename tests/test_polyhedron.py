@@ -181,6 +181,14 @@ def test_volume_damasceno_shapes():
         assert np.isclose(poly.volume, hull.volume)
 
 
+def test_insphere_radius():
+    pass
+
+
+def test_circumsphere_radius():
+    pass
+
+
 # This test is a bit slow (a couple of minutes), so skip running it locally.
 @pytest.mark.skipif(os.getenv('CI', 'false') == 'true' and
                     os.getenv('CIRCLECI', 'false') == 'true',

@@ -296,21 +296,25 @@ class Polyhedron(object):
     def insphere_radius(self):
         """Get or set the polyhedron's insphere radius (setting rescales
         vertices)."""
-        pass
+        return np.abs(equations[:, 3]).max()
 
     @insphere_radius.setter
-    def insphere_radius(self, value):
-        pass
+    def insphere_radius(self, new_radius):
+        scale_factor = new_radius/self.insphere_radius
+        self._vertices *= scale_factor
+        self._equations[:, 3] *= scale_factor
 
     @property
     def circumsphere_radius(self):
         """Get or set the polyhedron's circumsphere radius (setting rescales
         vertices)."""
-        pass
+        return np.linalg.norm(self.vertices, axis=1).max()
 
     @circumsphere_radius.setter
     def circumsphere_radius(self, value):
-        pass
+        scale_factor = new_radius/self.circumsphere_radius
+        self._vertices *= scale_factor
+        self._equations[:, 3] *= scale_factor
 
     @property
     def asphericity(self):
