@@ -2,7 +2,8 @@ import pytest
 import numpy as np
 from euclid.shape_classes.polyhedron import Polyhedron, ConvexPolyhedron
 from scipy.spatial import ConvexHull, Delaunay
-from hypothesis import given
+from scipy.spatial.qhull import QhullError
+from hypothesis import given, assume
 from hypothesis.strategies import floats
 from hypothesis.extra.numpy import arrays
 from euclid.damasceno import SHAPES
@@ -90,6 +91,37 @@ def test_set_volume(cube):
 def test_merge_facets(convex_cube):
     """Test that coplanar facets can be correctly merged."""
     assert len(convex_cube.facets) == 6
+
+
+@given(arrays(np.float64, (5, 3), floats(-10, 10, width=64), unique=True))
+def test_convex_volume(points):
+    """Check the volumes of various convex sets."""
+    try:
+        hull = ConvexHull(points)
+    except QhullError:
+        assume(False)
+    else:
+        # Avoid cases where numerical imprecision make tests fail.
+        assume(hull.volume > 1e-6)
+    verts = points[hull.vertices]
+    poly = ConvexPolyhedron(verts)
+
+    assert np.isclose(hull.volume, poly.volume)
+
+
+@given(arrays(np.float64, (5, 3), floats(-10, 10, width=64), unique=True))
+def test_convex_surface_area(points):
+    """Check the surface areas of various convex sets."""
+    try:
+        hull = ConvexHull(points)
+    except QhullError:
+        assume(False)
+    else:
+        # Avoid cases where numerical imprecision make tests fail.
+        assume(hull.area > 1e-6)
+    verts = points[hull.vertices]
+    poly = ConvexPolyhedron(verts)
+    assert np.isclose(hull.area, poly.surface_area)
 
 
 @pytest.mark.parametrize('cube', ['convex_cube', 'oriented_cube'],
