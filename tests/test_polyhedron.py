@@ -1,6 +1,7 @@
 import pytest
 import numpy as np
-from euclid.shape_classes.polyhedron import Polyhedron, ConvexPolyhedron
+from euclid.shape_classes.polyhedron import Polyhedron
+from euclid.shape_classes.convex_polyhedron import ConvexPolyhedron
 from scipy.spatial import ConvexHull, Delaunay
 from scipy.spatial.qhull import QhullError
 from hypothesis import given, assume
