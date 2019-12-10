@@ -1,9 +1,8 @@
 import pytest
 import numpy as np
-from euclid.shape_classes.polyhedron import Polyhedron
+from euclid.shape_classes.polyhedron import Polyhedron, ConvexPolyhedron
 from scipy.spatial import ConvexHull, Delaunay
-from scipy.spatial.qhull import QhullError
-from hypothesis import given, assume
+from hypothesis import given
 from hypothesis.strategies import floats
 from hypothesis.extra.numpy import arrays
 from euclid.damasceno import SHAPES
@@ -53,8 +52,7 @@ def convex_cube():
 
 @pytest.fixture
 def oriented_cube():
-    return Polyhedron(get_cube_points(), get_oriented_cube_facets(),
-                      get_oriented_cube_normals())
+    return ConvexPolyhedron(get_cube_points(), get_oriented_cube_facets())
 
 
 @pytest.fixture
@@ -115,31 +113,6 @@ def test_facet_alignment(convex_cube):
         assert any([str_facet in ref for ref in reference_facets])
 
 
-@given(arrays(np.float64, (5, 3), floats(-10, 10, width=64), unique=True))
-def test_convex_volume(points):
-    """Check the volumes of various convex sets."""
-    try:
-        hull = ConvexHull(points)
-    except QhullError:
-        assume(False)
-    verts = points[hull.vertices]
-    poly = Polyhedron(verts)
-
-    assert np.isclose(hull.volume, poly.volume)
-
-
-@given(arrays(np.float64, (5, 3), floats(-10, 10, width=64), unique=True))
-def test_convex_surface_area(points):
-    """Check the surface areas of various convex sets."""
-    try:
-        hull = ConvexHull(points)
-    except QhullError:
-        assume(False)
-    verts = points[hull.vertices]
-    poly = Polyhedron(verts)
-    assert np.isclose(hull.area, poly.surface_area)
-
-
 def compute_inertia_mc(vertices, num_samples=1e6):
     """Use Monte Carlo integration to compute the moment of inertia."""
     mins = np.min(vertices, axis=0)
@@ -190,8 +163,8 @@ def test_circumsphere_radius():
 
 
 # This test is a bit slow (a couple of minutes), so skip running it locally.
-@pytest.mark.skipif(os.getenv('CI', 'false') == 'true' and
-                    os.getenv('CIRCLECI', 'false') == 'true',
+@pytest.mark.skipif(os.getenv('CI', 'false') != 'true' and
+                    os.getenv('CIRCLECI', 'false') != 'true',
                     reason="Test is too slow to run during rapid development")
 def test_moment_inertia_damasceno_shapes():
     # These shapes pass the test for a sufficiently high number of samples, but
@@ -274,7 +247,7 @@ def test_curvature():
     for shape in SHAPES:
         if shape.Name in known_shapes:
             assert np.isclose(
-                Polyhedron(shape.vertices).mean_curvature,
+                ConvexPolyhedron(shape.vertices).mean_curvature,
                 known_shapes[shape.Name])
 
 
