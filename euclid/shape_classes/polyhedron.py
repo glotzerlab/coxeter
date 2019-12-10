@@ -299,7 +299,7 @@ class Polyhedron(object):
         return np.linalg.norm(self.vertices, axis=1).max()
 
     @circumsphere_radius.setter
-    def circumsphere_radius(self, value):
+    def circumsphere_radius(self, new_radius):
         scale_factor = new_radius/self.circumsphere_radius
         self._vertices *= scale_factor
         self._equations[:, 3] *= scale_factor
@@ -329,6 +329,7 @@ class Polyhedron(object):
             raise ValueError("The two facets are not neighbors.")
         n1, n2 = self._equations[[a, b], :3]
         return np.arccos(np.dot(-n1, n2))
+
 
 class ConvexPolyhedron(Polyhedron):
     @property
@@ -383,7 +384,7 @@ class ConvexPolyhedron(Polyhedron):
     def insphere_radius(self):
         """Get or set the polyhedron's insphere radius (setting rescales
         vertices)."""
-        return np.abs(equations[:, 3]).max()
+        return np.abs(self._equations[:, 3]).max()
 
     @insphere_radius.setter
     def insphere_radius(self, new_radius):
