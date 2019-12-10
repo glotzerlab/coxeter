@@ -2,7 +2,6 @@ from scipy.spatial import ConvexHull
 import numpy as np
 from .polygon import Polygon
 from scipy.sparse.csgraph import connected_components
-import warnings
 
 
 def _facet_to_edges(facet, reverse=False):
@@ -13,7 +12,7 @@ def _facet_to_edges(facet, reverse=False):
 
 
 class Polyhedron(object):
-    def __init__(self, vertices, facets=None, normals=None):
+    def __init__(self, vertices, facets=None):
         """A general polyhedron.
 
         If only vertices are passed in, the result is a convex polyhedron
@@ -30,27 +29,13 @@ class Polyhedron(object):
         if facets is None:
             hull = ConvexHull(vertices)
             self._facets = [facet for facet in hull.simplices]
-            if normals is not None:
-                warnings.warn(
-                    UserWarning,
-                    "Provided normals are ignored if facets are not provided, "
-                    "they are instead inferred from the convex hull.")
             self._find_equations()
             self.merge_facets()
 
         else:
             # TODO: Add some sanity checks here.
-            self._facets = facets
-
-            if normals is not None:
-                self._equations = np.empty((len(self.facets), 4))
-                for i, (facet, normal) in enumerate(zip(self.facets, normals)):
-                    # TODO: Add check that normal is a unit vector.
-                    self._equations[i, :3] = normal
-                    # Arbitrarily choose to use the first vertex of each facet.
-                    self._equations[i, 3] = normal.dot(self.vertices[facet[0]])
-            else:
-                self._find_equations()
+            self._facets = [facet for facet in facets]
+            self._find_equations()
 
     def _find_equations(self):
         """Find equations of facets."""
