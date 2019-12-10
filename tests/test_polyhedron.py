@@ -47,12 +47,12 @@ def cube_points():
 
 @pytest.fixture
 def convex_cube():
-    return Polyhedron(get_cube_points())
+    return ConvexPolyhedron(get_cube_points())
 
 
 @pytest.fixture
 def oriented_cube():
-    return ConvexPolyhedron(get_cube_points(), get_oriented_cube_facets())
+    return Polyhedron(get_cube_points(), get_oriented_cube_facets())
 
 
 @pytest.fixture
@@ -149,7 +149,7 @@ def test_volume_damasceno_shapes():
     for shape in SHAPES:
         if shape.Name in ('RESERVED', 'Sphere'):
             continue
-        poly = Polyhedron(shape.vertices)
+        poly = ConvexPolyhedron(shape.vertices)
         hull = ConvexHull(shape.vertices)
         assert np.isclose(poly.volume, hull.volume)
 
@@ -224,7 +224,7 @@ def test_dihedrals():
     }
     for shape in SHAPES:
         if shape.Name in known_shapes:
-            poly = Polyhedron(shape.vertices)
+            poly = ConvexPolyhedron(shape.vertices)
             # The dodecahedron in SHAPES needs a slightly more expansive merge
             # to get all the facets joined.
             poly.merge_facets(rtol=1e-4)

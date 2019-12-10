@@ -12,7 +12,7 @@ def _facet_to_edges(facet, reverse=False):
 
 
 class Polyhedron(object):
-    def __init__(self, vertices, facets=None):
+    def __init__(self, vertices, facets):
         """A general polyhedron.
 
         If only vertices are passed in, the result is a convex polyhedron
@@ -22,20 +22,9 @@ class Polyhedron(object):
         The polyhedron is assumed to be of unit mass and constant density.
 
         """
-        # TODO: If facets are not provided, I should merge facets and sort
-        # (sorting should be automatically part of merging). If they are
-        # provided, should I even check if they are right-handed? I think not.
         self._vertices = np.array(vertices, dtype=np.float64)
-        if facets is None:
-            hull = ConvexHull(vertices)
-            self._facets = [facet for facet in hull.simplices]
-            self._find_equations()
-            self.merge_facets()
-
-        else:
-            # TODO: Add some sanity checks here.
-            self._facets = [facet for facet in facets]
-            self._find_equations()
+        self._facets = [facet for facet in facets]
+        self._find_equations()
 
     def _find_equations(self):
         """Find equations of facets."""
@@ -317,6 +306,22 @@ class Polyhedron(object):
 
 
 class ConvexPolyhedron(Polyhedron):
+    def __init__(self, vertices, facets=None):
+        """A general polyhedron.
+
+        If only vertices are passed in, the result is a convex polyhedron
+        defined by these vertices. If facets are provided, the resulting
+        polyhedron may be nonconvex.
+
+        The polyhedron is assumed to be of unit mass and constant density.
+
+        """
+        self._vertices = np.array(vertices, dtype=np.float64)
+        hull = ConvexHull(vertices)
+        self._facets = [facet for facet in hull.simplices]
+        self._find_equations()
+        self.merge_facets()
+
     @property
     def mean_curvature(self):
         R"""The mean curvature of the polyhedron.
