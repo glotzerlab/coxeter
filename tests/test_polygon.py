@@ -161,8 +161,9 @@ def test_set_convex_area(points):
     poly.area *= 2
     assert np.isclose(poly.area, 2*original_area)
 
+
 def test_triangulate(square):
-    triangles = [tri for tri in square.triangulation()]
+    triangles = [tri for tri in square._triangulation()]
     assert len(triangles) == 2
 
     all_vertices = [tuple(vertex) for triangle in triangles for vertex in
@@ -170,9 +171,3 @@ def test_triangulate(square):
     assert len(set(all_vertices)) == 4
 
     assert not np.all(np.asarray(triangles[0]) == np.asarray(triangles[1]))
-
-
-
-
-
-

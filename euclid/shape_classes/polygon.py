@@ -1,6 +1,6 @@
 import numpy as np
 import rowan
-from .. import polytri
+from ..polytri import polytri
 
 
 class Polygon(object):
@@ -275,7 +275,7 @@ class Polygon(object):
     def center(self, value):
         self._vertices += (np.asarray(value) - self.center)
 
-    def triangulation(self):
+    def _triangulation(self):
         """Generate a triangulation of the polygon.
 
         Yields tuples of indices where each tuple corresponds to the vertex
