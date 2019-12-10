@@ -84,6 +84,12 @@ class Polyhedron(object):
         different tolerances, however, the operation is destructive in the
         sense that merged facets cannot be recovered. Users wishing to undo a
         merge to attempt a less expansive merge must build a new polyhedron.
+
+        Args:
+            atol (float):
+                Absolute tolerance for :func:`numpy.allclose`.
+            rtol (float):
+                Relative tolerance for :func:`numpy.allclose`.
         """
         # Construct a graph where connectivity indicates merging, then identify
         # connected components to merge.
