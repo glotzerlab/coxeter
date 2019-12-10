@@ -60,6 +60,12 @@ def cube(request):
     return request.getfixturevalue(request.param)
 
 
+def test_normal_detection(convex_cube):
+    detected_normals = set([tuple(n) for n in convex_cube.normals])
+    expected_normals = set([tuple(n) for n in get_oriented_cube_normals()])
+    assert detected_normals == expected_normals
+
+
 @pytest.mark.parametrize('cube', ['convex_cube', 'oriented_cube'],
                          indirect=True)
 def test_surface_area(cube):
