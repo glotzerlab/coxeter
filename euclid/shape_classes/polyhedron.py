@@ -6,28 +6,46 @@ from scipy.sparse.csgraph import connected_components
 
 def _facet_to_edges(facet, reverse=False):
     """Convert a facet (a sequence of vertices) into a sequence of edges
-    (tuples)."""
+    (tuples).
+
+    Args:
+        facet (array-like):
+            A facet composed of vertex indices.
+        reverse (bool):
+            Whether to return the edges in reverse.
+    """
     shift = 1 if reverse else -1
     return list(zip(*np.stack((facet, np.roll(facet, shift)))))
 
 
 class Polyhedron(object):
     def __init__(self, vertices, facets):
-        """A general polyhedron.
+        """A three-dimensional polytope.
 
-        If only vertices are passed in, the result is a convex polyhedron
-        defined by these vertices. If facets are provided, the resulting
-        polyhedron may be nonconvex.
+        A polyhedron is defined by a set of vertices and a set of facets
+        composed of the vertices. On construction, the facets are reordered
+        counterclockwise with respect to an outward normal. The polyhedron
+        provides various standard geometric calculations, such as volume and
+        surface area. Most features of the polyhedron can be accessed via
+        properties, including the plane equations defining the facets and the
+        neighbors of each facet.
 
-        The polyhedron is assumed to be of unit mass and constant density.
+        .. note::
+            For the purposes of calculations like moments of inertia, the
+            polyhedron is assumed to be of constant, unit density.
 
+        Args:
+            vertices (:math:`(N, 3)` :class:`numpy.ndarray`):
+                The vertices of the polyhedron.
+            facets (:math:`(N, 3)` :class:`numpy.ndarray`):
+                The facets of the polyhedron.
         """
         self._vertices = np.array(vertices, dtype=np.float64)
         self._facets = [facet for facet in facets]
         self.sort_facets()
 
     def _find_equations(self):
-        """Find equations of facets."""
+        """Find the plane equations of the polyhedron facets."""
         self._equations = np.empty((len(self.facets), 4))
         for i, facet in enumerate(self.facets):
             # The direction of the normal is selected such that vertices that
@@ -40,7 +58,9 @@ class Polyhedron(object):
             self._equations[i, 3] = normal.dot(self.vertices[facet[0]])
 
     def _find_neighbors(self):
-        """Find neighbors of facets (assumes facets are ordered)."""
+        """Find neighbors of facets. Note that facets must be ordered before
+        this method is called, so internal usage should only happen after
+        :math:`~.sort_facets` is called."""
         # First enumerate all edges of each neighbor. We include both
         # directions of the edges for comparison.
         facet_edges = [set(_facet_to_edges(f) +
@@ -56,13 +76,16 @@ class Polyhedron(object):
             self._neighbors[i] = np.array(self._neighbors[i])
 
     def merge_facets(self, atol=1e-8, rtol=1e-5):
-        """Merge facets of a polyhedron.
+        """Merge coplanar facets to a given tolerance.
 
-        For convex polyhedra, facets will automatically be merged to an
-        appropriate degree.  However, the merging of facets must be based on a
-        tolerance (we may need to provide two such parameters depending on how
-        we perform the merge), so we need to expose this method to allow the
-        user to redo the merge with a different tolerance."""
+        Whether or not facets should be merged is determined using
+        :func:`numpy.allclose` to compare the plane equations of neighboring
+        facets. Connected components of mergeable facets are then merged into
+        a single facet.  This method can be safely called many times with
+        different tolerances, however, the operation is destructive in the
+        sense that merged facets cannot be recovered. Users wishing to undo a
+        merge to attempt a less expansive merge must build a new polyhedron.
+        """
         # Construct a graph where connectivity indicates merging, then identify
         # connected components to merge.
         merge_graph = np.zeros((self.num_facets, self.num_facets))
@@ -84,21 +107,25 @@ class Polyhedron(object):
 
     @property
     def neighbors(self):
-        """The neighbors of each facet. Facets are defined to be neighbors if
-        they share an edge."""
+        """list(:class:`numpy.ndarray`): A list where the :math:`i`th element
+        is an array of indices of facets that are neighbors of facet :math:`i`.
+        """
         return self._neighbors
 
     @property
     def normals(self):
-        """The normal vectors to each facet."""
+        """:math:`(N, 3)` :class:`numpy.ndarray`: The normal vectors to each
+        facet."""
         return self._equations[:, :3]
 
     @property
     def num_vertices(self):
+        """int: The number of vertices."""
         return self.vertices.shape[0]
 
     @property
     def num_facets(self):
+        """int: The number of facets."""
         return len(self.facets)
 
     def sort_facets(self):
@@ -162,17 +189,19 @@ class Polyhedron(object):
 
     @property
     def vertices(self):
-        """Get the vertices of the polyhedron."""
+        """:math:`(N, 3)` :class:`numpy.ndarray`: Get the vertices of the
+        polyhedron."""
         return self._vertices
 
     @property
     def facets(self):
-        """Get the polyhedron's facets."""
+        """list(:class:`numpy.ndarray`): Get the polyhedron's facets."""
         return self._facets
 
     @property
     def volume(self):
-        """Get or set the polyhedron's volume (setting rescales vertices)."""
+        """float: Get or set the polyhedron's volume (setting rescales
+        vertices)."""
         ds = self._equations[:, 3]
         return np.sum(ds*self.get_facet_area())/3
 
@@ -192,10 +221,12 @@ class Polyhedron(object):
                 value: None).
 
         Returns:
-            list: The area of each facet.
+            :class:`numpy.ndarray`: The area of each facet.
         """
         if facets is None:
             facets = range(len(self.facets))
+        elif type(facets) is int:
+            facets = [facets]
 
         areas = np.empty(len(facets))
         for i, facet_index in enumerate(facets):
@@ -207,7 +238,7 @@ class Polyhedron(object):
 
     @property
     def surface_area(self):
-        """The surface area."""
+        """float: Get the surface area."""
         return np.sum(self.get_facet_area())
 
     def triangulation(self):
@@ -222,11 +253,8 @@ class Polyhedron(object):
 
     @property
     def inertia_tensor(self):
-        """The inertia tensor computed about the center of mass.
-
-        Computed using the method described in
-        https://www.tandfonline.com/doi/abs/10.1080/2151237X.2006.10129220
-        """
+        """float: Get the inertia tensor computed about the center of mass
+        (uses the algorithm described in :cite:`Kallay2006`)."""
         simplices = np.array(list(self.triangulation())) - self.center
 
         volumes = np.abs(np.linalg.det(simplices)/6)
@@ -255,7 +283,8 @@ class Polyhedron(object):
 
     @property
     def center(self):
-        """Get or set the polyhedron's centroid (setting rescales vertices)."""
+        """float: Get or set the polyhedron's centroid (setting rescales
+        vertices)."""
         return np.mean(self.vertices, axis=0)
 
     @center.setter
@@ -265,9 +294,9 @@ class Polyhedron(object):
 
     @property
     def circumsphere_radius(self):
-        """Get or set the polyhedron's circumsphere radius (setting rescales
-        vertices)."""
-        return np.linalg.norm(self.vertices, axis=1).max()
+        """float: Get or set the polyhedron's circumsphere radius (setting
+        rescales vertices)."""
+        return np.linalg.norm(self.vertices - self.center, axis=1).max()
 
     @circumsphere_radius.setter
     def circumsphere_radius(self, new_radius):
@@ -277,7 +306,7 @@ class Polyhedron(object):
 
     @property
     def iq(self):
-        """The isoperimetric quotient."""
+        """float: The isoperimetric quotient."""
         V = self.volume
         S = self.surface_area
         return np.pi * 36 * V * V / (S * S * S)
@@ -303,15 +332,18 @@ class Polyhedron(object):
 
 
 class ConvexPolyhedron(Polyhedron):
-    def __init__(self, vertices, facets=None):
-        """A general polyhedron.
+    def __init__(self, vertices):
+        """A convex polyhedron.
 
-        If only vertices are passed in, the result is a convex polyhedron
-        defined by these vertices. If facets are provided, the resulting
-        polyhedron may be nonconvex.
+        A convex polyhedron is defined as the convex hull of its vertices. The
+        class is a simple extension of :class:`~.Polyhedron` that builds the
+        facets from the simplices of the convex hull. This class also includes
+        various additional properties that can be used to characterize the
+        geometric features of the polyhedron.
 
-        The polyhedron is assumed to be of unit mass and constant density.
-
+        Args:
+            vertices (:math:`(N, 3)` :class:`numpy.ndarray`):
+                The vertices of the polyhedron.
         """
         hull = ConvexHull(vertices)
         super(ConvexPolyhedron, self).__init__(vertices, hull.simplices)
@@ -319,12 +351,10 @@ class ConvexPolyhedron(Polyhedron):
 
     @property
     def mean_curvature(self):
-        R"""The mean curvature of the polyhedron.
-
-        We follow the convention defined in :cite:`Irrgang2017`.  Mean
-        curvature R for a polyhedron is determined from the edge lengths
-        :math:`L_i` and dihedral angles :math:`\phi_i` and is given by
-        :math:`\sum_i (1/2) L_i (\pi - \phi_i) / (4 \pi)`.
+        R"""float: The mean curvature
+        :math:`R = \sum_i (1/2) L_i (\pi - \phi_i) / (4 \pi)` with edge lengths
+        :math:`L_i` and dihedral angles :math:`\phi_i` (see :cite:`Irrgang2017`
+        for more information).
         """
         R = 0
         for i in range(self.num_facets):
@@ -347,9 +377,7 @@ class ConvexPolyhedron(Polyhedron):
 
     @property
     def tau(self):
-        R"""The :math:`tau` parameter of aspheriity.
-
-        The quantity :math:`tau = \frac{S}{4\pi R^2}` is defined in
+        R"""float: The parameter :math:`tau = \frac{S}{4\pi R^2}` defined in
         :cite:`Naumann19841` that is closely related to the Pitzer acentric
         factor. This quantity appears relevant to the third and fourth virial
         coefficient for hard polyhedron fluids.
@@ -359,20 +387,5 @@ class ConvexPolyhedron(Polyhedron):
 
     @property
     def asphericity(self):
-        """The asphericity as defined in :cite:`Irrgang2017`."""
+        """float: The asphericity as defined in :cite:`Irrgang2017`."""
         return self.mean_curvature*self.surface_area/(3*self.volume)
-
-    # WARNING: The insphere radius calculation provided here is only valid for
-    # regular polyhedra. We should be careful indicating what we're providing
-    # here.
-    @property
-    def insphere_radius(self):
-        """Get or set the polyhedron's insphere radius (setting rescales
-        vertices)."""
-        return np.abs(self._equations[:, 3]).max()
-
-    @insphere_radius.setter
-    def insphere_radius(self, new_radius):
-        scale_factor = new_radius/self.insphere_radius
-        self._vertices *= scale_factor
-        self._equations[:, 3] *= scale_factor
