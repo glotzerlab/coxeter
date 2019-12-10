@@ -24,7 +24,7 @@ class Polyhedron(object):
         """
         self._vertices = np.array(vertices, dtype=np.float64)
         self._facets = [facet for facet in facets]
-        self._find_equations()
+        self.sort_facets()
 
     def _find_equations(self):
         """Find equations of facets."""
@@ -63,8 +63,6 @@ class Polyhedron(object):
         tolerance (we may need to provide two such parameters depending on how
         we perform the merge), so we need to expose this method to allow the
         user to redo the merge with a different tolerance."""
-        self._find_neighbors()
-
         # Construct a graph where connectivity indicates merging, then identify
         # connected components to merge.
         merge_graph = np.zeros((self.num_facets, self.num_facets))
@@ -82,7 +80,6 @@ class Polyhedron(object):
             new_facets[labels[i]].update(facet)
 
         self._facets = [np.asarray(list(f)) for f in new_facets]
-        self._find_equations()
         self.sort_facets()
 
     @property
@@ -316,10 +313,8 @@ class ConvexPolyhedron(Polyhedron):
         The polyhedron is assumed to be of unit mass and constant density.
 
         """
-        self._vertices = np.array(vertices, dtype=np.float64)
         hull = ConvexHull(vertices)
-        self._facets = [facet for facet in hull.simplices]
-        self._find_equations()
+        super(ConvexPolyhedron, self).__init__(vertices, hull.simplices)
         self.merge_facets()
 
     @property

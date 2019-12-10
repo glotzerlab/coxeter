@@ -168,7 +168,7 @@ def compute_inertia_mc(vertices, num_samples=1e6):
     Ixz = np.mean(-points[inside][:, 0] * points[inside][:, 2])
     Iyz = np.mean(-points[inside][:, 1] * points[inside][:, 2])
 
-    poly = Polyhedron(vertices)
+    poly = ConvexPolyhedron(vertices)
 
     inertia_tensor = np.array([[Ixx, Ixy, Ixz],
                                [Ixy,   Iyy, Iyz],
@@ -225,7 +225,7 @@ def test_moment_inertia_damasceno_shapes():
         if shape.Name in ['RESERVED', 'Sphere'] + bad_shapes:
             continue
 
-        poly = Polyhedron(shape.vertices)
+        poly = ConvexPolyhedron(shape.vertices)
         num_samples = 1000
         accept = False
         # Loop over different sampling rates to minimize the test runtime.
