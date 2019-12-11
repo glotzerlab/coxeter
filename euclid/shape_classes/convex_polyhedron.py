@@ -30,13 +30,10 @@ class ConvexPolyhedron(Polyhedron):
         """
         R = 0
         for i, j, edge in self._get_facet_intersections():
-            # Don't double count neighbors.
-            if j < i:
-                continue
             phi = self.get_dihedral(i, j)
-            edge_vert = self.vertices[edge[0]] - self.vertices[edge[1]]
-            length = np.linalg.norm(edge_vert)
-            R += length * (np.pi - phi)
+            edge_vector = self.vertices[edge[0]] - self.vertices[edge[1]]
+            edge_length = np.linalg.norm(edge_vector)
+            R += edge_length * (np.pi - phi)
         return R / (8 * np.pi)
 
     @property
