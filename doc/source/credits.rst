@@ -49,6 +49,7 @@ Vyas Ramasubramani
 * Cleaned up damasceno module and separated out shape information into a JSON file that is read on demand.
 * Fixed code formatting to conform to PEP8 requirements.
 * Implemented core Polygon class.
+* Implemented core ConvexSpheropolygon class.
 
 Carl Simon Adorf
 
