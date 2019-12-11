@@ -60,19 +60,30 @@ class Polyhedron(object):
         """Find neighbors of facets. Note that facets must be ordered before
         this method is called, so internal usage should only happen after
         :math:`~.sort_facets` is called."""
+        self._neighbors = [[] for _ in range(self.num_facets)]
+        for i, j, _ in self._get_facet_intersections():
+            self._neighbors[i].append(j)
+            self._neighbors[j].append(i)
+        self._neighbors = [np.array(neigh) for neigh in self._neighbors]
+
+    def _get_facet_intersections(self):
+        """A generator that yields tuples of the form (facet, neighbor,
+        (vertex1, vertex2)) indicating neighboring facets and their common
+        edge."""
         # First enumerate all edges of each neighbor. We include both
         # directions of the edges for comparison.
         facet_edges = [set(_facet_to_edges(f) +
                            _facet_to_edges(f, True)) for f in self.facets]
 
-        # Find any facets that share neighbors.
-        self._neighbors = [[] for _ in range(self.num_facets)]
         for i in range(self.num_facets):
             for j in range(i+1, self.num_facets):
-                if len(facet_edges[i].intersection(facet_edges[j])) > 0:
-                    self._neighbors[i].append(j)
-                    self._neighbors[j].append(i)
-            self._neighbors[i] = np.array(self._neighbors[i])
+                common_edges = facet_edges[i].intersection(facet_edges[j])
+                if len(common_edges) > 0:
+                    # Can never have multiple intersections, but we should have
+                    # the same edge show up twice (forward and reverse).
+                    assert len(common_edges) == 2
+                    common_edge = list(common_edges)[0]
+                    yield (i, j, (common_edge[0], common_edge[1]))
 
     def merge_facets(self, atol=1e-8, rtol=1e-5):
         """Merge coplanar facets to a given tolerance.

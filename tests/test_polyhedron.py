@@ -58,6 +58,14 @@ def oriented_cube():
 
 
 @pytest.fixture
+def unoriented_cube():
+    """A cube with the facets disordered (but still provided)."""
+    facets = get_oriented_cube_facets()
+    np.random.shuffle(facets)
+    return Polyhedron(get_cube_points(), facets)
+
+
+@pytest.fixture
 def cube(request):
     return request.getfixturevalue(request.param)
 
@@ -68,20 +76,23 @@ def test_normal_detection(convex_cube):
     assert detected_normals == expected_normals
 
 
-@pytest.mark.parametrize('cube', ['convex_cube', 'oriented_cube'],
+@pytest.mark.parametrize('cube',
+                         ['convex_cube', 'oriented_cube', 'unoriented_cube'],
                          indirect=True)
 def test_surface_area(cube):
     """Test surface area calculation."""
     assert cube.surface_area == 6
 
 
-@pytest.mark.parametrize('cube', ['convex_cube', 'oriented_cube'],
+@pytest.mark.parametrize('cube',
+                         ['convex_cube', 'oriented_cube', 'unoriented_cube'],
                          indirect=True)
 def test_volume(cube):
     assert cube.volume == 1
 
 
-@pytest.mark.parametrize('cube', ['convex_cube', 'oriented_cube'],
+@pytest.mark.parametrize('cube',
+                         ['convex_cube', 'oriented_cube', 'unoriented_cube'],
                          indirect=True)
 def test_set_volume(cube):
     """Test setting volume."""
@@ -125,7 +136,8 @@ def test_convex_surface_area(points):
     assert np.isclose(hull.area, poly.surface_area)
 
 
-@pytest.mark.parametrize('cube', ['convex_cube', 'oriented_cube'],
+@pytest.mark.parametrize('cube',
+                         ['convex_cube', 'oriented_cube', 'unoriented_cube'],
                          indirect=True)
 @given(new_center=arrays(np.float64, (3, ), floats(-10, 10, width=64)))
 def test_volume_center_shift(cube, new_center):
@@ -178,7 +190,8 @@ def compute_inertia_mc(vertices, num_samples=1e6):
     return inertia_tensor
 
 
-@pytest.mark.parametrize('cube', ['convex_cube', 'oriented_cube'],
+@pytest.mark.parametrize('cube',
+                         ['convex_cube', 'oriented_cube', 'unoriented_cube'],
                          indirect=True)
 def test_moment_inertia(cube):
     assert np.allclose(cube.inertia_tensor, np.diag([1/6]*3))
@@ -193,10 +206,7 @@ def test_volume_damasceno_shapes():
         assert np.isclose(poly.volume, hull.volume)
 
 
-def test_insphere_radius():
-    pass
-
-
+@pytest.mark.skip("Need test data")
 def test_circumsphere_radius():
     pass
 
@@ -247,7 +257,8 @@ def test_moment_inertia_damasceno_shapes():
                                  ))
 
 
-@pytest.mark.parametrize('cube', ['convex_cube', 'oriented_cube'],
+@pytest.mark.parametrize('cube',
+                         ['convex_cube', 'oriented_cube', 'unoriented_cube'],
                          indirect=True)
 def test_iq(cube):
     assert cube.iq == 36*np.pi*cube.volume**2/cube.surface_area**3
@@ -291,10 +302,26 @@ def test_curvature():
 
 
 @pytest.mark.skip("Need test data")
+def test_curvature_exact():
+    """Curvature test based on explicit calculation."""
+    pass
+
+
+@pytest.mark.skip("Need test data")
 def test_nonconvex_polyhedron():
     pass
 
 
 @pytest.mark.skip("Need test data")
 def test_nonconvex_polyhedron_with_nonconvex_polygon_face():
+    pass
+
+
+@pytest.mark.skip("Need test data")
+def test_tau():
+    pass
+
+
+@pytest.mark.skip("Need test data")
+def test_asphericity():
     pass
