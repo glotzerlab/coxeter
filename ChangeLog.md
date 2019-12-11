@@ -10,6 +10,7 @@ and this project adheres to
 
 * Continuous integrated testing on CircleCI.
 * New Polygon class with property-based API.
+* New ConvexSpheropolygon class with property-based API.
 
 ### Changed
 
