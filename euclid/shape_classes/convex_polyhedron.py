@@ -1,6 +1,6 @@
 from scipy.spatial import ConvexHull
 import numpy as np
-from .polyhedron import Polyhedron, _facet_to_edges
+from .polyhedron import Polyhedron
 
 
 class ConvexPolyhedron(Polyhedron):
@@ -23,28 +23,20 @@ class ConvexPolyhedron(Polyhedron):
 
     @property
     def mean_curvature(self):
-        R"""float: The mean curvature
+        R"""float: The integrated, normalized mean curvature
         :math:`R = \sum_i (1/2) L_i (\pi - \phi_i) / (4 \pi)` with edge lengths
         :math:`L_i` and dihedral angles :math:`\phi_i` (see :cite:`Irrgang2017`
         for more information).
         """
         R = 0
-        for i in range(self.num_facets):
-            for j in self.neighbors[i]:
-                # Don't double count neighbors.
-                if j < i:
-                    continue
-                phi = self.get_dihedral(i, j)
-                # Include both directions for one facet to get a unique edge.
-                f1 = set(_facet_to_edges(self.facets[i]))
-                f2 = set(_facet_to_edges(self.facets[j]) +
-                         _facet_to_edges(self.facets[j], reverse=True))
-                edge = list(f1.intersection(f2))
-                assert len(edge) == 1
-                edge = edge[0]
-                edge_vert = self.vertices[edge[0]] - self.vertices[edge[1]]
-                length = np.linalg.norm(edge_vert)
-                R += length * (np.pi - phi)
+        for i, j, edge in self._get_facet_intersections():
+            # Don't double count neighbors.
+            if j < i:
+                continue
+            phi = self.get_dihedral(i, j)
+            edge_vert = self.vertices[edge[0]] - self.vertices[edge[1]]
+            length = np.linalg.norm(edge_vert)
+            R += length * (np.pi - phi)
         return R / (8 * np.pi)
 
     @property
