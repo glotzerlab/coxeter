@@ -290,3 +290,34 @@ class Polygon(object):
     def iq(self):
         """The isopermietric quotient."""
         pass
+
+    def plot(self, ax, plot_verts=False, label_verts=False):
+        """Plot the polygon.
+
+        Note that the polygon is always rotated into the xy plane and plotted
+        in two dimensions.
+
+        Args:
+            plot_verts (bool):
+                If True, scatter points will be added at the vertices (Default
+                value: False).
+            label_verts (bool):
+                If True, vertex indices will be added next to the vertices
+                (Default value: False).
+        """
+        # TODO: Generate axis if one is not provided.
+        rotation, _ = rowan.mapping.kabsch([self._normal, -self._normal],
+                                           [[0, 0, 1], [0, 0, -1]])
+        verts = np.dot(self.vertices, rotation.T)
+        verts = np.concatenate((verts, verts[[0]]))
+        x = verts[:, 0]
+        y = verts[:, 1]
+        ax.plot(x, y)
+
+        if plot_verts:
+            ax.scatter(x, y)
+        if label_verts:
+            # Typically a good shift for plotting the labels
+            shift = (np.max(y) - np.min(y))*0.025
+            for i, vert in enumerate(verts[:-1]):
+                ax.text(vert[0], vert[1] + shift, '{}'.format(i), fontsize=10)
