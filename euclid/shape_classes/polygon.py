@@ -1,9 +1,10 @@
 import numpy as np
 import rowan
+from ..polytri import polytri
 
 
 class Polygon(object):
-    def __init__(self, vertices, normal=None):
+    def __init__(self, vertices, normal=None, planar_tolerance=1e-5):
         """A simple (i.e. non-self-overlapping) polygon.
 
         The polygon is embedded in 3-dimensions, so the normal
@@ -28,6 +29,11 @@ class Polygon(object):
                 choice may not preserve the orientation of the provided
                 vertices, users may provide a normal instead
                 (Default value: None).
+            planar_tolerance (float):
+                The tolerance to use to verify that the vertices are planar.
+                Providing this argument may be necessary if you have a large
+                number of vertices and are rotated significantly out of the
+                plane.
         """
         vertices = np.array(vertices, dtype=np.float64)
         _, indices = np.unique(vertices, axis=0, return_index=True)
@@ -63,8 +69,12 @@ class Polygon(object):
             self._normal /= np.linalg.norm(self._normal)
 
         d = self._normal.dot(self.vertices[0, :])
+        # If this simple check of coplanarity is not robust enough for a
+        # desired polygon, it might be necessary to implement more robust
+        # checks based on something like
+        # http://www.cs.cmu.edu/~quake/robust.html
         for v in self.vertices:
-            if not np.isclose(self._normal.dot(v) - d, 0):
+            if not np.isclose(self._normal.dot(v), d, planar_tolerance):
                 raise ValueError("Not all vertices are coplanar.")
 
         # The polygon must be oriented in order for the area calculation to
@@ -264,3 +274,19 @@ class Polygon(object):
     @center.setter
     def center(self, value):
         self._vertices += (np.asarray(value) - self.center)
+
+    def _triangulation(self):
+        """Generate a triangulation of the polygon.
+
+        Yields tuples of indices where each tuple corresponds to the vertex
+        indices of a single triangle.
+
+        Since the polygon may be embedded in 3D, we must rotate the polygon
+        into the plane to get a triangulation.
+        """
+        yield from polytri.triangulate(self.vertices)
+
+    @property
+    def iq(self):
+        """The isopermietric quotient."""
+        pass

@@ -139,7 +139,7 @@ def test_convex_area(points):
 
 
 @given(random_quat=arrays(np.float64, (4, ), floats(-1, 1, width=64)))
-def test_convex_signed_area(random_quat, square_points):
+def test_rotation_signed_area(random_quat, square_points):
     """Ensure that rotating does not change the signed area."""
     assume(not np.all(random_quat == 0))
     random_quat = rowan.normalize(random_quat)
@@ -160,3 +160,14 @@ def test_set_convex_area(points):
     original_area = poly.area
     poly.area *= 2
     assert np.isclose(poly.area, 2*original_area)
+
+
+def test_triangulate(square):
+    triangles = [tri for tri in square._triangulation()]
+    assert len(triangles) == 2
+
+    all_vertices = [tuple(vertex) for triangle in triangles for vertex in
+                    triangle]
+    assert len(set(all_vertices)) == 4
+
+    assert not np.all(np.asarray(triangles[0]) == np.asarray(triangles[1]))
