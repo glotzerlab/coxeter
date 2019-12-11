@@ -315,3 +315,13 @@ def test_nonconvex_polyhedron():
 @pytest.mark.skip("Need test data")
 def test_nonconvex_polyhedron_with_nonconvex_polygon_face():
     pass
+
+
+@pytest.mark.skip("Need test data")
+def test_tau():
+    pass
+
+
+@pytest.mark.skip("Need test data")
+def test_asphericity():
+    pass
