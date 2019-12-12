@@ -1,5 +1,4 @@
 import numpy as np
-from test_polyhedron import cube_points, convex_cube
 from euclid.shape_classes.convex_spheropolyhedron import ConvexSpheropolyhedron
 
 from hypothesis import given
