@@ -16,7 +16,7 @@ jobs:
       - run:
           name: style-check
           command: |
-            pip install --user -U flake8==3.7.1
+            python -m pip install --user -U flake8==3.7.1
             python -m flake8 --show-source euclid/ tests/
 
 
@@ -34,10 +34,10 @@ jobs:
           name: Run tests
           command: |
             python --version
-            pip install .[test] --user
+            python -m pip install .[test] --user
             python -c "import numpy; print('numpy', numpy.__version__)"
             python -c "import scipy; print('scipy', scipy.__version__)"
-            python -m unittest discover tests/ -v
+            pytest
 
   test-3.6:
     <<: *test-template
@@ -75,11 +75,11 @@ workflows:
     jobs:
       - style-check
       - test-3.6
-#          requires:
-#            - style-check
+          requires:
+            - style-check
       - test-3.7
-#          requires:
-#            - style-check
+          requires:
+            - style-check
 #      - test-deploy-pypi:
 #          filters:
 #            branches:
