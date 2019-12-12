@@ -1,6 +1,6 @@
 import numpy as np
 
-from .polygon import Polygon
+from .polygon import Polygon, _align_points_by_normal
 
 
 def _check_convex(vertices):
@@ -40,7 +40,8 @@ class ConvexSpheropolygon(object):
         if radius < 0:
             raise ValueError("The radius must be positive.")
         self.polygon = Polygon(vertices, normal)
-        _check_convex(self.vertices)
+        _check_convex(_align_points_by_normal(self.polygon.normal,
+                                              self.vertices))
         self._radius = radius
 
     def reorder_verts(self, clockwise=False, ref_index=0,
