@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 test_deps = [
     'pytest',
@@ -16,7 +16,8 @@ setup(
     url='https://github.com/glotzerlab/euclid',
     author='Bryan VanSaders',
     author_email='bvansade@umich.edu',
-    packages=['euclid'],
+    packages=find_packages(),
+    package_data={'euclid': ['science.1220869.json']},
     install_requires=[
         'numpy',
         'rowan>=1.2',
