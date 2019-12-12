@@ -44,54 +44,15 @@ jobs:
     docker:
       - image: circleci/python:3.6
 
-#  test-deploy-pypi:
-#    docker:
-#      - image: circleci/python:3.7
-#    working_directory: ~/repo
-#    steps:
-#      - checkout
-#      - run:
-#          name: test-deploy-pypi
-#          command: |
-#            pip install --user -U -r .requirements-deploy.txt
-#            bash .test-deploy.bash
-
-#  deploy-pypi:
-#    docker:
-#      - image: circleci/python:3.7
-#    working_directory: ~/repo
-#    steps:
-#      - checkout
-#      - run:
-#          name: deploy-pypi
-#          command: |
-#            pip install --user -U -r .requirements-deploy.txt
-#            bash .deploy.bash
-
 
 workflows:
   version: 2
   test:
     jobs:
       - style-check
-      - test-3.6
+      - test-3.6:
           requires:
             - style-check
-      - test-3.7
+      - test-3.7:
           requires:
             - style-check
-#      - test-deploy-pypi:
-#          filters:
-#            branches:
-#              only: /release\/.*/
-#          requires:
-#            - test-3.6
-#            - test-3.7
-#  deploy:
-#    jobs:
-#      - deploy-pypi:
-#          filters:
-#            branches:
-#              ignore: /.*/
-#            tags:
-#              only: /v.*/
