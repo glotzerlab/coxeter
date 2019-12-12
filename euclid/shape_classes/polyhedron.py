@@ -378,4 +378,3 @@ class Polyhedron(object):
             for i, vert in enumerate(self.vertices):
                 ax.text(vert[0], vert[1], vert[2] + shift, '{}'.format(i),
                         fontsize=10)
-
