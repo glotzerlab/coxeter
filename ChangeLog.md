@@ -14,6 +14,7 @@ and this project adheres to
 * New Polyhedron class with property-based API and robust facet sorting and merging.
 * New ConvexPolyhedron class with property-based API.
 * New ConvexSpheropolyhedron class with property-based API.
+* Ability to plot Polyhedra and Polygons.
 
 ### Changed
 

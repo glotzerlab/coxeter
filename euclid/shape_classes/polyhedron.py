@@ -345,3 +345,36 @@ class Polyhedron(object):
             raise ValueError("The two facets are not neighbors.")
         n1, n2 = self._equations[[a, b], :3]
         return np.arccos(np.dot(-n1, n2))
+
+    def plot(self, ax, plot_verts=False, label_verts=False):
+        """Plot the polyhedron.
+
+        Note that the polygon is always rotated into the xy plane and plotted
+        in two dimensions.
+
+        Args:
+            plot_verts (bool):
+                If True, scatter points will be added at the vertices (Default
+                value: False).
+            label_verts (bool):
+                If True, vertex indices will be added next to the vertices
+                (Default value: False).
+        """
+        # TODO: Generate axis if one is not provided.
+        # Determine dimensionality.
+        for i, facet in enumerate(self.facets):
+            verts = self.vertices[facet]
+            verts = np.concatenate((verts, verts[[0]]))
+            ax.plot(verts[:, 0], verts[:, 1], verts[:, 2])
+
+        if plot_verts:
+            ax.scatter(self.vertices[:, 0],
+                       self.vertices[:, 1],
+                       self.vertices[:, 2])
+        if label_verts:
+            # Typically a good shift for plotting the labels
+            shift = (np.max(self.vertices[:, 2]) -
+                     np.min(self.vertices[:, 2]))*0.025
+            for i, vert in enumerate(self.vertices):
+                ax.text(vert[0], vert[1], vert[2] + shift, '{}'.format(i),
+                        fontsize=10)
