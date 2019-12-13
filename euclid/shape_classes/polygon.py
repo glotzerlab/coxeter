@@ -3,6 +3,33 @@ import rowan
 from ..polytri import polytri
 
 
+def _align_points_by_normal(normal, points):
+    """Given a normal vector and a set of points, find a rotation to align the
+    normal with the z-axis and rotate all points by that rotation.
+
+    The primary utility of this function is to bring a set of vertices into the
+    xy plane. Note that this function will work for any arbitrary set of
+    points; it does no checks to ensure that they are in fact planar, or that
+    the provided normal vector is in fact normal to the plane defined by the
+    points.
+
+    Args:
+        normal (:math:`(3, )` :class:`numpy.ndarray`):
+            The normal vector to make coincide with [1, 0, 0].
+        points (:math:`(N, 3)` :class:`numpy.ndarray`):
+            The points that will be rotated and returned.
+
+    Returns:
+       :math:`(N, 3)` :class:`numpy.ndarray`: The rotated points.
+    """
+    # Since we are considering just a single vector, to avoid getting a pure
+    # translation we need to consider mapping both the vector and its opposite
+    # (which defines an oriented coordinate system).
+    rotation, _ = rowan.mapping.kabsch([normal, -normal],
+                                       [[0, 0, 1], [0, 0, -1]])
+    return np.dot(points, rotation.T)
+
+
 class Polygon(object):
     def __init__(self, vertices, normal=None, planar_tolerance=1e-5):
         """A simple (i.e. non-self-overlapping) polygon.
@@ -111,16 +138,8 @@ class Polygon(object):
                 comes first, otherwise the point further away comes first
                 (Default value: True).
         """
-        # Center vertices at the origin.
-        verts = self._vertices - self.center
-
-        # Rotate shape so that normal vector coincides with z-axis. Since we
-        # are considering just a single vector, to avoid getting a pure
-        # translation we need to consider mapping both the vector and its
-        # opposite (which defines an oriented coordinate system).
-        rotation, _ = rowan.mapping.kabsch([self._normal, -self._normal],
-                                           [[0, 0, 1], [0, 0, -1]])
-        verts = np.dot(verts, rotation.T)
+        verts = _align_points_by_normal(self._normal,
+                                        self._vertices - self.center)
 
         # Compute the angle of each vertex, shift so that the chosen
         # reference_index has a value of zero, then move into the [0, 2pi]
@@ -225,8 +244,8 @@ class Polygon(object):
         since the planar moments are invariant to this orientation.
         """  # noqa: E501
         # Rotate shape so that normal vector coincides with z-axis
-        rotation, _ = rowan.mapping.kabsch(self._normal, [0, 0, 1])
-        verts = np.dot(self._vertices, rotation.T)
+        verts = _align_points_by_normal(self._normal,
+                                        self._vertices)
 
         shifted_verts = np.roll(verts, shift=-1, axis=0)
 
@@ -306,9 +325,8 @@ class Polygon(object):
                 (Default value: False).
         """
         # TODO: Generate axis if one is not provided.
-        rotation, _ = rowan.mapping.kabsch([self._normal, -self._normal],
-                                           [[0, 0, 1], [0, 0, -1]])
-        verts = np.dot(self.vertices, rotation.T)
+        verts = _align_points_by_normal(self._normal,
+                                        self._vertices - self.center)
         verts = np.concatenate((verts, verts[[0]]))
         x = verts[:, 0]
         y = verts[:, 1]

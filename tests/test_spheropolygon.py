@@ -4,7 +4,7 @@ import numpy.testing as npt
 import rowan
 from euclid.shape_classes.spheropolygon import ConvexSpheropolygon
 from scipy.spatial import ConvexHull
-from hypothesis import given, assume
+from hypothesis import given, assume, example
 from hypothesis.strategies import floats
 from hypothesis.extra.numpy import arrays
 
@@ -122,6 +122,8 @@ def test_convex_area(points):
 
 
 @given(random_quat=arrays(np.float64, (4, ), floats(-1, 1, width=64)))
+@example(random_quat=np.array([0.00000000e+00, 2.22044605e-16, 2.60771169e-08,
+                               2.60771169e-08]))
 def test_convex_signed_area(random_quat, square_points):
     """Ensure that rotating does not change the signed area."""
     assume(not np.all(random_quat == 0))

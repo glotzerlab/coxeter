@@ -36,11 +36,11 @@ class ConvexSpheropolyhedron(object):
         # For every pair of faces, find the dihedral angle, divide by 2*pi to
         # get the fraction of a cylinder it includes, then multiply by the edge
         # length to get the cylinder contribution.
-        for i, j, edge in self._get_facet_intersections():
+        for i, j, edge in self.polyhedron._get_facet_intersections():
             phi = self.polyhedron.get_dihedral(i, j)
-            edge_vector = self.vertices[edge[0]] - self.vertices[edge[1]]
-            edge_length = np.linalg.norm(edge_vector)
-            V_cyl += (np.pi*self.radius**2)*(phi/2*np.pi)*edge_length
+            edge_length = np.linalg.norm(self.polyhedron.vertices[edge[0]] -
+                                         self.polyhedron.vertices[edge[1]])
+            V_cyl += (np.pi*self.radius**2)*(phi/(2*np.pi))*edge_length
 
         return V_poly + V_sphere + V_cyl
 
@@ -59,10 +59,10 @@ class ConvexSpheropolyhedron(object):
         # For every pair of faces, find the dihedral angle, divide by 2*pi to
         # get the fraction of a cylinder it includes, then multiply by the edge
         # length to get the cylinder contribution.
-        for i, j, edge in self._get_facet_intersections():
+        for i, j, edge in self.polyhedron._get_facet_intersections():
             phi = self.polyhedron.get_dihedral(i, j)
-            edge_vector = self.vertices[edge[0]] - self.vertices[edge[1]]
-            edge_length = np.linalg.norm(edge_vector)
-            A_cyl += (2*np.pi*self.radius)*(phi/2*np.pi)*edge_length
+            edge_length = np.linalg.norm(self.polyhedron.vertices[edge[0]] -
+                                         self.polyhedron.vertices[edge[1]])
+            A_cyl += (2*np.pi*self.radius)*(phi/(2*np.pi))*edge_length
 
         return A_poly + A_sphere + A_cyl
