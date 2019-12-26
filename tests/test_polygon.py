@@ -4,6 +4,7 @@ import numpy.testing as npt
 import rowan
 from euclid.shape_classes.polygon import Polygon
 from scipy.spatial import ConvexHull
+from scipy.spatial.qhull import QhullError
 from hypothesis import given, example, assume
 from hypothesis.strategies import floats
 from hypothesis.extra.numpy import arrays
@@ -171,3 +172,43 @@ def test_triangulate(square):
     assert len(set(all_vertices)) == 4
 
     assert not np.all(np.asarray(triangles[0]) == np.asarray(triangles[1]))
+
+
+def test_circumsphere_radius_regular_polygon():
+    from geometry import get_unit_area_ngon
+    import miniball
+    for i in range(3, 10):
+        vertices = get_unit_area_ngon(i)
+        rmax = np.max(np.linalg.norm(vertices, axis=-1))
+        C, r2 = miniball.get_bounding_ball(vertices)
+        assert np.isclose(rmax, np.sqrt(r2))
+        assert np.allclose(C, 0)
+
+
+@given(arrays(np.float64, (3, 2), floats(-5, 5, width=64), unique=True))
+def test_circumsphere_radius_random_hull(points):
+    import miniball
+
+    try:
+        hull = ConvexHull(points)
+    except QhullError:
+        assume(False)
+    else:
+        # Avoid cases where numerical imprecision make tests fail.
+        assume(hull.volume > 1e-1)
+
+    vertices = points[hull.vertices]
+    poly = Polygon(vertices)
+    poly.center = [0, 0, 0]
+    print(poly.vertices)
+    print(np.mean(poly.vertices))
+
+    # For an arbitrary convex polygon, the furthest vertex from the origin is
+    # an upper bound on the bounding sphere radius, but need not be the radius
+    # because the ball need not be centered at the centroid.
+    rmax = np.max(np.linalg.norm(poly.vertices, axis=-1))
+    C, r2 = miniball.get_bounding_ball(vertices)
+    assert np.sqrt(r2) <= rmax
+
+    C, r2 = miniball.get_bounding_ball(poly.vertices)
+    assert np.sqrt(r2) <= rmax

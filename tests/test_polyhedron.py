@@ -106,7 +106,15 @@ def test_facet_alignment(convex_cube):
 
 
 def compute_inertia_mc(vertices, num_samples=1e6):
-    """Use Monte Carlo integration to compute the moment of inertia."""
+    """Use Monte Carlo integration to compute the inertia tensor to test
+    against the analytical calculation.
+
+    Args:
+        num_samples (int): The number of samples to use.
+
+    Returns:
+        float: The 3x3 inertia tensor.
+    """
     mins = np.min(vertices, axis=0)
     maxs = np.max(vertices, axis=0)
 
@@ -145,11 +153,6 @@ def test_volume_damasceno_shapes():
         poly = ConvexPolyhedron(shape.vertices)
         hull = ConvexHull(shape.vertices)
         assert np.isclose(poly.volume, hull.volume)
-
-
-@pytest.mark.skip("Need test data")
-def test_circumsphere_radius():
-    pass
 
 
 # This test is a bit slow (a couple of minutes), so skip running it locally.
