@@ -174,21 +174,21 @@ def test_triangulate(square):
     assert not np.all(np.asarray(triangles[0]) == np.asarray(triangles[1]))
 
 
-def test_circumsphere_radius_regular_polygon():
+def test_bounding_sphere_radius_regular_polygon():
     from geometry import get_unit_area_ngon
-    import miniball
     for i in range(3, 10):
         vertices = get_unit_area_ngon(i)
         rmax = np.max(np.linalg.norm(vertices, axis=-1))
-        C, r2 = miniball.get_bounding_ball(vertices)
-        assert np.isclose(rmax, np.sqrt(r2))
-        assert np.allclose(C, 0)
+
+        poly = Polygon(vertices)
+        center, radius = poly.bounding_sphere
+
+        assert np.isclose(rmax, radius)
+        assert np.allclose(center, 0)
 
 
 @given(arrays(np.float64, (3, 2), floats(-5, 5, width=64), unique=True))
-def test_circumsphere_radius_random_hull(points):
-    import miniball
-
+def test_bounding_sphere_radius_random_hull(points):
     try:
         hull = ConvexHull(points)
     except QhullError:
@@ -199,16 +199,14 @@ def test_circumsphere_radius_random_hull(points):
 
     vertices = points[hull.vertices]
     poly = Polygon(vertices)
-    poly.center = [0, 0, 0]
-    print(poly.vertices)
-    print(np.mean(poly.vertices))
 
     # For an arbitrary convex polygon, the furthest vertex from the origin is
     # an upper bound on the bounding sphere radius, but need not be the radius
     # because the ball need not be centered at the centroid.
     rmax = np.max(np.linalg.norm(poly.vertices, axis=-1))
-    C, r2 = miniball.get_bounding_ball(vertices)
-    assert np.sqrt(r2) <= rmax
+    center, radius = poly.bounding_sphere
+    assert radius <= rmax
 
-    C, r2 = miniball.get_bounding_ball(poly.vertices)
-    assert np.sqrt(r2) <= rmax
+    poly.center = [0, 0, 0]
+    center, radius = poly.bounding_sphere
+    assert radius <= rmax

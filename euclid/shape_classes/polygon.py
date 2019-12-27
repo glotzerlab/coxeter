@@ -339,3 +339,19 @@ class Polygon(object):
             shift = (np.max(y) - np.min(y))*0.025
             for i, vert in enumerate(verts[:-1]):
                 ax.text(vert[0], vert[1] + shift, '{}'.format(i), fontsize=10)
+
+    @property
+    def bounding_sphere(self):
+        """The bounding sphere of the polygon, given by a center and a
+        radius."""
+        try:
+            import miniball
+        except ImportError as e:
+            raise ImportError("The miniball module must be installed. It can "
+                              "be installed as an extra with euclid (e.g. "
+                              "with pip install euclid[bounding_sphere], or "
+                              "directly from PyPI using pip install miniball."
+                              ) from e
+
+        C, r2 = miniball.get_bounding_ball(self.vertices)
+        return C, np.sqrt(r2)
