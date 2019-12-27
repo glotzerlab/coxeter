@@ -2,6 +2,12 @@ import numpy as np
 import rowan
 from ..polytri import polytri
 
+try:
+    import miniball
+    MINIBALL = True
+except ImportError:
+    MINIBALL = False
+
 
 def _align_points_by_normal(normal, points):
     """Given a normal vector and a set of points, find a rotation to align the
@@ -344,14 +350,12 @@ class Polygon(object):
     def bounding_sphere(self):
         """The bounding sphere of the polygon, given by a center and a
         radius."""
-        try:
-            import miniball
-        except ImportError as e:
+        if not MINIBALL:
             raise ImportError("The miniball module must be installed. It can "
                               "be installed as an extra with euclid (e.g. "
                               "with pip install euclid[bounding_sphere], or "
                               "directly from PyPI using pip install miniball."
-                              ) from e
+                              )
 
         C, r2 = miniball.get_bounding_ball(self.vertices)
         return C, np.sqrt(r2)
