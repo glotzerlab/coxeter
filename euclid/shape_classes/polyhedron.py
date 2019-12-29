@@ -309,6 +309,41 @@ class Polyhedron(object):
         self._find_equations()
 
     @property
+    def bounding_sphere(self):
+        """The bounding sphere of the polyhedron, given by a center and a
+        radius."""
+        if not MINIBALL:
+            raise ImportError("The miniball module must be installed. It can "
+                              "be installed as an extra with euclid (e.g. "
+                              "with pip install euclid[bounding_sphere], or "
+                              "directly from PyPI using pip install miniball."
+                              )
+
+        # The algorithm in miniball involves solving a linear system and
+        # can therefore occasionally be somewhat unstable. Applying a
+        # random rotation will usually fix the issue.
+        max_attempts = 10
+        attempt = 0
+        current_rotation = [1, 0, 0, 0]
+        vertices = self.vertices
+        while attempt < max_attempts:
+            attempt += 1
+            try:
+                center, r2 = miniball.get_bounding_ball(vertices)
+                break
+            except np.linalg.LinAlgError:
+                current_rotation = rowan.random.rand(1)
+                vertices = rowan.rotate(current_rotation, vertices)
+
+        if attempt == max_attempts:
+            raise RuntimeError("Unable to solve for a bounding sphere.")
+
+        # The center must be rotated back to undo any rotation.
+        center = rowan.rotate(rowan.conjugate(current_rotation), center)
+
+        return center, np.sqrt(r2)
+
+    @property
     def circumsphere(self):
         """float: Get the polyhedron's circumsphere."""
         points = self.vertices[1:] - self.vertices[0]
