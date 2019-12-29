@@ -195,20 +195,20 @@ def get_unit_area_ngon(n):
     return pos.T
 
 
-def test_bounding_sphere_radius_regular_polygon():
+def test_bounding_circle_radius_regular_polygon():
     for i in range(3, 10):
         vertices = get_unit_area_ngon(i)
         rmax = np.max(np.linalg.norm(vertices, axis=-1))
 
         poly = Polygon(vertices)
-        center, radius = poly.bounding_sphere
+        center, radius = poly.bounding_circle
 
         assert np.isclose(rmax, radius)
         assert np.allclose(center, 0)
 
 
 @given(arrays(np.float64, (3, 2), floats(-5, 5, width=64), unique=True))
-def test_bounding_sphere_radius_random_hull(points):
+def test_bounding_circle_radius_random_hull(points):
     # Avoid issues from floating point error.
     eps = 1e-4
 
@@ -227,17 +227,17 @@ def test_bounding_sphere_radius_random_hull(points):
     # an upper bound on the bounding sphere radius, but need not be the radius
     # because the ball need not be centered at the centroid.
     rmax = np.max(np.linalg.norm(poly.vertices, axis=-1))
-    center, radius = poly.bounding_sphere
+    center, radius = poly.bounding_circle
     assert radius <= rmax + eps
 
     poly.center = [0, 0, 0]
-    center, radius = poly.bounding_sphere
+    center, radius = poly.bounding_circle
     assert radius <= rmax + eps
 
 
 @given(points=arrays(np.float64, (3, 2), floats(-5, 5, width=64), unique=True),
        rotation=arrays(np.float64, (4, ), floats(-1, 1, width=64)))
-def test_bounding_sphere_radius_random_hull_rotation(points, rotation):
+def test_bounding_circle_radius_random_hull_rotation(points, rotation):
     """Test that rotating vertices does not change the bounding radius."""
     assume(not np.all(rotation == 0))
 
@@ -259,8 +259,8 @@ def test_bounding_sphere_radius_random_hull_rotation(points, rotation):
     rotated_vertices = rowan.rotate(rotation, poly.vertices)
     poly_rotated = Polygon(rotated_vertices)
 
-    _, radius = poly.bounding_sphere
-    _, rotated_radius = poly_rotated.bounding_sphere
+    _, radius = poly.bounding_circle
+    _, rotated_radius = poly_rotated.bounding_circle
     assert np.isclose(radius, rotated_radius)
 
 def test_circumcircle():

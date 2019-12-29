@@ -347,8 +347,8 @@ class Polygon(object):
                 ax.text(vert[0], vert[1] + shift, '{}'.format(i), fontsize=10)
 
     @property
-    def bounding_sphere(self):
-        """The bounding sphere of the polygon, given by a center and a
+    def bounding_circle(self):
+        """The bounding circle of the polygon, given by a center and a
         radius."""
         if not MINIBALL:
             raise ImportError("The miniball module must be installed. It can "
@@ -383,7 +383,7 @@ class Polygon(object):
 
     @property
     def circumcircle(self):
-        """float: Get the polyhedron's circumsphere radius."""
+        """float: Get the polygon's circumcircle."""
         # Solves a linear system of equations to find a point equidistant from
         # all the vertices if it exists. Since the polygon is embedded in 3D,
         # we must constrain our solutions to the plane of the polygon.
