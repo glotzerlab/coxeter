@@ -316,7 +316,7 @@ class Polygon(object):
         """The isopermietric quotient."""
         pass
 
-    def plot(self, ax, plot_verts=False, label_verts=False):
+    def plot(self, ax, center=False, plot_verts=False, label_verts=False):
         """Plot the polygon.
 
         Note that the polygon is always rotated into the xy plane and plotted
@@ -331,8 +331,8 @@ class Polygon(object):
                 (Default value: False).
         """
         # TODO: Generate axis if one is not provided.
-        verts = _align_points_by_normal(self._normal,
-                                        self._vertices - self.center)
+        verts = self._vertices - self.center if center else self._vertices
+        verts = _align_points_by_normal(self._normal, verts)
         verts = np.concatenate((verts, verts[[0]]))
         x = verts[:, 0]
         y = verts[:, 1]
@@ -380,3 +380,19 @@ class Polygon(object):
         center = rowan.rotate(rowan.conjugate(current_rotation), center)
 
         return center, np.sqrt(r2)
+
+    @property
+    def circumcircle(self):
+        """float: Get the polyhedron's circumsphere radius."""
+        # Solves a linear system of equations to find a point equidistant from
+        # all the vertices if it exists. Since the polygon is embedded in 3D,
+        # we must constrain our solutions to the plane of the polygon.
+        points = np.concatenate((
+            self.vertices[1:] - self.vertices[0], self.normal[np.newaxis]))
+        half_point_lengths = np.concatenate((
+            np.sum(points[:-1]*points[:-1], axis=1)/2, [0]))
+        x, resids, _, _ = np.linalg.lstsq(points, half_point_lengths, None)
+        if len(self.vertices) > 3 and not np.isclose(resids, 0):
+            raise RuntimeError("No circumcircle for this polygon.")
+
+        return x + self.vertices[0], np.linalg.norm(x)

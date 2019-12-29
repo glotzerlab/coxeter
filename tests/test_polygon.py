@@ -175,7 +175,8 @@ def test_triangulate(square):
 
 
 def get_unit_area_ngon(n):
-    """Compute vertices of a regular n-gon of area 1."""
+    """Compute vertices of a regular n-gon of area 1. Useful for constructing
+    simple tests of some of the "containing sphere" calculations."""
     r = 1  # The radius of the circle
     theta = np.linspace(0, 2*np.pi, num=n, endpoint=False)
     pos = np.array([np.cos(theta), np.sin(theta)])
@@ -196,7 +197,6 @@ def get_unit_area_ngon(n):
 
 def test_bounding_sphere_radius_regular_polygon():
     for i in range(3, 10):
-        i = 7
         vertices = get_unit_area_ngon(i)
         rmax = np.max(np.linalg.norm(vertices, axis=-1))
 
@@ -262,3 +262,14 @@ def test_bounding_sphere_radius_random_hull_rotation(points, rotation):
     _, radius = poly.bounding_sphere
     _, rotated_radius = poly_rotated.bounding_sphere
     assert np.isclose(radius, rotated_radius)
+
+def test_circumcircle():
+    for i in range(3, 10):
+        vertices = get_unit_area_ngon(i)
+        rmax = np.max(np.linalg.norm(vertices, axis=-1))
+
+        poly = Polygon(vertices)
+        center, radius = poly.circumcircle
+
+        assert np.isclose(rmax, radius)
+        assert np.allclose(center, 0)
