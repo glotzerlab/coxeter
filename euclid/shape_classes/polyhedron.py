@@ -309,16 +309,15 @@ class Polyhedron(object):
         self._find_equations()
 
     @property
-    def circumsphere_radius(self):
-        """float: Get or set the polyhedron's circumsphere radius (setting
-        rescales vertices)."""
-        return np.linalg.norm(self.vertices - self.center, axis=1).max()
+    def circumsphere(self):
+        """float: Get the polyhedron's circumsphere."""
+        points = self.vertices[1:] - self.vertices[0]
+        half_point_lengths = np.sum(points[:-1]*points[:-1], axis=1)/2
+        x, resids, _, _ = np.linalg.lstsq(points, half_point_lengths, None)
+        if len(self.vertices) > 4 and not np.isclose(resids, 0):
+            raise RuntimeError("No circumcircle for this polygon.")
 
-    @circumsphere_radius.setter
-    def circumsphere_radius(self, new_radius):
-        scale_factor = new_radius/self.circumsphere_radius
-        self._vertices *= scale_factor
-        self._equations[:, 3] *= scale_factor
+        return x + self.vertices[0], np.linalg.norm(x)
 
     @property
     def iq(self):
