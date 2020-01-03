@@ -284,3 +284,18 @@ def test_circumsphere_platonic():
             r2 = np.sum(poly.vertices**2, axis=1)
 
             assert np.allclose(r2, radius*radius)
+
+
+def test_bounding_sphere_platonic():
+    platonic_solids = ['Tetrahedron', 'Cube', 'Octahedron', 'Dodecahedron',
+                       'Icosahedron']
+    for shape in SHAPES:
+        if shape.Name in platonic_solids:
+            poly = ConvexPolyhedron(shape.vertices)
+            center, radius = poly.bounding_sphere
+
+            # Ensure polyhedron is centered, then compute distances.
+            poly.center = [0, 0, 0]
+            r2 = np.sum(poly.vertices**2, axis=1)
+
+            assert np.allclose(r2, radius*radius)
