@@ -1,6 +1,13 @@
 import numpy as np
 from .polygon import Polygon
 from scipy.sparse.csgraph import connected_components
+import rowan
+
+try:
+    import miniball
+    MINIBALL = True
+except ImportError:
+    MINIBALL = False
 
 
 def _facet_to_edges(facet, reverse=False):
@@ -347,10 +354,10 @@ class Polyhedron(object):
     def circumsphere(self):
         """float: Get the polyhedron's circumsphere."""
         points = self.vertices[1:] - self.vertices[0]
-        half_point_lengths = np.sum(points[:-1]*points[:-1], axis=1)/2
+        half_point_lengths = np.sum(points*points, axis=1)/2
         x, resids, _, _ = np.linalg.lstsq(points, half_point_lengths, None)
         if len(self.vertices) > 4 and not np.isclose(resids, 0):
-            raise RuntimeError("No circumcircle for this polygon.")
+            raise RuntimeError("No circumsphere for this polyhedron.")
 
         return x + self.vertices[0], np.linalg.norm(x)
 

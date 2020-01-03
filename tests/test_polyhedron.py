@@ -269,3 +269,18 @@ def test_tau():
 @pytest.mark.skip("Need test data")
 def test_asphericity():
     pass
+
+
+def test_circumsphere_platonic():
+    platonic_solids = ['Tetrahedron', 'Cube', 'Octahedron', 'Dodecahedron',
+                       'Icosahedron']
+    for shape in SHAPES:
+        if shape.Name in platonic_solids:
+            poly = ConvexPolyhedron(shape.vertices)
+            center, radius = poly.circumsphere
+
+            # Ensure polyhedron is centered, then compute distances.
+            poly.center = [0, 0, 0]
+            r2 = np.sum(poly.vertices**2, axis=1)
+
+            assert np.allclose(r2, radius*radius)
