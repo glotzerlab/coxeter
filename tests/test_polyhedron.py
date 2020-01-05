@@ -11,6 +11,11 @@ import os
 from conftest import get_oriented_cube_facets, get_oriented_cube_normals
 
 
+@pytest.fixture
+def platonic_solids():
+    return ('Tetrahedron', 'Cube', 'Octahedron', 'Dodecahedron', 'Icosahedron')
+
+
 def test_normal_detection(convex_cube):
     detected_normals = set([tuple(n) for n in convex_cube.normals])
     expected_normals = set([tuple(n) for n in get_oriented_cube_normals()])
@@ -146,20 +151,21 @@ def test_moment_inertia(cube):
     assert np.allclose(cube.inertia_tensor, np.diag([1/6]*3))
 
 
-def test_volume_damasceno_shapes():
-    for shape in SHAPES:
-        if shape.Name in ('RESERVED', 'Sphere'):
-            continue
-        poly = ConvexPolyhedron(shape.vertices)
-        hull = ConvexHull(shape.vertices)
-        assert np.isclose(poly.volume, hull.volume)
+@pytest.mark.parametrize('shape', SHAPES)
+def test_volume_damasceno_shapes(shape):
+    if shape.Name in ('RESERVED', 'Sphere'):
+        return
+    poly = ConvexPolyhedron(shape.vertices)
+    hull = ConvexHull(shape.vertices)
+    assert np.isclose(poly.volume, hull.volume)
 
 
 # This test is a bit slow (a couple of minutes), so skip running it locally.
 @pytest.mark.skipif(os.getenv('CI', 'false') != 'true' and
                     os.getenv('CIRCLECI', 'false') != 'true',
                     reason="Test is too slow to run during rapid development")
-def test_moment_inertia_damasceno_shapes():
+@pytest.mark.parametrize('shape', SHAPES)
+def test_moment_inertia_damasceno_shapes(shape):
     # These shapes pass the test for a sufficiently high number of samples, but
     # the number is too high to be worth running them regularly.
     bad_shapes = [
@@ -175,30 +181,29 @@ def test_moment_inertia_damasceno_shapes():
         'Triaugmented Truncated Dodecahedron',
         'Parabiaugmented Truncated Dodecahedron',
     ]
-    np.random.seed(0)
-    for shape in SHAPES:
-        if shape.Name in ['RESERVED', 'Sphere'] + bad_shapes:
-            continue
+    if shape.Name in ['RESERVED', 'Sphere'] + bad_shapes:
+        return
 
-        poly = ConvexPolyhedron(shape.vertices)
-        num_samples = 1000
-        accept = False
-        # Loop over different sampling rates to minimize the test runtime.
-        while num_samples < 1e8:
-            try:
-                euclid_result = poly.inertia_tensor
-                mc_result = compute_inertia_mc(shape.vertices, num_samples)
-                assert np.allclose(euclid_result, mc_result, atol=1e-1)
-                accept = True
-                break
-            except AssertionError:
-                num_samples *= 10
-                continue
-        if not accept:
-            raise AssertionError("The test failed for shape {}.\nMC Result: "
-                                 "\n{}\neuclid result: \n{}".format(
-                                     shape.Name, mc_result, euclid_result
-                                 ))
+    np.random.seed(0)
+    poly = ConvexPolyhedron(shape.vertices)
+    num_samples = 1000
+    accept = False
+    # Loop over different sampling rates to minimize the test runtime.
+    while num_samples < 1e8:
+        try:
+            euclid_result = poly.inertia_tensor
+            mc_result = compute_inertia_mc(shape.vertices, num_samples)
+            assert np.allclose(euclid_result, mc_result, atol=1e-1)
+            accept = True
+            break
+        except AssertionError:
+            num_samples *= 10
+            continue
+    if not accept:
+        raise AssertionError("The test failed for shape {}.\nMC Result: "
+                             "\n{}\neuclid result: \n{}".format(
+                                 shape.Name, mc_result, euclid_result
+                             ))
 
 
 @pytest.mark.parametrize('cube',
@@ -271,9 +276,7 @@ def test_asphericity():
     pass
 
 
-def test_circumsphere_platonic():
-    platonic_solids = ['Tetrahedron', 'Cube', 'Octahedron', 'Dodecahedron',
-                       'Icosahedron']
+def test_circumsphere_platonic(platonic_solids):
     for shape in SHAPES:
         if shape.Name in platonic_solids:
             poly = ConvexPolyhedron(shape.vertices)
@@ -286,9 +289,7 @@ def test_circumsphere_platonic():
             assert np.allclose(r2, radius*radius)
 
 
-def test_bounding_sphere_platonic():
-    platonic_solids = ['Tetrahedron', 'Cube', 'Octahedron', 'Dodecahedron',
-                       'Icosahedron']
+def test_bounding_sphere_platonic(platonic_solids):
     for shape in SHAPES:
         if shape.Name in platonic_solids:
             poly = ConvexPolyhedron(shape.vertices)
