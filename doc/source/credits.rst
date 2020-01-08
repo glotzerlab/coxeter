@@ -48,8 +48,11 @@ Vyas Ramasubramani
 * Formalized contribution guidelines and contributor agreement.
 * Cleaned up damasceno module and separated out shape information into a JSON file that is read on demand.
 * Fixed code formatting to conform to PEP8 requirements.
-* Implemented core Polygon class.
-* Implemented core ConvexSpheropolygon class.
+* Implemented Polygon class.
+* Implemented ConvexSpheropolygon class.
+* Implemented Polyhedron class.
+* Implemented ConvexPolyhedron class.
+* Implemented ConvexSpheropolyhedron class.
 
 Carl Simon Adorf
 

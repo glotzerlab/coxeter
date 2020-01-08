@@ -2,6 +2,12 @@ import numpy as np
 import rowan
 from ..polytri import polytri
 
+try:
+    import miniball
+    MINIBALL = True
+except ImportError:
+    MINIBALL = False
+
 
 def _align_points_by_normal(normal, points):
     """Given a normal vector and a set of points, find a rotation to align the
@@ -28,6 +34,21 @@ def _align_points_by_normal(normal, points):
     rotation, _ = rowan.mapping.kabsch([normal, -normal],
                                        [[0, 0, 1], [0, 0, -1]])
     return np.dot(points, rotation.T)
+
+
+def _is_convex(vertices):
+    """Check if a set of vertices defines a convex polygon.
+
+    This algorithm assumes that the vertices define a non-intersecting polygon.
+    The vertices must be consecutively ordered. Raises a ValueError if the
+    vertices form a nonconvex polygon.
+    """
+    shifted_forward = np.roll(vertices, shift=1, axis=0)
+    shifted_backward = np.roll(vertices, shift=-1, axis=0)
+
+    cross = np.cross(shifted_backward - vertices, vertices - shifted_forward)
+
+    return len(np.unique(np.sign(cross[:, 2]))) == 1
 
 
 class Polygon(object):
@@ -104,9 +125,11 @@ class Polygon(object):
             if not np.isclose(self._normal.dot(v), d, planar_tolerance):
                 raise ValueError("Not all vertices are coplanar.")
 
-        # The polygon must be oriented in order for the area calculation to
-        # work, so we always sort on construction. Users can alter the sorting
-        # later if desired, but we cannot have unsorted vertices.
+        # The polygon must be oriented in order for certain calculations to
+        # work, so we always verify sorting on construction. Users can alter
+        # the sorting later if desired, but we cannot have unsorted vertices.
+        # TODO: Only sort if the polygon is convex; otherwise, we should just
+        # check for crossings and otherwise not modify the shape.
         self.reorder_verts()
 
     def reorder_verts(self, clockwise=False, ref_index=0,
@@ -310,7 +333,7 @@ class Polygon(object):
         """The isopermietric quotient."""
         pass
 
-    def plot(self, ax, plot_verts=False, label_verts=False):
+    def plot(self, ax, center=False, plot_verts=False, label_verts=False):
         """Plot the polygon.
 
         Note that the polygon is always rotated into the xy plane and plotted
@@ -325,8 +348,8 @@ class Polygon(object):
                 (Default value: False).
         """
         # TODO: Generate axis if one is not provided.
-        verts = _align_points_by_normal(self._normal,
-                                        self._vertices - self.center)
+        verts = self._vertices - self.center if center else self._vertices
+        verts = _align_points_by_normal(self._normal, verts)
         verts = np.concatenate((verts, verts[[0]]))
         x = verts[:, 0]
         y = verts[:, 1]
@@ -339,3 +362,54 @@ class Polygon(object):
             shift = (np.max(y) - np.min(y))*0.025
             for i, vert in enumerate(verts[:-1]):
                 ax.text(vert[0], vert[1] + shift, '{}'.format(i), fontsize=10)
+
+    @property
+    def bounding_circle(self):
+        """The bounding circle of the polygon, given by a center and a
+        radius."""
+        if not MINIBALL:
+            raise ImportError("The miniball module must be installed. It can "
+                              "be installed as an extra with euclid (e.g. "
+                              "with pip install euclid[bounding_sphere], or "
+                              "directly from PyPI using pip install miniball."
+                              )
+
+        # The algorithm in miniball involves solving a linear system and
+        # can therefore occasionally be somewhat unstable. Applying a
+        # random rotation will usually fix the issue.
+        max_attempts = 10
+        attempt = 0
+        current_rotation = [1, 0, 0, 0]
+        vertices = self.vertices
+        while attempt < max_attempts:
+            attempt += 1
+            try:
+                center, r2 = miniball.get_bounding_ball(vertices)
+                break
+            except np.linalg.LinAlgError:
+                current_rotation = rowan.random.rand(1)
+                vertices = rowan.rotate(current_rotation, vertices)
+
+        if attempt == max_attempts:
+            raise RuntimeError("Unable to solve for a bounding sphere.")
+
+        # The center must be rotated back to undo any rotation.
+        center = rowan.rotate(rowan.conjugate(current_rotation), center)
+
+        return center, np.sqrt(r2)
+
+    @property
+    def circumcircle(self):
+        """float: Get the polygon's circumcircle."""
+        # Solves a linear system of equations to find a point equidistant from
+        # all the vertices if it exists. Since the polygon is embedded in 3D,
+        # we must constrain our solutions to the plane of the polygon.
+        points = np.concatenate((
+            self.vertices[1:] - self.vertices[0], self.normal[np.newaxis]))
+        half_point_lengths = np.concatenate((
+            np.sum(points[:-1]*points[:-1], axis=1)/2, [0]))
+        x, resids, _, _ = np.linalg.lstsq(points, half_point_lengths, None)
+        if len(self.vertices) > 3 and not np.isclose(resids, 0):
+            raise RuntimeError("No circumcircle for this polygon.")
+
+        return x + self.vertices[0], np.linalg.norm(x)

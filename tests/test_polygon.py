@@ -4,6 +4,7 @@ import numpy.testing as npt
 import rowan
 from euclid.shape_classes.polygon import Polygon
 from scipy.spatial import ConvexHull
+from scipy.spatial.qhull import QhullError
 from hypothesis import given, example, assume
 from hypothesis.strategies import floats
 from hypothesis.extra.numpy import arrays
@@ -171,3 +172,105 @@ def test_triangulate(square):
     assert len(set(all_vertices)) == 4
 
     assert not np.all(np.asarray(triangles[0]) == np.asarray(triangles[1]))
+
+
+def get_unit_area_ngon(n):
+    """Compute vertices of a regular n-gon of area 1. Useful for constructing
+    simple tests of some of the "containing sphere" calculations."""
+    r = 1  # The radius of the circle
+    theta = np.linspace(0, 2*np.pi, num=n, endpoint=False)
+    pos = np.array([np.cos(theta), np.sin(theta)])
+
+    # First normalize to guarantee that the limiting case of an infinite number
+    # of vertices produces a circle of area r^2.
+    pos /= (np.sqrt(np.pi)/r)
+
+    # Area of an n-gon inscribed in a circle
+    # A_poly = ((n*r**2)/2)*np.sin(2*np.pi/n)
+    # A_circ = np.pi*r**2
+    # pos *= np.sqrt(A_circ/A_poly)
+    A_circ_over_A_poly = np.pi/((n/2)*np.sin(2*np.pi/n))
+    pos *= np.sqrt(A_circ_over_A_poly)
+
+    return pos.T
+
+
+def test_bounding_circle_radius_regular_polygon():
+    for i in range(3, 10):
+        vertices = get_unit_area_ngon(i)
+        rmax = np.max(np.linalg.norm(vertices, axis=-1))
+
+        poly = Polygon(vertices)
+        center, radius = poly.bounding_circle
+
+        assert np.isclose(rmax, radius)
+        assert np.allclose(center, 0)
+
+
+@given(arrays(np.float64, (3, 2), floats(-5, 5, width=64), unique=True))
+def test_bounding_circle_radius_random_hull(points):
+    # Avoid issues from floating point error.
+    eps = 1e-4
+
+    try:
+        hull = ConvexHull(points)
+    except QhullError:
+        assume(False)
+    else:
+        # Avoid cases where numerical imprecision make tests fail.
+        assume(hull.volume > eps)
+
+    vertices = points[hull.vertices]
+    poly = Polygon(vertices)
+
+    # For an arbitrary convex polygon, the furthest vertex from the origin is
+    # an upper bound on the bounding sphere radius, but need not be the radius
+    # because the ball need not be centered at the centroid.
+    rmax = np.max(np.linalg.norm(poly.vertices, axis=-1))
+    center, radius = poly.bounding_circle
+    assert radius <= rmax + eps
+
+    poly.center = [0, 0, 0]
+    center, radius = poly.bounding_circle
+    assert radius <= rmax + eps
+
+
+@given(points=arrays(np.float64, (3, 2), floats(-5, 5, width=64), unique=True),
+       rotation=arrays(np.float64, (4, ), floats(-1, 1, width=64)))
+def test_bounding_circle_radius_random_hull_rotation(points, rotation):
+    """Test that rotating vertices does not change the bounding radius."""
+    assume(not np.all(rotation == 0))
+
+    # Avoid issues from floating point error.
+    eps = 1e-4
+
+    try:
+        hull = ConvexHull(points)
+    except QhullError:
+        assume(False)
+    else:
+        # Avoid cases where numerical imprecision make tests fail.
+        assume(hull.volume > eps)
+
+    vertices = points[hull.vertices]
+    poly = Polygon(vertices)
+
+    rotation = rowan.normalize(rotation)
+    rotated_vertices = rowan.rotate(rotation, poly.vertices)
+    poly_rotated = Polygon(rotated_vertices)
+
+    _, radius = poly.bounding_circle
+    _, rotated_radius = poly_rotated.bounding_circle
+    assert np.isclose(radius, rotated_radius)
+
+
+def test_circumcircle():
+    for i in range(3, 10):
+        vertices = get_unit_area_ngon(i)
+        rmax = np.max(np.linalg.norm(vertices, axis=-1))
+
+        poly = Polygon(vertices)
+        center, radius = poly.circumcircle
+
+        assert np.isclose(rmax, radius)
+        assert np.allclose(center, 0)

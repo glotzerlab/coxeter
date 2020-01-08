@@ -1,22 +1,6 @@
 import numpy as np
 
-from .polygon import Polygon, _align_points_by_normal
-
-
-def _check_convex(vertices):
-    """Check if a set of vertices defines a convex polygon.
-
-    This algorithm assumes that the vertices define a non-intersecting polygon.
-    The vertices must be consecutively ordered. Raises a ValueError if the
-    vertices form a nonconvex polygon.
-    """
-    shifted_forward = np.roll(vertices, shift=1, axis=0)
-    shifted_backward = np.roll(vertices, shift=-1, axis=0)
-
-    cross = np.cross(shifted_backward - vertices, vertices - shifted_forward)
-
-    if len(np.unique(np.sign(cross[:, 2]))) > 1:
-        raise ValueError("The vertices do not define a convex polygon.")
+from .polygon import Polygon, _align_points_by_normal, _is_convex
 
 
 class ConvexSpheropolygon(object):
@@ -40,8 +24,9 @@ class ConvexSpheropolygon(object):
         if radius < 0:
             raise ValueError("The radius must be positive.")
         self.polygon = Polygon(vertices, normal)
-        _check_convex(_align_points_by_normal(self.polygon.normal,
-                                              self.vertices))
+        if not _is_convex(_align_points_by_normal(self.polygon.normal,
+                                                  self.vertices)):
+            raise ValueError("The vertices do not define a convex polygon.")
         self._radius = radius
 
     def reorder_verts(self, clockwise=False, ref_index=0,

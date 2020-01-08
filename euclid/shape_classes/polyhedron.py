@@ -1,6 +1,13 @@
 import numpy as np
 from .polygon import Polygon
 from scipy.sparse.csgraph import connected_components
+import rowan
+
+try:
+    import miniball
+    MINIBALL = True
+except ImportError:
+    MINIBALL = False
 
 
 def _facet_to_edges(facet, reverse=False):
@@ -309,16 +316,50 @@ class Polyhedron(object):
         self._find_equations()
 
     @property
-    def circumsphere_radius(self):
-        """float: Get or set the polyhedron's circumsphere radius (setting
-        rescales vertices)."""
-        return np.linalg.norm(self.vertices - self.center, axis=1).max()
+    def bounding_sphere(self):
+        """The bounding sphere of the polyhedron, given by a center and a
+        radius."""
+        if not MINIBALL:
+            raise ImportError("The miniball module must be installed. It can "
+                              "be installed as an extra with euclid (e.g. "
+                              "with pip install euclid[bounding_sphere], or "
+                              "directly from PyPI using pip install miniball."
+                              )
 
-    @circumsphere_radius.setter
-    def circumsphere_radius(self, new_radius):
-        scale_factor = new_radius/self.circumsphere_radius
-        self._vertices *= scale_factor
-        self._equations[:, 3] *= scale_factor
+        # The algorithm in miniball involves solving a linear system and
+        # can therefore occasionally be somewhat unstable. Applying a
+        # random rotation will usually fix the issue.
+        max_attempts = 10
+        attempt = 0
+        current_rotation = [1, 0, 0, 0]
+        vertices = self.vertices
+        while attempt < max_attempts:
+            attempt += 1
+            try:
+                center, r2 = miniball.get_bounding_ball(vertices)
+                break
+            except np.linalg.LinAlgError:
+                current_rotation = rowan.random.rand(1)
+                vertices = rowan.rotate(current_rotation, vertices)
+
+        if attempt == max_attempts:
+            raise RuntimeError("Unable to solve for a bounding sphere.")
+
+        # The center must be rotated back to undo any rotation.
+        center = rowan.rotate(rowan.conjugate(current_rotation), center)
+
+        return center, np.sqrt(r2)
+
+    @property
+    def circumsphere(self):
+        """float: Get the polyhedron's circumsphere."""
+        points = self.vertices[1:] - self.vertices[0]
+        half_point_lengths = np.sum(points*points, axis=1)/2
+        x, resids, _, _ = np.linalg.lstsq(points, half_point_lengths, None)
+        if len(self.vertices) > 4 and not np.isclose(resids, 0):
+            raise RuntimeError("No circumsphere for this polyhedron.")
+
+        return x + self.vertices[0], np.linalg.norm(x)
 
     @property
     def iq(self):

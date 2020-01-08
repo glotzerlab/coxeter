@@ -1,12 +1,22 @@
 from setuptools import setup, find_packages
 
+################################################
+# Set up for the various optional dependencies
+# that may be installed for additional features.
+################################################
+
 test_deps = [
     'pytest',
     'hypothesis[numpy]',
 ]
 
+bounding_deps = [
+    'miniball',
+]
+
 extras = {
-    'test': test_deps,
+    'test': test_deps + bounding_deps,
+    'bounding_sphere': bounding_deps,
 }
 
 setup(
