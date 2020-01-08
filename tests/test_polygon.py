@@ -263,6 +263,7 @@ def test_bounding_circle_radius_random_hull_rotation(points, rotation):
     _, rotated_radius = poly_rotated.bounding_circle
     assert np.isclose(radius, rotated_radius)
 
+
 def test_circumcircle():
     for i in range(3, 10):
         vertices = get_unit_area_ngon(i)
