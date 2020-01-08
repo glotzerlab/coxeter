@@ -11,11 +11,11 @@ test_deps = [
 ]
 
 bounding_deps = [
-    'bounding_sphere',
+    'miniball',
 ]
 
 extras = {
-    'test': test_deps,
+    'test': test_deps + bounding_deps,
     'bounding_sphere': bounding_deps,
 }
 
