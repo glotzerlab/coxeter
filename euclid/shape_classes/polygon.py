@@ -36,6 +36,21 @@ def _align_points_by_normal(normal, points):
     return np.dot(points, rotation.T)
 
 
+def _is_convex(vertices):
+    """Check if a set of vertices defines a convex polygon.
+
+    This algorithm assumes that the vertices define a non-intersecting polygon.
+    The vertices must be consecutively ordered. Raises a ValueError if the
+    vertices form a nonconvex polygon.
+    """
+    shifted_forward = np.roll(vertices, shift=1, axis=0)
+    shifted_backward = np.roll(vertices, shift=-1, axis=0)
+
+    cross = np.cross(shifted_backward - vertices, vertices - shifted_forward)
+
+    return len(np.unique(np.sign(cross[:, 2]))) == 1
+
+
 class Polygon(object):
     def __init__(self, vertices, normal=None, planar_tolerance=1e-5):
         """A simple (i.e. non-self-overlapping) polygon.
@@ -110,9 +125,11 @@ class Polygon(object):
             if not np.isclose(self._normal.dot(v), d, planar_tolerance):
                 raise ValueError("Not all vertices are coplanar.")
 
-        # The polygon must be oriented in order for the area calculation to
-        # work, so we always sort on construction. Users can alter the sorting
-        # later if desired, but we cannot have unsorted vertices.
+        # The polygon must be oriented in order for certain calculations to
+        # work, so we always verify sorting on construction. Users can alter
+        # the sorting later if desired, but we cannot have unsorted vertices.
+        # TODO: Only sort if the polygon is convex; otherwise, we should just
+        # check for crossings and otherwise not modify the shape.
         self.reorder_verts()
 
     def reorder_verts(self, clockwise=False, ref_index=0,
