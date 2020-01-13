@@ -107,14 +107,17 @@ class Polygon(object):
 
         computed_normal = np.cross(self.vertices[2, :] - self.vertices[1, :],
                                    self.vertices[0, :] - self.vertices[1, :])
+        computed_normal /= np.linalg.norm(computed_normal)
         if normal is None:
-            self._normal = computed_normal/np.linalg.norm(computed_normal)
+            self._normal = computed_normal
         else:
-            if not np.isclose(np.abs(np.dot(computed_normal, normal)), 1):
+            norm_normal = np.asarray(normal, dtype=np.float64)
+            norm_normal /= np.linalg.norm(normal)
+
+            if not np.isclose(np.abs(np.dot(computed_normal, norm_normal)), 1):
                 raise ValueError("The provided normal vector is not "
                                  "orthogonal to the polygon.")
-            self._normal = np.asarray(normal, dtype=np.float64)
-            self._normal /= np.linalg.norm(self._normal)
+            self._normal = norm_normal
 
         d = self._normal.dot(self.vertices[0, :])
         # If this simple check of coplanarity is not robust enough for a
