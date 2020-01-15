@@ -42,6 +42,14 @@ def _is_convex(vertices):
     This algorithm assumes that the vertices define a non-intersecting polygon.
     The vertices must be consecutively ordered. Raises a ValueError if the
     vertices form a nonconvex polygon.
+
+    Args:
+        vertices (:math:`(3, )` :class:`numpy.ndarray`):
+            The vertices to check
+
+    Returns:
+        `bool`: `True` if `vertices` define a convex polygon; `False` otherwise
+
     """
     shifted_forward = np.roll(vertices, shift=1, axis=0)
     shifted_backward = np.roll(vertices, shift=-1, axis=0)
@@ -146,7 +154,7 @@ class Polygon(object):
         plane, then computing the angles of all vertices. The vertices are then
         sorted by this angle.  Note that if two points are at the same angle,
         the ordering is arbitrary and determined by the output of
-        :func:`numpy.argsort`, which using an unstable quicksort algorithm by
+        :func:`numpy.argsort`, which uses an unstable quicksort algorithm by
         default.
 
         Args:
@@ -310,7 +318,7 @@ class Polygon(object):
 
     @property
     def center(self):
-        """Get or set the polyhedron's centroid (setting rescales vertices)."""
+        """Get or set the polygon's centroid (setting rescales vertices)."""
         return np.mean(self.vertices, axis=0)
 
     @center.setter
@@ -331,7 +339,7 @@ class Polygon(object):
     @property
     def iq(self):
         """The isopermietric quotient."""
-        pass
+        raise NotImplementedError
 
     def plot(self, ax, center=False, plot_verts=False, label_verts=False):
         """Plot the polygon.

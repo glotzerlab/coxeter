@@ -277,7 +277,13 @@ class Polyhedron(object):
     @property
     def inertia_tensor(self):
         """float: Get the inertia tensor computed about the center of mass
-        (uses the algorithm described in :cite:`Kallay2006`)."""
+        (uses the algorithm described in :cite:`Kallay2006`).
+
+        TODO: add calculation of/option to return principal moments
+
+        Returns:
+           :math:`(3, 3)` :class:`numpy.ndarray`: The (symmetric) inertia tensor
+        """
         simplices = np.array(list(self._triangulation())) - self.center
 
         volumes = np.abs(np.linalg.det(simplices)/6)
@@ -363,7 +369,10 @@ class Polyhedron(object):
 
     @property
     def iq(self):
-        """float: The isoperimetric quotient."""
+        """float: The isoperimetric quotient.
+
+        TODO: allow for non-spherical reference ratio (changes the 36\pi factor)
+        """
         V = self.volume
         S = self.surface_area
         return np.pi * 36 * V * V / (S * S * S)
@@ -390,8 +399,7 @@ class Polyhedron(object):
     def plot(self, ax, plot_verts=False, label_verts=False):
         """Plot the polyhedron.
 
-        Note that the polygon is always rotated into the xy plane and plotted
-        in two dimensions.
+        Note that passing a 2d axis will result in odd behavior.
 
         Args:
             plot_verts (bool):
