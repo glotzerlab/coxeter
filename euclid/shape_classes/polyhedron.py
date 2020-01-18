@@ -341,8 +341,7 @@ class Polyhedron(object):
             except np.linalg.LinAlgError:
                 current_rotation = rowan.random.rand(1)
                 vertices = rowan.rotate(current_rotation, vertices)
-
-        if attempt == max_attempts:
+        else:
             raise RuntimeError("Unable to solve for a bounding sphere.")
 
         # The center must be rotated back to undo any rotation.
