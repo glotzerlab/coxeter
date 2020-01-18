@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.abspath('../../'))
 # -- Project information -----------------------------------------------------
 
 project = 'euclid'
-copyright = '2015-2019, The Regents of the University of Michigan'
+copyright = '2015-2020, The Regents of the University of Michigan'
 author = 'Bryan VanSaders'
 
 # The full version, including alpha/beta/rc tags
