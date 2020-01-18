@@ -130,7 +130,7 @@ class Polyhedron(object):
 
     @property
     def neighbors(self):
-        """list(:class:`numpy.ndarray`): A list where the :math:`i`th element
+        """list(:class:`numpy.ndarray`): A list where the :math:`i^{\\text{th}}` element
         is an array of indices of facets that are neighbors of facet :math:`i`.
         """
         return self._neighbors
