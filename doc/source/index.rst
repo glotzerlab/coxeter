@@ -11,6 +11,7 @@ The package works with both two- and three-dimensional shapes such as polygons a
 
    package-euclid
    credits
+   zreferences
 
 
 Getting Started
