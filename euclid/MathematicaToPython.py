@@ -14,6 +14,7 @@
 # ExportString[N[PolyhedronData["ObtuseGoldenRhombohedron",
 # "VertexCoordinates"]], "Table", "FieldSeparators" -> ", "]
 
+
 def main():
     # open the output file for writing
     import sys
@@ -67,6 +68,7 @@ def main():
 
     outfile.write(footer)
     outfile.close()
+
 
 if __name__ == '__main__':
     main()
