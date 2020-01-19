@@ -1,4 +1,4 @@
-from scipy.spatial import ConvexHull
+from scipy.spatial import ConvexHull, Delaunay
 import numpy as np
 from .polyhedron import Polyhedron
 
@@ -50,3 +50,25 @@ class ConvexPolyhedron(Polyhedron):
     def asphericity(self):
         """float: The asphericity as defined in :cite:`Irrgang2017`."""
         return self.mean_curvature*self.surface_area/(3*self.volume)
+
+    def is_inside(self, points):
+        """Determine whether a set of points are contained in this
+        polyhedron.
+
+        Implementation is based on
+        https://stackoverflow.com/questions/16750618/whats-an-efficient-way-to-find-if-a-point-lies-in-the-convex-hull-of-a-point-cl
+
+        .. note::
+            Points on the boundary of the shape will return :code:`True`.
+
+        Args:
+            points (:math:`(N, 3)` :class:`numpy.ndarray`):
+                The points to test.
+
+        Returns:
+            :math:`(N, )` :class:`numpy.ndarray`:
+                Boolean array indicating which points are contained in the
+                polyhedron.
+        """  # noqa: E501
+        hull = Delaunay(self.vertices)
+        return hull.find_simplex(points) >= 0
