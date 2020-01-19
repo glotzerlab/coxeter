@@ -53,6 +53,10 @@ Vyas Ramasubramani
 * Implemented Polyhedron class.
 * Implemented ConvexPolyhedron class.
 * Implemented ConvexSpheropolyhedron class.
+* Add ability to check if points are contained in convex polyhedra.
+* Fix calculation of circumsphere to work for non-regular polyhedra.
+* Fix calculation of circumcircle to work for non-regular polygons.
+* Add ability to calculate minimum bounding sphere/circle for polyhedra/polygons.
 
 Carl Simon Adorf
 
