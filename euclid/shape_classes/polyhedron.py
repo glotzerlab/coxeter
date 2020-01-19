@@ -1,5 +1,5 @@
 import numpy as np
-from .polygon import Polygon
+from .polygon import Polygon, _is_convex, _is_simple
 from scipy.sparse.csgraph import connected_components
 import rowan
 
@@ -168,11 +168,17 @@ class Polyhedron(object):
         # constructing a Polygon and updating the facet (in place), which
         # enables finding neighbors.
         for facet in self.facets:
-            facet[:] = np.asarray([
-                np.where(np.all(self.vertices == vertex, axis=1))[0][0]
-                for vertex in Polygon(self.vertices[facet],
-                                      planar_tolerance=1e-4).vertices
-            ])
+            polygon = Polygon(self.vertices[facet], planar_tolerance=1e-4)
+            if _is_convex(polygon.vertices, polygon.normal):
+                facet[:] = np.asarray([
+                    np.where(np.all(self.vertices == vertex, axis=1))[0][0]
+                    for vertex in polygon.vertices
+                ])
+            elif not _is_simple(polygon.vertices):
+                raise ValueError("The vertices of each facet must be provided "
+                                 "in counterclockwise order relative to the "
+                                 "facet normal unless the facet is a convex "
+                                 "polygon.")
         self._find_neighbors()
 
         # The initial facet sets the order of the others.
