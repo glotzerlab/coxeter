@@ -130,8 +130,9 @@ class Polyhedron(object):
 
     @property
     def neighbors(self):
-        """list(:class:`numpy.ndarray`): A list where the :math:`i`th element
-        is an array of indices of facets that are neighbors of facet :math:`i`.
+        """list(:class:`numpy.ndarray`): A list where the
+        :math:`i^{\\text{th}}` element is an array of indices of facets that
+        are neighbors of facet :math:`i`.
         """
         return self._neighbors
 
@@ -341,8 +342,7 @@ class Polyhedron(object):
             except np.linalg.LinAlgError:
                 current_rotation = rowan.random.rand(1)
                 vertices = rowan.rotate(current_rotation, vertices)
-
-        if attempt == max_attempts:
+        else:
             raise RuntimeError("Unable to solve for a bounding sphere.")
 
         # The center must be rotated back to undo any rotation.

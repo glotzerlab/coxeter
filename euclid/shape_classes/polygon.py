@@ -235,9 +235,9 @@ class Polygon(object):
         R"""Get the planar moments with respect to the x and y axis as well as
         the product of inertia.
 
-        The `planar moments <https://en.wikipedia.org/wiki/Polar_moment_of_inertia>`_
+        The `planar moments <https://en.wikipedia.org/wiki/Polar_moment_of_inertia>`__
         and the
-        `product moment <https://en.wikipedia.org/wiki/Second_moment_of_area#Product_moment_of_area>`_
+        `product moment <https://en.wikipedia.org/wiki/Second_moment_of_area#Product_moment_of_area>`__
         are defined by the formulas:
 
         .. math::
@@ -257,7 +257,7 @@ class Polygon(object):
             \end{align}
 
         These formulas can be derived as described
-        `here <https://physics.stackexchange.com/questions/493736/moment-of-inertia-for-a-random-polygon>`_.
+        `here <https://physics.stackexchange.com/questions/493736/moment-of-inertia-for-a-random-polygon>`__.
 
         Note that the moments are always calculated about an axis perpendicular
         to the polygon, i.e. the normal vector is aligned with the :math:`z`
@@ -299,10 +299,11 @@ class Polygon(object):
 
     @property
     def polar_moment_inertia(self):
-        """The `polar moment of inertia <https://en.wikipedia.org/wiki/Polar_moment_of_inertia>`_.
+        """The polar moment of inertia.
 
-        The moment is always calculated about an axis perpendicular to the
-        polygon (i.e. the normal vector) placed at the centroid of the polygon.
+        The `polar moment of inertia <https://en.wikipedia.org/wiki/Polar_moment_of_inertia>`__
+        is always calculated about an axis perpendicular to the polygon (i.e. the
+        normal vector) placed at the centroid of the polygon.
 
         The polar moment is computed as the sum of the two planar moments of inertia.
         """  # noqa: E501
