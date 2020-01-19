@@ -155,7 +155,10 @@ def test_rotation_signed_area(random_quat, square_points):
 @given(arrays(np.float64, (4, 2), floats(-5, 5, width=64), unique=True))
 def test_set_convex_area(points):
     """Test setting area of arbitrary convex sets."""
-    hull = ConvexHull(points)
+    try:
+        hull = ConvexHull(points)
+    except QhullError:
+        assume(False)
     verts = points[hull.vertices]
     poly = Polygon(verts)
     original_area = poly.area

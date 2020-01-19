@@ -1,6 +1,8 @@
 import numpy as np
 import rowan
 from ..polytri import polytri
+from ..bentley_ottman import poly_point_isect
+from scipy.spatial import ConvexHull
 
 try:
     import miniball
@@ -36,19 +38,37 @@ def _align_points_by_normal(normal, points):
     return np.dot(points, rotation.T)
 
 
-def _is_convex(vertices):
-    """Check if a set of vertices defines a convex polygon.
+def _is_convex(vertices, normal):
+    """Check if the vertices provided define a convex shape.
 
-    This algorithm assumes that the vertices define a non-intersecting polygon.
-    The vertices must be consecutively ordered. Raises a ValueError if the
-    vertices form a nonconvex polygon.
+    This algorithm makes no assumptions about ordering of the vertices, it
+    simply constructs the convex hull of the points and checks that all of the
+    vertices are on the convex hull.
+
+    Args:
+        vertices (:math:`(N, 3)` :class:`numpy.ndarray`):
+            The polygon vertices.
+        normal (:math:`(3, )` :class:`numpy.ndarray`):
+            The normal to the vertices.
+
+    Returns:
+        bool: Whether or not the vertices defined a convex shape.
     """
-    shifted_forward = np.roll(vertices, shift=1, axis=0)
-    shifted_backward = np.roll(vertices, shift=-1, axis=0)
+    # TODO: Add a tolerance check in case a user provides collinear vertices on
+    # the boundary of a convex hull.
+    verts_2d = _align_points_by_normal(normal, vertices)
+    hull = ConvexHull(verts_2d[:, :2])
+    return len(hull.vertices) == len(vertices)
 
-    cross = np.cross(shifted_backward - vertices, vertices - shifted_forward)
 
-    return len(np.unique(np.sign(cross[:, 2]))) == 1
+def _is_simple(vertices):
+    """Check if the vertices define a simple polygon.
+
+    This code directly calls through to an external implementation
+    (https://github.com/ideasman42/isect_segments-bentley_ottmann) of the
+    Bentley-Ottman algorithm to check for intersections between the line
+    segments."""
+    return len(poly_point_isect.isect_polygon(vertices)) == 0
 
 
 class Polygon(object):
@@ -84,18 +104,17 @@ class Polygon(object):
                 plane.
         """
         vertices = np.array(vertices, dtype=np.float64)
-        _, indices = np.unique(vertices, axis=0, return_index=True)
-        if len(indices) != vertices.shape[0]:
-            raise ValueError("Found duplicate vertices.")
 
-        vertices = vertices[np.sort(indices), :]
         if len(vertices.shape) != 2 or vertices.shape[1] not in (2, 3):
             raise ValueError(
                 "Vertices must be specified as an Nx2 or Nx3 array.")
-
         if len(vertices) < 3:
             raise ValueError(
                 "A polygon must be composed of at least 3 vertices.")
+
+        _, indices = np.unique(vertices, axis=0, return_index=True)
+        if len(indices) != vertices.shape[0]:
+            raise ValueError("Found duplicate vertices.")
 
         # For convenience, we support providing vertices without z components,
         # but the stored vertices are always Nx3.
@@ -105,16 +124,22 @@ class Polygon(object):
         else:
             self._vertices = vertices
 
-        computed_normal = np.cross(self.vertices[2, :] - self.vertices[1, :],
-                                   self.vertices[0, :] - self.vertices[1, :])
+        # Note: Vertices do not yet need to be ordered for the purpose of
+        # determining the normal, this check can be performed irrespective of
+        # ordering since any cross product of vectors will provide a normal.
+        computed_normal = np.cross(self._vertices[2, :] - self._vertices[1, :],
+                                   self._vertices[0, :] - self._vertices[1, :])
+        computed_normal /= np.linalg.norm(computed_normal)
         if normal is None:
-            self._normal = computed_normal/np.linalg.norm(computed_normal)
+            self._normal = computed_normal
         else:
-            if not np.isclose(np.abs(np.dot(computed_normal, normal)), 1):
+            norm_normal = np.asarray(normal, dtype=np.float64)
+            norm_normal /= np.linalg.norm(normal)
+
+            if not np.isclose(np.abs(np.dot(computed_normal, norm_normal)), 1):
                 raise ValueError("The provided normal vector is not "
                                  "orthogonal to the polygon.")
-            self._normal = np.asarray(normal, dtype=np.float64)
-            self._normal /= np.linalg.norm(self._normal)
+            self._normal = norm_normal
 
         d = self._normal.dot(self.vertices[0, :])
         # If this simple check of coplanarity is not robust enough for a
@@ -125,12 +150,21 @@ class Polygon(object):
             if not np.isclose(self._normal.dot(v), d, planar_tolerance):
                 raise ValueError("Not all vertices are coplanar.")
 
-        # The polygon must be oriented in order for certain calculations to
-        # work, so we always verify sorting on construction. Users can alter
-        # the sorting later if desired, but we cannot have unsorted vertices.
-        # TODO: Only sort if the polygon is convex; otherwise, we should just
-        # check for crossings and otherwise not modify the shape.
-        self.reorder_verts()
+        if _is_convex(self._vertices, self._normal):
+            # If points form a convex set, then we can order the vertices. We
+            # cannot directly use the output of scipy's convex hull because our
+            # polygon may be embedded in 3D, so we sort ourselves.
+            self.reorder_verts()
+        else:
+            # If the shape is nonconvex, the user must provide ordered vertices
+            # to uniquely identify the polygon. We must check if there are any
+            # intersections to avoid complex (self-intersecting) polygons.
+            if not _is_simple(self._vertices):
+                raise ValueError(
+                    "The vertices must be passed in counterclockwise order. "
+                    "Note that the Polygon class only supports simple "
+                    "polygons, so self-intersecting polygons are not "
+                    "permitted.")
 
     def reorder_verts(self, clockwise=False, ref_index=0,
                       increasing_length=True):
