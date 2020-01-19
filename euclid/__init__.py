@@ -18,3 +18,5 @@ __all__ = [
     'shape_classes',
     'common_shapes',
 ]
+
+__version__ = '0.1.0'
