@@ -8,10 +8,8 @@ The following people contributed to the development of euclid.
 
 Bryan VanSaders - **Creator and former lead developer**
 
-* Created package layout.
-* Original port of classes and methods into package.
-* Added some methods to the utils module.
-* Added symmetry groups.
+* Created package layout.  * Original port of classes and methods into package.
+  * Added some methods to the utils module.  * Added symmetry groups.
 
 James Proctor
 
@@ -19,14 +17,14 @@ James Proctor
 
 Bradley Dice
 
-* Migrated ft code into euclid from freud and added tests.
-* Added CircleCI support
+* Migrated ft code into euclid from freud and added tests.  * Added CircleCI
+  support
 
 Brandon Butler
 
-* Removed old quat\_tools module and modified modules to use rowan.
-* Moved logic in FreudShape module to top-level package namespace.
-* Moved all common shape definitions into a common\_shapes module.
+* Removed old quat\_tools module and modified modules to use rowan.  * Moved
+  logic in FreudShape module to top-level package namespace.  * Moved all
+  common shape definitions into a common\_shapes module.
 
 Eric Harper
 
@@ -38,9 +36,8 @@ Jens Glaser
 
 M. Eric Irrgang
 
-* Bugfixes to imports.
-* Implemented core shape classes.
-* Implemented the ft module.
+* Bugfixes to imports.  * Implemented core shape classes.  * Implemented the ft
+  module.
 
 Vyas Ramasubramani
 
@@ -64,9 +61,78 @@ Carl Simon Adorf
 
 Matthew Spellings
 
-* Added some methods to the utils module.
-* Triangulation of core shape classes.
+* Added some methods to the utils module.  * Triangulation of core shape
+  classes.
 
 William Zygmunt
 
 * Helped clean up utils module.
+
+
+Source code -----------
+
+**euclid** includes the source code of the following Python packages and
+modules.
+
+.. highlight:: none
+
+The source of polytri (https://github.com/bjorkegeek/polytri) is included
+directly into the **euclid** package. The module implementing that code is
+reproduced in its entirety along with an additional ``__init__`` file to enable
+its import as a subpackage. It is used for the triangulation of polygons and
+the surface triangulation of polyhedra. polytri is made available under the MIT
+license::
+
+    The MIT License (MIT)
+
+    Copyright (c) 2016 David Björkevik
+
+    Permission is hereby granted, free of charge, to any person obtaining a
+    copy of this software and associated documentation files (the "Software"),
+    to deal in the Software without restriction, including without limitation
+    the rights to use, copy, modify, merge, publish, distribute, sublicense,
+    and/or sell copies of the Software, and to permit persons to whom the
+    Software is furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in
+    all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+    FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+    DEALINGS IN THE
+
+The source of isect_segments-bentley_ottmann
+(https://github.com/ideasman42/isect_segments-bentley_ottmann) is included
+directly into the **euclid** package. The module implementing that code is
+reproduced in its entirety along with an additional ``__init__`` file to enable
+its import as a subpackage. It is used to check whether a set of vertices
+defines a simple or a complex polygon. polytri is made available under the MIT
+license::
+
+    Copyright (c) 2010 by Bart Kiers
+    Copyright (c) 2015 by Campbell Barton
+
+    Permission is hereby granted, free of charge, to any person
+    obtaining a copy of this software and associated documentation
+    files (the "Software"), to deal in the Software without
+    restriction, including without limitation the rights to use,
+    copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the
+    Software is furnished to do so, subject to the following
+    conditions:
+
+    The above copyright notice and this permission notice shall be
+    included in all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+    EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+    OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+    NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+    HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+    WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+    FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+    OTHER DEALINGS IN THE SOFTWARE.

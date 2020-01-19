@@ -1,5 +1,5 @@
 import numpy as np
-from .polygon import Polygon
+from .polygon import Polygon, _is_convex, _is_simple
 from scipy.sparse.csgraph import connected_components
 import rowan
 
@@ -130,8 +130,9 @@ class Polyhedron(object):
 
     @property
     def neighbors(self):
-        """list(:class:`numpy.ndarray`): A list where the :math:`i`th element
-        is an array of indices of facets that are neighbors of facet :math:`i`.
+        """list(:class:`numpy.ndarray`): A list where the
+        :math:`i^{\\text{th}}` element is an array of indices of facets that
+        are neighbors of facet :math:`i`.
         """
         return self._neighbors
 
@@ -168,11 +169,17 @@ class Polyhedron(object):
         # constructing a Polygon and updating the facet (in place), which
         # enables finding neighbors.
         for facet in self.facets:
-            facet[:] = np.asarray([
-                np.where(np.all(self.vertices == vertex, axis=1))[0][0]
-                for vertex in Polygon(self.vertices[facet],
-                                      planar_tolerance=1e-4).vertices
-            ])
+            polygon = Polygon(self.vertices[facet], planar_tolerance=1e-4)
+            if _is_convex(polygon.vertices, polygon.normal):
+                facet[:] = np.asarray([
+                    np.where(np.all(self.vertices == vertex, axis=1))[0][0]
+                    for vertex in polygon.vertices
+                ])
+            elif not _is_simple(polygon.vertices):
+                raise ValueError("The vertices of each facet must be provided "
+                                 "in counterclockwise order relative to the "
+                                 "facet normal unless the facet is a convex "
+                                 "polygon.")
         self._find_neighbors()
 
         # The initial facet sets the order of the others.
@@ -341,8 +348,7 @@ class Polyhedron(object):
             except np.linalg.LinAlgError:
                 current_rotation = rowan.random.rand(1)
                 vertices = rowan.rotate(current_rotation, vertices)
-
-        if attempt == max_attempts:
+        else:
             raise RuntimeError("Unable to solve for a bounding sphere.")
 
         # The center must be rotated back to undo any rotation.

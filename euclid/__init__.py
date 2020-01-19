@@ -1,18 +1,22 @@
 from . import shapes
-from . import utils
 from . import damasceno
 from . import symmetry
 from . import ft
 from . import polygon
 from . import polyhedron
+from . import shape_classes
+from . import common_shapes
 
-import os
-import importlib
+__all__ = [
+    'shapes',
+    'utils',
+    'damasceno',
+    'symmetry',
+    'ft',
+    'polygon',
+    'polyhedron',
+    'shape_classes',
+    'common_shapes',
+]
 
-module = __import__(__name__)
-path = os.path.join(os.path.dirname(module.__file__),
-                    'common_shapes')
-for filename in os.listdir(path):
-    if filename.startswith('_'):
-        continue
-    importlib.import_module('euclid.common_shapes.' + filename[:-3])
+__version__ = '0.1.0'
