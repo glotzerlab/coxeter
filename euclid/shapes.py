@@ -1,50 +1,5 @@
 # For calling up commonly used shapes
 import numpy as np
-from scipy.spatial import ConvexHull
-from . import utils
-
-# Base class for shapes. It really doesn't work for 2D stuff yet
-
-
-class Shape(object):
-
-    # The IDstr is a string identifier. Can be a name or
-    # a numerical designation. 'Content' is a dimension
-    # agnostic way to say 'volume' or 'area'
-    def __init__(self, vertices, radius=0, content=None):
-        self.ndims = vertices.shape[1]
-        self.radius = radius
-
-        if self.radius > 0:
-            self.is_sphero = True
-        else:
-            self.is_sphero = False
-
-        # Change the volume of the shape
-        if content is not None:
-            self.vertices = self.normalizeContent(self, vertices, content)
-            self.content = content
-        else:
-            self.vertices = vertices
-            self.content = self.getContent(self, vertices)
-
-        self.hull = ConvexHull(self.vertices)
-
-    # A function for normalizing the content of a shape
-    def normalizeContent(self, vertices, content):
-        vol = self.getContent(self, vertices)
-        self.content = content
-        return vertices / np.power(vol, 1 / self.ndims)
-
-    # a function for finding the content of a shape
-
-    def getContent(self, vertices):
-        if self.is_sphero:
-            vol = utils.spheropolyhedra_volume(vertices, R=self.radius)
-        else:
-            vol = ConvexHull(vertices).volume()
-
-        return vol
 
 
 # Truncation ranges from 0 (octahedra) to 2/3 (truncated octahedra) to 1
