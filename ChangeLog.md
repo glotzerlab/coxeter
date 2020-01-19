@@ -15,6 +15,7 @@ and this project adheres to
 * New ConvexPolyhedron class with property-based API.
 * New ConvexSpheropolyhedron class with property-based API.
 * Ability to plot Polyhedra and Polygons.
+* Can now check whether points lie inside a ConvexPolyhedron.
 * Added documentation.
 
 ### Changed

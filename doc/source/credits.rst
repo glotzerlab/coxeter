@@ -41,12 +41,19 @@ M. Eric Irrgang
 
 Vyas Ramasubramani
 
-* Created documentation pages.  * Formalized contribution guidelines and
-  contributor agreement.  * Cleaned up damasceno module and separated out shape
-  information into a JSON file that is read on demand.  * Fixed code formatting
-  to conform to PEP8 requirements.  * Implemented Polygon class.  * Implemented
-  ConvexSpheropolygon class.  * Implemented Polyhedron class.  * Implemented
-  ConvexPolyhedron class.  * Implemented ConvexSpheropolyhedron class.
+* Created documentation pages.
+* Formalized contribution guidelines and contributor agreement.
+* Cleaned up damasceno module and separated out shape information into a JSON file that is read on demand.
+* Fixed code formatting to conform to PEP8 requirements.
+* Implemented Polygon class.
+* Implemented ConvexSpheropolygon class.
+* Implemented Polyhedron class.
+* Implemented ConvexPolyhedron class.
+* Implemented ConvexSpheropolyhedron class.
+* Add ability to check if points are contained in convex polyhedra.
+* Fix calculation of circumsphere to work for non-regular polyhedra.
+* Fix calculation of circumcircle to work for non-regular polygons.
+* Add ability to calculate minimum bounding sphere/circle for polyhedra/polygons.
 
 Carl Simon Adorf
 
