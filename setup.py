@@ -31,7 +31,7 @@ setup(
     install_requires=[
         'numpy',
         'rowan>=1.2',
-        'scipy'
+        'scipy',
     ],
     tests_require=test_deps,
     extras_require=extras,
