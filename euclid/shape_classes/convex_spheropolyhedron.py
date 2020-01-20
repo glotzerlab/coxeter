@@ -103,7 +103,8 @@ class ConvexSpheropolyhedron(object):
             normal = eq[:3]
             normal /= np.linalg.norm(normal)
             extruded_vertices = base_vertices + self.radius * normal
-            extruded_hulls.append(ConvexHull([*base_vertices, *extruded_vertices]))
+            extruded_hulls.append(
+                ConvexHull([*base_vertices, *extruded_vertices]))
 
         # Select the points between the convex hull facet and extruded hull
         # facet and then filter them using the point-facet checks
@@ -139,10 +140,12 @@ class ConvexSpheropolyhedron(object):
 
             # Compute the vector rejection (perpendicular projection) of point
             # along edge vectors and determine if the cylinders contain it
-            edge_projections = np.einsum('ij,ij->i',
-                point_to_edge_starts, facet_edges_norm)
-            cylinder_distances = np.linalg.norm(point_to_edge_starts -
-                edge_projections[:, np.newaxis] * facet_edges_norm, axis=-1)
+            edge_projections = np.einsum(
+                'ij,ij->i', point_to_edge_starts, facet_edges_norm)
+            perpendicular_projections = point_to_edge_starts - \
+                edge_projections[:, np.newaxis] * facet_edges_norm
+            cylinder_distances = np.linalg.norm(
+                perpendicular_projections, axis=-1)
             in_cylinders = np.any((cylinder_distances <= self.radius) &
                                   (edge_projections >= 0) &
                                   (edge_projections <= facet_edge_lengths))

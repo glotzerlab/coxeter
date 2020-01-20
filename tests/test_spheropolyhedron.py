@@ -52,7 +52,8 @@ def test_inside_boundaries(convex_cube):
 
     assert np.all(sphero_cube.is_inside(sphero_cube.polyhedron.vertices))
     sphero_cube.polyhedron.center = [0, 0, 0]
-    assert np.all(sphero_cube.is_inside(sphero_cube.polyhedron.vertices * 0.99))
-    center_distance = np.linalg.norm(sphero_cube.polyhedron.vertices[0])
-    points_outside_convex_hull_inside_caps = sphero_cube.polyhedron.vertices * 1.01
-    assert np.all(sphero_cube.is_inside(points_outside_convex_hull_inside_caps))
+    verts = sphero_cube.polyhedron.vertices
+    # Points are inside the convex hull
+    assert np.all(sphero_cube.is_inside(verts * 0.99))
+    # Points are outside the convex hull but inside the spherical caps
+    assert np.all(sphero_cube.is_inside(verts * 1.01))
