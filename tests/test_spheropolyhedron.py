@@ -35,3 +35,24 @@ def test_surface_area_polyhedron(convex_cube, cube_points):
     polyhedron."""
     sphero_cube = ConvexSpheropolyhedron(cube_points, 0)
     assert sphero_cube.surface_area == convex_cube.surface_area
+
+
+def test_inside_boundaries(convex_cube):
+    sphero_cube = ConvexSpheropolyhedron(convex_cube.vertices, 1)
+
+    points_inside = [[0, 0, 0], [1, 1, 1], [-0.01, -0.01, -0.01],
+                     [2, 0.5, 0.5], [2, 1, 0.5], [0.5, -0.7, -0.7],
+                     [-0.57, -0.57, -0.57]]
+    points_outside = [[-0.99, -0.99, -0.99], [-1.01, -1.01, -1.01],
+                      [2.01, 0.5, 0.5], [2.01, 1, 0.5],
+                      [0.5, -0.99, -0.99], [0.5, -1.01, -1.01],
+                      [2, -0.7, -0.7]]
+    assert np.all(sphero_cube.is_inside(points_inside))
+    assert np.all(~sphero_cube.is_inside(points_outside))
+
+    assert np.all(sphero_cube.is_inside(sphero_cube.polyhedron.vertices))
+    sphero_cube.polyhedron.center = [0, 0, 0]
+    assert np.all(sphero_cube.is_inside(sphero_cube.polyhedron.vertices * 0.99))
+    center_distance = np.linalg.norm(sphero_cube.polyhedron.vertices[0])
+    points_outside_convex_hull_inside_caps = sphero_cube.polyhedron.vertices * 1.01
+    assert np.all(sphero_cube.is_inside(points_outside_convex_hull_inside_caps))

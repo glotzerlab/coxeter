@@ -304,6 +304,9 @@ def test_bounding_sphere_platonic(platonic_solids):
 
 def test_inside_boundaries(convex_cube):
     assert np.all(convex_cube.is_inside(convex_cube.vertices))
+    convex_cube.center = [0, 0, 0]
+    assert np.all(convex_cube.is_inside(convex_cube.vertices * 0.99))
+    assert not np.any(convex_cube.is_inside(convex_cube.vertices * 1.01))
 
 
 @given(arrays(np.float64, (100, 3), floats(-10, 10, width=64), unique=True))
