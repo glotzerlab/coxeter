@@ -94,7 +94,7 @@ class TestFormFactors(unittest.TestCase):
     def test_FTconvexPolyhedron(self):
         # TODO: Currently using this to test FTpolyhedron indirectly
         cube = Cube.shape
-        npt.assert_almost_equal(cube.getVolume(), 8)
+        npt.assert_almost_equal(cube.volume, 8)
         ft = euclid.ft.FTconvexPolyhedron(cube)
         ft.set_K(self.K)
 
