@@ -1,6 +1,6 @@
 from numpy import sqrt
 import numpy
-from euclid.polyhedron import ConvexPolyhedron
+from euclid.shape_classes.convex_polyhedron import ConvexPolyhedron
 
 points = [
     (0, 0, -sqrt(2 / 3)),
