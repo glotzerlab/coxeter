@@ -56,6 +56,7 @@ class ConvexPolyhedron(Polyhedron):
         polyhedron.
 
         .. note::
+
             Points on the boundary of the shape will return :code:`True`.
 
         Args:

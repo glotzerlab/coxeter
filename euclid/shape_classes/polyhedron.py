@@ -37,6 +37,7 @@ class Polyhedron(object):
         neighbors of each facet.
 
         .. note::
+
             For the purposes of calculations like moments of inertia, the
             polyhedron is assumed to be of constant, unit density.
 
@@ -385,7 +386,7 @@ class Polyhedron(object):
             a (int):
                 The index of the first facet.
             b (int):
-                The index of the secondfacet.
+                The index of the second facet.
 
         Returns:
             float: The dihedral angle in radians.

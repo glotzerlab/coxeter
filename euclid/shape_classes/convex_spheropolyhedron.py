@@ -72,10 +72,8 @@ class ConvexSpheropolyhedron(object):
         """Determine whether a set of points are contained in this
         spheropolyhedron.
 
-        Implementation is based on
-        https://stackoverflow.com/questions/16750618/whats-an-efficient-way-to-find-if-a-point-lies-in-the-convex-hull-of-a-point-cl
-
         .. note::
+
             Points on the boundary of the shape will return :code:`True`.
 
         Args:
