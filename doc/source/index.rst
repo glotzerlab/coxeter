@@ -40,8 +40,8 @@ The package can be installed from source by cloning `the repository <https://git
 Running Tests
 -------------
 
-The package is currently tested for Python versions 3.6 and 3.7 on Unix-like systems.
-Continuous integrated testing is performed using CircleCI on these Python versions.
+The package is currently tested for Python versions 3.6+ on Unix-like systems.
+Continuous integrated testing is performed using CircleCI.
 
 To run the packaged unit tests, execute the following line from the root of the repository:
 
