@@ -49,7 +49,7 @@ class Polyhedron(object):
         """
         self._vertices = np.array(vertices, dtype=np.float64)
         self._facets = [facet for facet in facets]
-        self.sort_facets()
+        self._sort_facets()
 
     def _find_equations(self):
         """Find the plane equations of the polyhedron facets."""
@@ -69,7 +69,7 @@ class Polyhedron(object):
     def _find_neighbors(self):
         """Find neighbors of facets. Note that facets must be ordered before
         this method is called, so internal usage should only happen after
-        :math:`~.sort_facets` is called."""
+        :math:`~._sort_facets` is called."""
         self._neighbors = [[] for _ in range(self.num_facets)]
         for i, j, _ in self._get_facet_intersections():
             self._neighbors[i].append(j)
@@ -129,7 +129,7 @@ class Polyhedron(object):
             new_facets[labels[i]].update(facet)
 
         self._facets = [np.asarray(list(f)) for f in new_facets]
-        self.sort_facets()
+        self._sort_facets()
 
     @property
     def neighbors(self):
@@ -155,7 +155,7 @@ class Polyhedron(object):
         """int: The number of facets."""
         return len(self.facets)
 
-    def sort_facets(self):
+    def _sort_facets(self):
         """Ensure that all facets are ordered such that the normals are
         counterclockwise and point outwards.
 
