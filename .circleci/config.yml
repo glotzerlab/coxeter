@@ -7,7 +7,7 @@ version: 2
 jobs:
   style-check:
     docker:
-      - image: circleci/python:3.7
+      - image: circleci/python:3.8
 
     working_directory: ~/repo
 
@@ -20,9 +20,9 @@ jobs:
             python -m flake8 --show-source euclid/ tests/
 
 
-  test-3.7: &test-template
+  test-3.8: &test-template
     docker:
-      - image: circleci/python:3.7
+      - image: circleci/python:3.8
 
     working_directory: ~/repo
 
@@ -39,6 +39,11 @@ jobs:
             python -c "import scipy; print('scipy', scipy.__version__)"
             pytest
 
+  test-3.7:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.7
+
   test-3.6:
     <<: *test-template
     docker:
@@ -50,9 +55,12 @@ workflows:
   test:
     jobs:
       - style-check
-      - test-3.6:
+      - test-3.8:
           requires:
             - style-check
       - test-3.7:
+          requires:
+            - style-check
+      - test-3.6:
           requires:
             - style-check
