@@ -24,6 +24,7 @@ The minimum requirements for using euclid are:
 
 * Python >= 3.6
 * NumPy
+* rowan >= 1.2
 * SciPy
 
 Installation
