@@ -315,7 +315,7 @@ class FTconvexPolyhedron(FTpolyhedron):
         verts = self.hull.vertices * self.scale
         facets = self.hull.facets
         norms = self.hull._equations[:, 0:3]
-        d = self.hull._equations[:, 3] * self.scale
+        d = -self.hull._equations[:, 3] * self.scale
         areas = [self.hull.get_facet_area(i) * self.scale**2.0
                  for i in range(len(facets))]
         volume = self.hull.volume * self.scale**3.0
