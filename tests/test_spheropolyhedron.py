@@ -58,7 +58,7 @@ def test_inside_boundaries(cube_points):
     # Points are outside the convex hull but inside the spherical caps
     assert np.all(sphero_cube.is_inside(verts * 1.01))
     # Points are outside the spherical caps
-    assert np.all(sphero_cube.is_inside(verts * 2))
+    assert np.all(~sphero_cube.is_inside(verts * 3))
     # Points are on the very corners of the spherical caps
     assert np.all(sphero_cube.is_inside(verts * (1 + 2*np.sqrt(1/3))))
     # Points are just outside the very corners of the spherical caps
