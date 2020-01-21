@@ -87,16 +87,15 @@ class ConvexSpheropolyhedron(object):
         """  # noqa: E501
         # Determine which points are in the polyhedron and which are in the
         # bounded volume of facets extruded by the rounding radius
-        hull = ConvexHull(self.polyhedron.vertices)
         points = np.atleast_2d(points)
 
-        point_facet_checks = hull.equations[:, :3] @ points.T
-        point_facet_checks += hull.equations[:, 3, np.newaxis]
+        point_facet_checks = self.polyhedron._equations[:, :3] @ points.T
+        point_facet_checks += self.polyhedron._equations[:, 3, np.newaxis]
         in_polyhedron = np.all(point_facet_checks <= 0, axis=0)
 
         # Compute convex hulls of the extruded facets
         extruded_hulls = []
-        for i, eq in enumerate(hull.equations):
+        for i, eq in enumerate(self.polyhedron._equations):
             base_vertices = hull.points[hull.simplices[i]]
             normal = eq[:3]
             normal /= np.linalg.norm(normal)
