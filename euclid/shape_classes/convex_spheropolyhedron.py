@@ -1,4 +1,3 @@
-from scipy.spatial import ConvexHull
 import numpy as np
 from .convex_polyhedron import ConvexPolyhedron
 
@@ -119,7 +118,8 @@ class ConvexSpheropolyhedron(object):
                 return True
 
             # Check spherocylinders around the edges (excluding spherical caps)
-            facet_points = self.polyhedron.vertices[self.polyhedron.facets[facet_id]]
+            facet_points = self.polyhedron.vertices[
+                self.polyhedron.facets[facet_id]]
 
             # Vectors along the facet edges
             facet_edges = np.roll(facet_points, -1, axis=0) - facet_points
