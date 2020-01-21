@@ -92,10 +92,9 @@ class ConvexSpheropolyhedron(object):
 
         # Compute extrusions of the facets
         extruded_facets = []
-        for i, eq in enumerate(self.polyhedron._equations):
-            base_vertices = self.polyhedron.vertices[self.polyhedron.facets[i]]
-            normal = eq[:3]
-            normal /= np.linalg.norm(normal)
+        for facet, normal in zip(self.polyhedron.facets,
+                                 self.polyhedron.normals):
+            base_vertices = self.polyhedron.vertices[facet]
             extruded_vertices = base_vertices + self.radius * normal
             extruded_facets.append(
                 ConvexPolyhedron([*base_vertices, *extruded_vertices]))
@@ -106,6 +105,11 @@ class ConvexSpheropolyhedron(object):
         point_facets_in_extruded_hull = point_facet_distances <= self.radius
         point_facets_to_check = \
             point_facets_in_extruded_hull & ~point_facets_in_polyhedron_hull
+
+        # Exit early if there are no intersections to check between points
+        # and rounded facets
+        if not np.any(point_facets_to_check):
+            return in_polyhedron
 
         def check_facet(point_id, facet_id):
             """Checks for intersection of the point with rounded facets."""
