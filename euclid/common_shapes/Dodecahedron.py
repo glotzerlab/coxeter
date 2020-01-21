@@ -1,6 +1,6 @@
 from numpy import sqrt
 import numpy
-from euclid.polyhedron import ConvexPolyhedron
+from euclid.shape_classes.convex_polyhedron import ConvexPolyhedron
 
 phi = (1. + sqrt(5.)) / 2.
 inv = 2. / (1. + sqrt(5.))
