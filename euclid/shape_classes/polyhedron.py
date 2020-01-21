@@ -284,6 +284,12 @@ class Polyhedron(object):
             poly = Polygon(self.vertices[facet], planar_tolerance=1e-4)
             yield from poly._triangulation()
 
+    def _point_facet_distances(self, points):
+        points = np.atleast_2d(points)
+        dots = np.inner(points, self._equations[:, :3])
+        distances = dots + self._equations[:, 3]
+        return distances
+
     @property
     def inertia_tensor(self):
         """float: Get the inertia tensor computed about the center of mass

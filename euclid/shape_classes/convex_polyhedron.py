@@ -68,7 +68,5 @@ class ConvexPolyhedron(Polyhedron):
                 Boolean array indicating which points are contained in the
                 polyhedron.
         """
-        points = np.atleast_2d(points)
-        dots = np.inner(points, self._equations[:, :3])
-        comps = (dots + self._equations[:, 3]) > 0
-        return np.logical_not(np.any(comps, axis=1))
+        point_facet_distances = self._point_facet_distances(points)
+        return np.logical_not(np.any(point_facet_distances > 0, axis=1))

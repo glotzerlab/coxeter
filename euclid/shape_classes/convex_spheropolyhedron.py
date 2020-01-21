@@ -88,42 +88,38 @@ class ConvexSpheropolyhedron(object):
         # Determine which points are in the polyhedron and which are in the
         # bounded volume of facets extruded by the rounding radius
         points = np.atleast_2d(points)
+        point_facet_distances = self.polyhedron._point_facet_distances(points)
+        in_polyhedron = np.all(point_facet_distances <= 0, axis=1)
 
-        point_facet_checks = self.polyhedron._equations[:, :3] @ points.T
-        point_facet_checks += self.polyhedron._equations[:, 3, np.newaxis]
-        in_polyhedron = np.all(point_facet_checks <= 0, axis=0)
-
-        # Compute convex hulls of the extruded facets
-        extruded_hulls = []
+        # Compute extrusions of the facets
+        extruded_facets = []
         for i, eq in enumerate(self.polyhedron._equations):
-            base_vertices = hull.points[hull.simplices[i]]
+            base_vertices = self.polyhedron.vertices[self.polyhedron.facets[i]]
             normal = eq[:3]
             normal /= np.linalg.norm(normal)
             extruded_vertices = base_vertices + self.radius * normal
-            extruded_hulls.append(
-                ConvexHull([*base_vertices, *extruded_vertices]))
+            extruded_facets.append(
+                ConvexPolyhedron([*base_vertices, *extruded_vertices]))
 
-        # Select the points between the convex hull facet and extruded hull
-        # facet and then filter them using the point-facet checks
-        point_facets_in_convex_hull = point_facet_checks <= 0
-        point_facets_in_extruded_hull = point_facet_checks <= self.radius
+        # Select the points between the inner polyhedron and extruded space
+        # and then filter them using the point-facet distances
+        point_facets_in_polyhedron_hull = point_facet_distances <= 0
+        point_facets_in_extruded_hull = point_facet_distances <= self.radius
         point_facets_to_check = \
-            point_facets_in_convex_hull ^ point_facets_in_extruded_hull
+            point_facets_in_extruded_hull & ~point_facets_in_polyhedron_hull
 
         def check_facet(point_id, facet_id):
             """Checks for intersection of the point with rounded facets."""
             point = points[point_id]
-            extruded_hull = extruded_hulls[facet_id]
-            facet_check = extruded_hull.equations[:, :3] @ point
-            facet_check += extruded_hull.equations[:, 3]
-            in_extruded_hull = np.all(facet_check <= 0)
+            extruded_facet = extruded_facets[facet_id]
+            in_extruded_facet = extruded_facet.is_inside(point)[0]
 
-            # Exit early if the point is found in the extruded hull
-            if in_extruded_hull:
+            # Exit early if the point is found in the extruded facet
+            if in_extruded_facet:
                 return True
 
             # Check spherocylinders around the edges (excluding spherical caps)
-            facet_points = hull.points[hull.simplices[facet_id]]
+            facet_points = self.polyhedron.vertices[self.polyhedron.facets[facet_id]]
 
             # Vectors along the facet edges
             facet_edges = np.roll(facet_points, -1, axis=0) - facet_points
@@ -137,8 +133,8 @@ class ConvexSpheropolyhedron(object):
 
             # Compute the vector rejection (perpendicular projection) of point
             # along edge vectors and determine if the cylinders contain it
-            edge_projections = np.einsum(
-                'ij,ij->i', point_to_edge_starts, facet_edges_norm)
+            edge_projections = np.sum(point_to_edge_starts * facet_edges_norm,
+                                      axis=1)
             perpendicular_projections = point_to_edge_starts - \
                 edge_projections[:, np.newaxis] * facet_edges_norm
             cylinder_distances = np.linalg.norm(
@@ -158,7 +154,7 @@ class ConvexSpheropolyhedron(object):
 
         # Check the facets whose rounded portion could contain the point
         in_sphero_shape = np.zeros(len(points), dtype=bool)
-        for facet_id, point_id in zip(*np.where(point_facets_to_check)):
+        for point_id, facet_id in zip(*np.where(point_facets_to_check)):
             if not in_sphero_shape[point_id]:
                 in_sphero_shape[point_id] = check_facet(point_id, facet_id)
 
