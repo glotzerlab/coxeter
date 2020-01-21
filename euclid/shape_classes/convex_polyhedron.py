@@ -69,5 +69,5 @@ class ConvexPolyhedron(Polyhedron):
         """
         points = np.atleast_2d(points)
         dots = np.inner(points, self._equations[:, :3])
-        comps = (dots - self._equations[:, 3]) > 0
+        comps = (dots + self._equations[:, 3]) > 0
         return np.logical_not(np.any(comps, axis=1))
