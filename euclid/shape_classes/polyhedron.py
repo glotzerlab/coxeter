@@ -61,7 +61,9 @@ class Polyhedron(object):
                 self.vertices[facet[0]] - self.vertices[facet[1]])
             normal /= np.linalg.norm(normal)
             self._equations[i, :3] = normal
-            self._equations[i, 3] = normal.dot(self.vertices[facet[0]])
+            # Sign conventions chosen to match scipy.spatial.ConvexHull
+            # We use ax + by + cz + d = 0 (not ax + by + cz = d)
+            self._equations[i, 3] = -normal.dot(self.vertices[facet[0]])
 
     def _find_neighbors(self):
         """Find neighbors of facets. Note that facets must be ordered before
@@ -232,7 +234,7 @@ class Polyhedron(object):
     def volume(self):
         """float: Get or set the polyhedron's volume (setting rescales
         vertices)."""
-        ds = self._equations[:, 3]
+        ds = -self._equations[:, 3]
         return np.sum(ds*self.get_facet_area())/3
 
     @volume.setter
