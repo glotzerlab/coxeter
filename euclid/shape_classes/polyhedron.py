@@ -284,7 +284,15 @@ class Polyhedron(object):
             poly = Polygon(self.vertices[facet], planar_tolerance=1e-4)
             yield from poly._triangulation()
 
-    def _point_facet_distances(self, points):
+    def _point_plane_distances(self, points):
+        """Computes the distances from a set of points to each plane.
+
+        Distances that are <= 0 are inside and > 0 are outside.
+
+        Returns:
+            :math:`(N_{points}, N_{planes})` :class:`numpy.ndarray`: The
+            distance from each point to each plane.
+        """
         points = np.atleast_2d(points)
         dots = np.inner(points, self._equations[:, :3])
         distances = dots + self._equations[:, 3]

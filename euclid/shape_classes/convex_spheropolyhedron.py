@@ -87,8 +87,12 @@ class ConvexSpheropolyhedron(object):
         # Determine which points are in the polyhedron and which are in the
         # bounded volume of facets extruded by the rounding radius
         points = np.atleast_2d(points)
-        point_facet_distances = self.polyhedron._point_facet_distances(points)
-        in_polyhedron = np.all(point_facet_distances <= 0, axis=1)
+        point_plane_distances = self.polyhedron._point_plane_distances(points)
+        in_polyhedron = np.all(point_plane_distances <= 0, axis=1)
+
+        # Exit early if all points are inside the convex polyhedron
+        if np.all(in_polyhedron):
+            return in_polyhedron
 
         # Compute extrusions of the facets
         extruded_facets = []
@@ -101,8 +105,8 @@ class ConvexSpheropolyhedron(object):
 
         # Select the points between the inner polyhedron and extruded space
         # and then filter them using the point-facet distances
-        point_facets_in_polyhedron_hull = point_facet_distances <= 0
-        point_facets_in_extruded_hull = point_facet_distances <= self.radius
+        point_facets_in_polyhedron_hull = point_plane_distances <= 0
+        point_facets_in_extruded_hull = point_plane_distances <= self.radius
         point_facets_to_check = \
             point_facets_in_extruded_hull & ~point_facets_in_polyhedron_hull
 
