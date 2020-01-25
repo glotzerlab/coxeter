@@ -37,6 +37,7 @@ class Polyhedron(object):
         neighbors of each facet.
 
         .. note::
+
             For the purposes of calculations like moments of inertia, the
             polyhedron is assumed to be of constant, unit density.
 
@@ -48,7 +49,7 @@ class Polyhedron(object):
         """
         self._vertices = np.array(vertices, dtype=np.float64)
         self._facets = [facet for facet in facets]
-        self.sort_facets()
+        self._sort_facets()
 
     def _find_equations(self):
         """Find the plane equations of the polyhedron facets."""
@@ -68,7 +69,7 @@ class Polyhedron(object):
     def _find_neighbors(self):
         """Find neighbors of facets. Note that facets must be ordered before
         this method is called, so internal usage should only happen after
-        :math:`~.sort_facets` is called."""
+        :math:`~._sort_facets` is called."""
         self._neighbors = [[] for _ in range(self.num_facets)]
         for i, j, _ in self._get_facet_intersections():
             self._neighbors[i].append(j)
@@ -128,7 +129,7 @@ class Polyhedron(object):
             new_facets[labels[i]].update(facet)
 
         self._facets = [np.asarray(list(f)) for f in new_facets]
-        self.sort_facets()
+        self._sort_facets()
 
     @property
     def neighbors(self):
@@ -154,7 +155,7 @@ class Polyhedron(object):
         """int: The number of facets."""
         return len(self.facets)
 
-    def sort_facets(self):
+    def _sort_facets(self):
         """Ensure that all facets are ordered such that the normals are
         counterclockwise and point outwards.
 
@@ -283,6 +284,20 @@ class Polyhedron(object):
             poly = Polygon(self.vertices[facet], planar_tolerance=1e-4)
             yield from poly._triangulation()
 
+    def _point_plane_distances(self, points):
+        """Computes the distances from a set of points to each plane.
+
+        Distances that are <= 0 are inside and > 0 are outside.
+
+        Returns:
+            :math:`(N_{points}, N_{planes})` :class:`numpy.ndarray`: The
+            distance from each point to each plane.
+        """
+        points = np.atleast_2d(points)
+        dots = np.inner(points, self._equations[:, :3])
+        distances = dots + self._equations[:, 3]
+        return distances
+
     @property
     def inertia_tensor(self):
         """float: Get the inertia tensor computed about the center of mass
@@ -385,7 +400,7 @@ class Polyhedron(object):
             a (int):
                 The index of the first facet.
             b (int):
-                The index of the secondfacet.
+                The index of the second facet.
 
         Returns:
             float: The dihedral angle in radians.

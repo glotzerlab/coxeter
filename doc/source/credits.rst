@@ -8,8 +8,10 @@ The following people contributed to the development of euclid.
 
 Bryan VanSaders - **Creator and former lead developer**
 
-* Created package layout.  * Original port of classes and methods into package.
-  * Added some methods to the utils module.  * Added symmetry groups.
+* Created package layout.
+* Original port of classes and methods into package.
+* Added some methods to the utils module.
+* Added symmetry groups.
 
 James Proctor
 
@@ -17,14 +19,15 @@ James Proctor
 
 Bradley Dice
 
-* Migrated ft code into euclid from freud and added tests.  * Added CircleCI
-  support
+* Migrated ft code into euclid from freud and added tests.
+* Added CircleCI support.
+* Add ability to check if points are contained in convex spheropolyhedra.
 
 Brandon Butler
 
-* Removed old quat\_tools module and modified modules to use rowan.  * Moved
-  logic in FreudShape module to top-level package namespace.  * Moved all
-  common shape definitions into a common\_shapes module.
+* Removed old quat\_tools module and modified modules to use rowan.
+* Moved logic in FreudShape module to top-level package namespace.
+* Moved all common shape definitions into a common\_shapes module.
 
 Eric Harper
 
@@ -36,8 +39,9 @@ Jens Glaser
 
 M. Eric Irrgang
 
-* Bugfixes to imports.  * Implemented core shape classes.  * Implemented the ft
-  module.
+* Bugfixes to imports.
+* Implemented core shape classes.
+* Implemented the ft module.
 
 Vyas Ramasubramani
 
@@ -61,15 +65,16 @@ Carl Simon Adorf
 
 Matthew Spellings
 
-* Added some methods to the utils module.  * Triangulation of core shape
-  classes.
+* Added some methods to the utils module.
+* Triangulation of core shape classes.
 
 William Zygmunt
 
 * Helped clean up utils module.
 
 
-Source code -----------
+Source code
+-----------
 
 **euclid** includes the source code of the following Python packages and
 modules.
@@ -80,8 +85,8 @@ The source of polytri (https://github.com/bjorkegeek/polytri) is included
 directly into the **euclid** package. The module implementing that code is
 reproduced in its entirety along with an additional ``__init__`` file to enable
 its import as a subpackage. It is used for the triangulation of polygons and
-the surface triangulation of polyhedra. polytri is made available under the MIT
-license::
+the surface triangulation of polyhedra. This software is made available under
+the MIT license::
 
     The MIT License (MIT)
 
@@ -110,8 +115,8 @@ The source of isect_segments-bentley_ottmann
 directly into the **euclid** package. The module implementing that code is
 reproduced in its entirety along with an additional ``__init__`` file to enable
 its import as a subpackage. It is used to check whether a set of vertices
-defines a simple or a complex polygon. polytri is made available under the MIT
-license::
+defines a simple or a complex polygon. This software is made available under
+the MIT license::
 
     Copyright (c) 2010 by Bart Kiers
     Copyright (c) 2015 by Campbell Barton

@@ -56,6 +56,7 @@ class ConvexPolyhedron(Polyhedron):
         polyhedron.
 
         .. note::
+
             Points on the boundary of the shape will return :code:`True`.
 
         Args:
@@ -67,7 +68,5 @@ class ConvexPolyhedron(Polyhedron):
                 Boolean array indicating which points are contained in the
                 polyhedron.
         """
-        points = np.atleast_2d(points)
-        dots = np.inner(points, self._equations[:, :3])
-        comps = (dots + self._equations[:, 3]) > 0
-        return np.logical_not(np.any(comps, axis=1))
+        return np.logical_not(np.any(
+            self._point_plane_distances(points) > 0, axis=1))
