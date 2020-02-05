@@ -56,3 +56,19 @@ class Ellipsoid(object):
 
         result = 2 * np.pi * (c**2 + a * b * elliptic_part)
         return result
+
+    @property
+    def inertia_tensor(self):
+        """float: Get the inertia tensor. Assumes constant density of 1."""
+        V = self.volume
+        Ixx = V/5 * (self.b**2 + self.c**2)
+        Iyy = V/5 * (self.a**2 + self.c**2)
+        Izz = V/5 * (self.a**2 + self.b**2)
+        return np.diag([Ixx, Iyy, Izz])
+
+    @property
+    def iq(self):
+        """float: The isoperimetric quotient."""
+        V = self.volume
+        S = self.surface_area
+        return np.pi * 36 * V**2 / (S**3)

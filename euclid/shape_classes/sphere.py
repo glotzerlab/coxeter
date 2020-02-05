@@ -25,3 +25,16 @@ class Sphere(object):
     def surface_area(self):
         """float: The surface area."""
         return 4 * np.pi * self.radius**2
+
+    @property
+    def inertia_tensor(self):
+        """float: Get the inertia tensor. Assumes constant density of 1."""
+        V = self.volume
+        Ixx = V * 2/5 * self.radius**2
+        return np.diag([Ixx, Ixx, Ixx])
+
+    @property
+    def iq(self):
+        """float: The isoperimetric quotient. This is 1 by definition for
+        spheres."""
+        return 1

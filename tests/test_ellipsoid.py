@@ -29,3 +29,28 @@ def test_earth():
     earth = Ellipsoid(a, b, c)
     assert earth.volume == pytest.approx(earth_volume, rel=1.01)
     assert earth.surface_area == pytest.approx(earth_surface, rel=1.01)
+
+
+def test_iq():
+    sphere = Ellipsoid(1, 1, 1)
+    assert sphere.iq == pytest.approx(1)
+
+
+@given(floats(0.1, 1000), floats(0.1, 1000), floats(0.1, 1000))
+def test_iq_symmetry(a, b, c):
+    ellipsoid1 = Ellipsoid(a, b, c)
+    ellipsoid2 = Ellipsoid(c, a, b)
+    ellipsoid3 = Ellipsoid(b, c, a)
+    assert ellipsoid1.iq == pytest.approx(ellipsoid2.iq)
+    assert ellipsoid1.iq == pytest.approx(ellipsoid3.iq)
+    assert ellipsoid2.iq == pytest.approx(ellipsoid3.iq)
+
+
+@given(floats(0.1, 1000), floats(0.1, 1000), floats(0.1, 1000))
+def test_inertia_tensor(a, b, c):
+    ellipsoid = Ellipsoid(a, b, c)
+    assert np.all(ellipsoid.inertia_tensor >= 0)
+
+    sphere = Ellipsoid(a, a, a)
+    expected = 2/5 * sphere.volume * a**2
+    np.testing.assert_allclose(np.diag(sphere.inertia_tensor), expected)

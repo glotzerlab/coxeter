@@ -20,3 +20,49 @@ class Circle(object):
     def area(self):
         """float: The area."""
         return np.pi * self.radius**2
+
+    @property
+    def eccentricity(self):
+        """float: The eccentricity. This is 0 by definition for circles."""
+        return 0
+
+    @property
+    def perimeter(self):
+        """float: The perimeter."""
+        return 2 * np.pi * self.radius
+
+    @property
+    def circumference(self):
+        """float: Alias for perimeter."""
+        return self.perimeter
+
+    @property
+    def planar_moments_inertia(self):
+        R"""Get the planar moments with respect to the x and y axis as well as
+        the product of inertia.
+
+        The `planar moments <https://en.wikipedia.org/wiki/Polar_moment_of_inertia>`__
+        and the
+        `product moment <https://en.wikipedia.org/wiki/Second_moment_of_area#Product_moment_of_area>`__
+        are defined by the formulas:
+
+        .. math::
+            \begin{align}
+                I_x &= {\int \int}_A y^2 dA = \frac{\pi}{4} r^4 = \frac{Ar^2}{4} \\
+                I_y &= {\int \int}_A z^2 dA = \frac{\pi}{4} r^4 = \frac{Ar^2}{4}\\
+                I_{xy} &= {\int \int}_A xy dA = 0 \\
+            \end{align}
+
+        These formulas are given `here https://en.wikipedia.org/wiki/List_of_second_moments_of_area`__.
+        Note that the product moment is zero by symmetry.
+        """  # noqa: E501
+        A = self.area
+        Ix = Iy = A/4 * self.radius**2
+        Ixy = 0
+        return Ix, Iy, Ixy
+
+    @property
+    def iq(self):
+        """float: The isoperimetric quotient. This is 1 by definition for
+        circles."""
+        return 1
