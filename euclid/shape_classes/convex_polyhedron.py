@@ -80,5 +80,5 @@ class ConvexPolyhedron(Polyhedron):
         if any(distances > 0):
             raise ValueError("The centroid is not contained in the shape. The "
                              "insphere from center is not defined.")
-        max_distance = -np.min(distances)
-        return center, max_distance
+        min_distance = -np.max(distances)
+        return center, min_distance

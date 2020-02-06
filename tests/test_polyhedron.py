@@ -317,9 +317,18 @@ def test_inside(convex_cube, test_points):
     assert np.all(expected == actual)
 
 
-@pytest.mark.parametrize('poly', platonic_solids())
-@given(arrays(np.float64, (100, 3), floats(0, 1, width=64), unique=True))
-def test_insphere(poly, test_points):
+@given(arrays(np.float64, (5, 3), floats(-10, 10, width=64), unique=True),
+       arrays(np.float64, (100, 3), floats(0, 1, width=64), unique=True))
+def test_insphere_convex_hulls(points, test_points):
+    try:
+        hull = ConvexHull(points)
+    except QhullError:
+        assume(False)
+    else:
+        # Avoid cases where numerical imprecision make tests fail.
+        assume(hull.volume > 1e-6)
+    verts = points[hull.vertices]
+    poly = ConvexPolyhedron(verts)
     center, radius = poly.insphere_from_center
     assert poly.is_inside(center)
     poly.center = [0, 0, 0]
