@@ -11,9 +11,12 @@ import os
 from conftest import get_oriented_cube_facets, get_oriented_cube_normals
 
 
-@pytest.fixture
 def platonic_solids():
-    return ('Tetrahedron', 'Cube', 'Octahedron', 'Dodecahedron', 'Icosahedron')
+    PLATONIC_SOLIDS = ('Tetrahedron', 'Cube', 'Octahedron', 'Dodecahedron',
+                       'Icosahedron')
+    for shape in SHAPES:
+        if shape.Name in PLATONIC_SOLIDS:
+            yield ConvexPolyhedron(shape.vertices)
 
 
 def test_normal_detection(convex_cube):
@@ -276,30 +279,26 @@ def test_asphericity():
     pass
 
 
-def test_circumsphere_platonic(platonic_solids):
-    for shape in SHAPES:
-        if shape.Name in platonic_solids:
-            poly = ConvexPolyhedron(shape.vertices)
-            center, radius = poly.circumsphere
+@pytest.mark.parametrize('poly', platonic_solids())
+def test_circumsphere_platonic(poly):
+    center, radius = poly.circumsphere
 
-            # Ensure polyhedron is centered, then compute distances.
-            poly.center = [0, 0, 0]
-            r2 = np.sum(poly.vertices**2, axis=1)
+    # Ensure polyhedron is centered, then compute distances.
+    poly.center = [0, 0, 0]
+    r2 = np.sum(poly.vertices**2, axis=1)
 
-            assert np.allclose(r2, radius*radius)
+    assert np.allclose(r2, radius*radius)
 
 
-def test_bounding_sphere_platonic(platonic_solids):
-    for shape in SHAPES:
-        if shape.Name in platonic_solids:
-            poly = ConvexPolyhedron(shape.vertices)
-            center, radius = poly.bounding_sphere
+@pytest.mark.parametrize('poly', platonic_solids())
+def test_bounding_sphere_platonic(poly):
+    center, radius = poly.bounding_sphere
 
-            # Ensure polyhedron is centered, then compute distances.
-            poly.center = [0, 0, 0]
-            r2 = np.sum(poly.vertices**2, axis=1)
+    # Ensure polyhedron is centered, then compute distances.
+    poly.center = [0, 0, 0]
+    r2 = np.sum(poly.vertices**2, axis=1)
 
-            assert np.allclose(r2, radius*radius)
+    assert np.allclose(r2, radius*radius)
 
 
 def test_inside_boundaries(convex_cube):
