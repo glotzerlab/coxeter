@@ -38,3 +38,22 @@ class Sphere(object):
         """float: The isoperimetric quotient. This is 1 by definition for
         spheres."""
         return 1
+
+    def is_inside(self, points):
+        """Determine whether a set of points are contained in this sphere.
+
+        .. note::
+
+            Points on the boundary of the shape will return :code:`True`.
+
+        Args:
+            points (:math:`(N, 3)` :class:`numpy.ndarray`):
+                The points to test.
+
+        Returns:
+            :math:`(N, )` :class:`numpy.ndarray`:
+                Boolean array indicating which points are contained in the
+                sphere.
+        """
+        points = np.atleast_2d(points)
+        return np.linalg.norm(points, axis=-1) <= self.radius

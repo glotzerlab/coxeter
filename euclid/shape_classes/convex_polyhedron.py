@@ -70,3 +70,15 @@ class ConvexPolyhedron(Polyhedron):
         """
         return np.logical_not(np.any(
             self._point_plane_distances(points) > 0, axis=1))
+
+    @property
+    def insphere_from_center(self):
+        """The largest sphere centered at the centroid that fits inside the
+        convex polyhedron, given by a center and a radius."""
+        center = self.center
+        distances = self._point_plane_distances(center).squeeze()
+        if any(distances > 0):
+            raise ValueError("The centroid is not contained in the shape. The "
+                             "insphere from center is not defined.")
+        max_distance = -np.min(distances)
+        return center, max_distance

@@ -1,6 +1,7 @@
 import pytest
 import numpy as np
 from euclid.shape_classes.convex_polyhedron import ConvexPolyhedron
+from euclid.shape_classes.sphere import Sphere
 from scipy.spatial import ConvexHull, Delaunay
 from scipy.spatial.qhull import QhullError
 from hypothesis import given, assume
@@ -314,3 +315,18 @@ def test_inside(convex_cube, test_points):
                       axis=1)
     actual = convex_cube.is_inside(test_points)
     assert np.all(expected == actual)
+
+
+@pytest.mark.parametrize('poly', platonic_solids())
+@given(arrays(np.float64, (100, 3), floats(0, 1, width=64), unique=True))
+def test_insphere(poly, test_points):
+    center, radius = poly.insphere_from_center
+    assert poly.is_inside(center)
+    poly.center = [0, 0, 0]
+    insphere = Sphere(radius)
+    test_points -= np.mean(test_points, axis=0)
+    test_points *= radius * 3
+    points_in_sphere = insphere.is_inside(test_points)
+    points_in_poly = poly.is_inside(test_points)
+    assert np.all(points_in_sphere <= points_in_poly)
+    assert insphere.volume < poly.volume
