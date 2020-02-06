@@ -18,6 +18,16 @@ def test_surface_area(a, b, c):
     assert ellipsoid.surface_area == pytest.approx(approx_surface, rel=0.015)
 
 
+@given(floats(0.1, 1000), floats(0.1, 1000), floats(0.1, 1000))
+def test_volume(a, b, c):
+    V = 4 / 3 * np.pi * a * b * c
+    ellipsoid = Ellipsoid(1, 1, 1)
+    ellipsoid.a = a
+    ellipsoid.b = b
+    ellipsoid.c = c
+    assert ellipsoid.volume == V
+
+
 def test_earth():
     """Approximate Earth's volume and surface area."""
     # Uses data (in meters) from GRS 80:
@@ -31,8 +41,9 @@ def test_earth():
     assert earth.surface_area == pytest.approx(earth_surface, rel=1.01)
 
 
-def test_iq():
-    sphere = Ellipsoid(1, 1, 1)
+@given(floats(0.1, 1000))
+def test_iq(r):
+    sphere = Ellipsoid(r, r, r)
     assert sphere.iq == pytest.approx(1)
 
 

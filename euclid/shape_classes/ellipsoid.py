@@ -23,15 +23,27 @@ class Ellipsoid(object):
         """float: Length of principal axis a (radius in the x direction)."""
         return self._a
 
+    @a.setter
+    def a(self, a):
+        self._a = a
+
     @property
     def b(self):
         """float: Length of principal axis b (radius in the y direction)."""
         return self._b
 
+    @b.setter
+    def b(self, b):
+        self._b = b
+
     @property
     def c(self):
         """float: Length of principal axis c (radius in the z direction)."""
         return self._c
+
+    @c.setter
+    def c(self, c):
+        self._c = c
 
     @property
     def volume(self):

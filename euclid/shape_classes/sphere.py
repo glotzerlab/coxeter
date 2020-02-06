@@ -16,6 +16,10 @@ class Sphere(object):
         """float: Radius of the sphere."""
         return self._radius
 
+    @radius.setter
+    def radius(self, radius):
+        self._radius = radius
+
     @property
     def volume(self):
         """float: The volume."""

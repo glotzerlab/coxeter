@@ -16,6 +16,10 @@ class Circle(object):
         """float: Radius of the circle."""
         return self._radius
 
+    @radius.setter
+    def radius(self, radius):
+        self._radius = radius
+
     @property
     def area(self):
         """float: The area."""
