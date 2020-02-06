@@ -17,6 +17,10 @@ and this project adheres to
 * Ability to plot Polyhedra and Polygons.
 * Can now check whether points lie inside a ConvexPolyhedron or ConvexSpheropolyhedron.
 * Added documentation.
+* New Ellipsoid class with property-based API.
+* New Sphere class with property-based API.
+* New Ellipse class with property-based API.
+* New Circle class with property-based API.
 
 ### Changed
 
