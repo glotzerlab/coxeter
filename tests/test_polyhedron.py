@@ -319,7 +319,7 @@ def test_inside(convex_cube, test_points):
 
 @given(arrays(np.float64, (5, 3), floats(-10, 10, width=64), unique=True),
        arrays(np.float64, (100, 3), floats(0, 1, width=64), unique=True))
-def test_insphere_convex_hulls(points, test_points):
+def test_insphere_from_center_convex_hulls(points, test_points):
     try:
         hull = ConvexHull(points)
     except QhullError:

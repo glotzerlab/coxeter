@@ -37,7 +37,7 @@ class Circle(object):
 
     @property
     def circumference(self):
-        """float: Alias for perimeter."""
+        """float: Alias for :meth:`~.perimeter`."""
         return self.perimeter
 
     @property
