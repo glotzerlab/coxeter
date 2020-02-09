@@ -21,6 +21,7 @@ and this project adheres to
 * New Sphere class with property-based API.
 * New Ellipse class with property-based API.
 * New Circle class with property-based API.
+* Added insphere from center calculation for polyhedra.
 
 ### Changed
 
