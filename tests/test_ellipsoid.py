@@ -65,3 +65,14 @@ def test_inertia_tensor(a, b, c):
     sphere = Ellipsoid(a, a, a)
     expected = 2/5 * sphere.volume * a**2
     np.testing.assert_allclose(np.diag(sphere.inertia_tensor), expected)
+
+
+@given(floats(0.1, 1000), floats(0.1, 1000), floats(0.1, 1000))
+def test_is_inside(a, b, c):
+    ellipsoid = Ellipsoid(a, b, c)
+    points_inside = np.array([[a, 0, 0], [-a, 0, 0],
+                              [0, b, 0], [0, -b, 0],
+                              [0, 0, c], [0, 0, -c]])
+    assert all(ellipsoid.is_inside(points_inside))
+    assert all(ellipsoid.is_inside(points_inside/2))
+    assert not any(ellipsoid.is_inside(points_inside*1.1))

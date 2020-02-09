@@ -84,3 +84,23 @@ class Ellipsoid(object):
         V = self.volume
         S = self.surface_area
         return np.pi * 36 * V**2 / (S**3)
+
+    def is_inside(self, points):
+        """Determine whether a set of points are contained in this ellipsoid.
+
+        .. note::
+
+            Points on the boundary of the shape will return :code:`True`.
+
+        Args:
+            points (:math:`(N, 3)` :class:`numpy.ndarray`):
+                The points to test.
+
+        Returns:
+            :math:`(N, )` :class:`numpy.ndarray`:
+                Boolean array indicating which points are contained in the
+                ellipsoid.
+        """
+        points = np.atleast_2d(points)
+        scale = np.array([self.a, self.b, self.c])
+        return np.linalg.norm(points / scale, axis=-1) <= 1
