@@ -2,6 +2,7 @@ import pytest
 import numpy as np
 from euclid.shape_classes.polyhedron import Polyhedron
 from euclid.shape_classes.convex_polyhedron import ConvexPolyhedron
+from euclid.shape_classes.convex_spheropolyhedron import ConvexSpheropolyhedron
 
 
 # Need to declare this outside the fixture so that it can be used in multiple
@@ -33,6 +34,10 @@ def get_oriented_cube_normals():
                        [0, 1, 0],
                        [1, 0, 0],
                        [-1, 0, 0]])
+
+
+def make_sphero_cube(radius=0):
+    return ConvexSpheropolyhedron(get_cube_points(), radius)
 
 
 @pytest.fixture

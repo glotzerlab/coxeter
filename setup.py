@@ -21,7 +21,7 @@ extras = {
 
 setup(
     name='euclid',
-    version='0.1',
+    version='0.1.0',
     description='Tools for creating and manipulating shapes.',
     url='https://github.com/glotzerlab/euclid',
     author='Bryan VanSaders',
@@ -31,7 +31,7 @@ setup(
     install_requires=[
         'numpy',
         'rowan>=1.2',
-        'scipy'
+        'scipy',
     ],
     tests_require=test_deps,
     extras_require=extras,

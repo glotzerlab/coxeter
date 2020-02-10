@@ -15,6 +15,8 @@ and this project adheres to
 * New ConvexPolyhedron class with property-based API.
 * New ConvexSpheropolyhedron class with property-based API.
 * Ability to plot Polyhedra and Polygons.
+* Can now check whether points lie inside a ConvexPolyhedron or ConvexSpheropolyhedron.
+* Added documentation.
 
 ### Changed
 
@@ -31,6 +33,7 @@ and this project adheres to
 * Various unused or redundant functions in the utils module.
 * The quaternion\_tools module (uses rowan for quaternion math instead).
 * The shapelib module.
+* Old polygon.py and polyhedron.py modules, which contained old implementations of various poly\* and spheropoly\* classes.
 
 ## v0.1.0
 

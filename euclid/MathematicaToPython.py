@@ -14,55 +14,61 @@
 # ExportString[N[PolyhedronData["ObtuseGoldenRhombohedron",
 # "VertexCoordinates"]], "Table", "FieldSeparators" -> ", "]
 
-# open the output file for writing
-import sys
-name = sys.argv[1]
-outfile = open(name + '.py', 'w')
 
-# Set up some boiler plate
+def main():
+    # open the output file for writing
+    import sys
+    name = sys.argv[1]
+    outfile = open(name + '.py', 'w')
 
-header = """from __future__ import division
-from numpy import sqrt
-import numpy
-from euclid.FreudShape import ConvexPolyhedron
+    # Set up some boiler plate
 
-# Example:
-"""
+    header = """from __future__ import division
+    from numpy import sqrt
+    import numpy
+    from euclid.FreudShape import ConvexPolyhedron
 
-example = "# from euclid.FreudShape.{0} import shape\n".format(name)
+    # Example:
+    """
 
-footer = """         ]
+    example = "# from euclid.FreudShape.{0} import shape\n".format(name)
 
-shape = ConvexPolyhedron(numpy.array(points))
-"""
+    footer = """         ]
 
-# Process the input
+    shape = ConvexPolyhedron(numpy.array(points))
+    """
 
-pstrings = list()
-instring = sys.stdin.read()
-# Strip out quotes
-instring = instring.replace('"', '')
-# merge wrapped lines
-instring = instring.replace('\\\n', '')
-# split input into list of lines
-lines = instring.splitlines()
-for line in lines:
-    # Turn Mathematica syntax into Python syntax
-    line = line.replace('Sqrt', 'sqrt')
-    line = line.replace('[', '(').replace(']', ')')
-    line = line.replace('^', '**')
-    # get string values of x,y,z
-    x, y, z = line.split(', ')
-    pstring = "          ({x}, {y}, {z}),\n".format(x=x, y=y, z=z)
-    pstrings.append(pstring)
+    # Process the input
 
-# Write the output
+    pstrings = list()
+    instring = sys.stdin.read()
+    # Strip out quotes
+    instring = instring.replace('"', '')
+    # merge wrapped lines
+    instring = instring.replace('\\\n', '')
+    # split input into list of lines
+    lines = instring.splitlines()
+    for line in lines:
+        # Turn Mathematica syntax into Python syntax
+        line = line.replace('Sqrt', 'sqrt')
+        line = line.replace('[', '(').replace(']', ')')
+        line = line.replace('^', '**')
+        # get string values of x,y,z
+        x, y, z = line.split(', ')
+        pstring = "          ({x}, {y}, {z}),\n".format(x=x, y=y, z=z)
+        pstrings.append(pstring)
 
-outfile.write(header)
-outfile.write(example)
-outfile.write("points = [ \n")
+    # Write the output
 
-outfile.writelines(pstrings)
+    outfile.write(header)
+    outfile.write(example)
+    outfile.write("points = [ \n")
 
-outfile.write(footer)
-outfile.close()
+    outfile.writelines(pstrings)
+
+    outfile.write(footer)
+    outfile.close()
+
+
+if __name__ == '__main__':
+    main()

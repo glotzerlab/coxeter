@@ -50,3 +50,23 @@ class ConvexPolyhedron(Polyhedron):
     def asphericity(self):
         """float: The asphericity as defined in :cite:`Irrgang2017`."""
         return self.mean_curvature*self.surface_area/(3*self.volume)
+
+    def is_inside(self, points):
+        """Determine whether a set of points are contained in this
+        polyhedron.
+
+        .. note::
+
+            Points on the boundary of the shape will return :code:`True`.
+
+        Args:
+            points (:math:`(N, 3)` :class:`numpy.ndarray`):
+                The points to test.
+
+        Returns:
+            :math:`(N, )` :class:`numpy.ndarray`:
+                Boolean array indicating which points are contained in the
+                polyhedron.
+        """
+        return np.logical_not(np.any(
+            self._point_plane_distances(points) > 0, axis=1))

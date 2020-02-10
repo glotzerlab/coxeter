@@ -312,14 +312,13 @@ class FTconvexPolyhedron(FTpolyhedron):
         self.hull = hull
 
         # set convex hull geometry
-        verts = self.hull.points * self.scale
-        facets = [self.hull.facets[i, 0:n]
-                  for (i, n) in enumerate(self.hull.nverts)]
-        norms = self.hull.equations[:, 0:3]
-        d = -self.hull.equations[:, 3] * self.scale
-        areas = [self.hull.getArea(i) * self.scale**2.0
+        verts = self.hull.vertices * self.scale
+        facets = self.hull.facets
+        norms = self.hull._equations[:, 0:3]
+        d = -self.hull._equations[:, 3] * self.scale
+        areas = [self.hull.get_facet_area(i) * self.scale**2.0
                  for i in range(len(facets))]
-        volume = self.hull.getVolume() * self.scale**3.0
+        volume = self.hull.volume * self.scale**3.0
         self.set_params(verts, facets, norms, d, areas, volume)
 
     def set_radius(self, radius):

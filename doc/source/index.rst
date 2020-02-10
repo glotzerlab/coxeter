@@ -9,8 +9,9 @@ The package works with both two- and three-dimensional shapes such as polygons a
    :maxdepth: 2
    :caption: Contents:
 
-   package-euclid
+   modules
    credits
+   zreferences
 
 
 Getting Started
@@ -23,6 +24,7 @@ The minimum requirements for using euclid are:
 
 * Python >= 3.6
 * NumPy
+* rowan >= 1.2
 * SciPy
 
 Installation
@@ -39,8 +41,8 @@ The package can be installed from source by cloning `the repository <https://git
 Running Tests
 -------------
 
-The package is currently tested for Python versions 3.6 and 3.7 on Unix-like systems.
-Continuous integrated testing is performed using CircleCI on these Python versions.
+The package is currently tested for Python versions 3.6+ on Unix-like systems.
+Continuous integrated testing is performed using CircleCI.
 
 To run the packaged unit tests, execute the following line from the root of the repository:
 

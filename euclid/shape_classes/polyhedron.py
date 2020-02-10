@@ -1,5 +1,5 @@
 import numpy as np
-from .polygon import Polygon
+from .polygon import Polygon, _is_convex, _is_simple
 from scipy.sparse.csgraph import connected_components
 import rowan
 
@@ -37,6 +37,7 @@ class Polyhedron(object):
         neighbors of each facet.
 
         .. note::
+
             For the purposes of calculations like moments of inertia, the
             polyhedron is assumed to be of constant, unit density.
 
@@ -48,7 +49,7 @@ class Polyhedron(object):
         """
         self._vertices = np.array(vertices, dtype=np.float64)
         self._facets = [facet for facet in facets]
-        self.sort_facets()
+        self._sort_facets()
 
     def _find_equations(self):
         """Find the plane equations of the polyhedron facets."""
@@ -61,12 +62,14 @@ class Polyhedron(object):
                 self.vertices[facet[0]] - self.vertices[facet[1]])
             normal /= np.linalg.norm(normal)
             self._equations[i, :3] = normal
-            self._equations[i, 3] = normal.dot(self.vertices[facet[0]])
+            # Sign conventions chosen to match scipy.spatial.ConvexHull
+            # We use ax + by + cz + d = 0 (not ax + by + cz = d)
+            self._equations[i, 3] = -normal.dot(self.vertices[facet[0]])
 
     def _find_neighbors(self):
         """Find neighbors of facets. Note that facets must be ordered before
         this method is called, so internal usage should only happen after
-        :math:`~.sort_facets` is called."""
+        :math:`~._sort_facets` is called."""
         self._neighbors = [[] for _ in range(self.num_facets)]
         for i, j, _ in self._get_facet_intersections():
             self._neighbors[i].append(j)
@@ -126,12 +129,13 @@ class Polyhedron(object):
             new_facets[labels[i]].update(facet)
 
         self._facets = [np.asarray(list(f)) for f in new_facets]
-        self.sort_facets()
+        self._sort_facets()
 
     @property
     def neighbors(self):
-        """list(:class:`numpy.ndarray`): A list where the :math:`i`th element
-        is an array of indices of facets that are neighbors of facet :math:`i`.
+        """list(:class:`numpy.ndarray`): A list where the
+        :math:`i^{\\text{th}}` element is an array of indices of facets that
+        are neighbors of facet :math:`i`.
         """
         return self._neighbors
 
@@ -151,7 +155,7 @@ class Polyhedron(object):
         """int: The number of facets."""
         return len(self.facets)
 
-    def sort_facets(self):
+    def _sort_facets(self):
         """Ensure that all facets are ordered such that the normals are
         counterclockwise and point outwards.
 
@@ -168,11 +172,17 @@ class Polyhedron(object):
         # constructing a Polygon and updating the facet (in place), which
         # enables finding neighbors.
         for facet in self.facets:
-            facet[:] = np.asarray([
-                np.where(np.all(self.vertices == vertex, axis=1))[0][0]
-                for vertex in Polygon(self.vertices[facet],
-                                      planar_tolerance=1e-4).vertices
-            ])
+            polygon = Polygon(self.vertices[facet], planar_tolerance=1e-4)
+            if _is_convex(polygon.vertices, polygon.normal):
+                facet[:] = np.asarray([
+                    np.where(np.all(self.vertices == vertex, axis=1))[0][0]
+                    for vertex in polygon.vertices
+                ])
+            elif not _is_simple(polygon.vertices):
+                raise ValueError("The vertices of each facet must be provided "
+                                 "in counterclockwise order relative to the "
+                                 "facet normal unless the facet is a convex "
+                                 "polygon.")
         self._find_neighbors()
 
         # The initial facet sets the order of the others.
@@ -225,7 +235,7 @@ class Polyhedron(object):
     def volume(self):
         """float: Get or set the polyhedron's volume (setting rescales
         vertices)."""
-        ds = self._equations[:, 3]
+        ds = -self._equations[:, 3]
         return np.sum(ds*self.get_facet_area())/3
 
     @volume.setter
@@ -273,6 +283,20 @@ class Polyhedron(object):
         for facet in self.facets:
             poly = Polygon(self.vertices[facet], planar_tolerance=1e-4)
             yield from poly._triangulation()
+
+    def _point_plane_distances(self, points):
+        """Computes the distances from a set of points to each plane.
+
+        Distances that are <= 0 are inside and > 0 are outside.
+
+        Returns:
+            :math:`(N_{points}, N_{planes})` :class:`numpy.ndarray`: The
+            distance from each point to each plane.
+        """
+        points = np.atleast_2d(points)
+        dots = np.inner(points, self._equations[:, :3])
+        distances = dots + self._equations[:, 3]
+        return distances
 
     @property
     def inertia_tensor(self):
@@ -342,8 +366,7 @@ class Polyhedron(object):
             except np.linalg.LinAlgError:
                 current_rotation = rowan.random.rand(1)
                 vertices = rowan.rotate(current_rotation, vertices)
-
-        if attempt == max_attempts:
+        else:
             raise RuntimeError("Unable to solve for a bounding sphere.")
 
         # The center must be rotated back to undo any rotation.
@@ -381,7 +404,7 @@ class Polyhedron(object):
             a (int):
                 The index of the first facet.
             b (int):
-                The index of the secondfacet.
+                The index of the second facet.
 
         Returns:
             float: The dihedral angle in radians.
