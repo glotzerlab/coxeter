@@ -276,13 +276,8 @@ class Polyhedron(object):
 
     @property
     def inertia_tensor(self):
-        """float: Get the inertia tensor computed about the center of mass
+        """:math:`(3, 3)` :class:`numpy.ndarray`: Get the inertia tensor computed about the center of mass
         (uses the algorithm described in :cite:`Kallay2006`).
-
-        TODO: add calculation of/option to return principal moments
-
-        Returns:
-           :math:`(3, 3)` :class:`numpy.ndarray`: The (symmetric) inertia tensor
         """
         simplices = np.array(list(self._triangulation())) - self.center
 
@@ -371,8 +366,8 @@ class Polyhedron(object):
     def iq(self):
         """float: The isoperimetric quotient.
 
-        TODO: allow for non-spherical reference ratio (changes the 36\pi factor)
         """
+        #TODO: allow for non-spherical reference ratio (changes the 36pi factor)
         V = self.volume
         S = self.surface_area
         return np.pi * 36 * V * V / (S * S * S)
@@ -399,9 +394,12 @@ class Polyhedron(object):
     def plot(self, ax, plot_verts=False, label_verts=False):
         """Plot the polyhedron.
 
-        Note that passing a 2d axis will result in odd behavior.
+        Note that the ``ax`` argument should be a 3D axes object; passing in a 
+        2D axes will result in wrong behavior.
 
         Args:
+            ax (:class:`matplotlib.axes.Axes`):
+                The axes onto which to draw the polyhedron
             plot_verts (bool):
                 If True, scatter points will be added at the vertices (Default
                 value: False).

@@ -48,7 +48,7 @@ def _is_convex(vertices):
             The vertices to check
 
     Returns:
-        `bool`: `True` if `vertices` define a convex polygon; `False` otherwise
+        bool: ``True`` if ``vertices`` define a convex polygon; ``False`` otherwise
 
     """
     shifted_forward = np.roll(vertices, shift=1, axis=0)
@@ -338,7 +338,7 @@ class Polygon(object):
 
     @property
     def iq(self):
-        """The isopermietric quotient."""
+        """The isoperimetric quotient."""
         raise NotImplementedError
 
     def plot(self, ax, center=False, plot_verts=False, label_verts=False):

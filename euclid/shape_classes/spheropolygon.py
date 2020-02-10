@@ -87,9 +87,8 @@ class ConvexSpheropolygon(object):
 
         To get the area, we simply compute the signed area and take the
         absolute value.
-
-        TODO: area setter for spheropolygon
         """
+        #TODO: area setter for spheropolygon
         return np.abs(self.signed_area)
 
     @property
