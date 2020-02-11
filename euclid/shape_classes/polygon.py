@@ -52,7 +52,7 @@ def _is_convex(vertices, normal):
             The normal to the vertices.
 
     Returns:
-        bool: ``True`` if ``vertices`` define a convex polygon; ``False`` otherwise
+        bool: ``True`` if ``vertices`` define a convex polygon
     """
     # TODO: Add a tolerance check in case a user provides collinear vertices on
     # the boundary of a convex hull.

@@ -300,8 +300,9 @@ class Polyhedron(object):
 
     @property
     def inertia_tensor(self):
-        """:math:`(3, 3)` :class:`numpy.ndarray`: Get the inertia tensor computed about the center of mass
-        (uses the algorithm described in :cite:`Kallay2006`).
+        """:math:`(3, 3)` :class:`numpy.ndarray`: Get the inertia tensor
+        computed about the center of mass (uses the algorithm described in
+        :cite:`Kallay2006`).
         """
         simplices = np.array(list(self._triangulation())) - self.center
 
@@ -390,7 +391,7 @@ class Polyhedron(object):
         """float: The isoperimetric quotient.
 
         """
-        #TODO: allow for non-spherical reference ratio (changes the 36pi factor)
+        # TODO: allow for non-spherical reference ratio (changes the prefactor)
         V = self.volume
         S = self.surface_area
         return np.pi * 36 * V * V / (S * S * S)
@@ -417,7 +418,7 @@ class Polyhedron(object):
     def plot(self, ax, plot_verts=False, label_verts=False):
         """Plot the polyhedron.
 
-        Note that the ``ax`` argument should be a 3D axes object; passing in a 
+        Note that the ``ax`` argument should be a 3D axes object; passing in a
         2D axes will result in wrong behavior.
 
         Args:
