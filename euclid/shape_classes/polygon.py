@@ -52,7 +52,7 @@ def _is_convex(vertices, normal):
             The normal to the vertices.
 
     Returns:
-        bool: Whether or not the vertices defined a convex shape.
+        bool: ``True`` if ``vertices`` define a convex polygon.
     """
     # TODO: Add a tolerance check in case a user provides collinear vertices on
     # the boundary of a convex hull.
@@ -180,7 +180,7 @@ class Polygon(object):
         plane, then computing the angles of all vertices. The vertices are then
         sorted by this angle.  Note that if two points are at the same angle,
         the ordering is arbitrary and determined by the output of
-        :func:`numpy.argsort`, which using an unstable quicksort algorithm by
+        :func:`numpy.argsort`, which uses an unstable quicksort algorithm by
         default.
 
         Args:
@@ -345,7 +345,7 @@ class Polygon(object):
 
     @property
     def center(self):
-        """Get or set the polyhedron's centroid (setting rescales vertices)."""
+        """Get or set the polygon's centroid (setting shifts the vertices)."""
         return np.mean(self.vertices, axis=0)
 
     @center.setter
@@ -365,8 +365,8 @@ class Polygon(object):
 
     @property
     def iq(self):
-        """The isopermietric quotient."""
-        pass
+        """The isoperimetric quotient."""
+        raise NotImplementedError
 
     def plot(self, ax, center=False, plot_verts=False, label_verts=False):
         """Plot the polygon.
