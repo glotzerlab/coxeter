@@ -41,3 +41,4 @@ def test_inertia_tensor(r):
     expected = np.pi / 4 * r**4
     np.testing.assert_allclose(circle.planar_moments_inertia[:2], expected)
     np.testing.assert_allclose(circle.planar_moments_inertia[2], 0)
+    assert np.isclose(circle.polar_moment_inertia, expected*2)

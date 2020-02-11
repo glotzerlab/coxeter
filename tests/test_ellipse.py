@@ -47,3 +47,4 @@ def test_inertia_tensor(a, b):
     expected = [np.pi / 4 * a * b**3, np.pi / 4 * a**3 * b]
     np.testing.assert_allclose(ellipse.planar_moments_inertia[:2], expected)
     np.testing.assert_allclose(ellipse.planar_moments_inertia[2], 0)
+    assert np.isclose(ellipse.polar_moment_inertia, sum(expected))
