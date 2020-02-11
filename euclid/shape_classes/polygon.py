@@ -52,7 +52,7 @@ def _is_convex(vertices, normal):
             The normal to the vertices.
 
     Returns:
-        bool: ``True`` if ``vertices`` define a convex polygon
+        bool: ``True`` if ``vertices`` define a convex polygon.
     """
     # TODO: Add a tolerance check in case a user provides collinear vertices on
     # the boundary of a convex hull.
@@ -345,7 +345,7 @@ class Polygon(object):
 
     @property
     def center(self):
-        """Get or set the polygon's centroid (setting rescales vertices)."""
+        """Get or set the polygon's centroid (setting shifts the vertices)."""
         return np.mean(self.vertices, axis=0)
 
     @center.setter

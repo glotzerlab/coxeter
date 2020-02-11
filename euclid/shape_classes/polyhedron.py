@@ -423,7 +423,7 @@ class Polyhedron(object):
 
         Args:
             ax (:class:`matplotlib.axes.Axes`):
-                The axes onto which to draw the polyhedron
+                The axes on which to draw the polyhedron.
             plot_verts (bool):
                 If True, scatter points will be added at the vertices (Default
                 value: False).
