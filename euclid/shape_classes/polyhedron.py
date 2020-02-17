@@ -327,8 +327,8 @@ class Polyhedron(object):
         Izz = triangle_integrate(lambda t: t[:, 0]**2 + t[:, 1]**2)
 
         return np.array([[Ixx, Ixy, Ixz],
-                         [Ixy,   Iyy, Iyz],
-                         [Ixz,   Iyz,   Izz]])
+                         [Ixy, Iyy, Iyz],
+                         [Ixz, Iyz, Izz]])
 
     @property
     def center(self):

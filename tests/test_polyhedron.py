@@ -1,6 +1,7 @@
 import pytest
 import numpy as np
 from euclid.shape_classes.convex_polyhedron import ConvexPolyhedron
+from euclid.shape_classes.sphere import Sphere
 from scipy.spatial import ConvexHull, Delaunay
 from scipy.spatial.qhull import QhullError
 from hypothesis import given, assume
@@ -11,9 +12,12 @@ import os
 from conftest import get_oriented_cube_facets, get_oriented_cube_normals
 
 
-@pytest.fixture
 def platonic_solids():
-    return ('Tetrahedron', 'Cube', 'Octahedron', 'Dodecahedron', 'Icosahedron')
+    PLATONIC_SOLIDS = ('Tetrahedron', 'Cube', 'Octahedron', 'Dodecahedron',
+                       'Icosahedron')
+    for shape in SHAPES:
+        if shape.Name in PLATONIC_SOLIDS:
+            yield ConvexPolyhedron(shape.vertices)
 
 
 def test_normal_detection(convex_cube):
@@ -276,30 +280,26 @@ def test_asphericity():
     pass
 
 
-def test_circumsphere_platonic(platonic_solids):
-    for shape in SHAPES:
-        if shape.Name in platonic_solids:
-            poly = ConvexPolyhedron(shape.vertices)
-            center, radius = poly.circumsphere
+@pytest.mark.parametrize('poly', platonic_solids())
+def test_circumsphere_platonic(poly):
+    center, radius = poly.circumsphere
 
-            # Ensure polyhedron is centered, then compute distances.
-            poly.center = [0, 0, 0]
-            r2 = np.sum(poly.vertices**2, axis=1)
+    # Ensure polyhedron is centered, then compute distances.
+    poly.center = [0, 0, 0]
+    r2 = np.sum(poly.vertices**2, axis=1)
 
-            assert np.allclose(r2, radius*radius)
+    assert np.allclose(r2, radius*radius)
 
 
-def test_bounding_sphere_platonic(platonic_solids):
-    for shape in SHAPES:
-        if shape.Name in platonic_solids:
-            poly = ConvexPolyhedron(shape.vertices)
-            center, radius = poly.bounding_sphere
+@pytest.mark.parametrize('poly', platonic_solids())
+def test_bounding_sphere_platonic(poly):
+    center, radius = poly.bounding_sphere
 
-            # Ensure polyhedron is centered, then compute distances.
-            poly.center = [0, 0, 0]
-            r2 = np.sum(poly.vertices**2, axis=1)
+    # Ensure polyhedron is centered, then compute distances.
+    poly.center = [0, 0, 0]
+    r2 = np.sum(poly.vertices**2, axis=1)
 
-            assert np.allclose(r2, radius*radius)
+    assert np.allclose(r2, radius*radius)
 
 
 def test_inside_boundaries(convex_cube):
@@ -315,3 +315,27 @@ def test_inside(convex_cube, test_points):
                       axis=1)
     actual = convex_cube.is_inside(test_points)
     assert np.all(expected == actual)
+
+
+@given(arrays(np.float64, (5, 3), floats(-10, 10, width=64), unique=True),
+       arrays(np.float64, (100, 3), floats(0, 1, width=64), unique=True))
+def test_insphere_from_center_convex_hulls(points, test_points):
+    try:
+        hull = ConvexHull(points)
+    except QhullError:
+        assume(False)
+    else:
+        # Avoid cases where numerical imprecision make tests fail.
+        assume(hull.volume > 1e-6)
+    verts = points[hull.vertices]
+    poly = ConvexPolyhedron(verts)
+    center, radius = poly.insphere_from_center
+    assert poly.is_inside(center)
+    poly.center = [0, 0, 0]
+    insphere = Sphere(radius)
+    test_points -= np.mean(test_points, axis=0)
+    test_points *= radius * 3
+    points_in_sphere = insphere.is_inside(test_points)
+    points_in_poly = poly.is_inside(test_points)
+    assert np.all(points_in_sphere <= points_in_poly)
+    assert insphere.volume < poly.volume
