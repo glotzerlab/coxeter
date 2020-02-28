@@ -1,6 +1,7 @@
 import numpy as np
 
-from .polygon import Polygon, _is_convex
+from .polygon import Polygon
+from .convex_polygon import _is_convex
 
 
 class ConvexSpheropolygon(object):

@@ -2,7 +2,6 @@ import numpy as np
 import rowan
 from ..polytri import polytri
 from ..bentley_ottman import poly_point_isect
-from scipy.spatial import ConvexHull
 
 try:
     import miniball
@@ -38,29 +37,6 @@ def _align_points_by_normal(normal, points):
     return np.dot(points, rotation.T)
 
 
-def _is_convex(vertices, normal):
-    """Check if the vertices provided define a convex shape.
-
-    This algorithm makes no assumptions about ordering of the vertices, it
-    simply constructs the convex hull of the points and checks that all of the
-    vertices are on the convex hull.
-
-    Args:
-        vertices (:math:`(N, 3)` :class:`numpy.ndarray`):
-            The polygon vertices.
-        normal (:math:`(3, )` :class:`numpy.ndarray`):
-            The normal to the vertices.
-
-    Returns:
-        bool: ``True`` if ``vertices`` define a convex polygon.
-    """
-    # TODO: Add a tolerance check in case a user provides collinear vertices on
-    # the boundary of a convex hull.
-    verts_2d = _align_points_by_normal(normal, vertices)
-    hull = ConvexHull(verts_2d[:, :2])
-    return len(hull.vertices) == len(vertices)
-
-
 def _is_simple(vertices):
     """Check if the vertices define a simple polygon.
 
@@ -72,7 +48,8 @@ def _is_simple(vertices):
 
 
 class Polygon(object):
-    def __init__(self, vertices, normal=None, planar_tolerance=1e-5):
+    def __init__(self, vertices, normal=None, planar_tolerance=1e-5,
+                 test_simple=True):
         """A simple (i.e. non-self-overlapping) polygon.
 
         The polygon is embedded in 3-dimensions, so the normal
@@ -102,6 +79,12 @@ class Polygon(object):
                 Providing this argument may be necessary if you have a large
                 number of vertices and are rotated significantly out of the
                 plane.
+            test_simple (bool):
+                If ``True``, perform a sanity check on construction that the
+                provided vertices constitute a simple polygon. If this check is
+                omitted, the class may produce invalid results if the user
+                inputs incorrect coordinates, so this flag should be set to
+                ``False`` with care.
         """
         vertices = np.array(vertices, dtype=np.float64)
 
@@ -150,21 +133,27 @@ class Polygon(object):
             if not np.isclose(self._normal.dot(v), d, planar_tolerance):
                 raise ValueError("Not all vertices are coplanar.")
 
-        if _is_convex(self._vertices, self._normal):
-            # If points form a convex set, then we can order the vertices. We
-            # cannot directly use the output of scipy's convex hull because our
-            # polygon may be embedded in 3D, so we sort ourselves.
-            self.reorder_verts()
-        else:
-            # If the shape is nonconvex, the user must provide ordered vertices
-            # to uniquely identify the polygon. We must check if there are any
-            # intersections to avoid complex (self-intersecting) polygons.
+        if test_simple:
             if not _is_simple(self._vertices):
                 raise ValueError(
                     "The vertices must be passed in counterclockwise order. "
                     "Note that the Polygon class only supports simple "
                     "polygons, so self-intersecting polygons are not "
                     "permitted.")
+
+    def _point_edge_distances(self, points):
+        """Computes the distances from a set of points to each edge.
+
+        Distances that are <= 0 are inside and > 0 are outside.
+
+        Returns:
+            :math:`(N_{points}, N_{planes})` :class:`numpy.ndarray`: The
+            distance from each point to each plane.
+        """
+        points = np.atleast_2d(points)
+        dots = np.inner(points, self._equations[:, :3])
+        distances = dots + self._equations[:, 3]
+        return distances
 
     def reorder_verts(self, clockwise=False, ref_index=0,
                       increasing_length=True):

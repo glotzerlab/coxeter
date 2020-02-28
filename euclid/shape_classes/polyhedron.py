@@ -1,5 +1,6 @@
 import numpy as np
-from .polygon import Polygon, _is_convex, _is_simple
+from .polygon import Polygon, _is_simple
+from .convex_polygon import _is_convex
 from scipy.sparse.csgraph import connected_components
 import rowan
 
