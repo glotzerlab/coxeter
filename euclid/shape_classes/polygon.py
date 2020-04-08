@@ -143,20 +143,6 @@ class Polygon(object):
                     "polygons, so self-intersecting polygons are not "
                     "permitted.")
 
-    def _point_edge_distances(self, points):
-        """Computes the distances from a set of points to each edge.
-
-        Distances that are <= 0 are inside and > 0 are outside.
-
-        Returns:
-            :math:`(N_{points}, N_{planes})` :class:`numpy.ndarray`: The
-            distance from each point to each plane.
-        """
-        points = np.atleast_2d(points)
-        dots = np.inner(points, self._equations[:, :3])
-        distances = dots + self._equations[:, 3]
-        return distances
-
     def reorder_verts(self, clockwise=False, ref_index=0,
                       increasing_length=True):
         """Sort the vertices such that the polygon is oriented with respect to
