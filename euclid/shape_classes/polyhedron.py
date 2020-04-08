@@ -1,5 +1,7 @@
 import numpy as np
-from .polygon import Polygon, _is_convex, _is_simple
+from .polygon import Polygon, _is_simple
+from .convex_polygon import ConvexPolygon
+from .convex_polygon import _is_convex
 from scipy.sparse.csgraph import connected_components
 import rowan
 
@@ -25,7 +27,7 @@ def _facet_to_edges(facet, reverse=False):
 
 
 class Polyhedron(object):
-    def __init__(self, vertices, facets):
+    def __init__(self, vertices, facets, facets_are_convex=None):
         """A three-dimensional polytope.
 
         A polyhedron is defined by a set of vertices and a set of facets
@@ -44,12 +46,20 @@ class Polyhedron(object):
         Args:
             vertices (:math:`(N, 3)` :class:`numpy.ndarray`):
                 The vertices of the polyhedron.
-            facets (:math:`(N, 3)` :class:`numpy.ndarray`):
+            facets (list(list)):
                 The facets of the polyhedron.
+            facets_are_convex (bool):
+                Whether or not the facets of the polyhedron are all convex.
+                This is used to determine whether certain operations like
+                coplanar facet merging are allowed (Default value: False).
         """
         self._vertices = np.array(vertices, dtype=np.float64)
         self._facets = [facet for facet in facets]
-        self._sort_facets()
+        if facets_are_convex is None:
+            facets_are_convex = all(len(facet) == 3 for facet in facets)
+        self._facets_are_convex = facets_are_convex
+        self._find_equations()
+        self._find_neighbors()
 
     def _find_equations(self):
         """Find the plane equations of the polyhedron facets."""
@@ -67,9 +77,7 @@ class Polyhedron(object):
             self._equations[i, 3] = -normal.dot(self.vertices[facet[0]])
 
     def _find_neighbors(self):
-        """Find neighbors of facets. Note that facets must be ordered before
-        this method is called, so internal usage should only happen after
-        :math:`~._sort_facets` is called."""
+        """Find neighbors of facets."""
         self._neighbors = [[] for _ in range(self.num_facets)]
         for i, j, _ in self._get_facet_intersections():
             self._neighbors[i].append(j)
@@ -112,6 +120,13 @@ class Polyhedron(object):
             rtol (float):
                 Relative tolerance for :func:`numpy.allclose`.
         """
+        if not self._facets_are_convex:
+            # Can only sort facets if they are guaranteed to be convex.
+            raise ValueError(
+                "Faces cannot be merged unless they are convex because the "
+                "correct ordering of vertices in a facet cannot be determined "
+                "for nonconvex faces.")
+
         # Construct a graph where connectivity indicates merging, then identify
         # connected components to merge.
         merge_graph = np.zeros((self.num_facets, self.num_facets))
@@ -129,7 +144,7 @@ class Polyhedron(object):
             new_facets[labels[i]].update(facet)
 
         self._facets = [np.asarray(list(f)) for f in new_facets]
-        self._sort_facets()
+        self.sort_facets()
 
     @property
     def neighbors(self):
@@ -155,7 +170,7 @@ class Polyhedron(object):
         """int: The number of facets."""
         return len(self.facets)
 
-    def _sort_facets(self):
+    def sort_facets(self):
         """Ensure that all facets are ordered such that the normals are
         counterclockwise and point outwards.
 
@@ -167,12 +182,24 @@ class Polyhedron(object):
         reorienting facets to match the orientation of the first facet.
         Finally, it computes the signed volume to determine whether or not all
         the normals need to be flipped.
+
+        .. note::
+            This method can only be called for polyhedra whose faces are all
+            convex (i.e. constructed with ``facets_are_convex=True``).
         """
+        if not self._facets_are_convex:
+            # Can only sort facets if they are guaranteed to be convex.
+            raise ValueError(
+                "Faces cannot be sorted unless they are convex because the "
+                "correct ordering of vertices in a facet cannot be determined "
+                "for nonconvex faces.")
+
         # We first ensure that facet vertices are sequentially ordered by
         # constructing a Polygon and updating the facet (in place), which
         # enables finding neighbors.
         for facet in self.facets:
-            polygon = Polygon(self.vertices[facet], planar_tolerance=1e-4)
+            polygon = ConvexPolygon(
+                self.vertices[facet], planar_tolerance=1e-4)
             if _is_convex(polygon.vertices, polygon.normal):
                 facet[:] = np.asarray([
                     np.where(np.all(self.vertices == vertex, axis=1))[0][0]
@@ -264,7 +291,7 @@ class Polyhedron(object):
         areas = np.empty(len(facets))
         for i, facet_index in enumerate(facets):
             facet = self.facets[facet_index]
-            poly = Polygon(self.vertices[facet], planar_tolerance=1e-4)
+            poly = ConvexPolygon(self.vertices[facet], planar_tolerance=1e-4)
             areas[i] = poly.area
 
         return areas

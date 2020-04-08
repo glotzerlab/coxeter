@@ -58,6 +58,7 @@ Vyas Ramasubramani
 * Fix calculation of circumsphere to work for non-regular polyhedra.
 * Fix calculation of circumcircle to work for non-regular polygons.
 * Add ability to calculate minimum bounding sphere/circle for polyhedra/polygons.
+* Implemented ConvexPolygon class.
 
 Carl Simon Adorf
 

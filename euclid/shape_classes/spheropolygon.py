@@ -1,6 +1,6 @@
 import numpy as np
 
-from .polygon import Polygon, _is_convex
+from .convex_polygon import _is_convex, ConvexPolygon
 
 
 class ConvexSpheropolygon(object):
@@ -23,7 +23,7 @@ class ConvexSpheropolygon(object):
         """
         if radius < 0:
             raise ValueError("The radius must be positive.")
-        self.polygon = Polygon(vertices, normal)
+        self.polygon = ConvexPolygon(vertices, normal)
         if not _is_convex(self.vertices, self.polygon.normal):
             raise ValueError("The vertices do not define a convex polygon.")
         self._radius = radius
