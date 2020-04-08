@@ -59,8 +59,11 @@ def oriented_cube():
 def unoriented_cube():
     """A cube with the facets disordered (but still provided)."""
     facets = get_oriented_cube_facets()
-    np.random.shuffle(facets)
-    return Polyhedron(get_cube_points(), facets)
+    for facet in facets:
+        np.random.shuffle(facet)
+    poly = Polyhedron(get_cube_points(), facets, faces_are_convex=True)
+    poly.sort_facets()
+    return poly
 
 
 @pytest.fixture

@@ -18,7 +18,7 @@ class ConvexPolyhedron(Polyhedron):
                 The vertices of the polyhedron.
         """
         hull = ConvexHull(vertices)
-        super(ConvexPolyhedron, self).__init__(vertices, hull.simplices)
+        super(ConvexPolyhedron, self).__init__(vertices, hull.simplices, True)
         self.merge_facets()
 
     @property
