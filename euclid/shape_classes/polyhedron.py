@@ -1,5 +1,6 @@
 import numpy as np
 from .polygon import Polygon, _is_simple
+from .convex_polygon import ConvexPolygon
 from .convex_polygon import _is_convex
 from scipy.sparse.csgraph import connected_components
 import rowan
@@ -173,7 +174,8 @@ class Polyhedron(object):
         # constructing a Polygon and updating the facet (in place), which
         # enables finding neighbors.
         for facet in self.facets:
-            polygon = Polygon(self.vertices[facet], planar_tolerance=1e-4)
+            polygon = ConvexPolygon(
+                self.vertices[facet], planar_tolerance=1e-4)
             if _is_convex(polygon.vertices, polygon.normal):
                 facet[:] = np.asarray([
                     np.where(np.all(self.vertices == vertex, axis=1))[0][0]
@@ -265,7 +267,7 @@ class Polyhedron(object):
         areas = np.empty(len(facets))
         for i, facet_index in enumerate(facets):
             facet = self.facets[facet_index]
-            poly = Polygon(self.vertices[facet], planar_tolerance=1e-4)
+            poly = ConvexPolygon(self.vertices[facet], planar_tolerance=1e-4)
             areas[i] = poly.area
 
         return areas

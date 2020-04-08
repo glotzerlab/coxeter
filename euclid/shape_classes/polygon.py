@@ -134,7 +134,9 @@ class Polygon(object):
                 raise ValueError("Not all vertices are coplanar.")
 
         if test_simple:
-            if not _is_simple(self._vertices):
+            planar_vertices = _align_points_by_normal(
+                self._normal, self._vertices)
+            if not _is_simple(planar_vertices):
                 raise ValueError(
                     "The vertices must be passed in counterclockwise order. "
                     "Note that the Polygon class only supports simple "

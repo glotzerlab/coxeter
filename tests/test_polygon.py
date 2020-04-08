@@ -3,6 +3,7 @@ import numpy as np
 import numpy.testing as npt
 import rowan
 from euclid.shape_classes.polygon import Polygon
+from euclid.shape_classes.convex_polygon import ConvexPolygon
 from scipy.spatial import ConvexHull
 from scipy.spatial.qhull import QhullError
 from hypothesis import given, example, assume
@@ -64,8 +65,9 @@ def test_reordering(square_points, square):
     npt.assert_equal(square.vertices, reordered_points)
 
     # Original vertices are clockwise, so they'll be flipped on construction if
-    # we specify the normal.
-    square = Polygon(square_points, normal=[0, 0, 1])
+    # we specify the normal. Note that we MUST use the Convexpolygon class,
+    # since Polygon will not sort by default.
+    square = ConvexPolygon(square_points, normal=[0, 0, 1])
     npt.assert_equal(square.vertices, reordered_points)
 
     square.reorder_verts(True)
