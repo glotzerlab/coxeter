@@ -61,7 +61,7 @@ def unoriented_cube():
     facets = get_oriented_cube_facets()
     for facet in facets:
         np.random.shuffle(facet)
-    poly = Polyhedron(get_cube_points(), facets, faces_are_convex=True)
+    poly = Polyhedron(get_cube_points(), facets, facets_are_convex=True)
     poly.sort_facets()
     return poly
 
