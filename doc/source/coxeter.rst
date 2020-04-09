@@ -1,5 +1,5 @@
 coxeter package
-==============
+===============
 
 Subpackages
 -----------
@@ -13,65 +13,37 @@ Submodules
 ----------
 
 coxeter.MathematicaToPython module
----------------------------------
+----------------------------------
 
 .. automodule:: coxeter.MathematicaToPython
    :members:
    :show-inheritance:
 
 coxeter.damasceno module
------------------------
+------------------------
 
 .. automodule:: coxeter.damasceno
    :members:
    :show-inheritance:
 
 coxeter.ft module
-----------------
+-----------------
 
 .. automodule:: coxeter.ft
    :members:
    :show-inheritance:
 
-coxeter.graveyard module
------------------------
-
-.. automodule:: coxeter.graveyard
-   :members:
-   :show-inheritance:
-
-coxeter.polygon module
----------------------
-
-.. automodule:: coxeter.polygon
-   :members:
-   :show-inheritance:
-
-coxeter.polyhedron module
-------------------------
-
-.. automodule:: coxeter.polyhedron
-   :members:
-   :show-inheritance:
-
 coxeter.shapes module
---------------------
+---------------------
 
 .. automodule:: coxeter.shapes
    :members:
    :show-inheritance:
 
 coxeter.symmetry module
-----------------------
+-----------------------
 
 .. automodule:: coxeter.symmetry
-   :members:
-   :show-inheritance:
-
-coxeter.utils module
--------------------
-
-.. automodule:: coxeter.utils
    :members:
    :show-inheritance:
 

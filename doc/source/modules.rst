@@ -1,5 +1,5 @@
 coxeter
-======
+=======
 
 .. toctree::
    :maxdepth: 4

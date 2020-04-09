@@ -1,4 +1,5 @@
 from .circle import Circle
+from .convex_polygon import ConvexPolygon
 from .convex_polyhedron import ConvexPolyhedron
 from .convex_spheropolyhedron import ConvexSpheropolyhedron
 from .ellipse import Ellipse
@@ -14,6 +15,7 @@ __all__ = [
     'ConvexSpheropolyhedron',
     'Ellipse',
     'Ellipsoid',
+    'ConvexPolygon',
     'Polygon',
     'Polyhedron',
     'Sphere',

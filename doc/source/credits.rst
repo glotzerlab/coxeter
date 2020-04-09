@@ -2,7 +2,7 @@ Credits
 =======
 
 coxeter Developers
------------------
+------------------
 
 The following people contributed to the development of coxeter.
 

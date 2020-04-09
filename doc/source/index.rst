@@ -1,6 +1,6 @@
-==================================
+===================================
 Welcome to coxeter's documentation!
-==================================
+===================================
 
 Welcome to the documentation for coxeter, a package for working with various geometric shapes.
 The package works with both two- and three-dimensional shapes such as polygons and polyhedra.
