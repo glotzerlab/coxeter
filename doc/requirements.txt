@@ -1,1 +1,4 @@
+numpy
+rowan>=1.2
+scipy
 sphinxcontrib-bibtex
