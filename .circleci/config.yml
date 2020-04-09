@@ -62,10 +62,9 @@ jobs:
           name: Deploy dist and wheels
           command: |
             python -m pip install --user flake8
-            python -m pip install --user numpy
-            python -m pip install --user scipy
+            python -m pip install .[test] --user
             python -m flake8 --show-source coxeter/ tests/
-            pytest
+            python -m pytest
             python --version
             python -m pip --version
             python -m pip install --user -U twine wheel setuptools
