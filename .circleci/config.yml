@@ -49,6 +49,26 @@ jobs:
     docker:
       - image: circleci/python:3.6
 
+  pypi_wheels: &pypi_wheels
+    steps:
+      - checkout
+
+      - run:
+          name: Deploy dist and wheels
+          command: |
+            python -m pip install --user flake8
+            python -m pip install --user numpy
+            python -m pip install --user scipy
+            python -m flake8 --show-source coxeter/ tests/
+            pytest
+            python --version
+            python -m pip --version
+            python -m pip install --user -U twine wheel setuptools
+            python -m twine --version
+            python -m wheel version
+            python setup.py sdist
+            python setup.py bdist_wheel
+            python -m twine upload --username vramasub --password ${PYPI_PASSWORD} dist/*
 
 workflows:
   version: 2
@@ -64,3 +84,11 @@ workflows:
       - test-3.6:
           requires:
             - style-check
+  deploy:
+    jobs:
+      - build_and_deploy:
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
