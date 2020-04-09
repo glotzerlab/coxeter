@@ -55,7 +55,8 @@ def test_merge_facets(convex_cube):
     assert len(convex_cube.facets) == 6
 
 
-@given(arrays(np.float64, (5, 3), floats(-10, 10, width=64), unique=True))
+@given(arrays(np.float64, (5, 3), elements=floats(-10, 10, width=64),
+              unique=True))
 def test_convex_volume(points):
     """Check the volumes of various convex sets."""
     try:
@@ -71,7 +72,8 @@ def test_convex_volume(points):
     assert np.isclose(hull.volume, poly.volume)
 
 
-@given(arrays(np.float64, (5, 3), floats(-10, 10, width=64), unique=True))
+@given(arrays(np.float64, (5, 3), elements=floats(-10, 10, width=64),
+              unique=True))
 def test_convex_surface_area(points):
     """Check the surface areas of various convex sets."""
     try:
@@ -80,7 +82,7 @@ def test_convex_surface_area(points):
         assume(False)
     else:
         # Avoid cases where numerical imprecision make tests fail.
-        assume(hull.area > 1e-6)
+        assume(hull.area > 1e-4)
     verts = points[hull.vertices]
     poly = ConvexPolyhedron(verts)
     assert np.isclose(hull.area, poly.surface_area)
@@ -89,11 +91,15 @@ def test_convex_surface_area(points):
 @pytest.mark.parametrize('cube',
                          ['convex_cube', 'oriented_cube', 'unoriented_cube'],
                          indirect=True)
-@given(new_center=arrays(np.float64, (3, ), floats(-10, 10, width=64)))
-def test_volume_center_shift(cube, new_center):
+def test_volume_center_shift(cube):
     """Make sure that moving the center doesn't affect the volume."""
-    cube.center = new_center
-    assert np.isclose(cube.volume, 1)
+    # Use nested function because it's OK to reuse the cube fixture.
+    @given(new_center=arrays(np.float64, (3, ),
+                             elements=floats(-10, 10, width=64)))
+    def testfun(new_center):
+        cube.center = new_center
+        assert np.isclose(cube.volume, 1)
+    testfun()
 
 
 def test_facet_alignment(convex_cube):
@@ -309,16 +315,22 @@ def test_inside_boundaries(convex_cube):
     assert not np.any(convex_cube.is_inside(convex_cube.vertices * 1.01))
 
 
-@given(arrays(np.float64, (100, 3), floats(-10, 10, width=64), unique=True))
-def test_inside(convex_cube, test_points):
-    expected = np.all(np.logical_and(test_points >= 0, test_points <= 1),
-                      axis=1)
-    actual = convex_cube.is_inside(test_points)
-    assert np.all(expected == actual)
+def test_inside(convex_cube):
+    # Use a nested function to reuse the convex cube.
+    @given(arrays(np.float64, (100, 3), elements=floats(-10, 10, width=64),
+                  unique=True))
+    def testfun(test_points):
+        expected = np.all(np.logical_and(test_points >= 0, test_points <= 1),
+                          axis=1)
+        actual = convex_cube.is_inside(test_points)
+        assert np.all(expected == actual)
+    testfun()
 
 
-@given(arrays(np.float64, (5, 3), floats(-10, 10, width=64), unique=True),
-       arrays(np.float64, (100, 3), floats(0, 1, width=64), unique=True))
+@given(arrays(np.float64, (5, 3), elements=floats(-10, 10, width=64),
+              unique=True),
+       arrays(np.float64, (100, 3), elements=floats(0, 1, width=64),
+              unique=True))
 def test_insphere_from_center_convex_hulls(points, test_points):
     try:
         hull = ConvexHull(points)

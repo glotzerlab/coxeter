@@ -4,11 +4,10 @@ import numpy.testing as npt
 import rowan
 from euclid.shape_classes.polygon import Polygon
 from euclid.shape_classes.convex_polygon import ConvexPolygon
-from scipy.spatial import ConvexHull
-from scipy.spatial.qhull import QhullError
 from hypothesis import given, example, assume
 from hypothesis.strategies import floats
 from hypothesis.extra.numpy import arrays
+from conftest import get_valid_hull
 
 
 # Need to declare this outside the fixture so that it can be used in multiple
@@ -120,38 +119,45 @@ def test_nonplanar(square_points):
         Polygon(square_points)
 
 
-@given(arrays(np.float64, (4, 2), floats(1, 5, width=64), unique=True))
+@given(arrays(np.float64, (4, 2), elements=floats(1, 5, width=64),
+              unique=True))
 @example(np.array([[1, 1],
                    [1, 1.00041707],
                    [2.78722762, 1],
                    [2.72755193, 1.32128906]]))
 def test_reordering_convex(points):
     """Test that vertices can be reordered appropriately."""
-    hull = ConvexHull(points)
+    hull = get_valid_hull(points)
+    assume(hull)
+
     verts = points[hull.vertices]
     poly = Polygon(verts)
     assert np.all(poly.vertices[:, :2] == verts)
 
 
-@given(arrays(np.float64, (4, 2), floats(-5, 5, width=64), unique=True))
+@given(arrays(np.float64, (4, 2), elements=floats(-5, 5, width=64),
+              unique=True))
 @example(np.array([[1, 1],
                    [1, 1.00041707],
                    [2.78722762, 1],
                    [2.72755193, 1.32128906]]))
 def test_convex_area(points):
     """Check the areas of various convex sets."""
-    hull = ConvexHull(points)
+    hull = get_valid_hull(points)
+    assume(hull)
+
+    print(hull.volume)
     verts = points[hull.vertices]
     poly = Polygon(verts)
     assert np.isclose(hull.volume, poly.area)
 
 
-@given(random_quat=arrays(np.float64, (4, ), floats(-1, 1, width=64)))
-def test_rotation_signed_area(random_quat, square_points):
+@given(random_quat=arrays(np.float64, (4, ), elements=floats(-1, 1, width=64)))
+def test_rotation_signed_area(random_quat):
     """Ensure that rotating does not change the signed area."""
     assume(not np.all(random_quat == 0))
     random_quat = rowan.normalize(random_quat)
-    rotated_points = rowan.rotate(random_quat, square_points)
+    rotated_points = rowan.rotate(random_quat, get_square_points())
     poly = Polygon(rotated_points)
     assert np.isclose(poly.signed_area, 1)
 
@@ -159,13 +165,13 @@ def test_rotation_signed_area(random_quat, square_points):
     assert np.isclose(poly.signed_area, -1)
 
 
-@given(arrays(np.float64, (4, 2), floats(-5, 5, width=64), unique=True))
+@given(arrays(np.float64, (4, 2), elements=floats(-5, 5, width=64),
+              unique=True))
 def test_set_convex_area(points):
     """Test setting area of arbitrary convex sets."""
-    try:
-        hull = ConvexHull(points)
-    except QhullError:
-        assume(False)
+    hull = get_valid_hull(points)
+    assume(hull)
+
     verts = points[hull.vertices]
     poly = Polygon(verts)
     original_area = poly.area
@@ -217,18 +223,11 @@ def test_bounding_circle_radius_regular_polygon():
         assert np.allclose(center, 0)
 
 
-@given(arrays(np.float64, (3, 2), floats(-5, 5, width=64), unique=True))
+@given(arrays(np.float64, (3, 2), elements=floats(-5, 5, width=64),
+              unique=True))
 def test_bounding_circle_radius_random_hull(points):
-    # Avoid issues from floating point error.
-    eps = 1e-4
-
-    try:
-        hull = ConvexHull(points)
-    except QhullError:
-        assume(False)
-    else:
-        # Avoid cases where numerical imprecision make tests fail.
-        assume(hull.volume > eps)
+    hull = get_valid_hull(points)
+    assume(hull)
 
     vertices = points[hull.vertices]
     poly = Polygon(vertices)
@@ -238,29 +237,22 @@ def test_bounding_circle_radius_random_hull(points):
     # because the ball need not be centered at the centroid.
     rmax = np.max(np.linalg.norm(poly.vertices, axis=-1))
     center, radius = poly.bounding_circle
-    assert radius <= rmax + eps
+    assert radius <= rmax + 1e-6
 
     poly.center = [0, 0, 0]
     center, radius = poly.bounding_circle
-    assert radius <= rmax + eps
+    assert radius <= rmax + 1e-6
 
 
-@given(points=arrays(np.float64, (3, 2), floats(-5, 5, width=64), unique=True),
-       rotation=arrays(np.float64, (4, ), floats(-1, 1, width=64)))
+@given(points=arrays(np.float64, (3, 2), elements=floats(-5, 5, width=64),
+                     unique=True),
+       rotation=arrays(np.float64, (4, ), elements=floats(-1, 1, width=64)))
 def test_bounding_circle_radius_random_hull_rotation(points, rotation):
     """Test that rotating vertices does not change the bounding radius."""
     assume(not np.all(rotation == 0))
 
-    # Avoid issues from floating point error.
-    eps = 1e-4
-
-    try:
-        hull = ConvexHull(points)
-    except QhullError:
-        assume(False)
-    else:
-        # Avoid cases where numerical imprecision make tests fail.
-        assume(hull.volume > eps)
+    hull = get_valid_hull(points)
+    assume(hull)
 
     vertices = points[hull.vertices]
     poly = Polygon(vertices)
