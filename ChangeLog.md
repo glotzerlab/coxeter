@@ -23,6 +23,7 @@ and this project adheres to
 * New Circle class with property-based API.
 * Added insphere from center calculation for convex polyhedra.
 * New ConvexPolygon class.
+* Documentation is hosted on ReadTheDocs.
 
 ### Changed
 
