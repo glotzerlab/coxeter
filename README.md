@@ -49,6 +49,7 @@ python setup.py install --user
 *   Python >= 3.3
 *   NumPy >= 1.10
 *   SciPy >= 1.0.0
+*   rowan >= 1.2
 
 ## Testing
 
