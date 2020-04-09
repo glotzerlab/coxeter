@@ -1,5 +1,6 @@
 from .polygon import Polygon, _align_points_by_normal
 from scipy.spatial import ConvexHull
+import numpy as np
 
 
 def _is_convex(vertices, normal):
@@ -66,3 +67,18 @@ class ConvexPolygon(Polygon):
             # intersections to avoid complex (self-intersecting) polygons.
             raise ValueError("The provided vertices do not form a convex "
                              "polygon.")
+
+    @property
+    def incircle_from_center(self):
+        """The largest circle centered at the centroid that fits inside the
+        convex polygon, given by a center and a radius."""
+        v1s = self.vertices
+        v2s = np.roll(self.vertices, shift=1, axis=0)
+        deltas = v1s - v2s
+        deltas /= np.linalg.norm(deltas, axis=-1)[:, np.newaxis]
+        points = self.center[np.newaxis, :] - v1s[:, :]
+
+        distances = np.linalg.norm(np.cross(points, deltas), axis=-1)
+
+        radius = np.min(distances)
+        return self.center, radius

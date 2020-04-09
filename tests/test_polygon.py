@@ -31,6 +31,11 @@ def square():
 
 
 @pytest.fixture
+def convex_square():
+    return ConvexPolygon(get_square_points())
+
+
+@pytest.fixture
 def ones():
     return np.ones((4, 2))
 
@@ -279,3 +284,9 @@ def test_circumcircle():
 
         assert np.isclose(rmax, radius)
         assert np.allclose(center, 0)
+
+
+def test_incircle_from_center(convex_square):
+    center, radius = convex_square.incircle_from_center
+    assert np.all(center == convex_square.center)
+    assert radius == 0.5
