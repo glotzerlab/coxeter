@@ -21,8 +21,8 @@ copyright = '2015-2020, The Regents of the University of Michigan'
 author = 'Bryan VanSaders'
 
 # The full version, including alpha/beta/rc tags
-version = '0.1.0'
-release = '0.1.0'
+version = '0.2.0'
+release = '0.2.0'
 
 
 # -- General configuration ---------------------------------------------------
