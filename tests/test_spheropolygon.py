@@ -7,6 +7,7 @@ from scipy.spatial import ConvexHull
 from hypothesis import given, assume, example
 from hypothesis.strategies import floats
 from hypothesis.extra.numpy import arrays
+from conftest import get_valid_hull
 
 
 def get_square_points():
@@ -98,19 +99,23 @@ def test_nonplanar(square_points):
         ConvexSpheropolygon(square_points, 1)
 
 
-@given(arrays(np.float64, (4, 2), floats(1, 5, width=64), unique=True))
+@given(arrays(np.float64, (4, 2), elements=floats(1, 5, width=64),
+              unique=True))
 def test_reordering_convex(points):
     """Test that vertices can be reordered appropriately."""
-    hull = ConvexHull(points)
+    hull = get_valid_hull(points)
+    assume(hull)
     verts = points[hull.vertices]
     poly = ConvexSpheropolygon(verts, radius=1)
     assert np.all(poly.vertices[:, :2] == verts)
 
 
-@given(arrays(np.float64, (4, 2), floats(-5, 5, width=64), unique=True))
+@given(arrays(np.float64, (4, 2), elements=floats(-5, 5, width=64),
+              unique=True))
 def test_convex_area(points):
     """Check the areas of various convex sets."""
-    hull = ConvexHull(points)
+    hull = get_valid_hull(points)
+    assume(hull)
     verts = points[hull.vertices]
     r = 1
     poly = ConvexSpheropolygon(verts, radius=r)
@@ -121,25 +126,30 @@ def test_convex_area(points):
     assert np.isclose(hull.volume + edge_area + cap_area, poly.area)
 
 
-@given(random_quat=arrays(np.float64, (4, ), floats(-1, 1, width=64)))
-@example(random_quat=np.array([0.00000000e+00, 2.22044605e-16, 2.60771169e-08,
-                               2.60771169e-08]))
-def test_convex_signed_area(random_quat, square_points):
+def test_convex_signed_area(square_points):
     """Ensure that rotating does not change the signed area."""
-    assume(not np.all(random_quat == 0))
-    random_quat = rowan.normalize(random_quat)
-    rotated_points = rowan.rotate(random_quat, square_points)
-    r = 1
-    poly = ConvexSpheropolygon(rotated_points, radius=r)
 
-    hull = ConvexHull(square_points[:, :2])
+    @given(random_quat=arrays(np.float64, (4, ),
+                              elements=floats(-1, 1, width=64)))
+    @example(random_quat=np.array([0.00000000e+00, 2.22044605e-16,
+                                   2.60771169e-08, 2.60771169e-08]))
+    def testfun(random_quat):
+        assume(not np.all(random_quat == 0))
+        random_quat = rowan.normalize(random_quat)
+        rotated_points = rowan.rotate(random_quat, square_points)
+        r = 1
+        poly = ConvexSpheropolygon(rotated_points, radius=r)
 
-    cap_area = np.pi*r*r
-    edge_area = np.sum(np.linalg.norm(square_points -
-                                      np.roll(square_points, 1, 0), axis=1),
-                       axis=0)
-    sphero_area = cap_area + edge_area
-    assert np.isclose(poly.signed_area, hull.volume + sphero_area)
+        hull = ConvexHull(square_points[:, :2])
 
-    poly.reorder_verts(clockwise=True)
-    assert np.isclose(poly.signed_area, -hull.volume - sphero_area)
+        cap_area = np.pi*r*r
+        edge_area = np.sum(
+            np.linalg.norm(square_points - np.roll(square_points, 1, 0),
+                           axis=1),
+            axis=0)
+        sphero_area = cap_area + edge_area
+        assert np.isclose(poly.signed_area, hull.volume + sphero_area)
+
+        poly.reorder_verts(clockwise=True)
+        assert np.isclose(poly.signed_area, -hull.volume - sphero_area)
+    testfun()

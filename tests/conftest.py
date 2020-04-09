@@ -3,6 +3,8 @@ import numpy as np
 from euclid.shape_classes.polyhedron import Polyhedron
 from euclid.shape_classes.convex_polyhedron import ConvexPolyhedron
 from euclid.shape_classes.convex_spheropolyhedron import ConvexSpheropolyhedron
+from scipy.spatial import ConvexHull
+from scipy.spatial.qhull import QhullError
 
 
 # Need to declare this outside the fixture so that it can be used in multiple
@@ -69,3 +71,29 @@ def unoriented_cube():
 @pytest.fixture
 def cube(request):
     return request.getfixturevalue(request.param)
+
+
+def get_valid_hull(points):
+    """To avoid issues from floating point error, we require any test that
+    computes a convex hull from a random set of points to successfully build a
+    hull, and the hull must have a reasonable finite area.
+
+    Args:
+        points (np.array):
+            The points to compute a hull for.
+
+    Returns:
+        hull (scipy.spatial.ConvexHull) or False:
+            A ConvexHull if the construction succeeded, otherwise False.
+    """
+    MIN_HULL_AREA = 1e-2
+    try:
+        hull = ConvexHull(points)
+    except QhullError:
+        return False
+    else:
+        # Avoid cases where numerical imprecision make tests fail.
+        if hull.volume > MIN_HULL_AREA:
+            return hull
+        else:
+            return False
