@@ -38,7 +38,7 @@ class ConvexPolyhedron(Polyhedron):
 
     @property
     def tau(self):
-        R"""float: The parameter :math:`tau = \frac{S}{4\pi R^2}` defined in
+        R"""float: The parameter :math:`tau = \frac{4\pi R^2}{S}` defined in
         :cite:`Naumann19841` that is closely related to the Pitzer acentric
         factor. This quantity appears relevant to the third and fourth virial
         coefficient for hard polyhedron fluids.
