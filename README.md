@@ -1,21 +1,91 @@
-# euclid - shape and geometry tools
+# coexeter
 
 ## About
 
-`euclid` is a collection of tools to help initialize and manipulate shapes. It includes prototypes for commonly used shapes, as well as a variety of helper functions.
+Welcome to the documentation for **coxeter**!
+The **coxeter** Python library provides tools for working with common geometric objects in two and three dimensions.
+Named for the 20th century geometer best known for his work on polytopes, **coexeter** is especially focused on polygons and polyhedra, but it also support various standard curved shapes such as spheres and ellipsoids.
+If you have any questions about how to work with coexeter, please visit the [ReadTheDocs page](http://coexeter.readthedocs.io/en/latest/).
 
-The package includes:
+## Authors
 
-1. Functions and shapes collected from several group members. These are in `shapes.py` and `utils.py`. There is also a quaternion package in `quaternion_tools.py`. For example, call `from euclid import quaternion_tools as qt` and `rand_q = qt.qrandom(10)` to import `quaternion_tools` and make 10 random quaternions.
+*   Vyas Ramasubramani <mailto:vramasub@umich.edu> (Lead developer)
 
-2. A migration of `freud.shape` functions and classes taken from version 0.6 of `freud` can be imported through `euclid.FreudShape`: `from euclid.FreudShape.Cube import shape`
+## Setup
 
-3. Classes to calculate Fourier transforms of collections of delta peaks, spheres, and (convex) polyhedra at specified k-space vectors, found in `euclid.ft`. These classes were originally implemented in `freud.kspace`.
+The recommended methods for installing coexeter are using **pip** or **conda**.
 
-## Installation
+### Installation via pip
 
-From within the euclid folder, run
+To install the package from PyPI, execute:
+```bash
+pip install coexeter --user
+```
+
+### Installation via conda
+
+To install the package from conda, first add the **conda-forge** channel:
+```bash
+conda config --add channels conda-forge
+```
+
+After the **conda-forge** channel has been added, you can install coexeter by
+executing
+```bash
+conda install coexeter
+```
+
+### Installation from source
+
+To install from source, execute:
+```bash
+git clone https://github.com/glotzerlab/coexeter.git
+cd coexeter
+python setup.py install --user
+```
+
+### Requirements
+
+*   Python >= 3.3
+*   NumPy >= 1.10
+*   SciPy >= 1.0.0
+
+## Testing
+
+The package is currently tested for Python >= 3.3 on Unix-like systems.
+Continuous integrated testing is performed using CircleCI on these Python versions.
+
+To run the packaged unit tests, execute the following line from the root of the repository:
 
 ```bash
-pip install . --user
+pytest
+```
+
+To check test coverage, make sure the coverage module is installed:
+
+```bash
+pip install coverage
+```
+
+and then run the packaged unit tests with the coverage module:
+
+```bash
+pytest --cov=coxeter
+```
+
+## Documentation
+Documentation for coexeter is written in [reStructuredText](http://docutils.sourceforge.net/rst.html) and compiled using [Sphinx](http://www.sphinx-doc.org/en/master/).
+To build the documentation, first install Sphinx:
+
+```bash
+pip install sphinx sphinx_rtd_theme
+```
+
+You can then use Sphinx to create the actual documentation in either PDF or HTML form by running the following commands in the coexeter root directory:
+
+```bash
+cd doc
+make html # For html output
+make latexpdf # For a LaTeX compiled PDF file
+open build/html/index.html
 ```
