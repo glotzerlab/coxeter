@@ -26,12 +26,12 @@ def main():
     header = """from __future__ import division
     from numpy import sqrt
     import numpy
-    from euclid.FreudShape import ConvexPolyhedron
+    from coxeter.common_shapes import ConvexPolyhedron
 
     # Example:
     """
 
-    example = "# from euclid.FreudShape.{0} import shape\n".format(name)
+    example = "# from coxeter.common_shapes.{0} import shape\n".format(name)
 
     footer = """         ]
 

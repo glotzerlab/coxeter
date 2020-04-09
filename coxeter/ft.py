@@ -303,7 +303,7 @@ class FTconvexPolyhedron(FTpolyhedron):
     """Fourier Transform for convex polyhedra.
 
     Args:
-        hull (:class:`euclid.FreudShape.ConvexPolyhedron`):
+        hull (:class:`coxeter.shape_classes.ConvexPolyhedron`):
             Convex polyhedron object.
     """
 

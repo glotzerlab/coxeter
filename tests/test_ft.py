@@ -1,8 +1,8 @@
 import unittest
 import numpy as np
 import numpy.testing as npt
-import euclid.ft
-from euclid.common_shapes import Cube
+import coxeter.ft
+from coxeter.common_shapes import Cube
 
 
 class TestFormFactors(unittest.TestCase):
@@ -19,10 +19,10 @@ class TestFormFactors(unittest.TestCase):
 
     def test_FTdefaults(self):
         """Ensures default quantities are set properly."""
-        for ft_class in [euclid.ft._FTbase,
-                         euclid.ft.FTdelta,
-                         euclid.ft.FTsphere,
-                         euclid.ft.FTpolyhedron]:
+        for ft_class in [coxeter.ft._FTbase,
+                         coxeter.ft.FTdelta,
+                         coxeter.ft.FTsphere,
+                         coxeter.ft.FTpolyhedron]:
             ft = ft_class()
             self.assertEqual(ft.NK, 0)
             npt.assert_array_equal(ft.K, np.zeros((1, 3)))
@@ -35,7 +35,7 @@ class TestFormFactors(unittest.TestCase):
             self.assertEqual(ft.scale, 1.)
 
     def test_FTdelta(self):
-        ft = euclid.ft.FTdelta()
+        ft = coxeter.ft.FTdelta()
         ft.set_K(self.K)
 
         positions = np.array([[0, 0, 0]], dtype=np.float)
@@ -61,7 +61,7 @@ class TestFormFactors(unittest.TestCase):
              -1.73167405, -1.20254791], decimal=6)
 
     def test_FTsphere(self):
-        ft = euclid.ft.FTsphere()
+        ft = coxeter.ft.FTsphere()
         self.assertEqual(ft.get_radius(), 0.5)
         ft.set_K(self.K)
 
@@ -95,7 +95,7 @@ class TestFormFactors(unittest.TestCase):
         # TODO: Currently using this to test FTpolyhedron indirectly
         cube = Cube.shape
         npt.assert_almost_equal(cube.volume, 8)
-        ft = euclid.ft.FTconvexPolyhedron(cube)
+        ft = coxeter.ft.FTconvexPolyhedron(cube)
         ft.set_K(self.K)
 
         positions = np.array([[0, 0, 0]], dtype=np.float)

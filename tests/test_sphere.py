@@ -1,5 +1,5 @@
 import numpy as np
-from euclid.shape_classes.sphere import Sphere
+from coxeter.shape_classes.sphere import Sphere
 from hypothesis import given
 from hypothesis.strategies import floats
 

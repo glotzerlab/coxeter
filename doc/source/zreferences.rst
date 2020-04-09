@@ -7,4 +7,4 @@ References
    fix this, we create this dummy file that comes as late as possible and
    import the bibliography here.
 
-.. bibliography:: euclid.bib
+.. bibliography:: coxeter.bib

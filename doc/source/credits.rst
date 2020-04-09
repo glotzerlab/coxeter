@@ -1,49 +1,12 @@
 Credits
 =======
 
-euclid Developers
+coxeter Developers
 -----------------
 
-The following people contributed to the development of euclid.
+The following people contributed to the development of coxeter.
 
-Bryan VanSaders - **Creator and former lead developer**
-
-* Created package layout.
-* Original port of classes and methods into package.
-* Added some methods to the utils module.
-* Added symmetry groups.
-
-James Proctor
-
-* Ported some damasceno code into euclid from standalone module.
-
-Bradley Dice
-
-* Migrated ft code into euclid from freud and added tests.
-* Added CircleCI support.
-* Add ability to check if points are contained in convex spheropolyhedra.
-
-Brandon Butler
-
-* Removed old quat\_tools module and modified modules to use rowan.
-* Moved logic in FreudShape module to top-level package namespace.
-* Moved all common shape definitions into a common\_shapes module.
-
-Eric Harper
-
-* Migrated shape classes into euclid from freud.
-
-Jens Glaser
-
-* Bug fix for convex hull finding.
-
-M. Eric Irrgang
-
-* Bugfixes to imports.
-* Implemented core shape classes.
-* Implemented the ft module.
-
-Vyas Ramasubramani
+Vyas Ramasubramani - **Creator and former lead developer**
 
 * Created documentation pages.
 * Formalized contribution guidelines and contributor agreement.
@@ -59,6 +22,43 @@ Vyas Ramasubramani
 * Fix calculation of circumcircle to work for non-regular polygons.
 * Add ability to calculate minimum bounding sphere/circle for polyhedra/polygons.
 * Implemented ConvexPolygon class.
+
+Bryan VanSaders - **Original maintainer of euclid package**
+
+* Created package layout.
+* Original port of classes and methods into package.
+* Added some methods to the utils module.
+* Added symmetry groups.
+
+James Proctor
+
+* Ported some damasceno code into coxeter from standalone module.
+
+Bradley Dice
+
+* Migrated ft code into coxeter from freud and added tests.
+* Added CircleCI support.
+* Add ability to check if points are contained in convex spheropolyhedra.
+
+Brandon Butler
+
+* Removed old quat\_tools module and modified modules to use rowan.
+* Moved logic in FreudShape module to top-level package namespace.
+* Moved all common shape definitions into a common\_shapes module.
+
+Eric Harper
+
+* Migrated shape classes into coxeter from freud.
+
+Jens Glaser
+
+* Bug fix for convex hull finding.
+
+M. Eric Irrgang
+
+* Bugfixes to imports.
+* Implemented core shape classes.
+* Implemented the ft module.
 
 Carl Simon Adorf
 
@@ -77,13 +77,13 @@ William Zygmunt
 Source code
 -----------
 
-**euclid** includes the source code of the following Python packages and
+**coxeter** includes the source code of the following Python packages and
 modules.
 
 .. highlight:: none
 
 The source of polytri (https://github.com/bjorkegeek/polytri) is included
-directly into the **euclid** package. The module implementing that code is
+directly into the **coxeter** package. The module implementing that code is
 reproduced in its entirety along with an additional ``__init__`` file to enable
 its import as a subpackage. It is used for the triangulation of polygons and
 the surface triangulation of polyhedra. This software is made available under
@@ -113,7 +113,7 @@ the MIT license::
 
 The source of isect_segments-bentley_ottmann
 (https://github.com/ideasman42/isect_segments-bentley_ottmann) is included
-directly into the **euclid** package. The module implementing that code is
+directly into the **coxeter** package. The module implementing that code is
 reproduced in its entirety along with an additional ``__init__`` file to enable
 its import as a subpackage. It is used to check whether a set of vertices
 defines a simple or a complex polygon. This software is made available under

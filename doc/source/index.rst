@@ -1,8 +1,8 @@
 ==================================
-Welcome to euclid's documentation!
+Welcome to coxeter's documentation!
 ==================================
 
-Welcome to the documentation for euclid, a package for working with various geometric shapes.
+Welcome to the documentation for coxeter, a package for working with various geometric shapes.
 The package works with both two- and three-dimensional shapes such as polygons and polyhedra.
 
 .. toctree::
@@ -20,7 +20,7 @@ Getting Started
 Requirements
 ------------
 
-The minimum requirements for using euclid are:
+The minimum requirements for using coxeter are:
 
 * Python >= 3.6
 * NumPy
@@ -30,12 +30,12 @@ The minimum requirements for using euclid are:
 Installation
 ------------
 
-The package can be installed from source by cloning `the repository <https://github.com/glotzerlab/euclid>`_ and running the setup script:
+The package can be installed from source by cloning `the repository <https://github.com/glotzerlab/coxeter>`_ and running the setup script:
 
 .. code-block:: bash
 
-    $ git clone https://github.com/glotzerlab/euclid.git
-    $ cd euclid
+    $ git clone https://github.com/glotzerlab/coxeter.git
+    $ cd coxeter
     $ python setup.py install
 
 Running Tests
@@ -61,7 +61,7 @@ To build from source, first install Sphinx:
 
     pip install sphinx sphinx_rtd_theme
 
-You can then use Sphinx to create the actual documentation in either PDF or HTML form by running the following commands in the euclid root directory:
+You can then use Sphinx to create the actual documentation in either PDF or HTML form by running the following commands in the coxeter root directory:
 
 .. code-block:: bash
 
@@ -73,9 +73,9 @@ You can then use Sphinx to create the actual documentation in either PDF or HTML
 Support and Contribution
 ========================
 
-This package is hosted on `GitHub <https://github.com/glotzerlab/euclid>`_.
-Please report any bugs or problems that you find on the `issue tracker <https://github.com/glotzerlab/euclid/issues>`_.
-All contributions to euclid are welcomed via pull requests!
+This package is hosted on `GitHub <https://github.com/glotzerlab/coxeter>`_.
+Please report any bugs or problems that you find on the `issue tracker <https://github.com/glotzerlab/coxeter/issues>`_.
+All contributions to coxeter are welcomed via pull requests!
 
 Indices and tables
 ==================

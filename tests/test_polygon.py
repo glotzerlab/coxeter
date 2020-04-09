@@ -2,8 +2,8 @@ import pytest
 import numpy as np
 import numpy.testing as npt
 import rowan
-from euclid.shape_classes.polygon import Polygon
-from euclid.shape_classes.convex_polygon import ConvexPolygon
+from coxeter.shape_classes.polygon import Polygon
+from coxeter.shape_classes.convex_polygon import ConvexPolygon
 from hypothesis import given, example, assume
 from hypothesis.strategies import floats
 from hypothesis.extra.numpy import arrays

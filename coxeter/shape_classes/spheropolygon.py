@@ -34,7 +34,7 @@ class ConvexSpheropolygon(object):
         the normal.
 
         For more information see
-        :meth:`euclid.shape_classes.polygon.Polygon.reorder_verts`.
+        :meth:`~coxeter.shape_classes.polygon.Polygon.reorder_verts`.
 
         Args:
             clockwise (bool):

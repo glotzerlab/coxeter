@@ -1,7 +1,7 @@
-euclid
+coxeter
 ======
 
 .. toctree::
    :maxdepth: 4
 
-   euclid
+   coxeter

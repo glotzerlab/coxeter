@@ -22,7 +22,7 @@ class ConvexSpheropolyhedron(object):
 
     @property
     def polyhedron(self):
-        """:class:`~euclid.shape_classes.convex_polyhedron.ConvexPolyhedron`:
+        """:class:`~coxeter.shape_classes.convex_polyhedron.ConvexPolyhedron`:
         The underlying polyhedron."""
         return self._polyhedron
 

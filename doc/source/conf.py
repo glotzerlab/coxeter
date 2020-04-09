@@ -16,7 +16,7 @@ sys.path.insert(0, os.path.abspath('../../'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'euclid'
+project = 'coxeter'
 copyright = '2015-2020, The Regents of the University of Michigan'
 author = 'Bryan VanSaders'
 

@@ -1,8 +1,8 @@
 import pytest
 import numpy as np
-from euclid.shape_classes.polyhedron import Polyhedron
-from euclid.shape_classes.convex_polyhedron import ConvexPolyhedron
-from euclid.shape_classes.convex_spheropolyhedron import ConvexSpheropolyhedron
+from coxeter.shape_classes import Polyhedron
+from coxeter.shape_classes import ConvexPolyhedron
+from coxeter.shape_classes import ConvexSpheropolyhedron
 from scipy.spatial import ConvexHull
 from scipy.spatial.qhull import QhullError
 
