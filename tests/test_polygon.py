@@ -127,7 +127,16 @@ def test_nonplanar(square_points):
                    [2.72755193, 1.32128906]]))
 def test_reordering_convex(points):
     """Test that vertices can be reordered appropriately."""
-    hull = ConvexHull(points)
+    # Avoid issues from floating point error.
+    eps = 1e-4
+    try:
+        hull = ConvexHull(points)
+    except QhullError:
+        assume(False)
+    else:
+        # Avoid cases where numerical imprecision make tests fail.
+        assume(hull.volume > eps)
+
     verts = points[hull.vertices]
     poly = Polygon(verts)
     assert np.all(poly.vertices[:, :2] == verts)
@@ -140,7 +149,16 @@ def test_reordering_convex(points):
                    [2.72755193, 1.32128906]]))
 def test_convex_area(points):
     """Check the areas of various convex sets."""
-    hull = ConvexHull(points)
+    # Avoid issues from floating point error.
+    eps = 1e-4
+    try:
+        hull = ConvexHull(points)
+    except QhullError:
+        assume(False)
+    else:
+        # Avoid cases where numerical imprecision make tests fail.
+        assume(hull.volume > eps)
+
     verts = points[hull.vertices]
     poly = Polygon(verts)
     assert np.isclose(hull.volume, poly.area)
