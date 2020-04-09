@@ -18,11 +18,11 @@ sys.path.insert(0, os.path.abspath('../../'))
 
 project = 'coxeter'
 copyright = '2015-2020, The Regents of the University of Michigan'
-author = 'Bryan VanSaders'
+author = 'Vyas Ramasubramani'
 
 # The full version, including alpha/beta/rc tags
-version = '0.1.0'
-release = '0.1.0'
+version = '0.2.0'
+release = '0.2.0'
 
 
 # -- General configuration ---------------------------------------------------
