@@ -1,10 +1,10 @@
 Credits
 =======
 
-euclid Developers
+coxeter Developers
 -----------------
 
-The following people contributed to the development of euclid.
+The following people contributed to the development of coxeter.
 
 Bryan VanSaders - **Creator and former lead developer**
 
@@ -15,11 +15,11 @@ Bryan VanSaders - **Creator and former lead developer**
 
 James Proctor
 
-* Ported some damasceno code into euclid from standalone module.
+* Ported some damasceno code into coxeter from standalone module.
 
 Bradley Dice
 
-* Migrated ft code into euclid from freud and added tests.
+* Migrated ft code into coxeter from freud and added tests.
 * Added CircleCI support.
 * Add ability to check if points are contained in convex spheropolyhedra.
 
@@ -31,7 +31,7 @@ Brandon Butler
 
 Eric Harper
 
-* Migrated shape classes into euclid from freud.
+* Migrated shape classes into coxeter from freud.
 
 Jens Glaser
 
@@ -77,13 +77,13 @@ William Zygmunt
 Source code
 -----------
 
-**euclid** includes the source code of the following Python packages and
+**coxeter** includes the source code of the following Python packages and
 modules.
 
 .. highlight:: none
 
 The source of polytri (https://github.com/bjorkegeek/polytri) is included
-directly into the **euclid** package. The module implementing that code is
+directly into the **coxeter** package. The module implementing that code is
 reproduced in its entirety along with an additional ``__init__`` file to enable
 its import as a subpackage. It is used for the triangulation of polygons and
 the surface triangulation of polyhedra. This software is made available under
@@ -113,7 +113,7 @@ the MIT license::
 
 The source of isect_segments-bentley_ottmann
 (https://github.com/ideasman42/isect_segments-bentley_ottmann) is included
-directly into the **euclid** package. The module implementing that code is
+directly into the **coxeter** package. The module implementing that code is
 reproduced in its entirety along with an additional ``__init__`` file to enable
 its import as a subpackage. It is used to check whether a set of vertices
 defines a simple or a complex polygon. This software is made available under

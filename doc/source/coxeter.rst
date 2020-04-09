@@ -1,4 +1,4 @@
-euclid package
+coxeter package
 ==============
 
 Subpackages
@@ -6,72 +6,72 @@ Subpackages
 
 .. toctree::
 
-   euclid.common_shapes
-   euclid.shape_classes
+   coxeter.common_shapes
+   coxeter.shape_classes
 
 Submodules
 ----------
 
-euclid.MathematicaToPython module
+coxeter.MathematicaToPython module
 ---------------------------------
 
-.. automodule:: euclid.MathematicaToPython
+.. automodule:: coxeter.MathematicaToPython
    :members:
    :show-inheritance:
 
-euclid.damasceno module
+coxeter.damasceno module
 -----------------------
 
-.. automodule:: euclid.damasceno
+.. automodule:: coxeter.damasceno
    :members:
    :show-inheritance:
 
-euclid.ft module
+coxeter.ft module
 ----------------
 
-.. automodule:: euclid.ft
+.. automodule:: coxeter.ft
    :members:
    :show-inheritance:
 
-euclid.graveyard module
+coxeter.graveyard module
 -----------------------
 
-.. automodule:: euclid.graveyard
+.. automodule:: coxeter.graveyard
    :members:
    :show-inheritance:
 
-euclid.polygon module
+coxeter.polygon module
 ---------------------
 
-.. automodule:: euclid.polygon
+.. automodule:: coxeter.polygon
    :members:
    :show-inheritance:
 
-euclid.polyhedron module
+coxeter.polyhedron module
 ------------------------
 
-.. automodule:: euclid.polyhedron
+.. automodule:: coxeter.polyhedron
    :members:
    :show-inheritance:
 
-euclid.shapes module
+coxeter.shapes module
 --------------------
 
-.. automodule:: euclid.shapes
+.. automodule:: coxeter.shapes
    :members:
    :show-inheritance:
 
-euclid.symmetry module
+coxeter.symmetry module
 ----------------------
 
-.. automodule:: euclid.symmetry
+.. automodule:: coxeter.symmetry
    :members:
    :show-inheritance:
 
-euclid.utils module
+coxeter.utils module
 -------------------
 
-.. automodule:: euclid.utils
+.. automodule:: coxeter.utils
    :members:
    :show-inheritance:
 
@@ -79,6 +79,6 @@ euclid.utils module
 Module contents
 ---------------
 
-.. automodule:: euclid
+.. automodule:: coxeter
    :members:
    :show-inheritance:
