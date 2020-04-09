@@ -381,8 +381,8 @@ class Polygon(object):
         radius."""
         if not MINIBALL:
             raise ImportError("The miniball module must be installed. It can "
-                              "be installed as an extra with euclid (e.g. "
-                              "with pip install euclid[bounding_sphere], or "
+                              "be installed as an extra with coxeter (e.g. "
+                              "with pip install coxeter[bounding_sphere], or "
                               "directly from PyPI using pip install miniball."
                               )
 

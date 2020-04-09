@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-from euclid.shape_classes.circle import Circle
+from coxeter.shape_classes.circle import Circle
 from hypothesis import given
 from hypothesis.strategies import floats
 

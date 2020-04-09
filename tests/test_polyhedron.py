@@ -1,13 +1,13 @@
 import pytest
 import numpy as np
-from euclid.shape_classes.convex_polyhedron import ConvexPolyhedron
-from euclid.shape_classes.sphere import Sphere
+from coxeter.shape_classes.convex_polyhedron import ConvexPolyhedron
+from coxeter.shape_classes.sphere import Sphere
 from scipy.spatial import ConvexHull, Delaunay
 from scipy.spatial.qhull import QhullError
 from hypothesis import given, assume
 from hypothesis.strategies import floats
 from hypothesis.extra.numpy import arrays
-from euclid.damasceno import SHAPES
+from coxeter.damasceno import SHAPES
 import os
 from conftest import get_oriented_cube_facets, get_oriented_cube_normals
 
@@ -201,9 +201,9 @@ def test_moment_inertia_damasceno_shapes(shape):
     # Loop over different sampling rates to minimize the test runtime.
     while num_samples < 1e8:
         try:
-            euclid_result = poly.inertia_tensor
+            coxeter_result = poly.inertia_tensor
             mc_result = compute_inertia_mc(shape.vertices, num_samples)
-            assert np.allclose(euclid_result, mc_result, atol=1e-1)
+            assert np.allclose(coxeter_result, mc_result, atol=1e-1)
             accept = True
             break
         except AssertionError:
@@ -211,8 +211,8 @@ def test_moment_inertia_damasceno_shapes(shape):
             continue
     if not accept:
         raise AssertionError("The test failed for shape {}.\nMC Result: "
-                             "\n{}\neuclid result: \n{}".format(
-                                 shape.Name, mc_result, euclid_result
+                             "\n{}\ncoxeter result: \n{}".format(
+                                 shape.Name, mc_result, coxeter_result
                              ))
 
 

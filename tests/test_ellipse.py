@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-from euclid.shape_classes.ellipse import Ellipse
+from coxeter.shape_classes.ellipse import Ellipse
 from hypothesis import given
 from hypothesis.strategies import floats
 

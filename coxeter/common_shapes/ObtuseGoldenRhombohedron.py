@@ -1,5 +1,5 @@
 import numpy
-from euclid.shape_classes.convex_polyhedron import ConvexPolyhedron
+from coxeter.shape_classes.convex_polyhedron import ConvexPolyhedron
 
 points = [
     (-0.9472135954999579, 0.08541019662496847, 0.2628655560595668),
