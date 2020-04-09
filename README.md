@@ -1,11 +1,11 @@
-# coexeter
+# coxeter
 
 ## About
 
 Welcome to the documentation for **coxeter**!
 The **coxeter** Python library provides tools for working with common geometric objects in two and three dimensions.
-Named for the 20th century geometer best known for his work on polytopes, **coexeter** is especially focused on polygons and polyhedra, but it also support various standard curved shapes such as spheres and ellipsoids.
-If you have any questions about how to work with coexeter, please visit the [ReadTheDocs page](http://coexeter.readthedocs.io/en/latest/).
+Named for the 20th century geometer best known for his work on polytopes, **coxeter** is especially focused on polygons and polyhedra, but it also support various standard curved shapes such as spheres and ellipsoids.
+If you have any questions about how to work with coxeter, please visit the [ReadTheDocs page](http://coxeter.readthedocs.io/en/latest/).
 
 ## Authors
 
@@ -13,13 +13,13 @@ If you have any questions about how to work with coexeter, please visit the [Rea
 
 ## Setup
 
-The recommended methods for installing coexeter are using **pip** or **conda**.
+The recommended methods for installing coxeter are using **pip** or **conda**.
 
 ### Installation via pip
 
 To install the package from PyPI, execute:
 ```bash
-pip install coexeter --user
+pip install coxeter --user
 ```
 
 ### Installation via conda
@@ -29,18 +29,18 @@ To install the package from conda, first add the **conda-forge** channel:
 conda config --add channels conda-forge
 ```
 
-After the **conda-forge** channel has been added, you can install coexeter by
+After the **conda-forge** channel has been added, you can install coxeter by
 executing
 ```bash
-conda install coexeter
+conda install coxeter
 ```
 
 ### Installation from source
 
 To install from source, execute:
 ```bash
-git clone https://github.com/glotzerlab/coexeter.git
-cd coexeter
+git clone https://github.com/glotzerlab/coxeter.git
+cd coxeter
 python setup.py install --user
 ```
 
@@ -75,14 +75,14 @@ pytest --cov=coxeter
 ```
 
 ## Documentation
-Documentation for coexeter is written in [reStructuredText](http://docutils.sourceforge.net/rst.html) and compiled using [Sphinx](http://www.sphinx-doc.org/en/master/).
+Documentation for coxeter is written in [reStructuredText](http://docutils.sourceforge.net/rst.html) and compiled using [Sphinx](http://www.sphinx-doc.org/en/master/).
 To build the documentation, first install Sphinx:
 
 ```bash
 pip install sphinx sphinx_rtd_theme
 ```
 
-You can then use Sphinx to create the actual documentation in either PDF or HTML form by running the following commands in the coexeter root directory:
+You can then use Sphinx to create the actual documentation in either PDF or HTML form by running the following commands in the coxeter root directory:
 
 ```bash
 cd doc

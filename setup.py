@@ -20,14 +20,14 @@ extras = {
 }
 
 setup(
-    name='coexeter',
+    name='coxeter',
     version='0.1.0',
     description='Tools for creating and manipulating shapes.',
-    url='https://github.com/glotzerlab/coexeter',
+    url='https://github.com/glotzerlab/coxeter',
     author='Vyas Ramasubramani',
     author_email='vramasub@umich.edu',
     packages=find_packages(),
-    package_data={'coexeter': ['science.1220869.json']},
+    package_data={'coxeter': ['science.1220869.json']},
     install_requires=[
         'numpy',
         'rowan>=1.2',
