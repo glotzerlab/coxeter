@@ -7,7 +7,7 @@ version: 2
 jobs:
   style-check:
     docker:
-      - image: circleci/python:3.7
+      - image: circleci/python:3.8
 
     working_directory: ~/repo
 
@@ -16,13 +16,13 @@ jobs:
       - run:
           name: style-check
           command: |
-            pip install --user -U flake8==3.7.1
-            python -m flake8 --show-source euclid/
+            python -m pip install --user -U flake8==3.7.1
+            python -m flake8 --show-source coxeter/ tests/
 
 
-  test-3.7: &test-template
+  test-3.8: &test-template
     docker:
-      - image: circleci/python:3.7
+      - image: circleci/python:3.8
 
     working_directory: ~/repo
 
@@ -34,39 +34,20 @@ jobs:
           name: Run tests
           command: |
             python --version
-            pip install . --user
+            python -m pip install .[test] --user
             python -c "import numpy; print('numpy', numpy.__version__)"
             python -c "import scipy; print('scipy', scipy.__version__)"
-            python -m unittest discover tests/ -v
+            pytest
+
+  test-3.7:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.7
 
   test-3.6:
     <<: *test-template
     docker:
       - image: circleci/python:3.6
-
-#  test-deploy-pypi:
-#    docker:
-#      - image: circleci/python:3.7
-#    working_directory: ~/repo
-#    steps:
-#      - checkout
-#      - run:
-#          name: test-deploy-pypi
-#          command: |
-#            pip install --user -U -r .requirements-deploy.txt
-#            bash .test-deploy.bash
-
-#  deploy-pypi:
-#    docker:
-#      - image: circleci/python:3.7
-#    working_directory: ~/repo
-#    steps:
-#      - checkout
-#      - run:
-#          name: deploy-pypi
-#          command: |
-#            pip install --user -U -r .requirements-deploy.txt
-#            bash .deploy.bash
 
 
 workflows:
@@ -74,24 +55,12 @@ workflows:
   test:
     jobs:
       - style-check
-      - test-3.6
-#          requires:
-#            - style-check
-      - test-3.7
-#          requires:
-#            - style-check
-#      - test-deploy-pypi:
-#          filters:
-#            branches:
-#              only: /release\/.*/
-#          requires:
-#            - test-3.6
-#            - test-3.7
-#  deploy:
-#    jobs:
-#      - deploy-pypi:
-#          filters:
-#            branches:
-#              ignore: /.*/
-#            tags:
-#              only: /v.*/
+      - test-3.8:
+          requires:
+            - style-check
+      - test-3.7:
+          requires:
+            - style-check
+      - test-3.6:
+          requires:
+            - style-check

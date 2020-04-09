@@ -1,4 +1,5 @@
 *~
+*.swp
 
 # Packages
 *.egg
@@ -15,4 +16,5 @@ develop-eggs
 lib
 lib64
 __pycache__
-
+.hypothesis
+*.pyc
