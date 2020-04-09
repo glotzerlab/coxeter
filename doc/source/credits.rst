@@ -22,6 +22,7 @@ Vyas Ramasubramani - **Creator and former lead developer**
 * Fix calculation of circumcircle to work for non-regular polygons.
 * Add ability to calculate minimum bounding sphere/circle for polyhedra/polygons.
 * Implemented ConvexPolygon class.
+* Added ReadTheDocs support.
 
 Bryan VanSaders - **Original maintainer of euclid package**
 
