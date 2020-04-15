@@ -82,3 +82,13 @@ class ConvexPolyhedron(Polyhedron):
                              "insphere from center is not defined.")
         min_distance = -np.max(distances)
         return center, min_distance
+
+    @property
+    def circumsphere_from_center(self):
+        """The smallest sphere centered at the centroid that contains the
+        convex polyhedron, given by a center and a radius."""
+        center = self.center
+        if not self.is_inside(center):
+            raise ValueError("The centroid is not contained in the shape. The "
+                             "circumsphere from center is not defined.")
+        return center, np.max(np.linalg.norm(self._vertices - center, axis=-1))
