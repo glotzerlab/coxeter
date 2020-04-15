@@ -4,6 +4,12 @@ The format is based on
 and this project adheres to
 [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## v0.3.0 - xxxx-xx-xx
+
+### Added
+
+* Calculation of circumsphere from center for convex polyhedra.
+
 ## v0.2.0 - 2020-04-09
 
 ### Added

@@ -5,7 +5,7 @@ from coxeter.shape_classes.sphere import Sphere
 from scipy.spatial import ConvexHull, Delaunay
 from scipy.spatial.qhull import QhullError
 from hypothesis import given, assume
-from hypothesis.strategies import floats
+from hypothesis.strategies import floats, integers
 from hypothesis.extra.numpy import arrays
 from coxeter.damasceno import SHAPES
 import os
@@ -295,6 +295,45 @@ def test_circumsphere_platonic(poly):
     r2 = np.sum(poly.vertices**2, axis=1)
 
     assert np.allclose(r2, radius*radius)
+
+
+def test_circumsphere_from_center():
+    """Check that all points outside this circumsphere are also outside the
+    polyhedron. Note that this is a necessary but not sufficient condition for
+    correctness."""
+    # Building convex polyhedra is the slowest part of this test, so rather
+    # than testing all shapes every time we test a random subset each time the
+    # test runs. To further speed the tests, we build all convex polyhedra
+    # ahead of time. Each set of # random points is tested against a different
+    # random polyhedron.
+    import random
+    shapes = [ConvexPolyhedron(s.vertices) for s in
+              random.sample([s for s in SHAPES if len(s.vertices)],
+                            len(SHAPES)//5)]
+
+    @given(center=arrays(np.float64, (3, ), elements=floats(-10, 10, width=64),
+                         unique=True),
+           points=arrays(np.float64, (50, 3), elements=floats(-1, 1, width=64),
+                         unique=True),
+           shape_index=integers(0, len(shapes)-1))
+    def testfun(center, points, shape_index):
+        poly = shapes[shape_index]
+        poly.center = center
+
+        centroid, radius = poly.circumsphere_from_center
+        sphere = Sphere(radius)
+
+        scaled_points = points*radius
+        points_outside = np.logical_not(sphere.is_inside(scaled_points))
+
+        # Verify that all points outside the circumsphere are also outside the
+        # polyhedron.
+        shifted_points = scaled_points + centroid
+        assert not np.any(np.logical_and(
+            points_outside,
+            poly.is_inside(shifted_points)))
+
+    testfun()
 
 
 @pytest.mark.parametrize('poly', platonic_solids())

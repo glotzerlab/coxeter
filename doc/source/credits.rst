@@ -23,6 +23,7 @@ Vyas Ramasubramani - **Creator and former lead developer**
 * Add ability to calculate minimum bounding sphere/circle for polyhedra/polygons.
 * Implemented ConvexPolygon class.
 * Added ReadTheDocs support.
+* Added circumsphere from center calculation for convex polyhedra.
 
 Bryan VanSaders - **Original maintainer of euclid package**
 
