@@ -24,6 +24,7 @@ Vyas Ramasubramani - **Creator and former lead developer**
 * Implemented ConvexPolygon class.
 * Added ReadTheDocs support.
 * Added circumsphere from center calculation for convex polyhedra.
+* Added shape getter for damasceno shapes.
 
 Bryan VanSaders - **Original maintainer of euclid package**
 
