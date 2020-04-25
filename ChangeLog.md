@@ -9,6 +9,7 @@ and this project adheres to
 ### Added
 
 * Calculation of circumsphere from center for convex polyhedra.
+* Simple name-based shape getter for damasceno SHAPES dictionary.
 
 ## v0.2.0 - 2020-04-09
 
