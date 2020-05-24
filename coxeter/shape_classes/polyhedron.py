@@ -2,6 +2,7 @@ import numpy as np
 from .polygon import Polygon, _is_simple
 from .convex_polygon import ConvexPolygon
 from .convex_polygon import _is_convex
+from .utils import translate_inertia_tensor
 from scipy.sparse.csgraph import connected_components
 import rowan
 
@@ -328,10 +329,24 @@ class Polyhedron(object):
     @property
     def inertia_tensor(self):
         """:math:`(3, 3)` :class:`numpy.ndarray`: Get the inertia tensor
-        computed about the center of mass (uses the algorithm described in
-        :cite:`Kallay2006`).
+        computed (uses the algorithm described in :cite:`Kallay2006`).
+
+        Note:
+            For improved stability, the inertia tensor is computed about the
+            center of mass and then shifted rather than directly computed in
+            the global frame.
         """
-        simplices = np.array(list(self._triangulation())) - self.center
+        it = self._compute_inertia_tensor()
+        return translate_inertia_tensor(self.center, it, self.volume)
+
+
+    def _compute_inertia_tensor(self, centered=True):
+        """Internal function for computing the inertia tensor that supports
+        both centered and uncentered calculations. Primarily of use for
+        validation purposes."""
+        simplices = np.array(list(self._triangulation()))
+        if centered:
+            simplices -= self.center
 
         volumes = np.abs(np.linalg.det(simplices)/6)
 
