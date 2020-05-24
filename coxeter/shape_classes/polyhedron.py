@@ -302,7 +302,7 @@ class Polyhedron(object):
         """float: Get the surface area."""
         return np.sum(self.get_facet_area())
 
-    def _triangulation(self):
+    def _surface_triangulation(self):
         """Generate a triangulation of the surface of the polyhedron.
 
         This algorithm constructs Polygons from each of the facets and then
@@ -339,12 +339,11 @@ class Polyhedron(object):
         it = self._compute_inertia_tensor()
         return translate_inertia_tensor(self.center, it, self.volume)
 
-
     def _compute_inertia_tensor(self, centered=True):
         """Internal function for computing the inertia tensor that supports
         both centered and uncentered calculations. Primarily of use for
         validation purposes."""
-        simplices = np.array(list(self._triangulation()))
+        simplices = np.array(list(self._surface_triangulation()))
         if centered:
             simplices -= self.center
 
