@@ -98,7 +98,9 @@ def test_convex_surface_area(points):
                          indirect=True)
 def test_volume_center_shift(cube):
     """Make sure that moving the center doesn't affect the volume."""
-    # Use nested function because it's OK to reuse the cube fixture.
+    # Use a nested function to avoid warnings from hypothesis. In this case, it
+    # is safe to reuse the cube fixture.
+    # See https://github.com/HypothesisWorks/hypothesis/issues/377
     @given(new_center=arrays(np.float64, (3, ),
                              elements=floats(-10, 10, width=64)))
     def testfun(new_center):
@@ -275,6 +277,12 @@ def test_circumsphere_from_center():
     # test runs. To further speed the tests, we build all convex polyhedra
     # ahead of time. Each set of random points is tested against a different
     # random polyhedron.
+    #
+    # Use a nested function to avoid warnings from hypothesis. While the shape
+    # does get modified inside the testfun, it's simply being recentered each
+    # time, which is not destructive since it can be overwritten in subsequent
+    # calls.
+    # See https://github.com/HypothesisWorks/hypothesis/issues/377
     import random
     shapes = [ConvexPolyhedron(s.vertices) for s in
               random.sample([s for s in SHAPES if len(s.vertices)],
@@ -324,7 +332,9 @@ def test_inside_boundaries(convex_cube):
 
 
 def test_inside(convex_cube):
-    # Use a nested function to reuse the convex cube.
+    # Use a nested function to avoid warnings from hypothesis. In this case, it
+    # is safe to reuse the convex cube.
+    # See https://github.com/HypothesisWorks/hypothesis/issues/377
     @given(arrays(np.float64, (100, 3), elements=floats(-10, 10, width=64),
                   unique=True))
     def testfun(test_points):
