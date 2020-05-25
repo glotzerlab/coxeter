@@ -11,14 +11,18 @@ from coxeter.damasceno import SHAPES
 import os
 from conftest import get_oriented_cube_facets, get_oriented_cube_normals
 from utils import compute_inertia_mc
+import rowan
+from coxeter.damasceno import get_shape_by_name
+from coxeter.shape_classes.utils import (translate_inertia_tensor,
+                                         rotate_order2_tensor)
+from conftest import get_valid_hull
 
 
 def platonic_solids():
     PLATONIC_SOLIDS = ('Tetrahedron', 'Cube', 'Octahedron', 'Dodecahedron',
                        'Icosahedron')
-    for shape in SHAPES:
-        if shape.Name in PLATONIC_SOLIDS:
-            yield ConvexPolyhedron(shape.vertices)
+    for shape in PLATONIC_SOLIDS:
+        yield get_shape_by_name(shape)
 
 
 def test_normal_detection(convex_cube):
@@ -125,6 +129,7 @@ def test_facet_alignment(convex_cube):
                          ['convex_cube', 'oriented_cube', 'unoriented_cube'],
                          indirect=True)
 def test_moment_inertia(cube):
+    cube.center = (0, 0, 0)
     assert np.allclose(cube.inertia_tensor, np.diag([1/6]*3))
 
 
@@ -198,16 +203,14 @@ def test_dihedrals():
         'Dodecahedron':  np.pi - np.arctan(2),
         'Icosahedron': np.pi - np.arccos(np.sqrt(5)/3),
     }
-    for shape in SHAPES:
-        if shape.Name in known_shapes:
-            poly = ConvexPolyhedron(shape.vertices)
-            # The dodecahedron in SHAPES needs a slightly more expansive merge
-            # to get all the facets joined.
-            poly.merge_facets(rtol=1e-4)
-            for i in range(poly.num_facets):
-                for j in poly.neighbors[i]:
-                    assert np.isclose(poly.get_dihedral(i, j),
-                                      known_shapes[shape.Name])
+    for name, dihedral in known_shapes.items():
+        poly = get_shape_by_name(name)
+        # The dodecahedron in SHAPES needs a slightly more expansive merge
+        # to get all the facets joined.
+        poly.merge_facets(rtol=1e-4)
+        for i in range(poly.num_facets):
+            for j in poly.neighbors[i]:
+                assert np.isclose(poly.get_dihedral(i, j), dihedral)
 
 
 def test_curvature():
@@ -220,11 +223,10 @@ def test_curvature():
         'Tetrahedron': 0.4561299069097583,
     }
 
-    for shape in SHAPES:
-        if shape.Name in known_shapes:
-            assert np.isclose(
-                ConvexPolyhedron(shape.vertices).mean_curvature,
-                known_shapes[shape.Name])
+    for name, curvature in known_shapes.items():
+        poly = get_shape_by_name(name)
+        assert np.isclose(
+            poly.mean_curvature, curvature)
 
 
 @pytest.mark.skip("Need test data")
@@ -271,7 +273,7 @@ def test_circumsphere_from_center():
     # Building convex polyhedra is the slowest part of this test, so rather
     # than testing all shapes every time we test a random subset each time the
     # test runs. To further speed the tests, we build all convex polyhedra
-    # ahead of time. Each set of # random points is tested against a different
+    # ahead of time. Each set of random points is tested against a different
     # random polyhedron.
     import random
     shapes = [ConvexPolyhedron(s.vertices) for s in
@@ -338,13 +340,8 @@ def test_inside(convex_cube):
        arrays(np.float64, (100, 3), elements=floats(0, 1, width=64),
               unique=True))
 def test_insphere_from_center_convex_hulls(points, test_points):
-    try:
-        hull = ConvexHull(points)
-    except QhullError:
-        assume(False)
-    else:
-        # Avoid cases where numerical imprecision make tests fail.
-        assume(hull.volume > 1e-6)
+    hull = get_valid_hull(points)
+    assume(hull)
     verts = points[hull.vertices]
     poly = ConvexPolyhedron(verts)
     center, radius = poly.insphere_from_center
@@ -357,3 +354,58 @@ def test_insphere_from_center_convex_hulls(points, test_points):
     points_in_poly = poly.is_inside(test_points)
     assert np.all(points_in_sphere <= points_in_poly)
     assert insphere.volume < poly.volume
+
+
+@given(arrays(np.float64, (4, 3), elements=floats(-10, 10, width=64),
+              unique=True))
+def test_rotate_inertia(points):
+    # Use the input as noise rather than the base points to avoid precision and
+    # degenerate cases provided by hypothesis.
+    tet = get_shape_by_name('Tetrahedron')
+    vertices = tet.vertices + points
+
+    rotation = rowan.random.rand()
+    shape = ConvexPolyhedron(vertices)
+    rotated_shape = ConvexPolyhedron(rowan.rotate(rotation, vertices))
+
+    mat = rowan.to_matrix(rotation)
+    rotated_inertia = rotate_order2_tensor(mat, shape.inertia_tensor)
+
+    assert np.allclose(rotated_inertia, rotated_shape.inertia_tensor)
+
+
+# Use a small range of translations to ensure that the Delaunay triangulation
+# used by the MC calculation will not break.
+@given(arrays(np.float64, (3, ), elements=floats(-0.2, 0.2, width=64),
+              unique=True))
+def test_translate_inertia(translation):
+    shape = get_shape_by_name('Cube')
+    # Choose a volume > 1 to test the volume scaling, but don't choose one
+    # that's too large because the uncentered polyhedral calculation has
+    # massive error without fixing that.
+    shape.volume = 2
+    shape.center = (0, 0, 0)
+
+    translated_shape = ConvexPolyhedron(shape.vertices + translation)
+
+    translated_inertia = translate_inertia_tensor(
+        translation, shape.inertia_tensor, shape.volume)
+    mc_tensor = compute_inertia_mc(translated_shape.vertices, 1e4)
+
+    assert np.allclose(translated_inertia,
+                       translated_shape._compute_inertia_tensor(False),
+                       atol=2e-1,
+                       rtol=2e-1)
+    assert np.allclose(mc_tensor,
+                       translated_shape._compute_inertia_tensor(False),
+                       atol=2e-1,
+                       rtol=2e-1)
+
+    assert np.allclose(mc_tensor,
+                       translated_inertia,
+                       atol=1e-2,
+                       rtol=1e-2)
+    assert np.allclose(mc_tensor,
+                       translated_shape.inertia_tensor,
+                       atol=1e-2,
+                       rtol=1e-2)
