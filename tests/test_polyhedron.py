@@ -26,7 +26,7 @@ def polyhedron_from_hull(verts):
         # Don't worry about failures caused by bad hulls that cause failures
         # for the simple polygon test.
         if 'The provided vertices do not form a convex polygon' in str(e):
-            assume(False)
+            return False
     return poly
 
 
@@ -80,6 +80,7 @@ def test_convex_volume(points):
     assume(hull)
 
     poly = polyhedron_from_hull(points[hull.vertices])
+    assume(poly)
     assert np.isclose(hull.volume, poly.volume)
 
 
@@ -91,6 +92,7 @@ def test_convex_surface_area(points):
     assume(hull)
 
     poly = polyhedron_from_hull(points[hull.vertices])
+    assume(poly)
     assert np.isclose(hull.area, poly.surface_area)
 
 
