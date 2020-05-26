@@ -200,7 +200,7 @@ def test_reordering_convex(points):
 
     verts = points[hull.vertices]
     poly = polygon_from_hull(points[hull.vertices])
-    assume(False)
+    assume(poly)
     assert np.all(poly.vertices[:, :2] == verts)
 
 
@@ -216,7 +216,7 @@ def test_convex_area(points):
     assume(hull)
 
     poly = polygon_from_hull(points[hull.vertices])
-    assume(False)
+    assume(poly)
     assert np.isclose(hull.volume, poly.area)
 
 
@@ -241,7 +241,7 @@ def test_set_convex_area(points):
     assume(hull)
 
     poly = polygon_from_hull(points[hull.vertices])
-    assume(False)
+    assume(poly)
     original_area = poly.area
     poly.area *= 2
     assert np.isclose(poly.area, 2*original_area)
