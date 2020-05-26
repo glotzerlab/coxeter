@@ -23,9 +23,12 @@ def polyhedron_from_hull(verts):
     try:
         poly = ConvexPolyhedron(verts)
     except ValueError as e:
-        # Don't worry about failures caused by bad hulls that cause failures
-        # for the simple polygon test.
-        if 'The provided vertices do not form a convex polygon' in str(e):
+        # Don't worry about failures caused by bad hulls.
+        allowed_errors = [
+            'The provided vertices do not form a convex polygon.',
+            'Not all vertices are coplanar.'
+        ]
+        if any([ae in str(e) for ae in allowed_errors]):
             return False
         else:
             raise e

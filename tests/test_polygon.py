@@ -16,8 +16,8 @@ def polygon_from_hull(verts):
     try:
         poly = Polygon(verts)
     except AssertionError:
-        # Don't worry about failures caused by bad hulls that cause failures
-        # for the simple polygon test.
+        # Don't worry about failures caused by bad hulls that fail the simple
+        # polygon test.
         return False
     return poly
 
