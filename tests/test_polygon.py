@@ -107,9 +107,65 @@ def test_center(square, square_points):
 
 def test_moment_inertia(square):
     """Test moment of inertia calculation."""
-    square.center = [0, 0, 0]
+
+    # First test the default values.
+    square.center = (0, 0, 0)
     assert np.allclose(square.planar_moments_inertia, (1/12, 1/12, 0))
     assert np.isclose(square.polar_moment_inertia, 1/6)
+
+    # Use hypothesis to validate the simple parallel axis theorem.
+    @given(arrays(np.float64, (3, ), elements=floats(-5, 5, width=64),
+                  unique=True))
+    def testfun(center):
+        # Just move in the plane.
+        center[2] = 0
+        square.center = center
+
+        assert np.isclose(square.polar_moment_inertia,
+                          1/6 + square.area*np.dot(center, center))
+
+    testfun()
+
+
+def test_inertia_tensor(square):
+    """Test the inertia tensor calculation."""
+
+    square.center = (0, 0, 0)
+    assert np.sum(square.inertia_tensor > 1e-6) == 1
+    assert square.inertia_tensor[2, 2] == 1/6
+
+    # Validate yz plane.
+    rotation = rowan.from_axis_angle([0, 1, 0], np.pi/2)
+    rotated_verts = rowan.rotate(rotation, square.vertices)
+    rotated_square = ConvexPolygon(rotated_verts)
+    assert np.sum(rotated_square.inertia_tensor > 1e-6) == 1
+    assert rotated_square.inertia_tensor[0, 0] == 1/6
+
+    # Validate xz plane.
+    rotation = rowan.from_axis_angle([1, 0, 0], np.pi/2)
+    rotated_verts = rowan.rotate(rotation, square.vertices)
+    rotated_square = ConvexPolygon(rotated_verts)
+    assert np.sum(rotated_square.inertia_tensor > 1e-6) == 1
+    assert rotated_square.inertia_tensor[1, 1] == 1/6
+
+    # Validate translation along each axis.
+    delta = 2
+    area = square.area
+    for i in range(3):
+        translation = [0]*3
+        translation[i] = delta
+        translated_verts = square.vertices + translation
+        translated_square = ConvexPolygon(translated_verts)
+        offdiagonal_tensor = translated_square.inertia_tensor.copy()
+        diag_indices = np.diag_indices(3)
+        offdiagonal_tensor[diag_indices] = 0
+        assert np.sum(offdiagonal_tensor > 1e-6) == 0
+        expected_diagonals = [0, 0, 1/6]
+        for j in range(3):
+            if i != j:
+                expected_diagonals[j] += area*delta*delta
+        assert np.allclose(np.diag(translated_square.inertia_tensor),
+                           expected_diagonals)
 
 
 def test_nonplanar(square_points):
@@ -146,7 +202,6 @@ def test_convex_area(points):
     hull = get_valid_hull(points)
     assume(hull)
 
-    print(hull.volume)
     verts = points[hull.vertices]
     poly = Polygon(verts)
     assert np.isclose(hull.volume, poly.area)
