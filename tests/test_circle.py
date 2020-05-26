@@ -43,3 +43,13 @@ def test_inertia_tensor(r):
     np.testing.assert_allclose(circle.planar_moments_inertia[:2], expected)
     np.testing.assert_allclose(circle.planar_moments_inertia[2], 0)
     assert circle.polar_moment_inertia == pytest.approx(expected*2)
+
+
+def test_center():
+    """Test getting and setting the center."""
+    circle = Circle(1)
+    assert circle.center == (0, 0, 0)
+
+    center = (1, 1, 1)
+    circle.center = center
+    assert circle.center == center

@@ -2,14 +2,25 @@ import numpy as np
 
 
 class Circle(object):
-    def __init__(self, radius):
+    def __init__(self, radius, center=(0, 0, 0)):
         """A circle with the given radius.
 
         Args:
             radius (float):
                 Radius of the circle.
+            center (Sequence[float]):
+                The coordinates of the center of the circle.
         """
         self._radius = radius
+        self._center = np.asarray(center)
+
+    @property
+    def center(self):
+        return self._center
+
+    @center.setter
+    def center(self, value):
+        self.center = np.asarray(value)
 
     @property
     def radius(self):
