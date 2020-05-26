@@ -10,6 +10,10 @@ and this project adheres to
 
 * Calculation of circumsphere from center for convex polyhedra.
 * Simple name-based shape getter for damasceno SHAPES dictionary.
+* Polygons moment of inertia calculation.
+
+### Changed
+* Inertia tensors for polyhedra and moments of inertia for polygons are calculated in global coordinates rather than the body frame.
 
 ## v0.2.0 - 2020-04-09
 
