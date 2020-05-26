@@ -27,6 +27,8 @@ def polyhedron_from_hull(verts):
         # for the simple polygon test.
         if 'The provided vertices do not form a convex polygon' in str(e):
             return False
+        else:
+            raise e
     return poly
 
 
