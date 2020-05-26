@@ -17,6 +17,19 @@ from coxeter.shape_classes.utils import (translate_inertia_tensor,
 from conftest import get_valid_hull
 
 
+def polyhedron_from_hull(verts):
+    """Try to generate a polyhedron from a hull, and fail gracefully (in the
+    context of Hypothesis) if the hull is nearly degenerate."""
+    try:
+        poly = ConvexPolyhedron(verts)
+    except ValueError as e:
+        # Don't worry about failures caused by bad hulls that cause failures
+        # for the simple polygon test.
+        if 'The provided vertices do not form a convex polygon' in str(e):
+            assume(False)
+    return poly
+
+
 def platonic_solids():
     PLATONIC_SOLIDS = ('Tetrahedron', 'Cube', 'Octahedron', 'Dodecahedron',
                        'Icosahedron')
@@ -66,7 +79,7 @@ def test_convex_volume(points):
     hull = get_valid_hull(points)
     assume(hull)
 
-    poly = ConvexPolyhedron(points[hull.vertices])
+    poly = polyhedron_from_hull(points[hull.vertices])
     assert np.isclose(hull.volume, poly.volume)
 
 
@@ -77,8 +90,7 @@ def test_convex_surface_area(points):
     hull = get_valid_hull(points)
     assume(hull)
 
-    verts = points[hull.vertices]
-    poly = ConvexPolyhedron(verts)
+    poly = polyhedron_from_hull(points[hull.vertices])
     assert np.isclose(hull.area, poly.surface_area)
 
 
