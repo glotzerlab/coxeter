@@ -19,6 +19,7 @@ def polygon_from_hull(verts):
         # Don't worry about failures caused by bad hulls that cause failures
         # for the simple polygon test.
         assume(False)
+    return poly
 
 
 # Need to declare this outside the fixture so that it can be used in multiple

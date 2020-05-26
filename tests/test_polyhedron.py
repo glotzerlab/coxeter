@@ -3,7 +3,6 @@ import numpy as np
 from coxeter.shape_classes.convex_polyhedron import ConvexPolyhedron
 from coxeter.shape_classes.sphere import Sphere
 from scipy.spatial import ConvexHull
-from scipy.spatial.qhull import QhullError
 from hypothesis import given, assume
 from hypothesis.strategies import floats, integers
 from hypothesis.extra.numpy import arrays
