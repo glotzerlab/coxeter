@@ -73,7 +73,7 @@ def cube(request):
     return request.getfixturevalue(request.param)
 
 
-def get_valid_hull(points):
+def get_valid_hull(points, min_hull_area=1e-2):
     """To avoid issues from floating point error, we require any test that
     computes a convex hull from a random set of points to successfully build a
     hull, and the hull must have a reasonable finite area.
@@ -85,15 +85,16 @@ def get_valid_hull(points):
     Returns:
         hull (scipy.spatial.ConvexHull) or False:
             A ConvexHull if the construction succeeded, otherwise False.
+        min_hull_area (float):
+            The minimum size of the hull required.
     """
-    MIN_HULL_AREA = 1e-2
     try:
         hull = ConvexHull(points)
     except QhullError:
         return False
     else:
         # Avoid cases where numerical imprecision make tests fail.
-        if hull.volume > MIN_HULL_AREA:
+        if hull.volume > min_hull_area:
             return hull
         else:
             return False
