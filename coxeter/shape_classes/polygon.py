@@ -2,6 +2,7 @@ import numpy as np
 import rowan
 from ..polytri import polytri
 from ..bentley_ottman import poly_point_isect
+from .utils import translate_inertia_tensor, rotate_order2_tensor
 
 try:
     import miniball
@@ -275,11 +276,12 @@ class Polygon(object):
         axis before the moments are calculated. This alignment should be
         considered when computing the moments for polygons embedded in
         three-dimensional space that are rotated out of the :math:`xy` plane,
-        since the planar moments are invariant to this orientation.
+        since the planar moments are invariant to this orientation. The exact
+        rotation used for this computation (i.e. changes in the x and y
+        position) should not be relied upon.
         """  # noqa: E501
-        # Rotate shape so that normal vector coincides with z-axis
-        verts = _align_points_by_normal(self._normal,
-                                        self._vertices)
+        # Rotate shape so that normal vector coincides with z-axis.
+        verts = _align_points_by_normal(self._normal, self._vertices)
 
         shifted_verts = np.roll(verts, shift=-1, axis=0)
 
@@ -314,11 +316,45 @@ class Polygon(object):
 
         The `polar moment of inertia <https://en.wikipedia.org/wiki/Polar_moment_of_inertia>`__
         is always calculated about an axis perpendicular to the polygon (i.e. the
-        normal vector) placed at the centroid of the polygon.
+        normal vector).
 
         The polar moment is computed as the sum of the two planar moments of inertia.
         """  # noqa: E501
         return np.sum(self.planar_moments_inertia[:2])
+
+    @property
+    def inertia_tensor(self):
+        R""":math:`(3, 3)` :class:`numpy.ndarray`: Get the inertia tensor of
+        the polygon embedded in :math:`\mathcal{R}^3`.
+
+        This computation proceeds by first computing the polar moment of
+        inertia for the polygon in the xy-plane relative to its centroid. The
+        tensor is then rotated back to the orientation of the polygon and
+        shifted to the original centroid.
+        """
+        # Save the original configuration as we translate and rotate it to the
+        # origin so that we can reset after (since we're modifying the internal
+        # state in order to use self.polar_moment_inertia). The sequence here
+        # is important: we must translate before rotating so that the parallel
+        # axis theorem can be applied in the reverse direction (rotating about
+        # the origin before translating to the actual centroid).
+        center = self.center
+        self.center = (0, 0, 0)
+        mat, _ = rowan.mapping.kabsch([self.normal, -self.normal],
+                                      [[0, 0, 1], [0, 0, -1]])
+        self._vertices = self._vertices.dot(mat.T)
+        original_normal = self._normal
+        self._normal = np.asarray([0, 0, 1])
+
+        inertia_tensor = np.diag([0, 0, self.polar_moment_inertia])
+        shifted_inertia_tensor = translate_inertia_tensor(
+            center, rotate_order2_tensor(mat, inertia_tensor), self.area)
+
+        self.center = center
+        self._vertices = self._vertices.dot(mat)
+        self._normal = original_normal
+
+        return shifted_inertia_tensor
 
     @property
     def center(self):

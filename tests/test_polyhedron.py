@@ -2,7 +2,7 @@ import pytest
 import numpy as np
 from coxeter.shape_classes.convex_polyhedron import ConvexPolyhedron
 from coxeter.shape_classes.sphere import Sphere
-from scipy.spatial import ConvexHull, Delaunay
+from scipy.spatial import ConvexHull
 from scipy.spatial.qhull import QhullError
 from hypothesis import given, assume
 from hypothesis.strategies import floats, integers
@@ -10,14 +10,19 @@ from hypothesis.extra.numpy import arrays
 from coxeter.damasceno import SHAPES
 import os
 from conftest import get_oriented_cube_facets, get_oriented_cube_normals
+from utils import compute_inertia_mc
+import rowan
+from coxeter.damasceno import get_shape_by_name
+from coxeter.shape_classes.utils import (translate_inertia_tensor,
+                                         rotate_order2_tensor)
+from conftest import get_valid_hull
 
 
 def platonic_solids():
     PLATONIC_SOLIDS = ('Tetrahedron', 'Cube', 'Octahedron', 'Dodecahedron',
                        'Icosahedron')
-    for shape in SHAPES:
-        if shape.Name in PLATONIC_SOLIDS:
-            yield ConvexPolyhedron(shape.vertices)
+    for shape in PLATONIC_SOLIDS:
+        yield get_shape_by_name(shape)
 
 
 def test_normal_detection(convex_cube):
@@ -93,7 +98,9 @@ def test_convex_surface_area(points):
                          indirect=True)
 def test_volume_center_shift(cube):
     """Make sure that moving the center doesn't affect the volume."""
-    # Use nested function because it's OK to reuse the cube fixture.
+    # Use a nested function to avoid warnings from hypothesis. In this case, it
+    # is safe to reuse the cube fixture.
+    # See https://github.com/HypothesisWorks/hypothesis/issues/377
     @given(new_center=arrays(np.float64, (3, ),
                              elements=floats(-10, 10, width=64)))
     def testfun(new_center):
@@ -120,44 +127,11 @@ def test_facet_alignment(convex_cube):
         assert any([str_facet in ref for ref in reference_facets])
 
 
-def compute_inertia_mc(vertices, num_samples=1e6):
-    """Use Monte Carlo integration to compute the inertia tensor to test
-    against the analytical calculation.
-
-    Args:
-        num_samples (int): The number of samples to use.
-
-    Returns:
-        float: The 3x3 inertia tensor.
-    """
-    mins = np.min(vertices, axis=0)
-    maxs = np.max(vertices, axis=0)
-
-    points = np.random.rand(int(num_samples), 3)*(maxs-mins)+mins
-
-    hull = Delaunay(vertices)
-    inside = hull.find_simplex(points) >= 0
-
-    Ixx = np.mean(points[inside][:, 1]**2 + points[inside][:, 2]**2)
-    Iyy = np.mean(points[inside][:, 0]**2 + points[inside][:, 2]**2)
-    Izz = np.mean(points[inside][:, 0]**2 + points[inside][:, 1]**2)
-    Ixy = np.mean(-points[inside][:, 0] * points[inside][:, 1])
-    Ixz = np.mean(-points[inside][:, 0] * points[inside][:, 2])
-    Iyz = np.mean(-points[inside][:, 1] * points[inside][:, 2])
-
-    poly = ConvexPolyhedron(vertices)
-
-    inertia_tensor = np.array([[Ixx, Ixy, Ixz],
-                               [Ixy,   Iyy, Iyz],
-                               [Ixz,   Iyz,   Izz]]) * poly.volume
-
-    return inertia_tensor
-
-
 @pytest.mark.parametrize('cube',
                          ['convex_cube', 'oriented_cube', 'unoriented_cube'],
                          indirect=True)
 def test_moment_inertia(cube):
+    cube.center = (0, 0, 0)
     assert np.allclose(cube.inertia_tensor, np.diag([1/6]*3))
 
 
@@ -231,16 +205,14 @@ def test_dihedrals():
         'Dodecahedron':  np.pi - np.arctan(2),
         'Icosahedron': np.pi - np.arccos(np.sqrt(5)/3),
     }
-    for shape in SHAPES:
-        if shape.Name in known_shapes:
-            poly = ConvexPolyhedron(shape.vertices)
-            # The dodecahedron in SHAPES needs a slightly more expansive merge
-            # to get all the facets joined.
-            poly.merge_facets(rtol=1e-4)
-            for i in range(poly.num_facets):
-                for j in poly.neighbors[i]:
-                    assert np.isclose(poly.get_dihedral(i, j),
-                                      known_shapes[shape.Name])
+    for name, dihedral in known_shapes.items():
+        poly = get_shape_by_name(name)
+        # The dodecahedron in SHAPES needs a slightly more expansive merge
+        # to get all the facets joined.
+        poly.merge_facets(rtol=1e-4)
+        for i in range(poly.num_facets):
+            for j in poly.neighbors[i]:
+                assert np.isclose(poly.get_dihedral(i, j), dihedral)
 
 
 def test_curvature():
@@ -253,11 +225,10 @@ def test_curvature():
         'Tetrahedron': 0.4561299069097583,
     }
 
-    for shape in SHAPES:
-        if shape.Name in known_shapes:
-            assert np.isclose(
-                ConvexPolyhedron(shape.vertices).mean_curvature,
-                known_shapes[shape.Name])
+    for name, curvature in known_shapes.items():
+        poly = get_shape_by_name(name)
+        assert np.isclose(
+            poly.mean_curvature, curvature)
 
 
 @pytest.mark.skip("Need test data")
@@ -304,8 +275,14 @@ def test_circumsphere_from_center():
     # Building convex polyhedra is the slowest part of this test, so rather
     # than testing all shapes every time we test a random subset each time the
     # test runs. To further speed the tests, we build all convex polyhedra
-    # ahead of time. Each set of # random points is tested against a different
+    # ahead of time. Each set of random points is tested against a different
     # random polyhedron.
+    #
+    # Use a nested function to avoid warnings from hypothesis. While the shape
+    # does get modified inside the testfun, it's simply being recentered each
+    # time, which is not destructive since it can be overwritten in subsequent
+    # calls.
+    # See https://github.com/HypothesisWorks/hypothesis/issues/377
     import random
     shapes = [ConvexPolyhedron(s.vertices) for s in
               random.sample([s for s in SHAPES if len(s.vertices)],
@@ -355,7 +332,9 @@ def test_inside_boundaries(convex_cube):
 
 
 def test_inside(convex_cube):
-    # Use a nested function to reuse the convex cube.
+    # Use a nested function to avoid warnings from hypothesis. In this case, it
+    # is safe to reuse the convex cube.
+    # See https://github.com/HypothesisWorks/hypothesis/issues/377
     @given(arrays(np.float64, (100, 3), elements=floats(-10, 10, width=64),
                   unique=True))
     def testfun(test_points):
@@ -371,13 +350,8 @@ def test_inside(convex_cube):
        arrays(np.float64, (100, 3), elements=floats(0, 1, width=64),
               unique=True))
 def test_insphere_from_center_convex_hulls(points, test_points):
-    try:
-        hull = ConvexHull(points)
-    except QhullError:
-        assume(False)
-    else:
-        # Avoid cases where numerical imprecision make tests fail.
-        assume(hull.volume > 1e-6)
+    hull = get_valid_hull(points)
+    assume(hull)
     verts = points[hull.vertices]
     poly = ConvexPolyhedron(verts)
     center, radius = poly.insphere_from_center
@@ -390,3 +364,58 @@ def test_insphere_from_center_convex_hulls(points, test_points):
     points_in_poly = poly.is_inside(test_points)
     assert np.all(points_in_sphere <= points_in_poly)
     assert insphere.volume < poly.volume
+
+
+@given(arrays(np.float64, (4, 3), elements=floats(-10, 10, width=64),
+              unique=True))
+def test_rotate_inertia(points):
+    # Use the input as noise rather than the base points to avoid precision and
+    # degenerate cases provided by hypothesis.
+    tet = get_shape_by_name('Tetrahedron')
+    vertices = tet.vertices + points
+
+    rotation = rowan.random.rand()
+    shape = ConvexPolyhedron(vertices)
+    rotated_shape = ConvexPolyhedron(rowan.rotate(rotation, vertices))
+
+    mat = rowan.to_matrix(rotation)
+    rotated_inertia = rotate_order2_tensor(mat, shape.inertia_tensor)
+
+    assert np.allclose(rotated_inertia, rotated_shape.inertia_tensor)
+
+
+# Use a small range of translations to ensure that the Delaunay triangulation
+# used by the MC calculation will not break.
+@given(arrays(np.float64, (3, ), elements=floats(-0.2, 0.2, width=64),
+              unique=True))
+def test_translate_inertia(translation):
+    shape = get_shape_by_name('Cube')
+    # Choose a volume > 1 to test the volume scaling, but don't choose one
+    # that's too large because the uncentered polyhedral calculation has
+    # massive error without fixing that.
+    shape.volume = 2
+    shape.center = (0, 0, 0)
+
+    translated_shape = ConvexPolyhedron(shape.vertices + translation)
+
+    translated_inertia = translate_inertia_tensor(
+        translation, shape.inertia_tensor, shape.volume)
+    mc_tensor = compute_inertia_mc(translated_shape.vertices, 1e4)
+
+    assert np.allclose(translated_inertia,
+                       translated_shape._compute_inertia_tensor(False),
+                       atol=2e-1,
+                       rtol=2e-1)
+    assert np.allclose(mc_tensor,
+                       translated_shape._compute_inertia_tensor(False),
+                       atol=2e-1,
+                       rtol=2e-1)
+
+    assert np.allclose(mc_tensor,
+                       translated_inertia,
+                       atol=1e-2,
+                       rtol=1e-2)
+    assert np.allclose(mc_tensor,
+                       translated_shape.inertia_tensor,
+                       atol=1e-2,
+                       rtol=1e-2)
