@@ -64,16 +64,10 @@ def test_merge_facets(convex_cube):
               unique=True))
 def test_convex_volume(points):
     """Check the volumes of various convex sets."""
-    try:
-        hull = ConvexHull(points)
-    except QhullError:
-        assume(False)
-    else:
-        # Avoid cases where numerical imprecision make tests fail.
-        assume(hull.volume > 1e-6)
-    verts = points[hull.vertices]
-    poly = ConvexPolyhedron(verts)
+    hull = get_valid_hull(points)
+    assume(hull)
 
+    poly = ConvexPolyhedron(points[hull.vertices])
     assert np.isclose(hull.volume, poly.volume)
 
 
