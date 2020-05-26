@@ -75,13 +75,9 @@ def test_convex_volume(points):
               unique=True))
 def test_convex_surface_area(points):
     """Check the surface areas of various convex sets."""
-    try:
-        hull = ConvexHull(points)
-    except QhullError:
-        assume(False)
-    else:
-        # Avoid cases where numerical imprecision make tests fail.
-        assume(hull.area > 1e-4)
+    hull = get_valid_hull(points)
+    assume(hull)
+
     verts = points[hull.vertices]
     poly = ConvexPolyhedron(verts)
     assert np.isclose(hull.area, poly.surface_area)

@@ -10,6 +10,17 @@ from hypothesis.extra.numpy import arrays
 from conftest import get_valid_hull
 
 
+def polygon_from_hull(verts):
+    """Try to generate a polygon from a hull, and fail gracefully (in the
+    context of Hypothesis) if the hull is poorly formed."""
+    try:
+        poly = Polygon(verts)
+    except AssertionError:
+        # Don't worry about failures caused by bad hulls that cause failures
+        # for the simple polygon test.
+        assume(False)
+
+
 # Need to declare this outside the fixture so that it can be used in multiple
 # fixtures (pytest does not allow fixtures to be called).
 def get_square_points():
@@ -187,12 +198,7 @@ def test_reordering_convex(points):
     assume(hull)
 
     verts = points[hull.vertices]
-    try:
-        poly = Polygon(verts)
-    except AssertionError:
-        # Don't worry about failures caused by bad hulls that cause failures
-        # for the simple polygon test.
-        assume(False)
+    poly = polygon_from_hull(points[hull.vertices])
     assert np.all(poly.vertices[:, :2] == verts)
 
 
@@ -207,13 +213,7 @@ def test_convex_area(points):
     hull = get_valid_hull(points)
     assume(hull)
 
-    verts = points[hull.vertices]
-    try:
-        poly = Polygon(verts)
-    except AssertionError:
-        # Don't worry about failures caused by bad hulls that cause failures
-        # for the simple polygon test.
-        assume(False)
+    poly = polygon_from_hull(points[hull.vertices])
     assert np.isclose(hull.volume, poly.area)
 
 
@@ -237,8 +237,7 @@ def test_set_convex_area(points):
     hull = get_valid_hull(points)
     assume(hull)
 
-    verts = points[hull.vertices]
-    poly = Polygon(verts)
+    poly = polygon_from_hull(points[hull.vertices])
     original_area = poly.area
     poly.area *= 2
     assert np.isclose(poly.area, 2*original_area)
