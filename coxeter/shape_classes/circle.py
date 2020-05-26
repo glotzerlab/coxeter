@@ -10,7 +10,8 @@ class Circle(Shape2D):
             radius (float):
                 Radius of the circle.
             center (Sequence[float]):
-                The coordinates of the center of the circle.
+                The coordinates of the center of the circle (Default
+                value: (0, 0, 0)).
         """
         self._radius = radius
         self._center = np.asarray(center)
@@ -21,7 +22,7 @@ class Circle(Shape2D):
 
     @center.setter
     def center(self, value):
-        self.center = np.asarray(value)
+        self._center = np.asarray(value)
 
     @property
     def radius(self):
