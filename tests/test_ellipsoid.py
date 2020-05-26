@@ -3,6 +3,8 @@ import numpy as np
 from coxeter.shape_classes.ellipsoid import Ellipsoid
 from hypothesis import given
 from hypothesis.strategies import floats
+from hypothesis.extra.numpy import arrays
+from coxeter.shape_classes.utils import translate_inertia_tensor
 
 
 @given(floats(0.1, 1000), floats(0.1, 1000), floats(0.1, 1000))
@@ -57,14 +59,21 @@ def test_iq_symmetry(a, b, c):
     assert ellipsoid2.iq == pytest.approx(ellipsoid3.iq)
 
 
-@given(floats(0.1, 1000), floats(0.1, 1000), floats(0.1, 1000))
-def test_inertia_tensor(a, b, c):
-    ellipsoid = Ellipsoid(a, b, c)
+@given(floats(0.1, 1000), floats(0.1, 1000), floats(0.1, 1000),
+       arrays(np.float64, (3, ), elements=floats(-10, 10, width=64),
+              unique=True))
+def test_inertia_tensor(a, b, c, center):
+    # First just test a sphere.
+    ellipsoid = Ellipsoid(a, a, a)
     assert np.all(ellipsoid.inertia_tensor >= 0)
 
-    sphere = Ellipsoid(a, a, a)
-    expected = 2/5 * sphere.volume * a**2
-    np.testing.assert_allclose(np.diag(sphere.inertia_tensor), expected)
+    volume = ellipsoid.volume
+    expected = [2/5 * volume * a**2]*3
+    np.testing.assert_allclose(np.diag(ellipsoid.inertia_tensor), expected)
+
+    ellipsoid.center = center
+    expected = translate_inertia_tensor(center, np.diag(expected), volume)
+    np.testing.assert_allclose(ellipsoid.inertia_tensor, expected)
 
 
 @given(floats(0.1, 1000), floats(0.1, 1000), floats(0.1, 1000))
@@ -76,3 +85,13 @@ def test_is_inside(a, b, c):
     assert all(ellipsoid.is_inside(points_inside))
     assert all(ellipsoid.is_inside(points_inside/2))
     assert not any(ellipsoid.is_inside(points_inside*1.1))
+
+
+def test_center():
+    """Test getting and setting the center."""
+    ellipsoid = Ellipsoid(1, 2, 3)
+    assert all(ellipsoid.center == (0, 0, 0))
+
+    center = (1, 1, 1)
+    ellipsoid.center = center
+    assert all(ellipsoid.center == center)
