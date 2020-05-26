@@ -1,15 +1,28 @@
 import numpy as np
+from.base_classes import Shape2D
 
 
-class Circle(object):
-    def __init__(self, radius):
+class Circle(Shape2D):
+    def __init__(self, radius, center=(0, 0, 0)):
         """A circle with the given radius.
 
         Args:
             radius (float):
                 Radius of the circle.
+            center (Sequence[float]):
+                The coordinates of the center of the circle (Default
+                value: (0, 0, 0)).
         """
         self._radius = radius
+        self._center = np.asarray(center)
+
+    @property
+    def center(self):
+        return self._center
+
+    @center.setter
+    def center(self, value):
+        self._center = np.asarray(value)
 
     @property
     def radius(self):
@@ -53,7 +66,7 @@ class Circle(object):
         .. math::
             \begin{align}
                 I_x &= {\int \int}_A y^2 dA = \frac{\pi}{4} r^4 = \frac{Ar^2}{4} \\
-                I_y &= {\int \int}_A z^2 dA = \frac{\pi}{4} r^4 = \frac{Ar^2}{4}\\
+                I_y &= {\int \int}_A x^2 dA = \frac{\pi}{4} r^4 = \frac{Ar^2}{4}\\
                 I_{xy} &= {\int \int}_A xy dA = 0 \\
             \end{align}
 
@@ -63,6 +76,11 @@ class Circle(object):
         A = self.area
         Ix = Iy = A/4 * self.radius**2
         Ixy = 0
+
+        # Apply parallel axis theorem from the center
+        Ix += A*self.center[0]**2
+        Iy += A*self.center[1]**2
+        Ixy += A*self.center[0]*self.center[1]
         return Ix, Iy, Ixy
 
     @property

@@ -1,4 +1,5 @@
 from .circle import Circle
+from .base_classes import Shape, Shape2D, Shape3D
 from .convex_polygon import ConvexPolygon
 from .convex_polyhedron import ConvexPolyhedron
 from .convex_spheropolyhedron import ConvexSpheropolyhedron
@@ -18,6 +19,9 @@ __all__ = [
     'ConvexPolygon',
     'Polygon',
     'Polyhedron',
+    'Shape',
+    'Shape2D',
+    'Shape3D',
     'Sphere',
     'ConvexSpheropolygon',
 ]

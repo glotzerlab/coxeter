@@ -1,15 +1,29 @@
 import numpy as np
+from .utils import translate_inertia_tensor
+from.base_classes import Shape3D
 
 
-class Sphere(object):
-    def __init__(self, radius):
+class Sphere(Shape3D):
+    def __init__(self, radius, center=(0, 0, 0)):
         """A sphere with the given radius.
 
         Args:
             radius (float):
                 Radius of the sphere.
+            center (Sequence[float]):
+                The coordinates of the center of the circle (Default
+                value: (0, 0, 0)).
         """
         self._radius = radius
+        self._center = np.asarray(center)
+
+    @property
+    def center(self):
+        return self._center
+
+    @center.setter
+    def center(self, value):
+        self._center = np.asarray(value)
 
     @property
     def radius(self):
@@ -35,7 +49,9 @@ class Sphere(object):
         """float: Get the inertia tensor. Assumes constant density of 1."""
         V = self.volume
         Ixx = V * 2/5 * self.radius**2
-        return np.diag([Ixx, Ixx, Ixx])
+        inertia_tensor = np.diag([Ixx, Ixx, Ixx])
+        return translate_inertia_tensor(
+            self.center, inertia_tensor, self.volume)
 
     @property
     def iq(self):

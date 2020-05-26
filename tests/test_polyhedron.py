@@ -3,7 +3,6 @@ import numpy as np
 from coxeter.shape_classes.convex_polyhedron import ConvexPolyhedron
 from coxeter.shape_classes.sphere import Sphere
 from scipy.spatial import ConvexHull
-from scipy.spatial.qhull import QhullError
 from hypothesis import given, assume
 from hypothesis.strategies import floats, integers
 from hypothesis.extra.numpy import arrays
@@ -16,6 +15,24 @@ from coxeter.damasceno import get_shape_by_name
 from coxeter.shape_classes.utils import (translate_inertia_tensor,
                                          rotate_order2_tensor)
 from conftest import get_valid_hull
+
+
+def polyhedron_from_hull(verts):
+    """Try to generate a polyhedron from a hull, and fail gracefully (in the
+    context of Hypothesis) if the hull is nearly degenerate."""
+    try:
+        poly = ConvexPolyhedron(verts)
+    except ValueError as e:
+        # Don't worry about failures caused by bad hulls.
+        allowed_errors = [
+            'The provided vertices do not form a convex polygon.',
+            'Not all vertices are coplanar.'
+        ]
+        if any([ae in str(e) for ae in allowed_errors]):
+            return False
+        else:
+            raise e
+    return poly
 
 
 def platonic_solids():
@@ -64,16 +81,11 @@ def test_merge_facets(convex_cube):
               unique=True))
 def test_convex_volume(points):
     """Check the volumes of various convex sets."""
-    try:
-        hull = ConvexHull(points)
-    except QhullError:
-        assume(False)
-    else:
-        # Avoid cases where numerical imprecision make tests fail.
-        assume(hull.volume > 1e-6)
-    verts = points[hull.vertices]
-    poly = ConvexPolyhedron(verts)
+    hull = get_valid_hull(points)
+    assume(hull)
 
+    poly = polyhedron_from_hull(points[hull.vertices])
+    assume(poly)
     assert np.isclose(hull.volume, poly.volume)
 
 
@@ -81,15 +93,11 @@ def test_convex_volume(points):
               unique=True))
 def test_convex_surface_area(points):
     """Check the surface areas of various convex sets."""
-    try:
-        hull = ConvexHull(points)
-    except QhullError:
-        assume(False)
-    else:
-        # Avoid cases where numerical imprecision make tests fail.
-        assume(hull.area > 1e-4)
-    verts = points[hull.vertices]
-    poly = ConvexPolyhedron(verts)
+    hull = get_valid_hull(points)
+    assume(hull)
+
+    poly = polyhedron_from_hull(points[hull.vertices])
+    assume(poly)
     assert np.isclose(hull.area, poly.surface_area)
 
 

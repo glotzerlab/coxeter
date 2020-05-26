@@ -3,6 +3,7 @@ import rowan
 from ..polytri import polytri
 from ..bentley_ottman import poly_point_isect
 from .utils import translate_inertia_tensor, rotate_order2_tensor
+from .base_classes import Shape2D
 
 try:
     import miniball
@@ -48,7 +49,7 @@ def _is_simple(vertices):
     return len(poly_point_isect.isect_polygon(vertices)) == 0
 
 
-class Polygon(object):
+class Polygon(Shape2D):
     def __init__(self, vertices, normal=None, planar_tolerance=1e-5,
                  test_simple=True):
         """A simple (i.e. non-self-overlapping) polygon.

@@ -1,9 +1,10 @@
 import numpy as np
 from scipy.special import ellipe
+from.base_classes import Shape2D
 
 
-class Ellipse(object):
-    def __init__(self, a, b):
+class Ellipse(Shape2D):
+    def __init__(self, a, b, center=(0, 0, 0)):
         """An ellipse with principal axes a and b.
 
         Args:
@@ -11,9 +12,21 @@ class Ellipse(object):
                 Principal axis a of the ellipse (radius in the x direction).
             b (float):
                 Principal axis b of the ellipse (radius in the y direction).
+            center (Sequence[float]):
+                The coordinates of the center of the ellipse (Default
+                value: (0, 0, 0)).
         """
         self._a = a
         self._b = b
+        self._center = np.asarray(center)
+
+    @property
+    def center(self):
+        return self._center
+
+    @center.setter
+    def center(self, value):
+        self._center = np.asarray(value)
 
     @property
     def a(self):
@@ -85,6 +98,11 @@ class Ellipse(object):
         Ix = A/4 * self.b**2
         Iy = A/4 * self.a**2
         Ixy = 0
+
+        # Apply parallel axis theorem from the center
+        Ix += A*self.center[0]**2
+        Iy += A*self.center[1]**2
+        Ixy += A*self.center[0]*self.center[1]
         return Ix, Iy, Ixy
 
     @property

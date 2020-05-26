@@ -3,6 +3,7 @@ import numpy as np
 from coxeter.shape_classes.ellipse import Ellipse
 from hypothesis import given
 from hypothesis.strategies import floats
+from hypothesis.extra.numpy import arrays
 
 
 @given(floats(0.1, 1000), floats(0.1, 1000))
@@ -48,12 +49,30 @@ def test_eccentricity_ratio(a, k):
     assert ellipse.eccentricity == pytest.approx(expected)
 
 
-@given(floats(0.1, 1000), floats(0.1, 1000))
-def test_inertia_tensor(a, b):
+@given(floats(0.1, 1000), floats(0.1, 1000),
+       arrays(np.float64, (3, ), elements=floats(-10, 10, width=64),
+              unique=True))
+def test_inertia_tensor(a, b, center):
     ellipse = Ellipse(a, b)
     assert np.all(np.asarray(ellipse.planar_moments_inertia) >= 0)
 
-    expected = [np.pi / 4 * a * b**3, np.pi / 4 * a**3 * b]
-    np.testing.assert_allclose(ellipse.planar_moments_inertia[:2], expected)
-    np.testing.assert_allclose(ellipse.planar_moments_inertia[2], 0)
-    assert ellipse.polar_moment_inertia == pytest.approx(sum(expected))
+    ellipse.center = center
+    area = ellipse.area
+    expected = [np.pi / 4 * a * b**3, np.pi / 4 * a**3 * b, 0]
+    expected[0] += area*center[0]**2
+    expected[1] += area*center[1]**2
+    expected[2] = area*center[0]*center[1]
+    np.testing.assert_allclose(ellipse.planar_moments_inertia[:2],
+                               expected[:2])
+    np.testing.assert_allclose(ellipse.planar_moments_inertia[2], expected[2])
+    assert ellipse.polar_moment_inertia == pytest.approx(sum(expected[:2]))
+
+
+def test_center():
+    """Test getting and setting the center."""
+    ellipse = Ellipse(1, 2)
+    assert all(ellipse.center == (0, 0, 0))
+
+    center = (1, 1, 1)
+    ellipse.center = center
+    assert all(ellipse.center == center)

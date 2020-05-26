@@ -1,9 +1,11 @@
 import numpy as np
 from scipy.special import ellipkinc, ellipeinc
+from .utils import translate_inertia_tensor
+from.base_classes import Shape3D
 
 
-class Ellipsoid(object):
-    def __init__(self, a, b, c):
+class Ellipsoid(Shape3D):
+    def __init__(self, a, b, c, center=(0, 0, 0)):
         """An ellipsoid with principal axes a, b, and c.
 
         Args:
@@ -13,10 +15,22 @@ class Ellipsoid(object):
                 Principal axis b of the ellipsoid (radius in the y direction).
             c (float):
                 Principal axis c of the ellipsoid (radius in the z direction).
+            center (Sequence[float]):
+                The coordinates of the center of the circle (Default
+                value: (0, 0, 0)).
         """
         self._a = a
         self._b = b
         self._c = c
+        self._center = np.asarray(center)
+
+    @property
+    def center(self):
+        return self._center
+
+    @center.setter
+    def center(self, value):
+        self._center = np.asarray(value)
 
     @property
     def a(self):
@@ -76,7 +90,9 @@ class Ellipsoid(object):
         Ixx = V/5 * (self.b**2 + self.c**2)
         Iyy = V/5 * (self.a**2 + self.c**2)
         Izz = V/5 * (self.a**2 + self.b**2)
-        return np.diag([Ixx, Iyy, Izz])
+        inertia_tensor = np.diag([Ixx, Iyy, Izz])
+        return translate_inertia_tensor(
+            self.center, inertia_tensor, self.volume)
 
     @property
     def iq(self):

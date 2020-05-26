@@ -5,6 +5,7 @@ from .convex_polygon import _is_convex
 from .utils import translate_inertia_tensor
 from scipy.sparse.csgraph import connected_components
 import rowan
+from .base_classes import Shape3D
 
 try:
     import miniball
@@ -27,7 +28,7 @@ def _facet_to_edges(facet, reverse=False):
     return list(zip(*np.stack((facet, np.roll(facet, shift)))))
 
 
-class Polyhedron(object):
+class Polyhedron(Shape3D):
     def __init__(self, vertices, facets, facets_are_convex=None):
         """A three-dimensional polytope.
 
