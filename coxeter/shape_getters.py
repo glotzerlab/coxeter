@@ -14,34 +14,31 @@ def from_gsd_type_shapes(params, ndim=3):  # noqa: C901
 
     See `here <https://gsd.readthedocs.io/en/stable/shapes.html>`_ for the
     specification of the schema. Note that the schema does not differentiate
-    between 2D and 3D shapes for Spheres and Ellipsoids because in context
-    those can be inferred from simulation boxes. To address this ambiguity,
-    this function accepts an ndim parameter that can be used to disambiguate
-    explicitly between these two cases.
+    between 2D and 3D shapes for Spheres because in context those can be
+    inferred from simulation boxes. To address this ambiguity, this function
+    accepts an ndim parameter that can be used to disambiguate explicitly
+    between these two cases.
 
     Args:
         params (dict):
             The parameters of the shape to construct.
         ndim (int):
             The dimensionality of the shape (either 2 or 3). Ignored except
-            when the shape is a sphere or an ellipsoid, in which case a value
-            of 2 is used to indicate generating a
-            :class:`~.shape_classes.Circle` or :class:`~.shape_classes.Ellipse`
-            instead (Default value: 3).
+            when the shape is a sphere, in which case a value of 2 is used to
+            indicate generating a :class:`~.shape_classes.Circle` instead of a
+            :class:`~.shape_classes.Sphere` (Default value: 3).
     """
     if 'type' not in params:
         raise ValueError("The parameters are malformed, there must be a type "
                          "key indicating what type of shape this is.")
-    elif ndim not in (2, 3):
-        raise ValueError("The number of dimensions must be 2 or 3.")
 
     if params['type'] == 'Sphere':
-        if ndim == 3:
-            return Sphere(params['diameter']/2)
-        else:
+        if ndim == 2:
             return Circle(params['diameter']/2)
+        else:
+            return Sphere(params['diameter']/2)
     elif params['type'] == 'Ellipsoid':
-        if ndim == 3:
+        if 'c' in params:
             return Ellipsoid(params['a'], params['b'], params['c'])
         else:
             return Ellipse(params['a'], params['b'])

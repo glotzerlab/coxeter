@@ -20,7 +20,7 @@ def get_cube_points():
                        [1, 0, 1]])
 
 
-def get_oriented_cube_facets():
+def get_oriented_cube_faces():
     return np.array([[0, 1, 2, 3],  # Bottom face
                      [4, 7, 6, 5],  # Top face
                      [0, 3, 7, 4],  # Left face
@@ -54,17 +54,17 @@ def convex_cube():
 
 @pytest.fixture
 def oriented_cube():
-    return Polyhedron(get_cube_points(), get_oriented_cube_facets())
+    return Polyhedron(get_cube_points(), get_oriented_cube_faces())
 
 
 @pytest.fixture
 def unoriented_cube():
-    """A cube with the facets disordered (but still provided)."""
-    facets = get_oriented_cube_facets()
-    for facet in facets:
-        np.random.shuffle(facet)
-    poly = Polyhedron(get_cube_points(), facets, facets_are_convex=True)
-    poly.sort_facets()
+    """A cube with the faces disordered (but still provided)."""
+    faces = get_oriented_cube_faces()
+    for face in faces:
+        np.random.shuffle(face)
+    poly = Polyhedron(get_cube_points(), faces, faces_are_convex=True)
+    poly.sort_faces()
     return poly
 
 

@@ -192,6 +192,13 @@ class Polygon(Shape2D):
         self._vertices = self._vertices[vert_order, :]
 
     @property
+    def gsd_shape_spec(self):
+        """dict: A complete description of this shape corresponding to the
+        shape specification in the GSD file format as described
+        `here <https://gsd.readthedocs.io/en/stable/shapes.html>`_."""
+        return {'type': 'Polygon', 'vertices': self._vertices.tolist()}
+
+    @property
     def normal(self):
         """The normal vector."""
         return self._normal

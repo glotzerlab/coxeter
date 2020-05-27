@@ -208,19 +208,19 @@ class FTpolyhedron(_FTbase):
                 if k_sq == 0:
                     f = self.volume
                 else:
-                    for facet_id, facet in enumerate(self.facets):
-                        norm = self.norms[facet_id]
+                    for face_id, face in enumerate(self.faces):
+                        norm = self.norms[face_id]
                         k_dot_norm = np.dot(norm, k)
                         k_projected = k - k_dot_norm * norm
                         k_projected_sq = np.dot(k_projected, k_projected)
                         f_2D = 0
                         if k_projected_sq == 0:
-                            f_2D = self.areas[facet_id]
+                            f_2D = self.areas[face_id]
                         else:
-                            n_verts = len(facet)
+                            n_verts = len(face)
                             for edge_id in range(n_verts):
-                                r0 = self.verts[facet[edge_id]]
-                                r1 = self.verts[facet[(edge_id + 1) % n_verts]]
+                                r0 = self.verts[face[edge_id]]
+                                r1 = self.verts[face[(edge_id + 1) % n_verts]]
                                 edge_vec = r1 - r0
                                 edge_center = 0.5 * (r0 + r1)
                                 edge_cross_k = np.cross(edge_vec, k_projected)
@@ -231,29 +231,29 @@ class FTpolyhedron(_FTbase):
                                     np.sinc(0.5 * k_dot_edge / np.pi) / \
                                     k_projected_sq
                                 f_2D -= f_n * 1j * np.exp(-1j * k_dot_center)
-                        d = self.d[facet_id]
+                        d = self.d[face_id]
                         exp_kr = np.exp(-1j * k_dot_norm * d)
                         f += k_dot_norm * (1j * f_2D * exp_kr)
-                    # end loop over facets
+                    # end loop over faces
                     f /= k_sq
                 # end if/else, f is now calculated
                 # S += rho * f * exp(-i k r)
                 self.S[i] += self.density * f * \
                     np.exp(-1j * np.dot(k, rowan.rotate(rowan.inverse(q), r)))
 
-    def set_params(self, verts, facets, norms, d, areas, volume):
+    def set_params(self, verts, faces, norms, d, areas, volume):
         """Set polyhedron geometry.
 
         Args:
             verts ((:math:`N_{particles}`, 3) :class:`numpy.ndarray`):
                 Vertex coordinates.
-            facets ((:math:`N_{facets}`, 3) :class:`numpy.ndarray`):
+            faces ((:math:`N_{faces}`, 3) :class:`numpy.ndarray`):
                 Facet vertex indices.
-            norms ((:math:`N_{facets}`, 3) :class:`numpy.ndarray`):
+            norms ((:math:`N_{faces}`, 3) :class:`numpy.ndarray`):
                 Facet normals.
-            d ((:math:`N_{facets}`) :class:`numpy.ndarray`):
+            d ((:math:`N_{faces}`) :class:`numpy.ndarray`):
                 Facet distances.
-            area ((:math:`N_{facets}`) :class:`numpy.ndarray`):
+            area ((:math:`N_{faces}`) :class:`numpy.ndarray`):
                 Facet areas.
             volume (:class:`numpy.float64`):
                 Polyhedron volume.
@@ -262,13 +262,13 @@ class FTpolyhedron(_FTbase):
         if verts.shape[1] != 3:
             raise TypeError('verts should be an Nx3 array')
 
-        facet_offs = np.zeros((len(facets) + 1), dtype=np.uint32)
-        for i, f in enumerate(facets):
-            facet_offs[i + 1] = facet_offs[i] + len(f)
+        face_offs = np.zeros((len(faces) + 1), dtype=np.uint32)
+        for i, f in enumerate(faces):
+            face_offs[i + 1] = face_offs[i] + len(f)
 
-        facet_offs = np.asarray(facet_offs)
+        face_offs = np.asarray(face_offs)
 
-        facets = np.asarray(facets)
+        faces = np.asarray(faces)
 
         norms = np.asarray(norms)
         if norms.shape[1] != 3:
@@ -278,21 +278,21 @@ class FTpolyhedron(_FTbase):
 
         areas = np.asarray(areas)
 
-        if norms.shape[0] != facet_offs.shape[0] - 1:
+        if norms.shape[0] != face_offs.shape[0] - 1:
             raise RuntimeError(
-                ('Length of norms should be equal to number of facet offsets'
+                ('Length of norms should be equal to number of face offsets'
                     '- 1'))
-        if d.shape[0] != facet_offs.shape[0] - 1:
+        if d.shape[0] != face_offs.shape[0] - 1:
             raise RuntimeError(
-                ('Length of facet distances should be equal to number of facet'
+                ('Length of face distances should be equal to number of face'
                     'offsets - 1'))
-        if areas.shape[0] != facet_offs.shape[0] - 1:
+        if areas.shape[0] != face_offs.shape[0] - 1:
             raise RuntimeError(
-                ('Length of areas should be equal to number of facet offsets'
+                ('Length of areas should be equal to number of face offsets'
                     '- 1'))
         self.verts = verts
-        self.facet_offs = facet_offs
-        self.facets = facets
+        self.face_offs = face_offs
+        self.faces = faces
         self.norms = norms
         self.d = d
         self.areas = areas
@@ -313,13 +313,13 @@ class FTconvexPolyhedron(FTpolyhedron):
 
         # set convex hull geometry
         verts = self.hull.vertices * self.scale
-        facets = self.hull.facets
+        faces = self.hull.faces
         norms = self.hull._equations[:, 0:3]
         d = -self.hull._equations[:, 3] * self.scale
-        areas = [self.hull.get_facet_area(i) * self.scale**2.0
-                 for i in range(len(facets))]
+        areas = [self.hull.get_face_area(i) * self.scale**2.0
+                 for i in range(len(faces))]
         volume = self.hull.volume * self.scale**3.0
-        self.set_params(verts, facets, norms, d, areas, volume)
+        self.set_params(verts, faces, norms, d, areas, volume)
 
     def set_radius(self, radius):
         """Set radius of in-sphere.
@@ -359,7 +359,7 @@ class FTconvexPolyhedron(FTpolyhedron):
         else:
             S = 0.0
             nverts = self.hull.nverts[i]
-            verts = list(self.hull.facets[i, 0:nverts])
+            verts = list(self.hull.faces[i, 0:nverts])
             # apply periodic boundary condition for convenience
             verts.append(verts[0])
             points = self.hull.points * self.scale
@@ -390,7 +390,7 @@ class FTconvexPolyhedron(FTpolyhedron):
         else:
             S = 0.0
             # for face in faces
-            for i in range(self.hull.nfacets):
+            for i in range(self.hull.nfaces):
                 # need to project k into plane of face
                 ni = self.hull.equations[i, 0:3]
                 di = - self.hull.equations[i, 3] * self.scale

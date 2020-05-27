@@ -8,7 +8,7 @@ from hypothesis.strategies import floats, integers
 from hypothesis.extra.numpy import arrays
 from coxeter.damasceno import SHAPES
 import os
-from conftest import get_oriented_cube_facets, get_oriented_cube_normals
+from conftest import get_oriented_cube_faces, get_oriented_cube_normals
 from utils import compute_inertia_mc
 import rowan
 from coxeter.damasceno import get_shape_by_name
@@ -72,9 +72,9 @@ def test_set_volume(cube):
     assert np.isclose(cube.volume, 2)
 
 
-def test_merge_facets(convex_cube):
-    """Test that coplanar facets can be correctly merged."""
-    assert len(convex_cube.facets) == 6
+def test_merge_faces(convex_cube):
+    """Test that coplanar faces can be correctly merged."""
+    assert len(convex_cube.faces) == 6
 
 
 @given(arrays(np.float64, (5, 3), elements=floats(-10, 10, width=64),
@@ -117,22 +117,22 @@ def test_volume_center_shift(cube):
     testfun()
 
 
-def test_facet_alignment(convex_cube):
-    """Make sure that facets are constructed correctly given vertices."""
-    def facet_to_string(facet):
+def test_face_alignment(convex_cube):
+    """Make sure that faces are constructed correctly given vertices."""
+    def face_to_string(face):
         # Convenience function to create a string of vertex ids, which is the
         # easiest way to test for sequences that are cyclically equal.
-        return ''.join([str(c) for c in facet])
+        return ''.join([str(c) for c in face])
 
-    reference_facets = []
-    for facet in get_oriented_cube_facets():
-        reference_facets.append(facet_to_string(facet)*2)
+    reference_faces = []
+    for face in get_oriented_cube_faces():
+        reference_faces.append(face_to_string(face)*2)
 
-    assert len(convex_cube.facets) == len(reference_facets)
+    assert len(convex_cube.faces) == len(reference_faces)
 
-    for facet in convex_cube.facets:
-        str_facet = facet_to_string(facet)
-        assert any([str_facet in ref for ref in reference_facets])
+    for face in convex_cube.faces:
+        str_face = face_to_string(face)
+        assert any([str_face in ref for ref in reference_faces])
 
 
 @pytest.mark.parametrize('cube',
@@ -216,9 +216,9 @@ def test_dihedrals():
     for name, dihedral in known_shapes.items():
         poly = get_shape_by_name(name)
         # The dodecahedron in SHAPES needs a slightly more expansive merge
-        # to get all the facets joined.
-        poly.merge_facets(rtol=1e-4)
-        for i in range(poly.num_facets):
+        # to get all the faces joined.
+        poly.merge_faces(rtol=1e-4)
+        for i in range(poly.num_faces):
             for j in poly.neighbors[i]:
                 assert np.isclose(poly.get_dihedral(i, j), dihedral)
 

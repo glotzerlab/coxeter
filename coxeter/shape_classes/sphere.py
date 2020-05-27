@@ -18,6 +18,13 @@ class Sphere(Shape3D):
         self._center = np.asarray(center)
 
     @property
+    def gsd_shape_spec(self):
+        """dict: A complete description of this shape corresponding to the
+        shape specification in the GSD file format as described
+        `here <https://gsd.readthedocs.io/en/stable/shapes.html>`_."""
+        return {'type': 'Sphere', 'diameter': 2*self._radius}
+
+    @property
     def center(self):
         return self._center
 

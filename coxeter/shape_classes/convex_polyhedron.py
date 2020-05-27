@@ -9,7 +9,7 @@ class ConvexPolyhedron(Polyhedron):
 
         A convex polyhedron is defined as the convex hull of its vertices. The
         class is a simple extension of :class:`~.Polyhedron` that builds the
-        facets from the simplices of the convex hull. This class also includes
+        faces from the simplices of the convex hull. This class also includes
         various additional properties that can be used to characterize the
         geometric features of the polyhedron.
 
@@ -19,7 +19,7 @@ class ConvexPolyhedron(Polyhedron):
         """
         hull = ConvexHull(vertices)
         super(ConvexPolyhedron, self).__init__(vertices, hull.simplices, True)
-        self.merge_facets()
+        self.merge_faces()
 
     @property
     def mean_curvature(self):
@@ -29,12 +29,20 @@ class ConvexPolyhedron(Polyhedron):
         for more information).
         """
         R = 0
-        for i, j, edge in self._get_facet_intersections():
+        for i, j, edge in self._get_face_intersections():
             phi = self.get_dihedral(i, j)
             edge_vector = self.vertices[edge[0]] - self.vertices[edge[1]]
             edge_length = np.linalg.norm(edge_vector)
             R += edge_length * (np.pi - phi)
         return R / (8 * np.pi)
+
+    @property
+    def gsd_shape_spec(self):
+        """dict: A complete description of this shape corresponding to the
+        shape specification in the GSD file format as described
+        `here <https://gsd.readthedocs.io/en/stable/shapes.html>`_."""
+        return {'type': 'ConvexPolyhedron',
+                'vertices': self._vertices.tolist()}
 
     @property
     def tau(self):

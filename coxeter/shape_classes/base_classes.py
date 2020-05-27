@@ -15,6 +15,13 @@ class Shape(ABC):
     def center(self, value):
         pass
 
+    @property
+    def gsd_shape_spec(self):
+        """dict: A complete description of this shape corresponding to the
+        shape specification in the GSD file format as described
+        `here <https://gsd.readthedocs.io/en/stable/shapes.html>`_."""
+        return {}
+
 
 class Shape2D(Shape):
     """An abstract representation of a shape in 2 dimensions."""
