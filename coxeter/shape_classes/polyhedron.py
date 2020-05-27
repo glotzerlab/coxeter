@@ -14,31 +14,31 @@ except ImportError:
     MINIBALL = False
 
 
-def _facet_to_edges(facet, reverse=False):
-    """Convert a facet (a sequence of vertices) into a sequence of edges
+def _face_to_edges(face, reverse=False):
+    """Convert a face (a sequence of vertices) into a sequence of edges
     (tuples).
 
     Args:
-        facet (array-like):
-            A facet composed of vertex indices.
+        face (array-like):
+            A face composed of vertex indices.
         reverse (bool):
             Whether to return the edges in reverse.
     """
     shift = 1 if reverse else -1
-    return list(zip(*np.stack((facet, np.roll(facet, shift)))))
+    return list(zip(*np.stack((face, np.roll(face, shift)))))
 
 
 class Polyhedron(Shape3D):
-    def __init__(self, vertices, facets, facets_are_convex=None):
+    def __init__(self, vertices, faces, faces_are_convex=None):
         """A three-dimensional polytope.
 
-        A polyhedron is defined by a set of vertices and a set of facets
-        composed of the vertices. On construction, the facets are reordered
+        A polyhedron is defined by a set of vertices and a set of faces
+        composed of the vertices. On construction, the faces are reordered
         counterclockwise with respect to an outward normal. The polyhedron
         provides various standard geometric calculations, such as volume and
         surface area. Most features of the polyhedron can be accessed via
-        properties, including the plane equations defining the facets and the
-        neighbors of each facet.
+        properties, including the plane equations defining the faces and the
+        neighbors of each face.
 
         .. note::
 
@@ -48,56 +48,56 @@ class Polyhedron(Shape3D):
         Args:
             vertices (:math:`(N, 3)` :class:`numpy.ndarray`):
                 The vertices of the polyhedron.
-            facets (list(list)):
-                The facets of the polyhedron.
-            facets_are_convex (bool):
-                Whether or not the facets of the polyhedron are all convex.
+            faces (list(list)):
+                The faces of the polyhedron.
+            faces_are_convex (bool):
+                Whether or not the faces of the polyhedron are all convex.
                 This is used to determine whether certain operations like
-                coplanar facet merging are allowed (Default value: False).
+                coplanar face merging are allowed (Default value: False).
         """
         self._vertices = np.array(vertices, dtype=np.float64)
-        self._facets = [facet for facet in facets]
-        if facets_are_convex is None:
-            facets_are_convex = all(len(facet) == 3 for facet in facets)
-        self._facets_are_convex = facets_are_convex
+        self._faces = [face for face in faces]
+        if faces_are_convex is None:
+            faces_are_convex = all(len(face) == 3 for face in faces)
+        self._faces_are_convex = faces_are_convex
         self._find_equations()
         self._find_neighbors()
 
     def _find_equations(self):
-        """Find the plane equations of the polyhedron facets."""
-        self._equations = np.empty((len(self.facets), 4))
-        for i, facet in enumerate(self.facets):
+        """Find the plane equations of the polyhedron faces."""
+        self._equations = np.empty((len(self.faces), 4))
+        for i, face in enumerate(self.faces):
             # The direction of the normal is selected such that vertices that
             # are already ordered counterclockwise will point outward.
             normal = np.cross(
-                self.vertices[facet[2]] - self.vertices[facet[1]],
-                self.vertices[facet[0]] - self.vertices[facet[1]])
+                self.vertices[face[2]] - self.vertices[face[1]],
+                self.vertices[face[0]] - self.vertices[face[1]])
             normal /= np.linalg.norm(normal)
             self._equations[i, :3] = normal
             # Sign conventions chosen to match scipy.spatial.ConvexHull
             # We use ax + by + cz + d = 0 (not ax + by + cz = d)
-            self._equations[i, 3] = -normal.dot(self.vertices[facet[0]])
+            self._equations[i, 3] = -normal.dot(self.vertices[face[0]])
 
     def _find_neighbors(self):
-        """Find neighbors of facets."""
-        self._neighbors = [[] for _ in range(self.num_facets)]
-        for i, j, _ in self._get_facet_intersections():
+        """Find neighbors of faces."""
+        self._neighbors = [[] for _ in range(self.num_faces)]
+        for i, j, _ in self._get_face_intersections():
             self._neighbors[i].append(j)
             self._neighbors[j].append(i)
         self._neighbors = [np.array(neigh) for neigh in self._neighbors]
 
-    def _get_facet_intersections(self):
-        """A generator that yields tuples of the form (facet, neighbor,
-        (vertex1, vertex2)) indicating neighboring facets and their common
+    def _get_face_intersections(self):
+        """A generator that yields tuples of the form (face, neighbor,
+        (vertex1, vertex2)) indicating neighboring faces and their common
         edge."""
         # First enumerate all edges of each neighbor. We include both
         # directions of the edges for comparison.
-        facet_edges = [set(_facet_to_edges(f) +
-                           _facet_to_edges(f, True)) for f in self.facets]
+        face_edges = [set(_face_to_edges(f) +
+                          _face_to_edges(f, True)) for f in self.faces]
 
-        for i in range(self.num_facets):
-            for j in range(i+1, self.num_facets):
-                common_edges = facet_edges[i].intersection(facet_edges[j])
+        for i in range(self.num_faces):
+            for j in range(i+1, self.num_faces):
+                common_edges = face_edges[i].intersection(face_edges[j])
                 if len(common_edges) > 0:
                     # Can never have multiple intersections, but we should have
                     # the same edge show up twice (forward and reverse).
@@ -105,15 +105,25 @@ class Polyhedron(Shape3D):
                     common_edge = list(common_edges)[0]
                     yield (i, j, (common_edge[0], common_edge[1]))
 
-    def merge_facets(self, atol=1e-8, rtol=1e-5):
-        """Merge coplanar facets to a given tolerance.
+    @property
+    def gsd_shape_spec(self):
+        """dict: A complete description of this shape corresponding to the
+        shape specification in the GSD file format as described
+        `here <https://gsd.readthedocs.io/en/stable/shapes.html>`_."""
+        return {'type': 'Mesh',
+                'vertices': self._vertices.tolist(),
+                'faces': self._faces,
+                }
 
-        Whether or not facets should be merged is determined using
+    def merge_faces(self, atol=1e-8, rtol=1e-5):
+        """Merge coplanar faces to a given tolerance.
+
+        Whether or not faces should be merged is determined using
         :func:`numpy.allclose` to compare the plane equations of neighboring
-        facets. Connected components of mergeable facets are then merged into
-        a single facet.  This method can be safely called many times with
+        faces. Connected components of mergeable faces are then merged into
+        a single face.  This method can be safely called many times with
         different tolerances, however, the operation is destructive in the
-        sense that merged facets cannot be recovered. Users wishing to undo a
+        sense that merged faces cannot be recovered. Users wishing to undo a
         merge to attempt a less expansive merge must build a new polyhedron.
 
         Args:
@@ -122,17 +132,17 @@ class Polyhedron(Shape3D):
             rtol (float):
                 Relative tolerance for :func:`numpy.allclose`.
         """
-        if not self._facets_are_convex:
-            # Can only sort facets if they are guaranteed to be convex.
+        if not self._faces_are_convex:
+            # Can only sort faces if they are guaranteed to be convex.
             raise ValueError(
                 "Faces cannot be merged unless they are convex because the "
-                "correct ordering of vertices in a facet cannot be determined "
+                "correct ordering of vertices in a face cannot be determined "
                 "for nonconvex faces.")
 
         # Construct a graph where connectivity indicates merging, then identify
         # connected components to merge.
-        merge_graph = np.zeros((self.num_facets, self.num_facets))
-        for i in range(self.num_facets):
+        merge_graph = np.zeros((self.num_faces, self.num_faces))
+        for i in range(self.num_faces):
             for j in self._neighbors[i]:
                 eq1, eq2 = self._equations[[i, j]]
                 if np.allclose(eq1, eq2, atol=atol, rtol=rtol) or \
@@ -141,25 +151,25 @@ class Polyhedron(Shape3D):
 
         _, labels = connected_components(merge_graph, directed=False,
                                          return_labels=True)
-        new_facets = [set() for _ in range(len(np.unique(labels)))]
-        for i, facet in enumerate(self.facets):
-            new_facets[labels[i]].update(facet)
+        new_faces = [set() for _ in range(len(np.unique(labels)))]
+        for i, face in enumerate(self.faces):
+            new_faces[labels[i]].update(face)
 
-        self._facets = [np.asarray(list(f)) for f in new_facets]
-        self.sort_facets()
+        self._faces = [np.asarray(list(f)) for f in new_faces]
+        self.sort_faces()
 
     @property
     def neighbors(self):
         """list(:class:`numpy.ndarray`): A list where the
-        :math:`i^{\\text{th}}` element is an array of indices of facets that
-        are neighbors of facet :math:`i`.
+        :math:`i^{\\text{th}}` element is an array of indices of faces that
+        are neighbors of face :math:`i`.
         """
         return self._neighbors
 
     @property
     def normals(self):
         """:math:`(N, 3)` :class:`numpy.ndarray`: The normal vectors to each
-        facet."""
+        face."""
         return self._equations[:, :3]
 
     @property
@@ -168,85 +178,85 @@ class Polyhedron(Shape3D):
         return self.vertices.shape[0]
 
     @property
-    def num_facets(self):
-        """int: The number of facets."""
-        return len(self.facets)
+    def num_faces(self):
+        """int: The number of faces."""
+        return len(self.faces)
 
-    def sort_facets(self):
-        """Ensure that all facets are ordered such that the normals are
+    def sort_faces(self):  # noqa: C901
+        """Ensure that all faces are ordered such that the normals are
         counterclockwise and point outwards.
 
         This algorithm proceeds in four steps. First, it ensures that each
-        facet is ordered in either clockwise or counterclockwise order such
+        face is ordered in either clockwise or counterclockwise order such
         that edges can be found from the sequence of the vertices in each
-        facet. Next, it calls the neighbor finding routine to establish with
-        facets are neighbors. Then, it performs a breadth-first search,
-        reorienting facets to match the orientation of the first facet.
+        face. Next, it calls the neighbor finding routine to establish with
+        faces are neighbors. Then, it performs a breadth-first search,
+        reorienting faces to match the orientation of the first face.
         Finally, it computes the signed volume to determine whether or not all
         the normals need to be flipped.
 
         .. note::
             This method can only be called for polyhedra whose faces are all
-            convex (i.e. constructed with ``facets_are_convex=True``).
+            convex (i.e. constructed with ``faces_are_convex=True``).
         """
-        if not self._facets_are_convex:
-            # Can only sort facets if they are guaranteed to be convex.
+        if not self._faces_are_convex:
+            # Can only sort faces if they are guaranteed to be convex.
             raise ValueError(
                 "Faces cannot be sorted unless they are convex because the "
-                "correct ordering of vertices in a facet cannot be determined "
+                "correct ordering of vertices in a face cannot be determined "
                 "for nonconvex faces.")
 
-        # We first ensure that facet vertices are sequentially ordered by
-        # constructing a Polygon and updating the facet (in place), which
+        # We first ensure that face vertices are sequentially ordered by
+        # constructing a Polygon and updating the face (in place), which
         # enables finding neighbors.
-        for facet in self.facets:
+        for face in self.faces:
             polygon = ConvexPolygon(
-                self.vertices[facet], planar_tolerance=1e-4)
+                self.vertices[face], planar_tolerance=1e-4)
             if _is_convex(polygon.vertices, polygon.normal):
-                facet[:] = np.asarray([
+                face[:] = np.asarray([
                     np.where(np.all(self.vertices == vertex, axis=1))[0][0]
                     for vertex in polygon.vertices
                 ])
             elif not _is_simple(polygon.vertices):
-                raise ValueError("The vertices of each facet must be provided "
+                raise ValueError("The vertices of each face must be provided "
                                  "in counterclockwise order relative to the "
-                                 "facet normal unless the facet is a convex "
+                                 "face normal unless the face is a convex "
                                  "polygon.")
         self._find_neighbors()
 
-        # The initial facet sets the order of the others.
-        visited_facets = []
-        remaining_facets = [0]
-        while len(remaining_facets):
-            current_facet = remaining_facets[-1]
-            visited_facets.append(current_facet)
-            remaining_facets.pop()
+        # The initial face sets the order of the others.
+        visited_faces = []
+        remaining_faces = [0]
+        while len(remaining_faces):
+            current_face = remaining_faces[-1]
+            visited_faces.append(current_face)
+            remaining_faces.pop()
 
-            # Search for common edges between pairs of facets, then check the
-            # ordering of the edge to determine relative facet orientation.
-            current_edges = _facet_to_edges(self.facets[current_facet])
-            for neighbor in self._neighbors[current_facet]:
-                if neighbor in visited_facets:
+            # Search for common edges between pairs of faces, then check the
+            # ordering of the edge to determine relative face orientation.
+            current_edges = _face_to_edges(self.faces[current_face])
+            for neighbor in self._neighbors[current_face]:
+                if neighbor in visited_faces:
                     continue
-                remaining_facets.append(neighbor)
+                remaining_faces.append(neighbor)
 
-                # Two facets can only share a single edge (otherwise they would
+                # Two faces can only share a single edge (otherwise they would
                 # be coplanar), so we can break as soon as we find the
                 # neighbor. Flip the neighbor if the edges are identical.
-                for edge in _facet_to_edges(self.facets[neighbor]):
+                for edge in _face_to_edges(self.faces[neighbor]):
                     if edge in current_edges:
-                        self._facets[neighbor] = self._facets[neighbor][::-1]
+                        self._faces[neighbor] = self._faces[neighbor][::-1]
                         break
                     elif edge[::-1] in current_edges:
                         break
-                visited_facets.append(neighbor)
+                visited_faces.append(neighbor)
 
         # Now compute the signed area and flip all the orderings if the area is
         # negative.
         self._find_equations()
         if self.volume < 0:
-            for i in range(len(self.facets)):
-                self._facets[i] = self._facets[i][::-1]
+            for i in range(len(self.faces)):
+                self._faces[i] = self._faces[i][::-1]
                 self._equations[i] *= -1
 
     @property
@@ -256,16 +266,16 @@ class Polyhedron(Shape3D):
         return self._vertices
 
     @property
-    def facets(self):
-        """list(:class:`numpy.ndarray`): Get the polyhedron's facets."""
-        return self._facets
+    def faces(self):
+        """list(:class:`numpy.ndarray`): Get the polyhedron's faces."""
+        return self._faces
 
     @property
     def volume(self):
         """float: Get or set the polyhedron's volume (setting rescales
         vertices)."""
         ds = -self._equations[:, 3]
-        return np.sum(ds*self.get_facet_area())/3
+        return np.sum(ds*self.get_face_area())/3
 
     @volume.setter
     def volume(self, new_volume):
@@ -273,27 +283,27 @@ class Polyhedron(Shape3D):
         self._vertices *= scale_factor
         self._equations[:, 3] *= scale_factor
 
-    def get_facet_area(self, facets=None):
-        """Get the total surface area of a set of facets.
+    def get_face_area(self, faces=None):
+        """Get the total surface area of a set of faces.
 
         Args:
-            facets (int, sequence, or None):
-                The index of a facet or a set of facet indices for which to
-                find the area. If None, finds the area of all facets (Default
+            faces (int, sequence, or None):
+                The index of a face or a set of face indices for which to
+                find the area. If None, finds the area of all faces (Default
                 value: None).
 
         Returns:
-            :class:`numpy.ndarray`: The area of each facet.
+            :class:`numpy.ndarray`: The area of each face.
         """
-        if facets is None:
-            facets = range(len(self.facets))
-        elif type(facets) is int:
-            facets = [facets]
+        if faces is None:
+            faces = range(len(self.faces))
+        elif type(faces) is int:
+            faces = [faces]
 
-        areas = np.empty(len(facets))
-        for i, facet_index in enumerate(facets):
-            facet = self.facets[facet_index]
-            poly = ConvexPolygon(self.vertices[facet], planar_tolerance=1e-4)
+        areas = np.empty(len(faces))
+        for i, face_index in enumerate(faces):
+            face = self.faces[face_index]
+            poly = ConvexPolygon(self.vertices[face], planar_tolerance=1e-4)
             areas[i] = poly.area
 
         return areas
@@ -301,16 +311,16 @@ class Polyhedron(Shape3D):
     @property
     def surface_area(self):
         """float: Get the surface area."""
-        return np.sum(self.get_facet_area())
+        return np.sum(self.get_face_area())
 
     def _surface_triangulation(self):
         """Generate a triangulation of the surface of the polyhedron.
 
-        This algorithm constructs Polygons from each of the facets and then
+        This algorithm constructs Polygons from each of the faces and then
         triangulates each of these to provide a total triangulation.
         """
-        for facet in self.facets:
-            poly = Polygon(self.vertices[facet], planar_tolerance=1e-4)
+        for face in self.faces:
+            poly = Polygon(self.vertices[face], planar_tolerance=1e-4)
             yield from poly._triangulation()
 
     def _point_plane_distances(self, points):
@@ -439,21 +449,21 @@ class Polyhedron(Shape3D):
         return np.pi * 36 * V * V / (S * S * S)
 
     def get_dihedral(self, a, b):
-        """Get the dihedral angle between a pair of facets.
+        """Get the dihedral angle between a pair of faces.
 
-        The dihedral is computed from the dot product of the facet normals.
+        The dihedral is computed from the dot product of the face normals.
 
         Args:
             a (int):
-                The index of the first facet.
+                The index of the first face.
             b (int):
-                The index of the second facet.
+                The index of the second face.
 
         Returns:
             float: The dihedral angle in radians.
         """
         if b not in self.neighbors[a]:
-            raise ValueError("The two facets are not neighbors.")
+            raise ValueError("The two faces are not neighbors.")
         n1, n2 = self._equations[[a, b], :3]
         return np.arccos(np.dot(-n1, n2))
 
@@ -475,8 +485,8 @@ class Polyhedron(Shape3D):
         """
         # TODO: Generate axis if one is not provided.
         # Determine dimensionality.
-        for i, facet in enumerate(self.facets):
-            verts = self.vertices[facet]
+        for i, face in enumerate(self.faces):
+            verts = self.vertices[face]
             verts = np.concatenate((verts, verts[[0]]))
             ax.plot(verts[:, 0], verts[:, 1], verts[:, 2])
 

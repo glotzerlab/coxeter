@@ -51,6 +51,15 @@ class ConvexSpheropolygon(object):
         self.polygon.reorder_verts(clockwise, ref_index, increasing_length)
 
     @property
+    def gsd_shape_spec(self):
+        """dict: A complete description of this shape corresponding to the
+        shape specification in the GSD file format as described
+        `here <https://gsd.readthedocs.io/en/stable/shapes.html>`_."""
+        return {'type': 'Polygon',
+                'vertices': self.polygon._vertices.tolist(),
+                'rounding_radius': self._radius}
+
+    @property
     def vertices(self):
         """Get the vertices of the spheropolygon."""
         return self.polygon.vertices
