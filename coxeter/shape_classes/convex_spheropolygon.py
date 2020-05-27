@@ -1,9 +1,9 @@
 import numpy as np
-
+from .base_classes import Shape2D
 from .convex_polygon import _is_convex, ConvexPolygon
 
 
-class ConvexSpheropolygon(object):
+class ConvexSpheropolygon(Shape2D):
     """A convex spheropolygon.
 
     Args:
@@ -23,8 +23,8 @@ class ConvexSpheropolygon(object):
     def __init__(self, vertices, radius, normal=None):
         if radius < 0:
             raise ValueError("The radius must be positive.")
-        self.polygon = ConvexPolygon(vertices, normal)
-        if not _is_convex(self.vertices, self.polygon.normal):
+        self._polygon = ConvexPolygon(vertices, normal)
+        if not _is_convex(self.vertices, self._polygon.normal):
             raise ValueError("The vertices do not define a convex polygon.")
         self._radius = radius
 
@@ -34,7 +34,7 @@ class ConvexSpheropolygon(object):
         the normal.
 
         For more information see
-        :meth:`~coxeter.shape_classes.polygon.Polygon.reorder_verts`.
+        :meth:`~coxeter.shape_classes._polygon.Polygon.reorder_verts`.
 
         Args:
             clockwise (bool):
@@ -48,7 +48,13 @@ class ConvexSpheropolygon(object):
                 comes first, otherwise the point further away comes first
                 (Default value: True).
         """
-        self.polygon.reorder_verts(clockwise, ref_index, increasing_length)
+        self._polygon.reorder_verts(clockwise, ref_index, increasing_length)
+
+    @property
+    def polygon(self):
+        """:class:`~coxeter.shape_classes.convex_polygon.ConvexPolygon`:
+        The underlying polygon."""
+        return self._polygon
 
     @property
     def gsd_shape_spec(self):
@@ -56,13 +62,13 @@ class ConvexSpheropolygon(object):
         shape specification in the GSD file format as described
         `here <https://gsd.readthedocs.io/en/stable/shapes.html>`_."""
         return {'type': 'Polygon',
-                'vertices': self.polygon._vertices.tolist(),
+                'vertices': self._polygon._vertices.tolist(),
                 'rounding_radius': self._radius}
 
     @property
     def vertices(self):
         """Get the vertices of the spheropolygon."""
-        return self.polygon.vertices
+        return self._polygon.vertices
 
     @property
     def radius(self):
@@ -76,7 +82,7 @@ class ConvexSpheropolygon(object):
         The area is computed as the sum of the underlying polygon area and the
         area added by the rounding radius.
         """
-        poly_area = self.polygon.signed_area
+        poly_area = self._polygon.signed_area
 
         drs = self.vertices - np.roll(self.vertices,
                                       shift=-1, axis=0)
@@ -101,8 +107,8 @@ class ConvexSpheropolygon(object):
 
     @property
     def center(self):
-        return self.polygon.center
+        return self._polygon.center
 
     @center.setter
     def center(self, new_center):
-        self.polygon.center = new_center
+        self._polygon.center = new_center
