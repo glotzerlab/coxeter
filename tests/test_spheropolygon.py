@@ -2,7 +2,7 @@ import pytest
 import numpy as np
 import numpy.testing as npt
 import rowan
-from coxeter.shape_classes.spheropolygon import ConvexSpheropolygon
+from coxeter.shape_classes import ConvexSpheropolygon
 from scipy.spatial import ConvexHull
 from hypothesis import given, assume, example
 from hypothesis.strategies import floats

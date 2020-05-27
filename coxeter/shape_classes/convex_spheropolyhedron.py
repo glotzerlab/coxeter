@@ -1,8 +1,9 @@
 import numpy as np
+from .base_classes import Shape3D
 from .convex_polyhedron import ConvexPolyhedron
 
 
-class ConvexSpheropolyhedron(object):
+class ConvexSpheropolyhedron(Shape3D):
     """A convex spheropolyhedron.
 
     A convex spheropolyhedron is defined as a convex polyhedron plus a
@@ -39,6 +40,14 @@ class ConvexSpheropolyhedron(object):
     def vertices(self):
         """Get the vertices of the spheropolyhedron."""
         return self._polyhedron.vertices
+
+    @property
+    def center(self):
+        return self._polyhedron.center
+
+    @center.setter
+    def center(self, new_center):
+        self._polyhedron.center = new_center
 
     @property
     def volume(self):

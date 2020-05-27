@@ -8,7 +8,7 @@ from .ellipsoid import Ellipsoid
 from .polygon import Polygon
 from .polyhedron import Polyhedron
 from .sphere import Sphere
-from .spheropolygon import ConvexSpheropolygon
+from .convex_spheropolygon import ConvexSpheropolygon
 
 __all__ = [
     'Circle',
