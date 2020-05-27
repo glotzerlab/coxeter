@@ -26,6 +26,7 @@ Vyas Ramasubramani - **Creator and former lead developer**
 * Added circumsphere from center calculation for convex polyhedra.
 * Added shape getter for damasceno shapes.
 * Define proper inertia tensor calculations and transformations for polygons and polyhedra.
+* Added interoperability with the GSD shape specification.
 
 Bryan VanSaders - **Original maintainer of euclid package**
 
