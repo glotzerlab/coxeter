@@ -4,19 +4,19 @@ from .polyhedron import Polyhedron
 
 
 class ConvexPolyhedron(Polyhedron):
+    """A convex polyhedron.
+
+    A convex polyhedron is defined as the convex hull of its vertices. The
+    class is a simple extension of :class:`~.Polyhedron` that builds the
+    faces from the simplices of the convex hull. This class also includes
+    various additional properties that can be used to characterize the
+    geometric features of the polyhedron.
+
+    Args:
+        vertices (:math:`(N, 3)` :class:`numpy.ndarray`):
+            The vertices of the polyhedron.
+    """
     def __init__(self, vertices):
-        """A convex polyhedron.
-
-        A convex polyhedron is defined as the convex hull of its vertices. The
-        class is a simple extension of :class:`~.Polyhedron` that builds the
-        faces from the simplices of the convex hull. This class also includes
-        various additional properties that can be used to characterize the
-        geometric features of the polyhedron.
-
-        Args:
-            vertices (:math:`(N, 3)` :class:`numpy.ndarray`):
-                The vertices of the polyhedron.
-        """
         hull = ConvexHull(vertices)
         super(ConvexPolyhedron, self).__init__(vertices, hull.simplices, True)
         self.merge_faces()

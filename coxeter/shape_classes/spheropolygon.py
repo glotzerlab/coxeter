@@ -4,23 +4,23 @@ from .convex_polygon import _is_convex, ConvexPolygon
 
 
 class ConvexSpheropolygon(object):
-    def __init__(self, vertices, radius, normal=None):
-        """A convex spheropolygon.
+    """A convex spheropolygon.
 
-        Args:
-            vertices (:math:`(N, 3)` or :math:`(N, 2)` :class:`numpy.ndarray`):
-                The vertices of the polygon.
-            radius (float):
-                The rounding radius of the spheropolygon.
-            normal (sequence of length 3 or None):
-                The normal vector to the polygon. If :code:`None`, the normal
-                is computed by taking the cross product of the vectors formed
-                by the first three vertices :code:`np.cross(vertices[2, :] -
-                vertices[1, :], vertices[0, :] - vertices[1, :])`. Since this
-                arbitrary choice may not preserve the orientation of the
-                provided vertices, users may provide a normal instead
-                (Default value: None).
-        """
+    Args:
+        vertices (:math:`(N, 3)` or :math:`(N, 2)` :class:`numpy.ndarray`):
+            The vertices of the polygon.
+        radius (float):
+            The rounding radius of the spheropolygon.
+        normal (sequence of length 3 or None):
+            The normal vector to the polygon. If :code:`None`, the normal
+            is computed by taking the cross product of the vectors formed
+            by the first three vertices :code:`np.cross(vertices[2, :] -
+            vertices[1, :], vertices[0, :] - vertices[1, :])`. Since this
+            arbitrary choice may not preserve the orientation of the
+            provided vertices, users may provide a normal instead
+            (Default value: None).
+    """
+    def __init__(self, vertices, radius, normal=None):
         if radius < 0:
             raise ValueError("The radius must be positive.")
         self.polygon = ConvexPolygon(vertices, normal)

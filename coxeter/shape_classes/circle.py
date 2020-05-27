@@ -3,16 +3,16 @@ from.base_classes import Shape2D
 
 
 class Circle(Shape2D):
-    def __init__(self, radius, center=(0, 0, 0)):
-        """A circle with the given radius.
+    """A circle with the given radius.
 
-        Args:
-            radius (float):
-                Radius of the circle.
-            center (Sequence[float]):
-                The coordinates of the center of the circle (Default
-                value: (0, 0, 0)).
-        """
+    Args:
+        radius (float):
+            Radius of the circle.
+        center (Sequence[float]):
+            The coordinates of the center of the circle (Default
+            value: (0, 0, 0)).
+    """
+    def __init__(self, radius, center=(0, 0, 0)):
         self._radius = radius
         self._center = np.asarray(center)
 

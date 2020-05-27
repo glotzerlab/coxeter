@@ -4,18 +4,18 @@ from.base_classes import Shape2D
 
 
 class Ellipse(Shape2D):
-    def __init__(self, a, b, center=(0, 0, 0)):
-        """An ellipse with principal axes a and b.
+    """An ellipse with principal axes a and b.
 
-        Args:
-            a (float):
-                Principal axis a of the ellipse (radius in the x direction).
-            b (float):
-                Principal axis b of the ellipse (radius in the y direction).
-            center (Sequence[float]):
-                The coordinates of the center of the ellipse (Default
-                value: (0, 0, 0)).
-        """
+    Args:
+        a (float):
+            Principal axis a of the ellipse (radius in the x direction).
+        b (float):
+            Principal axis b of the ellipse (radius in the y direction).
+        center (Sequence[float]):
+            The coordinates of the center of the ellipse (Default
+            value: (0, 0, 0)).
+    """
+    def __init__(self, a, b, center=(0, 0, 0)):
         self._a = a
         self._b = b
         self._center = np.asarray(center)

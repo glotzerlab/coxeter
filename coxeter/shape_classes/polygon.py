@@ -50,44 +50,44 @@ def _is_simple(vertices):
 
 
 class Polygon(Shape2D):
+    """A simple (i.e. non-self-overlapping) polygon.
+
+    The polygon is embedded in 3-dimensions, so the normal
+    vector determines which way is "up".
+
+    .. note::
+        This class is designed for polygons without self-intersections, so
+        the internal sorting will automatically result in such
+        intersections being removed.
+
+    Args:
+        vertices (:math:`(N, 3)` or :math:`(N, 2)` :class:`numpy.ndarray`):
+            The vertices of the polygon.
+        normal (sequence of length 3 or None):
+            The normal vector to the polygon. If :code:`None`, the normal
+            is computed by taking the cross product of the vectors formed
+            by the first three vertices :code:`np.cross(vertices[2, :] -
+            vertices[1, :], vertices[0, :] - vertices[1, :])`. This choice
+            is made so that if the provided vertices are in the :math:`xy`
+            plane and are specified in counterclockwise order, the
+            resulting normal is the :math:`z` axis. Since this arbitrary
+            choice may not preserve the orientation of the provided
+            vertices, users may provide a normal instead
+            (Default value: None).
+        planar_tolerance (float):
+            The tolerance to use to verify that the vertices are planar.
+            Providing this argument may be necessary if you have a large
+            number of vertices and are rotated significantly out of the
+            plane.
+        test_simple (bool):
+            If ``True``, perform a sanity check on construction that the
+            provided vertices constitute a simple polygon. If this check is
+            omitted, the class may produce invalid results if the user
+            inputs incorrect coordinates, so this flag should be set to
+            ``False`` with care.
+    """
     def __init__(self, vertices, normal=None, planar_tolerance=1e-5,
                  test_simple=True):
-        """A simple (i.e. non-self-overlapping) polygon.
-
-        The polygon is embedded in 3-dimensions, so the normal
-        vector determines which way is "up".
-
-        .. note::
-            This class is designed for polygons without self-intersections, so
-            the internal sorting will automatically result in such
-            intersections being removed.
-
-        Args:
-            vertices (:math:`(N, 3)` or :math:`(N, 2)` :class:`numpy.ndarray`):
-                The vertices of the polygon.
-            normal (sequence of length 3 or None):
-                The normal vector to the polygon. If :code:`None`, the normal
-                is computed by taking the cross product of the vectors formed
-                by the first three vertices :code:`np.cross(vertices[2, :] -
-                vertices[1, :], vertices[0, :] - vertices[1, :])`. This choice
-                is made so that if the provided vertices are in the :math:`xy`
-                plane and are specified in counterclockwise order, the
-                resulting normal is the :math:`z` axis. Since this arbitrary
-                choice may not preserve the orientation of the provided
-                vertices, users may provide a normal instead
-                (Default value: None).
-            planar_tolerance (float):
-                The tolerance to use to verify that the vertices are planar.
-                Providing this argument may be necessary if you have a large
-                number of vertices and are rotated significantly out of the
-                plane.
-            test_simple (bool):
-                If ``True``, perform a sanity check on construction that the
-                provided vertices constitute a simple polygon. If this check is
-                omitted, the class may produce invalid results if the user
-                inputs incorrect coordinates, so this flag should be set to
-                ``False`` with care.
-        """
         vertices = np.array(vertices, dtype=np.float64)
 
         if len(vertices.shape) != 2 or vertices.shape[1] not in (2, 3):

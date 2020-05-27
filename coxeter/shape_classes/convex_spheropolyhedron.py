@@ -3,20 +3,20 @@ from .convex_polyhedron import ConvexPolyhedron
 
 
 class ConvexSpheropolyhedron(object):
+    """A convex spheropolyhedron.
+
+    A convex spheropolyhedron is defined as a convex polyhedron plus a
+    rounding radius. All properties of the underlying polyhedron (the
+    vertices, the faces and their neighbors, etc) can be accessed directly
+    through :attr:`.polyhedron`.
+
+    Args:
+        vertices (:math:`(N, 3)` :class:`numpy.ndarray`):
+            The vertices of the underlying polyhedron.
+        radius (float):
+            The rounding radius of the spheropolyhedron.
+    """
     def __init__(self, vertices, radius):
-        """A convex spheropolyhedron.
-
-        A convex spheropolyhedron is defined as a convex polyhedron plus a
-        rounding radius. All properties of the underlying polyhedron (the
-        vertices, the faces and their neighbors, etc) can be accessed directly
-        through :attr:`.polyhedron`.
-
-        Args:
-            vertices (:math:`(N, 3)` :class:`numpy.ndarray`):
-                The vertices of the underlying polyhedron.
-            radius (float):
-                The rounding radius of the spheropolyhedron.
-        """
         self._polyhedron = ConvexPolyhedron(vertices)
         self._radius = radius
 

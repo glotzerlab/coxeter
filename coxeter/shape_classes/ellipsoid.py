@@ -5,20 +5,20 @@ from.base_classes import Shape3D
 
 
 class Ellipsoid(Shape3D):
-    def __init__(self, a, b, c, center=(0, 0, 0)):
-        """An ellipsoid with principal axes a, b, and c.
+    """An ellipsoid with principal axes a, b, and c.
 
-        Args:
-            a (float):
-                Principal axis a of the ellipsoid (radius in the x direction).
-            b (float):
-                Principal axis b of the ellipsoid (radius in the y direction).
-            c (float):
-                Principal axis c of the ellipsoid (radius in the z direction).
-            center (Sequence[float]):
-                The coordinates of the center of the circle (Default
-                value: (0, 0, 0)).
-        """
+    Args:
+        a (float):
+            Principal axis a of the ellipsoid (radius in the x direction).
+        b (float):
+            Principal axis b of the ellipsoid (radius in the y direction).
+        c (float):
+            Principal axis c of the ellipsoid (radius in the z direction).
+        center (Sequence[float]):
+            The coordinates of the center of the circle (Default
+            value: (0, 0, 0)).
+    """
+    def __init__(self, a, b, c, center=(0, 0, 0)):
         self._a = a
         self._b = b
         self._c = c
