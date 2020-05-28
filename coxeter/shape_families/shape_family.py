@@ -20,8 +20,6 @@ class TruncationPlaneShapeFamily(ShapeFamily):
         # vectorize the plane distances
         dists = np.array([a, b, c])
 
-        verts = []
-
         thresh = 1e-6
 
         planetypes = self.plane_types
@@ -32,24 +30,17 @@ class TruncationPlaneShapeFamily(ShapeFamily):
                    range(i+1, num_planes) for k in range(j+1, num_planes)]
 
         As = planelist[indices]
-        dets = np.linalg.det(As)
-
         alltypes = planetypes[indices]
         bs = dists[alltypes]
 
-        #  xs = np.zeros(bs.shape)
+        dets = np.linalg.det(As)
         solution_indices = np.abs(dets) > thresh
-
         xs = np.linalg.solve(As[solution_indices], bs[solution_indices])
 
         # Get for each x whether any of the planes fail.
-        # Need to squeeze because broadcasting generates odd singleton
-        # dimensions.
-        dots = np.inner(
-            xs[:, np.newaxis, :], planelist[np.newaxis, :, :]).squeeze()
+        dots = np.einsum('ik,jk', xs, planelist, optimize=True)
         alldists = dists[planetypes]
         dist_filter = (dots <= alldists[np.newaxis, :] + thresh).all(axis=1)
-
         passed_plane_test = xs[dist_filter]
 
         # We don't want to lose precision in the vertices to ensure that the
