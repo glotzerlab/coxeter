@@ -18,7 +18,7 @@ class TruncationPlaneShapeFamily(ShapeFamily):
     """A family of shapes defined by a set of truncation planes"""
     def __call__(self, a=1, b=1, c=1):
         # vectorize the plane distances
-        dists = [a, b, c]
+        dists = np.array([a, b, c])
 
         verts = []
 
@@ -26,44 +26,38 @@ class TruncationPlaneShapeFamily(ShapeFamily):
 
         planetypes = self.plane_types
         planelist = self.planes
-        # for each triplet of planes
-        for i in range(len(planetypes)):
-            for j in range(i+1, len(planetypes)):
-                for k in range(j+1, len(planetypes)):
-                    A = np.array([planelist[i], planelist[j], planelist[k]])
-                    # compute the determinant
-                    det = np.linalg.det(A)
-                    # if it is non-zero, the find the intersection point
-                    if abs(det) > thresh:
-                        b = np.array([dists[planetypes[i]],
-                                      dists[planetypes[j]],
-                                      dists[planetypes[k]]])
-                        x = np.linalg.solve(A, b)
 
-                        # once the intersection point has been found, check it
-                        # against the planes
-                        try:
-                            for (n, t) in zip(planelist, planetypes):
-                                assert(np.dot(n, x) <= dists[t] + thresh)
-                        except:  # noqa
-                            pass
-                        else:
-                            # then check whether it has alerady been found
-                            # within some tolerance
-                            try:
-                                if len(verts) > 0:
-                                    for v in verts:
-                                        diff = x - v
-                                        numer = np.dot(diff, diff)
-                                        denom = np.sqrt(
-                                            np.dot(x, x)*np.dot(v, v))
-                                        assert(numer/denom > thresh)
-                                else:
-                                    pass
-                            except:  # noqa
-                                pass
-                            else:
-                                verts.append(x)
+        num_planes = len(planetypes)
+        indices = [(i, j, k) for i in range(num_planes) for j in
+                   range(i+1, num_planes) for k in range(j+1, num_planes)]
+
+        As = planelist[indices]
+        dets = np.linalg.det(As)
+
+        alltypes = planetypes[indices]
+        bs = dists[alltypes]
+
+        #  xs = np.zeros(bs.shape)
+        solution_indices = np.abs(dets) > thresh
+
+        xs = np.linalg.solve(As[solution_indices], bs[solution_indices])
+
+        # Get for each x whether any of the planes fail.
+        # Need to squeeze because broadcasting generates odd singleton
+        # dimensions.
+        dots = np.inner(
+            xs[:, np.newaxis, :], planelist[np.newaxis, :, :]).squeeze()
+        alldists = dists[planetypes]
+        dist_filter = (dots <= alldists[np.newaxis, :] + thresh).all(axis=1)
+
+        passed_plane_test = xs[dist_filter]
+
+        # We don't want to lose precision in the vertices to ensure that the
+        # convex hull ends up finding the right faces, so get the unique
+        # indices based on rounding but then use the original vertices.
+        _, verts_indices = np.unique(
+            passed_plane_test.round(6), axis=0, return_index=True)
+        verts = passed_plane_test[verts_indices]
 
         return ConvexPolyhedron(verts)
 
@@ -82,7 +76,7 @@ class Family332(TruncationPlaneShapeFamily):
     """The 332 shape family defined in :cite:`Chen2014`"""
     @property
     def planes(self):
-        return [
+        return np.array([
             [1.0, 1.0, 1.0],
             [-1.0, -1.0, 1.0],
             [-1.0, 1.0, -1.0],
@@ -96,11 +90,11 @@ class Family332(TruncationPlaneShapeFamily):
             [0.0, 1.0, 0.0],
             [0.0, -1.0, 0.0],
             [0.0, 0.0, 1.0],
-            [0.0, 0.0, -1.0]]
+            [0.0, 0.0, -1.0]])
 
     @property
     def plane_types(self):
-        return [2, 2, 2, 2, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1]
+        return np.array([2, 2, 2, 2, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1])
 
 
 class Family532(TruncationPlaneShapeFamily):
@@ -109,7 +103,7 @@ class Family532(TruncationPlaneShapeFamily):
     def planes(self):
         s = ((5**0.5)-1.0)/2.
         S = ((5**0.5)+1.0)/2.
-        return [
+        return np.array([
             [1.0, 0.0, s],
             [-1.0, 0.0, -s],
             [-1.0, 0.0, s],
@@ -172,21 +166,21 @@ class Family532(TruncationPlaneShapeFamily):
             [-1.0, s, S],
             [1.0, -s, S],
             [-1.0, -s, -S]
-            ]
+            ])
 
     @property
     def plane_types(self):
-        return [0, 0, 0, 0, 0,  0, 0, 0, 0, 0,  0, 0,  1, 1, 1, 1, 1,  1,  2,
-                2, 2, 2, 2,  2, 2, 2, 2, 2,  2, 2, 2, 2, 2,  2, 2, 2, 2, 2,  1,
-                1, 1, 1, 1,  1, 1, 1, 1, 1,  1, 1, 1, 1, 1,  1, 1, 1, 1, 1,  1,
-                1, 1, 1]
+        return np.array([0, 0, 0, 0, 0,  0, 0, 0, 0, 0,  0, 0,  1, 1, 1, 1, 1,
+                         1,  2, 2, 2, 2, 2,  2, 2, 2, 2, 2,  2, 2, 2, 2, 2,  2,
+                         2, 2, 2, 2,  1, 1, 1, 1, 1,  1, 1, 1, 1, 1,  1, 1, 1,
+                         1, 1,  1, 1, 1, 1, 1,  1, 1, 1, 1])
 
 
 class Family432(TruncationPlaneShapeFamily):
     """The 432 shape family defined in :cite:`Chen2014`"""
     @property
     def planes(self):
-        return [
+        return np.array([
              [1.0, 1.0, 1.0],
              [-1.0, -1.0, 1.0],
              [-1.0, 1.0, -1.0],
@@ -212,9 +206,9 @@ class Family432(TruncationPlaneShapeFamily):
              [0.0, 1.0, 0.0],
              [0.0, -1.0, 0.0],
              [0.0,  0.0,  1.0],
-             [0.0, 0.0, -1.0]]
+             [0.0, 0.0, -1.0]])
 
     @property
     def plane_types(self):
-        return [2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
-                0, 0, 0, 0, 0]
+        return np.array([2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                         1, 1, 0, 0, 0, 0, 0, 0])
