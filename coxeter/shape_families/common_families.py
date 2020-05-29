@@ -3,7 +3,7 @@
 from .tabulated_shape_family import TabulatedGSDShapeFamily
 from ..shape_classes import ConvexPolygon
 from .shape_family import ShapeFamily
-from .data_repositories import _DATA_FOLDER
+from .doi_data_repositories import _DATA_FOLDER
 import numpy as np
 import os
 
