@@ -40,9 +40,9 @@ def from_gsd_type_shapes(params, dimensions=3):  # noqa: C901
 
     if params['type'] == 'Sphere':
         if dimensions == 2:
-            return Circle(params['diameter']/2)
+            return Circle(params['diameter'] / 2)
         else:
-            return Sphere(params['diameter']/2)
+            return Sphere(params['diameter'] / 2)
     elif params['type'] == 'Ellipsoid':
         if dimensions == 2:
             return Ellipse(params['a'], params['b'])

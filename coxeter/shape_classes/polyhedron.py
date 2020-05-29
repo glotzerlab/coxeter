@@ -1,3 +1,5 @@
+"""Defines a polyhedron."""
+
 import numpy as np
 from .polygon import Polygon, _is_simple
 from .convex_polygon import ConvexPolygon
@@ -15,14 +17,17 @@ except ImportError:
 
 
 def _face_to_edges(face, reverse=False):
-    """Convert a face (a sequence of vertices) into a sequence of edges
-    (tuples).
+    """Convert a face into a sequence of edges (tuples).
 
     Args:
         face (array-like):
             A face composed of vertex indices.
         reverse (bool):
             Whether to return the edges in reverse.
+
+    Returns:
+        list[tuple[int, int]]:
+            A list of edges where each is a tuple of a pair of vertices.
     """
     shift = 1 if reverse else -1
     return list(zip(*np.stack((face, np.roll(face, shift)))))
@@ -54,6 +59,7 @@ class Polyhedron(Shape3D):
             This is used to determine whether certain operations like
             coplanar face merging are allowed (Default value: False).
     """
+
     def __init__(self, vertices, faces, faces_are_convex=None):
         self._vertices = np.array(vertices, dtype=np.float64)
         self._faces = [face for face in faces]
@@ -87,16 +93,19 @@ class Polyhedron(Shape3D):
         self._neighbors = [np.array(neigh) for neigh in self._neighbors]
 
     def _get_face_intersections(self):
-        """A generator that yields tuples of the form (face, neighbor,
+        """Get pairs of faces and their common edges.
+
+        This function yields a generator of tuples of the form (face, neighbor,
         (vertex1, vertex2)) indicating neighboring faces and their common
-        edge."""
+        edge.
+        """
         # First enumerate all edges of each neighbor. We include both
         # directions of the edges for comparison.
-        face_edges = [set(_face_to_edges(f) +
-                          _face_to_edges(f, True)) for f in self.faces]
+        face_edges = [set(_face_to_edges(f)
+                          + _face_to_edges(f, True)) for f in self.faces]
 
         for i in range(self.num_faces):
-            for j in range(i+1, self.num_faces):
+            for j in range(i + 1, self.num_faces):
                 common_edges = face_edges[i].intersection(face_edges[j])
                 if len(common_edges) > 0:
                     # Can never have multiple intersections, but we should have
@@ -107,9 +116,7 @@ class Polyhedron(Shape3D):
 
     @property
     def gsd_shape_spec(self):
-        """dict: A complete description of this shape corresponding to the
-        shape specification in the GSD file format as described
-        `here <https://gsd.readthedocs.io/en/stable/shapes.html>`_."""
+        """dict: Get a `complete GSD specification <shapes>`_."""  # noqa: D401
         return {'type': 'Mesh',
                 'vertices': self._vertices.tolist(),
                 'faces': self._faces,
@@ -160,40 +167,41 @@ class Polyhedron(Shape3D):
 
     @property
     def neighbors(self):
-        """list(:class:`numpy.ndarray`): A list where the
-        :math:`i^{\\text{th}}` element is an array of indices of faces that
-        are neighbors of face :math:`i`.
+        r"""list(:class:`numpy.ndarray`): Get neighboring pairs of faces.
+
+        The neighbors are provided as a list where the :math:`i^{\text{th}}`
+        element is an array of indices of faces that are neighbors of face
+        :math:`i`.
         """
         return self._neighbors
 
     @property
     def normals(self):
-        """:math:`(N, 3)` :class:`numpy.ndarray`: The normal vectors to each
-        face."""
+        """:math:`(N, 3)` :class:`numpy.ndarray`: Get the face normals."""
         return self._equations[:, :3]
 
     @property
     def num_vertices(self):
-        """int: The number of vertices."""
+        """int: Get the number of vertices."""
         return self.vertices.shape[0]
 
     @property
     def num_faces(self):
-        """int: The number of faces."""
+        """int: Get the number of faces."""
         return len(self.faces)
 
     def sort_faces(self):  # noqa: C901
-        """Ensure that all faces are ordered such that the normals are
-        counterclockwise and point outwards.
+        """Sort faces of the polyhedron.
 
-        This algorithm proceeds in four steps. First, it ensures that each
-        face is ordered in either clockwise or counterclockwise order such
-        that edges can be found from the sequence of the vertices in each
-        face. Next, it calls the neighbor finding routine to establish with
-        faces are neighbors. Then, it performs a breadth-first search,
-        reorienting faces to match the orientation of the first face.
-        Finally, it computes the signed volume to determine whether or not all
-        the normals need to be flipped.
+        This method ensures that all faces are ordered such that the normals
+        are counterclockwise and point outwards. This algorithm proceeds in
+        four steps. First, it ensures that each face is ordered in either
+        clockwise or counterclockwise order such that edges can be found from
+        the sequence of the vertices in each face. Next, it calls the neighbor
+        finding routine to establish with faces are neighbors. Then, it
+        performs a breadth-first search, reorienting faces to match the
+        orientation of the first face.  Finally, it computes the signed volume
+        to determine whether or not all the normals need to be flipped.
 
         .. note::
             This method can only be called for polyhedra whose faces are all
@@ -261,8 +269,7 @@ class Polyhedron(Shape3D):
 
     @property
     def vertices(self):
-        """:math:`(N, 3)` :class:`numpy.ndarray`: Get the vertices of the
-        polyhedron."""
+        """:math:`(N, 3)` :class:`numpy.ndarray`: Get the vertices of the polyhedron."""  # noqa: E501
         return self._vertices
 
     @property
@@ -272,14 +279,13 @@ class Polyhedron(Shape3D):
 
     @property
     def volume(self):
-        """float: Get or set the polyhedron's volume (setting rescales
-        vertices)."""
+        """float: Get or set the polyhedron's volume."""
         ds = -self._equations[:, 3]
-        return np.sum(ds*self.get_face_area())/3
+        return np.sum(ds * self.get_face_area()) / 3
 
     @volume.setter
     def volume(self, new_volume):
-        scale_factor = (new_volume/self.volume)**(1/3)
+        scale_factor = (new_volume / self.volume)**(1 / 3)
         self._vertices *= scale_factor
         self._equations[:, 3] *= scale_factor
 
@@ -324,7 +330,7 @@ class Polyhedron(Shape3D):
             yield from poly._triangulation()
 
     def _point_plane_distances(self, points):
-        """Computes the distances from a set of points to each plane.
+        """Compute the distances from a set of points to each plane.
 
         Distances that are <= 0 are inside and > 0 are outside.
 
@@ -339,8 +345,10 @@ class Polyhedron(Shape3D):
 
     @property
     def inertia_tensor(self):
-        """:math:`(3, 3)` :class:`numpy.ndarray`: Get the inertia tensor
-        computed (uses the algorithm described in :cite:`Kallay2006`).
+        """:math:`(3, 3)` :class:`numpy.ndarray`: Get the inertia tensor.
+
+        The inertia tensor is computed using the algorithm described in
+        :cite:`Kallay2006`.
 
         Note:
             For improved stability, the inertia tensor is computed about the
@@ -351,31 +359,37 @@ class Polyhedron(Shape3D):
         return translate_inertia_tensor(self.center, it, self.volume)
 
     def _compute_inertia_tensor(self, centered=True):
-        """Internal function for computing the inertia tensor that supports
-        both centered and uncentered calculations. Primarily of use for
-        validation purposes."""
+        """Compute the inertia tensor.
+
+        Internal function for computing the inertia tensor that supports both
+        centered and uncentered calculations. Primarily of use for testing and
+        validation purposes.
+        """
         simplices = np.array(list(self._surface_triangulation()))
         if centered:
             simplices -= self.center
 
-        volumes = np.abs(np.linalg.det(simplices)/6)
+        volumes = np.abs(np.linalg.det(simplices) / 6)
 
         def triangle_integrate(f):
-            R"""Compute integrals of the form :math:`\int\int\int f(x, y, z)
-            dx dy dz` over a set of triangles. Omits a factor of v/20."""
+            r"""Integrate f over the simplices.
+
+            This function computes integrals of the form
+            :math:`\int\int\int f(x, y, z) dx dy dz` over a set of triangles.
+            """
             fv1 = f(simplices[:, 0, :])
             fv2 = f(simplices[:, 1, :])
             fv3 = f(simplices[:, 2, :])
-            fvsum = (f(simplices[:, 0, :] +
-                       simplices[:, 1, :] +
-                       simplices[:, 2, :]))
-            return np.sum((volumes/20)*(fv1 + fv2 + fv3 + fvsum))
+            fvsum = (f(simplices[:, 0, :]
+                       + simplices[:, 1, :]
+                       + simplices[:, 2, :]))
+            return np.sum((volumes / 20) * (fv1 + fv2 + fv3 + fvsum))
 
         Ixx = triangle_integrate(lambda t: t[:, 1]**2 + t[:, 2]**2)
-        Ixy = triangle_integrate(lambda t: -t[:, 0]*t[:, 1])
-        Ixz = triangle_integrate(lambda t: -t[:, 0]*t[:, 2])
+        Ixy = triangle_integrate(lambda t: -t[:, 0] * t[:, 1])
+        Ixz = triangle_integrate(lambda t: -t[:, 0] * t[:, 2])
         Iyy = triangle_integrate(lambda t: t[:, 0]**2 + t[:, 2]**2)
-        Iyz = triangle_integrate(lambda t: -t[:, 1]*t[:, 2])
+        Iyz = triangle_integrate(lambda t: -t[:, 1] * t[:, 2])
         Izz = triangle_integrate(lambda t: t[:, 0]**2 + t[:, 1]**2)
 
         return np.array([[Ixx, Ixy, Ixz],
@@ -384,8 +398,7 @@ class Polyhedron(Shape3D):
 
     @property
     def center(self):
-        """float: Get or set the polyhedron's centroid (setting rescales
-        vertices)."""
+        """:math:`(3, )` :class:`numpy.ndarray` of float: Get or set the centroid of the shape."""  # noqa: E501
         return np.mean(self.vertices, axis=0)
 
     @center.setter
@@ -395,8 +408,7 @@ class Polyhedron(Shape3D):
 
     @property
     def bounding_sphere(self):
-        """The bounding sphere of the polyhedron, given by a center and a
-        radius."""
+        """tuple[float, float]: Get the center and radius of the bounding sphere."""  # noqa: E501
         if not MINIBALL:
             raise ImportError("The miniball module must be installed. It can "
                               "be installed as an extra with coxeter (e.g. "
@@ -431,7 +443,7 @@ class Polyhedron(Shape3D):
     def circumsphere(self):
         """float: Get the polyhedron's circumsphere."""
         points = self.vertices[1:] - self.vertices[0]
-        half_point_lengths = np.sum(points*points, axis=1)/2
+        half_point_lengths = np.sum(points * points, axis=1) / 2
         x, resids, _, _ = np.linalg.lstsq(points, half_point_lengths, None)
         if len(self.vertices) > 4 and not np.isclose(resids, 0):
             raise RuntimeError("No circumsphere for this polyhedron.")
@@ -440,9 +452,7 @@ class Polyhedron(Shape3D):
 
     @property
     def iq(self):
-        """float: The isoperimetric quotient.
-
-        """
+        """float: The isoperimetric quotient."""
         # TODO: allow for non-spherical reference ratio (changes the prefactor)
         V = self.volume
         S = self.surface_area
@@ -496,8 +506,8 @@ class Polyhedron(Shape3D):
                        self.vertices[:, 2])
         if label_verts:
             # Typically a good shift for plotting the labels
-            shift = (np.max(self.vertices[:, 2]) -
-                     np.min(self.vertices[:, 2]))*0.025
+            shift = (np.max(self.vertices[:, 2])
+                     - np.min(self.vertices[:, 2])) * 0.025
             for i, vert in enumerate(self.vertices):
                 ax.text(vert[0], vert[1], vert[2] + shift, '{}'.format(i),
                         fontsize=10)

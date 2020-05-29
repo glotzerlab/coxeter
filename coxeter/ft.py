@@ -1,19 +1,16 @@
-"""Calculates Fourier transforms of collections of delta peaks, spheres, and
-(convex) polyhedra at specified k-space vectors.
+"""Calculates Fourier transforms for form factors.
 
 Ported from freud.kspace by Bradley Dice.
 Original authors: Eric Irrgang, Jens Glaser.
 """
 
+from collections.abc import ABC, abstractmethod
 import numpy as np
 import rowan
 
 
-class _FTbase(object):
-    """Compute the Fourier transform of a set of delta peaks at a list of
-    :math:`K` points.
-
-    .. moduleauthor:: Jens Glaser <jsglaser@umich.edu>
+class _FTbase(ABC):
+    """Compute the Fourier transform of some function at some :math:`K` points.
 
     Attributes:
         FT (:class:`np.ndarray`): The Fourier transform.
@@ -29,6 +26,7 @@ class _FTbase(object):
         self.orientation[0][0] = 1.0
         self.NK = 0
 
+    @abstractmethod
     def _computeFT(self):
         pass
 
@@ -42,7 +40,6 @@ class _FTbase(object):
         Returns:
             :class:`numpy.ndarray`: Fourier Transform.
         """
-
         return self.S
 
     def set_K(self, K):
@@ -115,10 +112,7 @@ class _FTbase(object):
 
 
 class FTdelta(_FTbase):
-    """Compute the Fourier transform of a set of delta peaks at a list of
-    :math:`K` points.
-
-    .. moduleauthor:: Jens Glaser <jsglaser@umich.edu>
+    """Compute the Fourier transform of a set of delta functions.
 
     Attributes:
         FT (:class:`np.ndarray`): The Fourier transform.
@@ -136,7 +130,7 @@ class FTdelta(_FTbase):
 
 class FTsphere(_FTbase):
     """
-    .. moduleauthor:: Jens Glaser <jsglaser@umich.edu>
+    Generate the Fourier transform of a sphere.
 
     Attributes:
         FT (:class:`np.ndarray`): The Fourier transform.
@@ -182,7 +176,7 @@ class FTsphere(_FTbase):
 
 class FTpolyhedron(_FTbase):
     """
-    .. moduleauthor:: Jens Glaser <jsglaser@umich.edu>
+    Generate the form factor of a polyhedron.
 
     Attributes:
         FT (:class:`np.ndarray`): The Fourier transform.
@@ -345,14 +339,14 @@ class FTconvexPolyhedron(FTpolyhedron):
         return self.hull.getInsphereRadius()
 
     def Spoly2D(self, i, k):
-        """Calculate Fourier transform of polygon.
+        r"""Calculate Fourier transform of polygon.
 
         Args:
             i (float):
                 Face index into self.hull simplex list.
             k (:class:`numpy.ndarray`):
                 Angular wave vector at which to calculate
-                :math:`S\\left(i\\right)`.
+                :math:`S\left(i\right)`.
         """
         if np.dot(k, k) == 0.0:
             S = self.hull.getArea(i) * self.scale**2
@@ -378,12 +372,12 @@ class FTconvexPolyhedron(FTpolyhedron):
         return S
 
     def Spoly3D(self, k):
-        """Calculate Fourier transform of polyhedron.
+        r"""Calculate Fourier transform of polyhedron.
 
         Args:
             k (int):
                 Angular wave vector at which to calculate
-                :math:`S\\left(i\\right)`.
+                :math:`S\left(i\right)`.
         """
         if np.dot(k, k) == 0.0:
             S = self.hull.getVolume() * self.scale**3

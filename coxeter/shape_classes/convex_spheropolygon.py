@@ -1,3 +1,9 @@
+"""Defines a convex spheropolygon.
+
+A convex spheropolygon is defined by the Minkowski sum of a convex polygon and
+a circle of some radius.
+"""
+
 import numpy as np
 from .base_classes import Shape2D
 from .convex_polygon import _is_convex, ConvexPolygon
@@ -20,6 +26,7 @@ class ConvexSpheropolygon(Shape2D):
             provided vertices, users may provide a normal instead
             (Default value: None).
     """
+
     def __init__(self, vertices, radius, normal=None):
         if radius < 0:
             raise ValueError("The radius must be positive.")
@@ -30,8 +37,7 @@ class ConvexSpheropolygon(Shape2D):
 
     def reorder_verts(self, clockwise=False, ref_index=0,
                       increasing_length=True):
-        """Sort the vertices such that the polygon is oriented with respect to
-        the normal.
+        """Sort the vertices.
 
         For more information see
         :meth:`~coxeter.shape_classes._polygon.Polygon.reorder_verts`.
@@ -52,28 +58,29 @@ class ConvexSpheropolygon(Shape2D):
 
     @property
     def polygon(self):
-        """:class:`~coxeter.shape_classes.convex_polygon.ConvexPolygon`:
-        The underlying polygon."""
+        """:class:`~coxeter.shape_classes.ConvexPolygon`: The underlying polygon."""  # noqa: E501
         return self._polygon
 
     @property
     def gsd_shape_spec(self):
-        """dict: A complete description of this shape corresponding to the
-        shape specification in the GSD file format as described
-        `here <https://gsd.readthedocs.io/en/stable/shapes.html>`_."""
+        """dict: Get a `complete GSD specification <shapes>`_."""  # noqa: D401
         return {'type': 'Polygon',
                 'vertices': self._polygon._vertices.tolist(),
                 'rounding_radius': self._radius}
 
     @property
     def vertices(self):
-        """Get the vertices of the spheropolygon."""
+        """:math:`(N_{verts}, 3) :class:`numpy.ndarray` of float: Get the vertices of the spheropolygon."""  # noqa: E501
         return self._polygon.vertices
 
     @property
     def radius(self):
-        """The rounding radius."""
+        """float: Get or set the rounding radius."""
         return self._radius
+
+    @radius.setter
+    def radius(self, value):
+        self._radius = value
 
     @property
     def signed_area(self):
@@ -97,7 +104,7 @@ class ConvexSpheropolygon(Shape2D):
 
     @property
     def area(self):
-        """Get or set the polygon's area (setting rescales vertices).
+        """Get or set the polygon's area.
 
         To get the area, we simply compute the signed area and take the
         absolute value.
@@ -107,6 +114,7 @@ class ConvexSpheropolygon(Shape2D):
 
     @property
     def center(self):
+        """:math:`(3, )` :class:`numpy.ndarray` of float: Get or set the centroid of the shape."""  # noqa: E501
         return self._polygon.center
 
     @center.setter

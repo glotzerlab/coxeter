@@ -1,3 +1,5 @@
+"""Defines a convex polygon."""
+
 from .polygon import Polygon, _align_points_by_normal
 from scipy.spatial import ConvexHull
 import numpy as np
@@ -53,6 +55,7 @@ class ConvexPolygon(Polygon):
             number of vertices and are rotated significantly out of the
             plane.
     """
+
     def __init__(self, vertices, normal=None, planar_tolerance=1e-5):
         super(ConvexPolygon, self).__init__(vertices, normal, planar_tolerance,
                                             False)
@@ -70,8 +73,12 @@ class ConvexPolygon(Polygon):
 
     @property
     def incircle_from_center(self):
-        """The largest circle centered at the centroid that fits inside the
-        convex polygon, given by a center and a radius."""
+        """Get the largest inscribed circle centered at the centroid.
+
+        The requirement that the circle be centered at the centroid of the
+        shape distinguishes this circle from most typical incircle
+        calculations.
+        """
         v1s = self.vertices
         v2s = np.roll(self.vertices, shift=1, axis=0)
         deltas = v1s - v2s

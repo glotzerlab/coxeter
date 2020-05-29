@@ -1,6 +1,12 @@
-"""This module provides tools for generating data from internally stored data
-sources. These data sources are stored in the JSON format that can be parsed
-by the :class:`~coxeter.shape_families.TabulatedShapeFamily`."""
+"""Tools for generating data from internally stored data sources.
+
+The goal of this module is to produce shapes that were used in scientific
+papers. Some of these papers use some tabulated set of shapes, while others
+use some analytically defined class of shapes. The
+:class:`~coxeter.shape_families.ShapeFamily` is sufficiently flexible to handle
+both, so this module provides utilities that generate shape families when
+given a particular DOI.
+"""
 
 from .tabulated_shape_family import TabulatedGSDShapeFamily
 from .plane_shape_families import (Family323Plus, Family423, Family523,
@@ -13,10 +19,15 @@ _DATA_FOLDER = os.path.join(os.path.dirname(__file__), 'data')
 
 
 def _doi_shape_collection_factory(doi):
-    """Factory function used in a defaultdict for generating
-    :class:`~coxeter.shape_families.ShapeFamily` instances based on a given
-    DOI."""
+    """Produce the default shape family for a given key.
 
+    This function is the factory used in a defaultdict for generating
+    :class:`~coxeter.shape_families.ShapeFamily` instances based on a given
+    key when that key has not yet been seen. The purpose of using this factory
+    is to delay the loading of files until they are requested. Without it, all
+    files would be loaded when coxeter is imported, which introduces noticeable
+    and unnecessary lag.
+    """
     # Set of DOIs for which data is stored within the data/ directory.
     doi_to_file = {
         '10.1126/science.1220869': ['science1220869.json'],
@@ -46,7 +57,8 @@ class _keyeddefaultdict(defaultdict):
     """A defaultdict that passes the key to the default_factory.
 
     This class is used so that data files are read the first time data is
-    requested for shapes corresponding to a given key."""
+    requested for shapes corresponding to a given key.
+    """
     def __missing__(self, key):
         ret = self[key] = self.default_factory(key)
         return ret
@@ -56,8 +68,11 @@ _DOI_SHAPE_REPOSITORIES = _keyeddefaultdict(_doi_shape_collection_factory)
 
 
 def family_from_doi(doi):
-    """Acquire a list of :class:`~coxeter.shape_families.ShapeFamily` instances
-    that were used in the paper with the given DOI.
+    """Acquire a list of shape families.
+
+    This function produces :class:`~coxeter.shape_families.ShapeFamily`
+    instances corresponding to sets of shapes that were used in the paper with
+    the given DOI.
 
     Args:
         doi (str):

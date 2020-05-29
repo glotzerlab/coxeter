@@ -1,13 +1,14 @@
+"""Defines some symmetry operators.
+
+They have been given the name of space groups, however they represent only the
+rotational analogs of these groups. This means that any operation involving an
+inversion or reflection was not included. Half the elements are built from the
+rotation operators, the other half are these same operators after a quaternion
+rotation by [-1,0,0,0].
+"""
+
 import numpy as np
 import rowan
-
-# Here some symmetry operators groups are defined
-# They have been given the name of space groups,
-# however they represent only the rotational analogs
-# of these groups. This means that any operation involving
-# an inversion or reflection was not included. Half the elements
-# are built from the rotation operators, the other half are these
-# same operators after a quaternion rotation by [-1,0,0,0]
 
 # The elements are listed as (n-fold, axis) tuples, with
 # angle = 2pi/n
@@ -294,6 +295,7 @@ symgroups = {
 
 
 def gen_sym_quats(group):
+    """Generate symmetric quaternions for a set of point groups."""
     operations = symgroups[group]
     quats = []
     for operation in operations:
@@ -303,6 +305,3 @@ def gen_sym_quats(group):
         quats.append(rowan.multiply([-1, 0, 0, 0], qtemp).tolist())
 
     return quats
-
-# This is a json loadable string that has the quaternions that bring the shape
-# definitions of Damsceno into alignment with the above symmetry definitions

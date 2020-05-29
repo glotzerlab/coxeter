@@ -1,3 +1,5 @@
+"""Defines a convex polyhedron."""
+
 from scipy.spatial import ConvexHull
 import numpy as np
 from .polyhedron import Polyhedron
@@ -16,6 +18,7 @@ class ConvexPolyhedron(Polyhedron):
         vertices (:math:`(N, 3)` :class:`numpy.ndarray`):
             The vertices of the polyhedron.
     """
+
     def __init__(self, vertices):
         hull = ConvexHull(vertices)
         super(ConvexPolyhedron, self).__init__(vertices, hull.simplices, True)
@@ -23,7 +26,9 @@ class ConvexPolyhedron(Polyhedron):
 
     @property
     def mean_curvature(self):
-        R"""float: The integrated, normalized mean curvature
+        r"""float: The integrated, normalized mean curvature.
+
+        This quantity is calculated by the formula
         :math:`R = \sum_i (1/2) L_i (\pi - \phi_i) / (4 \pi)` with edge lengths
         :math:`L_i` and dihedral angles :math:`\phi_i` (see :cite:`Irrgang2017`
         for more information).
@@ -38,30 +43,28 @@ class ConvexPolyhedron(Polyhedron):
 
     @property
     def gsd_shape_spec(self):
-        """dict: A complete description of this shape corresponding to the
-        shape specification in the GSD file format as described
-        `here <https://gsd.readthedocs.io/en/stable/shapes.html>`_."""
+        """dict: Get a `complete GSD specification <shapes>`_."""  # noqa: D401
         return {'type': 'ConvexPolyhedron',
                 'vertices': self._vertices.tolist()}
 
     @property
     def tau(self):
-        R"""float: The parameter :math:`tau = \frac{4\pi R^2}{S}` defined in
-        :cite:`Naumann19841` that is closely related to the Pitzer acentric
-        factor. This quantity appears relevant to the third and fourth virial
-        coefficient for hard polyhedron fluids.
+        r"""float: Get the parameter :math:`tau = \frac{4\pi R^2}{S}`.
+
+        This parameter is defined in :cite:`Naumann19841` and is closely
+        related to the Pitzer acentric factor. This quantity appears relevant
+        to the third and fourth virial coefficient for hard polyhedron fluids.
         """
         R = self.mean_curvature
-        return 4*np.pi*R*R/self.surface_area
+        return 4 * np.pi * R * R / self.surface_area
 
     @property
     def asphericity(self):
-        """float: The asphericity as defined in :cite:`Irrgang2017`."""
-        return self.mean_curvature*self.surface_area/(3*self.volume)
+        """float: Get the asphericity as defined in :cite:`Irrgang2017`."""
+        return self.mean_curvature * self.surface_area / (3 * self.volume)
 
     def is_inside(self, points):
-        """Determine whether a set of points are contained in this
-        polyhedron.
+        """Determine whether points are contained in this polyhedron.
 
         .. note::
 
@@ -81,8 +84,12 @@ class ConvexPolyhedron(Polyhedron):
 
     @property
     def insphere_from_center(self):
-        """The largest sphere centered at the centroid that fits inside the
-        convex polyhedron, given by a center and a radius."""
+        """Get the largest inscribed sphere centered at the centroid.
+
+        The requirement that the sphere be centered at the centroid of the
+        shape distinguishes this sphere from most typical insphere
+        calculations.
+        """
         center = self.center
         distances = self._point_plane_distances(center).squeeze()
         if any(distances > 0):
@@ -93,8 +100,12 @@ class ConvexPolyhedron(Polyhedron):
 
     @property
     def circumsphere_from_center(self):
-        """The smallest sphere centered at the centroid that contains the
-        convex polyhedron, given by a center and a radius."""
+        """Get the smallest circumscribed sphere centered at the centroid.
+
+        The requirement that the sphere be centered at the centroid of the
+        shape distinguishes this sphere from most typical circumsphere
+        calculations.
+        """
         center = self.center
         if not self.is_inside(center):
             raise ValueError("The centroid is not contained in the shape. The "
