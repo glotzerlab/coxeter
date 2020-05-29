@@ -3,30 +3,41 @@ sources. These data sources are stored in the JSON format that can be parsed
 by the :class:`~coxeter.shape_families.TabulatedShapeFamily`."""
 
 from .tabulated_shape_family import TabulatedGSDShapeFamily
+from .plane_shape_families import Family332, Family432, Family532
 from collections import defaultdict
 import json
 import os
 
-# Set of keys for which data is stored within the data/ directory. Keys may
-# either be DOIs or any other identifier for a particular dataset.
-key_to_file = {
-    '10.1126/science.1220869': ['science1220869.json'],
-    'platonic_solids': ['platonic.json']
-}
+_DATA_FOLDER = os.path.join(os.path.dirname(__file__), 'data')
 
 
-def _shape_collection_factory(doi):
-    """Factory function used in a defaultdict for generating shapes from a file
-    with a DOI."""
+def _shape_collection_factory(key):
+    """Factory function used in a defaultdict for generating
+    :class:`~coxeter.shape_families.ShapeFamily` instances based on a given
+    key."""
+
+    # Set of keys for which data is stored within the data/ directory. Keys may
+    # either be DOIs or any other identifier for a particular dataset.
+    key_to_file = {
+        '10.1126/science.1220869': ['science1220869.json'],
+    }
+
+    # Set of keys that are associated with a specific ShapeFamily subclass.
+    key_to_family = {
+        '10.1103/PhysRevX.4.011024': [Family332, Family432, Family532]
+    }
+
     families = []
-    try:
-        files = key_to_file[doi]
-    except KeyError as e:
-        raise KeyError("Provided DOI is not known to coxeter.") from e
-
-    for fn in files:
-        with open(os.path.join(os.path.dirname(__file__), 'data', fn)) as f:
-            families.append(TabulatedGSDShapeFamily(json.load(f)))
+    if key in key_to_file:
+        for fn in key_to_file[key]:
+            with open(os.path.join(_DATA_FOLDER, fn)) as f:
+                families.append(TabulatedGSDShapeFamily(json.load(f)))
+    elif key in key_to_family:
+        for family_type in key_to_family[key]:
+            families.append(family_type())
+    else:
+        raise KeyError("Provided key is not associated with any known data or "
+                       "shape families.")
     return families
 
 
@@ -63,22 +74,3 @@ def get_by_doi(doi):
     except KeyError:
         raise ValueError("coxeter does not contain any data corresponding to "
                          "the requested DOI.")
-
-
-def get_family(family_name):
-    """Acquire a :class:`~coxeter.shape_families.ShapeFamily`.
-
-    Args:
-        family_name (str):
-            The identifier for the desired shape family.
-
-    Returns:
-        :class:`~coxeter.shape_families.ShapeFamily`:
-            A list of shape families used in the paper.
-    """
-    try:
-        # Always return a single family here.
-        return _DOI_SHAPE_REPOSITORIES[family_name][0]
-    except KeyError:
-        raise ValueError("coxeter does not contain any data corresponding to "
-                         "the requested family name.")

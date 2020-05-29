@@ -2,7 +2,7 @@ import pytest
 import numpy as np
 from coxeter.shape_classes.convex_polyhedron import ConvexPolyhedron
 from coxeter.shape_classes.sphere import Sphere
-from coxeter.shape_families import get_family, get_by_doi
+from coxeter.shape_families import PlatonicFamily, get_by_doi
 from scipy.spatial import ConvexHull
 from hypothesis import given, assume
 from hypothesis.strategies import floats, integers
@@ -43,7 +43,7 @@ def damasceno_shapes():
 
 
 def platonic_solids():
-    family = get_family('platonic_solids')
+    family = PlatonicFamily()
     for shape_name in family.data:
         yield family(shape_name)
 
@@ -220,7 +220,7 @@ def test_dihedrals():
         'Dodecahedron':  np.pi - np.arctan(2),
         'Icosahedron': np.pi - np.arccos(np.sqrt(5)/3),
     }
-    family = get_family('platonic_solids')
+    family = PlatonicFamily()
     for name, dihedral in known_shapes.items():
         poly = family(name)
         # The dodecahedron needs a more expansive merge to get all the
@@ -242,7 +242,7 @@ def test_curvature():
         'Tetrahedron': 0.9303430847680867,
     }
 
-    family = get_family('platonic_solids')
+    family = PlatonicFamily()
     for name, curvature in known_shapes.items():
         poly = family(name)
         if name == 'Dodecahedron':
@@ -392,7 +392,7 @@ def test_insphere_from_center_convex_hulls(points, test_points):
 def test_rotate_inertia(points):
     # Use the input as noise rather than the base points to avoid precision and
     # degenerate cases provided by hypothesis.
-    tet = get_family('platonic_solids')('Tetrahedron')
+    tet = PlatonicFamily()('Tetrahedron')
     vertices = tet.vertices + points
 
     rotation = rowan.random.rand()
@@ -410,7 +410,7 @@ def test_rotate_inertia(points):
 @given(arrays(np.float64, (3, ), elements=floats(-0.2, 0.2, width=64),
               unique=True))
 def test_translate_inertia(translation):
-    shape = get_family('platonic_solids')('Cube')
+    shape = PlatonicFamily()('Cube')
     # Choose a volume > 1 to test the volume scaling, but don't choose one
     # that's too large because the uncentered polyhedral calculation has
     # massive error without fixing that.

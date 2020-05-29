@@ -1,8 +1,11 @@
 """Certain common shape families that can be analytically generated."""
 
+from .tabulated_shape_family import TabulatedGSDShapeFamily
 from ..shape_classes import ConvexPolygon
 from .shape_family import ShapeFamily
+from .data_repositories import _DATA_FOLDER
 import numpy as np
+import os
 
 
 class RegularNGonFamily(ShapeFamily):
@@ -32,3 +35,15 @@ class RegularNGonFamily(ShapeFamily):
         pos *= np.sqrt(A_circ_A_poly_sq)
 
         return pos.T
+
+
+class PlatonicFamily(TabulatedGSDShapeFamily):
+    """The family of platonic solids
+
+    The following parameters are required by this class:
+
+      - name: The name of the Platonic solid.
+    """
+    def __init__(self):
+        fn = os.path.join(_DATA_FOLDER, 'platonic.json')
+        super().__init__(fn)
