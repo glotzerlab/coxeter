@@ -2,7 +2,7 @@ import pytest
 import numpy as np
 from coxeter.shape_classes.convex_polyhedron import ConvexPolyhedron
 from coxeter.shape_classes.sphere import Sphere
-from coxeter.shape_families import PlatonicFamily, get_by_doi
+from coxeter.shape_families import PlatonicFamily, family_from_doi
 from scipy.spatial import ConvexHull
 from hypothesis import given, assume
 from hypothesis.strategies import floats, integers
@@ -37,7 +37,7 @@ def polyhedron_from_hull(verts):
 def damasceno_shapes():
     """For efficiency, we don't construct all the shape classes, but rather
     just yield the raw shape dicts."""
-    family = get_by_doi('10.1126/science.1220869')[0]
+    family = family_from_doi('10.1126/science.1220869')[0]
     for shape_data in family.data.values():
         yield shape_data
 
@@ -304,7 +304,7 @@ def test_circumsphere_from_center():
     # calls.
     # See https://github.com/HypothesisWorks/hypothesis/issues/377
     import random
-    family = get_by_doi('10.1126/science.1220869')[0]
+    family = family_from_doi('10.1126/science.1220869')[0]
     shapes = [ConvexPolyhedron(s['vertices']) for s in
               random.sample([s for s in family.data.values() if
                              len(s['vertices'])], len(family.data)//5)]

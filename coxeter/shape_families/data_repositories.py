@@ -57,7 +57,7 @@ class _shape_repo_dict(defaultdict):
 _DOI_SHAPE_REPOSITORIES = _shape_repo_dict()
 
 
-def get_by_doi(doi):
+def family_from_doi(doi):
     """Acquire a list of :class:`~coxeter.shape_families.ShapeFamily` instances
     that were used in the paper with the given DOI.
 
