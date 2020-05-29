@@ -1,4 +1,3 @@
-from . import shapes
 from . import symmetry
 from . import ft
 from . import shape_classes
@@ -7,7 +6,6 @@ from . import shape_families
 from .shape_getters import from_gsd_type_shapes
 
 __all__ = [
-    'shapes',
     'symmetry',
     'ft',
     'shape_classes',
