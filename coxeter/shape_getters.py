@@ -12,12 +12,11 @@ from .shape_classes import (Circle, ConvexPolygon, ConvexPolyhedron,
 def from_gsd_type_shapes(params, ndim=3):  # noqa: C901
     """Create a :class:`~.Shape` from a dict conforming to the GSD schema.
 
-    See `here <https://gsd.readthedocs.io/en/stable/shapes.html>`_ for the
-    specification of the schema. Note that the schema does not differentiate
-    between 2D and 3D shapes for Spheres because in context those can be
-    inferred from simulation boxes. To address this ambiguity, this function
-    accepts an ndim parameter that can be used to disambiguate explicitly
-    between these two cases.
+    See :ref:`here <shapes>` for the specification of the schema. Note that the
+    schema does not differentiate between 2D and 3D shapes for Spheres because
+    in context those can be inferred from simulation boxes. To address this
+    ambiguity, this function accepts an ndim parameter that can be used to
+    disambiguate explicitly between these two cases.
 
     Args:
         params (dict):

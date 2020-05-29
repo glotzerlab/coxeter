@@ -19,7 +19,7 @@ class Shape(ABC):
     def gsd_shape_spec(self):
         """dict: A complete description of this shape corresponding to the
         shape specification in the GSD file format as described
-        `here <https://gsd.readthedocs.io/en/stable/shapes.html>`_."""
+        :ref:`here <shapes>`."""
         return {}
 
 

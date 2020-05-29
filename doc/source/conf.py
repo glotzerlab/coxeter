@@ -49,6 +49,21 @@ templates_path = ['_templates']
 exclude_patterns = []
 
 
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/3', None),
+    'numpy': ('https://docs.scipy.org/doc/numpy', None),
+    'matplotlib': ('https://matplotlib.org', None),
+    'gsd': ('https://gsd.readthedocs.io/en/stable/', None),
+}
+
+autodoc_default_options = {
+    'inherited-members': True,
+    'show-inheritance': True,
+}
+
+
+# The reST default role to use for all documents.
+default_role = 'any'
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for

@@ -7,8 +7,14 @@ from .shape_family import ShapeFamily
 class TabulatedShapeFamily(ShapeFamily):
     """A shape family corresponding to a tabulated set of shapes.
 
-    The shapes must be stored in a JSON file. All available data is accessible
-    via the :attr:`~.data` attribute.
+    Data can either be read from a file or provided in the form of a
+    dictionary. If a filename is provided, it must be a JSON file that can be
+    parsed into an appropriately formatted dictionary, namely a set of
+    key-value pairs such that the call operator of this class can generate
+    a :class:`~coxeter.shape_classes.Shape` from the dictionary. The raw parsed
+    JSON is accessible via the :attr:`~.data` attribute. Subclasses of this
+    class implement the call operator to define exactly how the dictionary
+    values are converted to a shape definition.
 
     Args:
         filename_or_dict (str or Mapping):
@@ -25,22 +31,21 @@ class TabulatedShapeFamily(ShapeFamily):
 
     @property
     def data(self):
-        """Get the JSON data underlying the file."""
+        """dict[dict]: Get the JSON data underlying the file."""
         return self._data
 
     def get_params(self, name):
-        """Get the full dictionary of data stored for a given file."""
+        """dict: Get the full dictionary of data stored for a given file."""
         return self._data[name]
 
 
 class TabulatedGSDShapeFamily(TabulatedShapeFamily):
     """A tabulated shape family defined by a GSD shape schema.
 
-    The shapes must be stored in a JSON file that provides a dictionary of
-    name->params mappings, where the params must adhere to the
-    `GSD shape spec <https://gsd.readthedocs.io/en/stable/shapes.html>`_. Each
-    mapping may contain additional data, which is ignored when the class is
-    called to actually produce :class:`~coxeter.shape_classes.Shape` objects.
+    The values of the dictionary used to construct this class must adhere to
+    the :ref:`GSD shape spec <shapes>`. Each mapping may contain additional
+    data, which is ignored when the class is called to actually produce
+    :class:`~coxeter.shape_classes.Shape` objects.
 
     Args:
         filename_or_dict (str or Mapping):
