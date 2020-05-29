@@ -12,7 +12,6 @@ def test_gsd_shape_getter():
             'type': 'Ellipsoid',
             'a': 1,
             'b': 2,
-            'c': 3,
             'ndim': 2
         },
         {
