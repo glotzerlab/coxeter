@@ -1,5 +1,5 @@
-from coxeter.shape_families import (family_from_doi, Family332, Family432,
-                                    Family532, RegularNGonFamily)
+from coxeter.shape_families import (family_from_doi, Family323Plus, Family423,
+                                    Family523, RegularNGonFamily)
 import numpy as np
 import pytest
 
@@ -30,8 +30,8 @@ def test_shape_repos():
     assert len(cube.faces) == 6
 
 
-def test_shape332():
-    family = Family332()
+def test_shape323():
+    family = Family323Plus()
     # Octahedron (6)
     assert len(family(1, 1).vertices) == 6
     assert len(family(1, 1).faces) == 8
@@ -46,8 +46,8 @@ def test_shape332():
     assert len(family(3, 3).faces) == 6
 
 
-def test_shape432():
-    family = Family432()
+def test_shape423():
+    family = Family423()
     # Cuboctahedron (12)
     assert len(family(1, 2).vertices) == 12
     assert len(family(1, 2).faces) == 14
@@ -62,8 +62,8 @@ def test_shape432():
     assert len(family(2, 3).faces) == 12
 
 
-def test_shape532():
-    family = Family532()
+def test_shape523():
+    family = Family523()
     s = family.s
     S = family.S
     # Icosidodecahedron

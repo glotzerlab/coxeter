@@ -88,8 +88,8 @@ class TruncationPlaneShapeFamily(ShapeFamily):
         pass
 
 
-class Family332(TruncationPlaneShapeFamily):
-    R"""The 332 shape family defined in :cite:`Chen2014`.
+class Family323Plus(TruncationPlaneShapeFamily):
+    R"""The 323+ shape family defined in :cite:`Chen2014`.
 
     The following parameters are required by this class:
 
@@ -129,8 +129,8 @@ class Family332(TruncationPlaneShapeFamily):
         return np.array([2, 2, 2, 2, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1])
 
 
-class Family432(TruncationPlaneShapeFamily):
-    R"""The 432 shape family defined in :cite:`Chen2014`.
+class Family423(TruncationPlaneShapeFamily):
+    R"""The 423 shape family defined in :cite:`Chen2014`.
 
     The following parameters are required by this class:
 
@@ -183,8 +183,8 @@ class Family432(TruncationPlaneShapeFamily):
                          1, 1, 0, 0, 0, 0, 0, 0])
 
 
-class Family532(TruncationPlaneShapeFamily):
-    R"""The 432 shape family defined in :cite:`Chen2014`.
+class Family523(TruncationPlaneShapeFamily):
+    R"""The 423 shape family defined in :cite:`Chen2014`.
 
     The following parameters are required by this class:
 
