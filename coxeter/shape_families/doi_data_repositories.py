@@ -3,7 +3,8 @@ sources. These data sources are stored in the JSON format that can be parsed
 by the :class:`~coxeter.shape_families.TabulatedShapeFamily`."""
 
 from .tabulated_shape_family import TabulatedGSDShapeFamily
-from .plane_shape_families import Family323Plus, Family423, Family523
+from .plane_shape_families import (Family323Plus, Family423, Family523,
+                                   TruncatedTetrahedronFamily)
 from collections import defaultdict
 import json
 import os
@@ -24,7 +25,8 @@ def _shape_collection_factory(key):
 
     # Set of keys that are associated with a specific ShapeFamily subclass.
     key_to_family = {
-        '10.1103/PhysRevX.4.011024': [Family323Plus, Family423, Family523]
+        '10.1103/PhysRevX.4.011024': [Family323Plus, Family423, Family523],
+        '10.1021/nn204012y': [TruncatedTetrahedronFamily]
     }
 
     families = []

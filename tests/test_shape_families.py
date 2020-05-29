@@ -1,5 +1,6 @@
 from coxeter.shape_families import (family_from_doi, Family323Plus, Family423,
-                                    Family523, RegularNGonFamily)
+                                    Family523, RegularNGonFamily,
+                                    TruncatedTetrahedronFamily)
 import numpy as np
 import pytest
 
@@ -78,3 +79,15 @@ def test_shape523():
     # Rhombic Tricontahedron
     assert len(family(1*s*np.sqrt(5), 3).vertices) == 32
     assert len(family(1*s*np.sqrt(5), 3).faces) == 30
+
+
+def test_truncated_tetrahedron():
+    family = TruncatedTetrahedronFamily()
+    # Test the endpoints (tetrahedron or octahedron).
+    tet = family(0)
+    assert len(tet.vertices) == 4
+    assert len(tet.faces) == 4
+
+    tet = family(1)
+    assert len(tet.vertices) == 6
+    assert len(tet.faces) == 8

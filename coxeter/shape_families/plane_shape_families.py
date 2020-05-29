@@ -284,3 +284,22 @@ class Family523(TruncationPlaneShapeFamily):
                          1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
                          2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                          1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+
+
+class TruncatedTetrahedronFamily(Family323Plus):
+    R"""The truncated tetrahedron family used in :cite:`Damasceno2012`.
+
+    The following parameters are required by this class:
+
+      - :math:`truncation \in [0, 1]`
+
+    This family is constructed as a limiting case of :class:`~.Family323Plus`
+    with a = 1. The c value is then directly related to a linear interpolation
+    over truncations.
+    """
+
+    def __call__(self, truncation):
+        if not 0 <= truncation <= 1:
+            raise ValueError("The truncation must be between 0 and 1.")
+        c = (2 * ((-truncation) + 1) + 1)
+        return super().__call__(1, c)
