@@ -1,5 +1,6 @@
 from setuptools import setup, find_packages
 import os
+import glob
 
 # Read README for PyPI, fallback if it fails.
 desc = 'Tools for creating and manipulating shapes.'
@@ -33,6 +34,9 @@ extras = {
     'bounding_sphere': bounding_deps,
 }
 
+# Acquire package data files.
+DATA = glob.glob('coxeter/shape_families/data/*.json').replace('coxeter/', '')
+
 setup(
     name='coxeter',
     version=version,
@@ -43,7 +47,7 @@ setup(
     author='Vyas Ramasubramani',
     author_email='vramasub@umich.edu',
     packages=find_packages(),
-    package_data={'coxeter': ['science.1220869.json']},
+    package_data={'coxeter': DATA},
     install_requires=[
         'numpy',
         'rowan>=1.2',
