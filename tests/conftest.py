@@ -59,7 +59,7 @@ def oriented_cube():
 
 @pytest.fixture
 def unoriented_cube():
-    """A cube with the faces disordered (but still provided)."""
+    """Get a cube with the faces out of order on construction."""
     faces = get_oriented_cube_faces()
     for face in faces:
         np.random.shuffle(face)
@@ -74,7 +74,9 @@ def cube(request):
 
 
 def get_valid_hull(points, min_hull_area=1e-2):
-    """To avoid issues from floating point error, we require any test that
+    """Get a convex hull that adheres to our requirements.
+
+    To avoid issues from floating point error, we require any test that
     computes a convex hull from a random set of points to successfully build a
     hull, and the hull must have a reasonable finite area.
 

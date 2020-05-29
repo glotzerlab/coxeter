@@ -8,11 +8,16 @@ from hypothesis import given, example, assume
 from hypothesis.strategies import floats
 from hypothesis.extra.numpy import arrays
 from conftest import get_valid_hull
+from coxeter.shape_families import RegularNGonFamily
 
 
 def polygon_from_hull(verts):
-    """Try to generate a polygon from a hull, and fail gracefully (in the
-    context of Hypothesis) if the hull is nearly degenerate."""
+    """Generate a polygon from a hull if possible.
+
+    This function tries to generate a polygon from a hull, and returns False if
+    it fails so that Hypothesis can simply assume(False) if the hull is nearly
+    degenerate.
+    """
     try:
         poly = Polygon(verts)
     except AssertionError:
@@ -119,11 +124,10 @@ def test_center(square, square_points):
 
 def test_moment_inertia(square):
     """Test moment of inertia calculation."""
-
     # First test the default values.
     square.center = (0, 0, 0)
-    assert np.allclose(square.planar_moments_inertia, (1/12, 1/12, 0))
-    assert np.isclose(square.polar_moment_inertia, 1/6)
+    assert np.allclose(square.planar_moments_inertia, (1 / 12, 1 / 12, 0))
+    assert np.isclose(square.polar_moment_inertia, 1 / 6)
 
     # Use hypothesis to validate the simple parallel axis theorem.
     @given(arrays(np.float64, (3, ), elements=floats(-5, 5, width=64),
@@ -134,37 +138,36 @@ def test_moment_inertia(square):
         square.center = center
 
         assert np.isclose(square.polar_moment_inertia,
-                          1/6 + square.area*np.dot(center, center))
+                          1 / 6 + square.area * np.dot(center, center))
 
     testfun()
 
 
 def test_inertia_tensor(square):
     """Test the inertia tensor calculation."""
-
     square.center = (0, 0, 0)
     assert np.sum(square.inertia_tensor > 1e-6) == 1
-    assert square.inertia_tensor[2, 2] == 1/6
+    assert square.inertia_tensor[2, 2] == 1 / 6
 
     # Validate yz plane.
-    rotation = rowan.from_axis_angle([0, 1, 0], np.pi/2)
+    rotation = rowan.from_axis_angle([0, 1, 0], np.pi / 2)
     rotated_verts = rowan.rotate(rotation, square.vertices)
     rotated_square = ConvexPolygon(rotated_verts)
     assert np.sum(rotated_square.inertia_tensor > 1e-6) == 1
-    assert rotated_square.inertia_tensor[0, 0] == 1/6
+    assert rotated_square.inertia_tensor[0, 0] == 1 / 6
 
     # Validate xz plane.
-    rotation = rowan.from_axis_angle([1, 0, 0], np.pi/2)
+    rotation = rowan.from_axis_angle([1, 0, 0], np.pi / 2)
     rotated_verts = rowan.rotate(rotation, square.vertices)
     rotated_square = ConvexPolygon(rotated_verts)
     assert np.sum(rotated_square.inertia_tensor > 1e-6) == 1
-    assert rotated_square.inertia_tensor[1, 1] == 1/6
+    assert rotated_square.inertia_tensor[1, 1] == 1 / 6
 
     # Validate translation along each axis.
     delta = 2
     area = square.area
     for i in range(3):
-        translation = [0]*3
+        translation = [0] * 3
         translation[i] = delta
         translated_verts = square.vertices + translation
         translated_square = ConvexPolygon(translated_verts)
@@ -172,10 +175,10 @@ def test_inertia_tensor(square):
         diag_indices = np.diag_indices(3)
         offdiagonal_tensor[diag_indices] = 0
         assert np.sum(offdiagonal_tensor > 1e-6) == 0
-        expected_diagonals = [0, 0, 1/6]
+        expected_diagonals = [0, 0, 1 / 6]
         for j in range(3):
             if i != j:
-                expected_diagonals[j] += area*delta*delta
+                expected_diagonals[j] += area * delta * delta
         assert np.allclose(np.diag(translated_square.inertia_tensor),
                            expected_diagonals)
 
@@ -244,7 +247,7 @@ def test_set_convex_area(points):
     assume(poly)
     original_area = poly.area
     poly.area *= 2
-    assert np.isclose(poly.area, 2*original_area)
+    assert np.isclose(poly.area, 2 * original_area)
 
 
 def test_triangulate(square):
@@ -258,30 +261,10 @@ def test_triangulate(square):
     assert not np.all(np.asarray(triangles[0]) == np.asarray(triangles[1]))
 
 
-def get_unit_area_ngon(n):
-    """Compute vertices of a regular n-gon of area 1. Useful for constructing
-    simple tests of some of the "containing sphere" calculations."""
-    r = 1  # The radius of the circle
-    theta = np.linspace(0, 2*np.pi, num=n, endpoint=False)
-    pos = np.array([np.cos(theta), np.sin(theta)])
-
-    # First normalize to guarantee that the limiting case of an infinite number
-    # of vertices produces a circle of area r^2.
-    pos /= (np.sqrt(np.pi)/r)
-
-    # Area of an n-gon inscribed in a circle
-    # A_poly = ((n*r**2)/2)*np.sin(2*np.pi/n)
-    # A_circ = np.pi*r**2
-    # pos *= np.sqrt(A_circ/A_poly)
-    A_circ_over_A_poly = np.pi/((n/2)*np.sin(2*np.pi/n))
-    pos *= np.sqrt(A_circ_over_A_poly)
-
-    return pos.T
-
-
 def test_bounding_circle_radius_regular_polygon():
+    family = RegularNGonFamily()
     for i in range(3, 10):
-        vertices = get_unit_area_ngon(i)
+        vertices = family.make_vertices(i)
         rmax = np.max(np.linalg.norm(vertices, axis=-1))
 
         poly = Polygon(vertices)
@@ -335,8 +318,9 @@ def test_bounding_circle_radius_random_hull_rotation(points, rotation):
 
 
 def test_circumcircle():
+    family = RegularNGonFamily()
     for i in range(3, 10):
-        vertices = get_unit_area_ngon(i)
+        vertices = family.make_vertices(i)
         rmax = np.max(np.linalg.norm(vertices, axis=-1))
 
         poly = Polygon(vertices)

@@ -69,14 +69,14 @@ def test_shape523():
     assert len(family(1, S**2).vertices) == 30
     assert len(family(1, S**2).faces) == 32
     # Icosahedron
-    assert len(family(1*s*np.sqrt(5), S**2).vertices) == 12
-    assert len(family(1*s*np.sqrt(5), S**2).faces) == 20
+    assert len(family(1 * s * np.sqrt(5), S**2).vertices) == 12
+    assert len(family(1 * s * np.sqrt(5), S**2).faces) == 20
     # Dodecahedron
     assert len(family(1, 3).vertices) == 20
     assert len(family(1, 3).faces) == 12
     # Rhombic Triacontahedron
-    assert len(family(1*s*np.sqrt(5), 3).vertices) == 32
-    assert len(family(1*s*np.sqrt(5), 3).faces) == 30
+    assert len(family(1 * s * np.sqrt(5), 3).vertices) == 32
+    assert len(family(1 * s * np.sqrt(5), 3).faces) == 30
 
 
 def test_truncated_tetrahedron():

@@ -16,7 +16,7 @@ def test_surface_area(r):
 
 @given(floats(0.1, 1000))
 def test_volume(r):
-    V = 4/3 * np.pi * r**3
+    V = 4 / 3 * np.pi * r**3
     sphere = Sphere(1)
     sphere.radius = r
     assert sphere.volume == V
@@ -35,8 +35,8 @@ def test_inertia_tensor(r, center):
     sphere = Sphere(r)
     assert np.all(sphere.inertia_tensor >= 0)
 
-    volume = 4/3 * np.pi * r**3
-    expected = [2/5 * volume * r**2]*3
+    volume = 4 / 3 * np.pi * r**3
+    expected = [2 / 5 * volume * r**2] * 3
     np.testing.assert_allclose(np.diag(sphere.inertia_tensor), expected)
 
     sphere.center = center

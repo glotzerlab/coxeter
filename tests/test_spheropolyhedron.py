@@ -9,14 +9,13 @@ from hypothesis.strategies import floats
 def test_volume(radius):
     sphero_cube = make_sphero_cube(radius=radius)
     V_cube = 1
-    V_sphere = (4/3)*np.pi*radius**3
-    V_cyl = 12*(np.pi*radius**2)/4
+    V_sphere = (4 / 3) * np.pi * radius**3
+    V_cyl = 12 * (np.pi * radius**2) / 4
     assert np.isclose(sphero_cube.volume, V_cube + V_sphere + V_cyl)
 
 
 def test_volume_polyhedron(convex_cube, cube_points):
-    """Ensure that the base case of zero radius gives the same result as a
-    polyhedron."""
+    """Ensure that zero radius gives the same result as a polyhedron."""
     sphero_cube = make_sphero_cube(radius=0)
     assert sphero_cube.volume == convex_cube.volume
 
@@ -25,14 +24,13 @@ def test_volume_polyhedron(convex_cube, cube_points):
 def test_surface_area(radius):
     sphero_cube = make_sphero_cube(radius=radius)
     S_cube = 6
-    S_sphere = 4*np.pi*radius**2
-    S_cyl = 12*(2*np.pi*radius)/4
+    S_sphere = 4 * np.pi * radius**2
+    S_cyl = 12 * (2 * np.pi * radius) / 4
     assert np.isclose(sphero_cube.surface_area, S_cube + S_sphere + S_cyl)
 
 
 def test_surface_area_polyhedron(convex_cube):
-    """Ensure that the base case of zero radius gives the same result as a
-    polyhedron."""
+    """Ensure that zero radius gives the same result as a polyhedron."""
     sphero_cube = make_sphero_cube(radius=0)
     assert sphero_cube.surface_area == convex_cube.surface_area
 
@@ -60,6 +58,7 @@ def test_inside_boundaries():
     # Points are outside the spherical caps
     assert np.all(~sphero_cube.is_inside(verts * 3))
     # Points are on the very corners of the spherical caps
-    assert np.all(sphero_cube.is_inside(verts * (1 + 2*np.sqrt(1/3))))
+    assert np.all(sphero_cube.is_inside(verts * (1 + 2 * np.sqrt(1 / 3))))
     # Points are just outside the very corners of the spherical caps
-    assert np.all(~sphero_cube.is_inside(verts * (1 + 2*np.sqrt(1/3) + 1e-6)))
+    assert np.all(~sphero_cube.is_inside(
+        verts * (1 + 2 * np.sqrt(1 / 3) + 1e-6)))

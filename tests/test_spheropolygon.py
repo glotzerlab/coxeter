@@ -93,7 +93,6 @@ def test_center(square_points, unit_rounded_square):
 
 def test_nonplanar(square_points):
     """Ensure that nonplanar vertices raise an error."""
-
     with pytest.raises(ValueError):
         square_points[0, 2] += 1
         ConvexSpheropolygon(square_points, 1)
@@ -120,7 +119,7 @@ def test_convex_area(points):
     r = 1
     poly = ConvexSpheropolygon(verts, radius=r)
 
-    cap_area = np.pi*r*r
+    cap_area = np.pi * r * r
     edge_area = np.sum(np.linalg.norm(verts - np.roll(verts, 1, 0), axis=1),
                        axis=0)
     assert np.isclose(hull.volume + edge_area + cap_area, poly.area)
@@ -142,7 +141,7 @@ def test_convex_signed_area(square_points):
 
         hull = ConvexHull(square_points[:, :2])
 
-        cap_area = np.pi*r*r
+        cap_area = np.pi * r * r
         edge_area = np.sum(
             np.linalg.norm(square_points - np.roll(square_points, 1, 0),
                            axis=1),

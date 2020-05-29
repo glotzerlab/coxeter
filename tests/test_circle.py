@@ -44,10 +44,10 @@ def test_moment_inertia(r, center):
 
     circle.center = center
     area = np.pi * r**2
-    expected = [np.pi / 4 * r**4]*3
-    expected[0] += area*center[0]**2
-    expected[1] += area*center[1]**2
-    expected[2] = area*center[0]*center[1]
+    expected = [np.pi / 4 * r**4] * 3
+    expected[0] += area * center[0]**2
+    expected[1] += area * center[1]**2
+    expected[2] = area * center[0] * center[1]
     np.testing.assert_allclose(circle.planar_moments_inertia[:2], expected[:2])
     np.testing.assert_allclose(circle.planar_moments_inertia[2], expected[2])
     assert circle.polar_moment_inertia == pytest.approx(sum(expected[:2]))

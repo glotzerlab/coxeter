@@ -17,8 +17,12 @@ from conftest import get_valid_hull
 
 
 def polyhedron_from_hull(verts):
-    """Try to generate a polyhedron from a hull, and fail gracefully (in the
-    context of Hypothesis) if the hull is nearly degenerate."""
+    """Generate a polyhedron from a hull if possible.
+
+    This function tries to generate a polyhedron from a hull, and returns False
+    if it fails so that Hypothesis can simply assume(False) if the hull is
+    nearly degenerate.
+    """
     try:
         poly = ConvexPolyhedron(verts)
     except ValueError as e:
@@ -35,8 +39,11 @@ def polyhedron_from_hull(verts):
 
 
 def damasceno_shapes():
-    """For efficiency, we don't construct all the shape classes, but rather
-    just yield the raw shape dicts."""
+    """Generate the shapes from :cite:`Damasceno2012a`.
+
+    For efficiency, we don't construct all the shape classes, but rather just
+    yield the raw shape dicts.
+    """
     family = family_from_doi('10.1126/science.1220869')[0]
     for shape_data in family.data.values():
         yield shape_data
@@ -132,7 +139,7 @@ def test_face_alignment(convex_cube):
 
     reference_faces = []
     for face in get_oriented_cube_faces():
-        reference_faces.append(face_to_string(face)*2)
+        reference_faces.append(face_to_string(face) * 2)
 
     assert len(convex_cube.faces) == len(reference_faces)
 
@@ -146,7 +153,7 @@ def test_face_alignment(convex_cube):
                          indirect=True)
 def test_moment_inertia(cube):
     cube.center = (0, 0, 0)
-    assert np.allclose(cube.inertia_tensor, np.diag([1/6]*3))
+    assert np.allclose(cube.inertia_tensor, np.diag([1 / 6] * 3))
 
 
 @pytest.mark.parametrize('shape', damasceno_shapes())
@@ -160,8 +167,8 @@ def test_volume_damasceno_shapes(shape):
 
 
 # This test is a bit slow (a couple of minutes), so skip running it locally.
-@pytest.mark.skipif(os.getenv('CI', 'false') != 'true' and
-                    os.getenv('CIRCLECI', 'false') != 'true',
+@pytest.mark.skipif(os.getenv('CI', 'false') != 'true'
+                    and os.getenv('CIRCLECI', 'false') != 'true',
                     reason="Test is too slow to run during rapid development")
 @pytest.mark.parametrize('shape', damasceno_shapes())
 def test_moment_inertia_damasceno_shapes(shape):
@@ -209,16 +216,16 @@ def test_moment_inertia_damasceno_shapes(shape):
                          ['convex_cube', 'oriented_cube', 'unoriented_cube'],
                          indirect=True)
 def test_iq(cube):
-    assert cube.iq == 36*np.pi*cube.volume**2/cube.surface_area**3
+    assert cube.iq == 36 * np.pi * cube.volume**2 / cube.surface_area**3
 
 
 def test_dihedrals():
     known_shapes = {
-        'Tetrahedron': np.arccos(1/3),
-        'Cube': np.pi/2,
-        'Octahedron': np.pi - np.arccos(1/3),
-        'Dodecahedron':  np.pi - np.arctan(2),
-        'Icosahedron': np.pi - np.arccos(np.sqrt(5)/3),
+        'Tetrahedron': np.arccos(1 / 3),
+        'Cube': np.pi / 2,
+        'Octahedron': np.pi - np.arccos(1 / 3),
+        'Dodecahedron': np.pi - np.arctan(2),
+        'Icosahedron': np.pi - np.arccos(np.sqrt(5) / 3),
     }
     family = PlatonicFamily()
     for name, dihedral in known_shapes.items():
@@ -286,13 +293,16 @@ def test_circumsphere_platonic(poly):
     poly.center = [0, 0, 0]
     r2 = np.sum(poly.vertices**2, axis=1)
 
-    assert np.allclose(r2, radius*radius)
+    assert np.allclose(r2, radius * radius)
 
 
 def test_circumsphere_from_center():
-    """Check that all points outside this circumsphere are also outside the
+    """Validate circumsphere by testing the polyhedron.
+
+    This checks that all points outside this circumsphere are also outside the
     polyhedron. Note that this is a necessary but not sufficient condition for
-    correctness."""
+    correctness.
+    """
     # Building convex polyhedra is the slowest part of this test, so rather
     # than testing all the shapes from this particular dataset every time we
     # instead test a random subset each time the test runs. To further speed
@@ -302,7 +312,7 @@ def test_circumsphere_from_center():
     family = family_from_doi('10.1126/science.1220869')[0]
     shapes = [ConvexPolyhedron(s['vertices']) for s in
               random.sample([s for s in family.data.values() if
-                             len(s['vertices'])], len(family.data)//5)]
+                             len(s['vertices'])], len(family.data) // 5)]
 
     # Use a nested function to avoid warnings from hypothesis. While the shape
     # does get modified inside the testfun, it's simply being recentered each
@@ -313,7 +323,7 @@ def test_circumsphere_from_center():
                          unique=True),
            points=arrays(np.float64, (50, 3), elements=floats(-1, 1, width=64),
                          unique=True),
-           shape_index=integers(0, len(shapes)-1))
+           shape_index=integers(0, len(shapes) - 1))
     def testfun(center, points, shape_index):
         poly = shapes[shape_index]
         poly.center = center
@@ -321,7 +331,7 @@ def test_circumsphere_from_center():
         centroid, radius = poly.circumsphere_from_center
         sphere = Sphere(radius)
 
-        scaled_points = points*radius
+        scaled_points = points * radius
         points_outside = np.logical_not(sphere.is_inside(scaled_points))
 
         # Verify that all points outside the circumsphere are also outside the
@@ -342,7 +352,7 @@ def test_bounding_sphere_platonic(poly):
     poly.center = [0, 0, 0]
     r2 = np.sum(poly.vertices**2, axis=1)
 
-    assert np.allclose(r2, radius*radius, rtol=1e-4)
+    assert np.allclose(r2, radius * radius, rtol=1e-4)
 
 
 def test_inside_boundaries(convex_cube):

@@ -70,7 +70,7 @@ class TestFormFactors(unittest.TestCase):
                                 dtype=np.float)
         ft.set_rq(positions, orientations)
         ft.compute()
-        npt.assert_equal(ft.S[0], 4./3. * np.pi * ft.get_radius()**3)
+        npt.assert_equal(ft.S[0], 4 / 3 * np.pi * ft.get_radius()**3)
         npt.assert_almost_equal(
             ft.S,
             [0.52359878, 0.51062514, 0.51062514, 0.47307465,
