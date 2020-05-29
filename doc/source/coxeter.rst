@@ -8,25 +8,10 @@ Subpackages
 
    coxeter.common_shapes
    coxeter.shape_classes
+   coxeter.shape_families
 
 Submodules
 ----------
-
-coxeter.MathematicaToPython module
-----------------------------------
-
-.. automodule:: coxeter.MathematicaToPython
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-coxeter.damasceno module
-------------------------
-
-.. automodule:: coxeter.damasceno
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
 coxeter.ft module
 -----------------
@@ -36,22 +21,13 @@ coxeter.ft module
    :undoc-members:
    :show-inheritance:
 
-coxeter.shapes module
----------------------
+coxeter.shape\_getters module
+-----------------------------
 
-.. automodule:: coxeter.shapes
+.. automodule:: coxeter.shape_getters
    :members:
    :undoc-members:
    :show-inheritance:
-
-coxeter.symmetry module
------------------------
-
-.. automodule:: coxeter.symmetry
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 
 Module contents
 ---------------

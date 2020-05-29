@@ -4,6 +4,14 @@ coxeter.shape\_classes package
 Submodules
 ----------
 
+coxeter.shape\_classes.base\_classes module
+-------------------------------------------
+
+.. automodule:: coxeter.shape_classes.base_classes
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 coxeter.shape\_classes.circle module
 ------------------------------------
 
@@ -24,6 +32,14 @@ coxeter.shape\_classes.convex\_polyhedron module
 ------------------------------------------------
 
 .. automodule:: coxeter.shape_classes.convex_polyhedron
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+coxeter.shape\_classes.convex\_spheropolygon module
+---------------------------------------------------
+
+.. automodule:: coxeter.shape_classes.convex_spheropolygon
    :members:
    :undoc-members:
    :show-inheritance:
@@ -76,10 +92,10 @@ coxeter.shape\_classes.sphere module
    :undoc-members:
    :show-inheritance:
 
-coxeter.shape\_classes.spheropolygon module
--------------------------------------------
+coxeter.shape\_classes.utils module
+-----------------------------------
 
-.. automodule:: coxeter.shape_classes.spheropolygon
+.. automodule:: coxeter.shape_classes.utils
    :members:
    :undoc-members:
    :show-inheritance:
