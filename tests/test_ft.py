@@ -2,7 +2,7 @@ import unittest
 import numpy as np
 import numpy.testing as npt
 import coxeter.ft
-from coxeter.common_shapes import Cube
+from coxeter.shape_families import PlatonicFamily
 
 
 class TestFormFactors(unittest.TestCase):
@@ -93,7 +93,8 @@ class TestFormFactors(unittest.TestCase):
 
     def test_FTconvexPolyhedron(self):
         # TODO: Currently using this to test FTpolyhedron indirectly
-        cube = Cube.shape
+        cube = PlatonicFamily()('Cube')
+        cube.volume = 8
         npt.assert_almost_equal(cube.volume, 8)
         ft = coxeter.ft.FTconvexPolyhedron(cube)
         ft.set_K(self.K)

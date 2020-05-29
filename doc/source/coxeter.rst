@@ -6,7 +6,6 @@ Subpackages
 
 .. toctree::
 
-   coxeter.common_shapes
    coxeter.shape_classes
    coxeter.shape_families
 
@@ -28,6 +27,7 @@ coxeter.shape\_getters module
    :members:
    :undoc-members:
    :show-inheritance:
+
 
 Module contents
 ---------------
