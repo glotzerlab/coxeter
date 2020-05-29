@@ -1,5 +1,18 @@
-from coxeter.shape_families import get_by_doi, Family332, Family432, Family532
+from coxeter.shape_families import (get_by_doi, Family332, Family432,
+                                    Family532, RegularNGonFamily)
 import numpy as np
+import pytest
+
+
+@pytest.mark.parametrize('n', range(3, 100))
+def test_regular_ngon(n):
+    family = RegularNGonFamily()
+    poly = family(n)
+    assert len(poly.vertices) == n
+    # All side lengths should be the same.
+    assert len(np.unique(np.linalg.norm(
+        poly.vertices - np.roll(poly.vertices, shift=-1, axis=0),
+        axis=1).round(4))) == 1
 
 
 def test_shape_repos():
