@@ -1,12 +1,21 @@
-from coxeter import shape_families
-from coxeter.shape_families.shape_family import Family332, Family432, Family532
+from coxeter.shape_families import get_by_doi, Family332, Family432, Family532
 import numpy as np
+from coxeter.shape_classes import ConvexPolyhedron
 
 
 def test_shape_repos():
-    repo = shape_families.shape_repositories['10.1126/science.1220869']
-    print(repo)
-    print(repo('1'))
+    family = get_by_doi('10.1126/science.1220869')[0]
+    found_cube = False
+    for key, shape_data in family.data.items():
+        if shape_data['Name'] == 'Cube':
+            found_cube = True
+            break
+    if not found_cube:
+        assert False, "Could not find a cube in the dataset."
+
+    cube = ConvexPolyhedron(family(key))
+    assert len(cube.vertices) == 8
+    assert len(cube.faces) == 6
 
 
 def test_shape332():
