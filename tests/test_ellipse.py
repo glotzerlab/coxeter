@@ -22,11 +22,10 @@ def test_perimeter(a, b):
 
 @given(floats(0.1, 1000), floats(0.1, 1000))
 def test_area(a, b):
-    A = np.pi * a * b
     ellipse = Ellipse(1, 1)
     ellipse.a = a
     ellipse.b = b
-    assert ellipse.area == A
+    assert ellipse.area == np.pi * a * b
 
 
 @given(floats(0.1, 1000), floats(0.1, 1000))

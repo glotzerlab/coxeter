@@ -8,10 +8,10 @@ from hypothesis.strategies import floats
 @given(radius=floats(0.1, 1))
 def test_volume(radius):
     sphero_cube = make_sphero_cube(radius=radius)
-    V_cube = 1
-    V_sphere = (4 / 3) * np.pi * radius**3
-    V_cyl = 12 * (np.pi * radius**2) / 4
-    assert np.isclose(sphero_cube.volume, V_cube + V_sphere + V_cyl)
+    v_cube = 1
+    v_sphere = (4 / 3) * np.pi * radius**3
+    v_cyl = 12 * (np.pi * radius**2) / 4
+    assert np.isclose(sphero_cube.volume, v_cube + v_sphere + v_cyl)
 
 
 def test_volume_polyhedron(convex_cube, cube_points):
@@ -23,10 +23,10 @@ def test_volume_polyhedron(convex_cube, cube_points):
 @given(radius=floats(0.1, 1))
 def test_surface_area(radius):
     sphero_cube = make_sphero_cube(radius=radius)
-    S_cube = 6
-    S_sphere = 4 * np.pi * radius**2
-    S_cyl = 12 * (2 * np.pi * radius) / 4
-    assert np.isclose(sphero_cube.surface_area, S_cube + S_sphere + S_cyl)
+    sa_cube = 6
+    sa_sphere = 4 * np.pi * radius**2
+    sa_cyl = 12 * (2 * np.pi * radius) / 4
+    assert np.isclose(sphero_cube.surface_area, sa_cube + sa_sphere + sa_cyl)
 
 
 def test_surface_area_polyhedron(convex_cube):

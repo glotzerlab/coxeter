@@ -56,8 +56,8 @@ class RegularNGonFamily(_ShapeFamily):
         # A_poly = ((n*r**2)/2)*np.sin(2*np.pi/n)
         # A_circ = np.pi*r**2
         # pos *= np.sqrt(A_circ/A_poly)
-        A_circ_A_poly_sq = np.pi / ((n / 2) * np.sin(2 * np.pi / n))
-        pos *= np.sqrt(A_circ_A_poly_sq)
+        a_circ_a_poly_sq = np.pi / ((n / 2) * np.sin(2 * np.pi / n))
+        pos *= np.sqrt(a_circ_a_poly_sq)
 
         return pos.T
 

@@ -98,20 +98,18 @@ class Ellipsoid(Shape3D):
 
         Assumes a constant density of 1.
         """
-        V = self.volume
-        Ixx = V / 5 * (self.b**2 + self.c**2)
-        Iyy = V / 5 * (self.a**2 + self.c**2)
-        Izz = V / 5 * (self.a**2 + self.b**2)
-        inertia_tensor = np.diag([Ixx, Iyy, Izz])
+        vol = self.volume
+        i_xx = vol / 5 * (self.b**2 + self.c**2)
+        i_yy = vol / 5 * (self.a**2 + self.c**2)
+        i_zz = vol / 5 * (self.a**2 + self.b**2)
+        inertia_tensor = np.diag([i_xx, i_yy, i_zz])
         return translate_inertia_tensor(
-            self.center, inertia_tensor, self.volume)
+            self.center, inertia_tensor, vol)
 
     @property
     def iq(self):
         """float: Get the isoperimetric quotient."""
-        V = self.volume
-        S = self.surface_area
-        return np.pi * 36 * V**2 / (S**3)
+        return np.pi * 36 * self.volume**2 / (self.surface_area**3)
 
     def is_inside(self, points):
         """Determine whether a set of points are contained in this ellipsoid.

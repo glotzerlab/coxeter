@@ -33,13 +33,13 @@ class ConvexPolyhedron(Polyhedron):
         :math:`L_i` and dihedral angles :math:`\phi_i` (see :cite:`Irrgang2017`
         for more information).
         """
-        R = 0
+        unnorm_r = 0
         for i, j, edge in self._get_face_intersections():
             phi = self.get_dihedral(i, j)
             edge_vector = self.vertices[edge[0]] - self.vertices[edge[1]]
             edge_length = np.linalg.norm(edge_vector)
-            R += edge_length * (np.pi - phi)
-        return R / (8 * np.pi)
+            unnorm_r += edge_length * (np.pi - phi)
+        return unnorm_r / (8 * np.pi)
 
     @property
     def gsd_shape_spec(self):
@@ -55,8 +55,8 @@ class ConvexPolyhedron(Polyhedron):
         related to the Pitzer acentric factor. This quantity appears relevant
         to the third and fourth virial coefficient for hard polyhedron fluids.
         """
-        R = self.mean_curvature
-        return 4 * np.pi * R * R / self.surface_area
+        mc = self.mean_curvature
+        return 4 * np.pi * mc * mc / self.surface_area
 
     @property
     def asphericity(self):

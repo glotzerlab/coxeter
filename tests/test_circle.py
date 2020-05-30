@@ -8,19 +8,17 @@ from hypothesis.extra.numpy import arrays
 
 @given(floats(0.1, 1000))
 def test_perimeter(r):
-    C = 2 * np.pi * r
     circle = Circle(1)
     circle.radius = r
-    assert circle.perimeter == C
-    assert circle.circumference == C
+    assert circle.perimeter == 2 * np.pi * r
+    assert circle.circumference == 2 * np.pi * r
 
 
 @given(floats(0.1, 1000))
 def test_area(r):
-    A = np.pi * r**2
     circle = Circle(1)
     circle.radius = r
-    assert circle.area == A
+    assert circle.area == np.pi * r**2
 
 
 @given(floats(0.1, 1000))

@@ -317,12 +317,12 @@ class Polygon(Shape2D):
 
         # Need to take absolute values in case vertices are ordered clockwise.
         diag_sums = areas[:, np.newaxis] * (verts_sq + prod + sv_sq)
-        Iy, Ix, _ = np.abs(np.sum(diag_sums, axis=0) / 12)
+        i_y, i_x, _ = np.abs(np.sum(diag_sums, axis=0) / 12)
 
         xy_sums = areas * (xi_yip1 + 2 * (xi_yi + xip1_yip1) + xip1_yi)
-        Ixy = np.abs(np.sum(xy_sums) / 24)
+        i_xy = np.abs(np.sum(xy_sums) / 24)
 
-        return Ix, Iy, Ixy
+        return i_x, i_y, i_xy
 
     @property
     def polar_moment_inertia(self):

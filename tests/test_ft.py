@@ -17,7 +17,7 @@ class TestFormFactors(unittest.TestCase):
                            [1, 2, 3],
                            [-2, 4, -5.2]], dtype=np.float)
 
-    def test_FTdefaults(self):
+    def test_ft_defaults(self):
         """Ensures default quantities are set properly."""
         for ft_class in [coxeter.ft._FTbase,
                          coxeter.ft.FTdelta,
@@ -34,9 +34,9 @@ class TestFormFactors(unittest.TestCase):
                                    np.array([[0, 0, 0]], dtype=np.float))
             self.assertEqual(ft.scale, 1.)
 
-    def test_FTdelta(self):
+    def test_ft_delta(self):
         ft = coxeter.ft.FTdelta()
-        ft.set_K(self.K)
+        ft.set_k(self.K)
 
         positions = np.array([[0, 0, 0]], dtype=np.float)
         orientations = np.array([[1, 0, 0, 0]] * len(positions),
@@ -60,10 +60,10 @@ class TestFormFactors(unittest.TestCase):
             [6., 5.08060461, 5.08060461, 3.16770633, 5.08060461, 5.08060461,
              -1.73167405, -1.20254791], decimal=6)
 
-    def test_FTsphere(self):
+    def test_ft_sphere(self):
         ft = coxeter.ft.FTsphere()
         self.assertEqual(ft.get_radius(), 0.5)
-        ft.set_K(self.K)
+        ft.set_k(self.K)
 
         positions = np.array([[0, 0, 0]], dtype=np.float)
         orientations = np.array([[1, 0, 0, 0]] * len(positions),
@@ -91,13 +91,13 @@ class TestFormFactors(unittest.TestCase):
             [3.14159265, 2.59428445, 2.59428445, 1.49856158, 2.59428445,
              2.59428445, -0.62655329, -0.14073389])
 
-    def test_FTconvexPolyhedron(self):
+    def test_ft_convex_polyhedron(self):
         # TODO: Currently using this to test FTpolyhedron indirectly
         cube = PlatonicFamily()('Cube')
         cube.volume = 8
         npt.assert_almost_equal(cube.volume, 8)
         ft = coxeter.ft.FTconvexPolyhedron(cube)
-        ft.set_K(self.K)
+        ft.set_k(self.K)
 
         positions = np.array([[0, 0, 0]], dtype=np.float)
         orientations = np.array([[1, 0, 0, 0]] * len(positions),

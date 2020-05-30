@@ -8,18 +8,16 @@ from coxeter.shape_classes.utils import translate_inertia_tensor
 
 @given(floats(0.1, 1000))
 def test_surface_area(r):
-    S = 4 * np.pi * r**2
     sphere = Sphere(1)
     sphere.radius = r
-    assert sphere.surface_area == S
+    assert sphere.surface_area == 4 * np.pi * r**2
 
 
 @given(floats(0.1, 1000))
 def test_volume(r):
-    V = 4 / 3 * np.pi * r**3
     sphere = Sphere(1)
     sphere.radius = r
-    assert sphere.volume == V
+    assert sphere.volume == 4 / 3 * np.pi * r**3
 
 
 @given(floats(0.1, 1000))

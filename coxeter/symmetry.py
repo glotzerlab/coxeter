@@ -14,7 +14,7 @@ import rowan
 # angle = 2pi/n
 
 # http://it.iucr.org/Ab/ch7o1v0001/sgtable7o1o225/
-mbarThreem = [
+mbar_threem = [
     (1, [1, 1, 1]),  # 1
     (2, [0, 0, 1]),
     (2, [0, 1, 0]),
@@ -42,10 +42,10 @@ mbarThreem = [
 ]
 
 # http://it.iucr.org/Ab/ch7o1v0001/sgtable7o1o209/
-FourThreeTwo = mbarThreem[0:24]
+four_three_two = mbar_threem[0:24]
 
 # http://onlinelibrary.wiley.com/iucr/itc/Ab/ch7o1v0001/sgtable7o1o123/
-Four_mmm = [
+four_mmm = [
     (1, [1, 0, 0]),
     (2, [0, 0, 1]),
     (4, [0, 0, 1]),
@@ -57,7 +57,7 @@ Four_mmm = [
 ]
 
 # http://onlinelibrary.wiley.com/iucr/itc/Ab/ch7o1v0001/sgtable7o1o089/
-FourTwoTwo = [
+four_two_two = [
     (1, [1, 0, 0]),
     (2, [0, 0, 1]),
     (4, [0, 0, 1]),
@@ -69,7 +69,7 @@ FourTwoTwo = [
 ]
 
 # http://onlinelibrary.wiley.com/iucr/itc/Ab/ch7o1v0001/sgtable7o1o111/
-barFourTwom = [
+bar_four_twom = [
     (1, [1, 0, 0]),
     (2, [0, 0, 1]),
     (2, [0, 1, 0]),
@@ -77,14 +77,14 @@ barFourTwom = [
 ]
 
 # http://onlinelibrary.wiley.com/iucr/itc/Ab/ch7o1v0001/sgtable7o1o160/
-Threem = [
+threem = [
     (1, [1, 0, 0]),
     (3, [0, 0, 1]),
     (-3, [0, 0, 1])
 ]
 
 # http://onlinelibrary.wiley.com/iucr/itc/Ab/ch7o1v0001/sgtable7o1o025/
-mmTwo = [
+mm_two = [
     (1, [1, 0, 0]),
     (2, [0, 0, 1])
 ]
@@ -92,7 +92,7 @@ mmTwo = [
 # http://onlinelibrary.wiley.com/iucr/itc/Ab/ch7o1v0001/sgtable7o1o187/
 # This group does not follow the definition exactly, the axis of
 # the two fold axes have been modified
-barSixmTwo = [
+bar_sixm_two = [
     (1, [1, 0, 0]),
     (3, [0, 0, 1]),
     (-3, [0, 0, 1]),
@@ -120,7 +120,7 @@ equi_vert = rowan.rotate(rowan.from_axis_angle(axes=face1,
                                                angles=1 * 2 * np.pi / 5),
                          crown_vert)
 
-Icosohedral = [
+icosohedral = [
     (1, [1, 0, 0]),
     # first face pair
     (5, [0, 0, 1]),
@@ -280,15 +280,15 @@ Icosohedral = [
 ]
 
 symgroups = {
-    "m-3m": mbarThreem,
-    "432": FourThreeTwo,
-    "4_mmm": Four_mmm,
-    "422": FourTwoTwo,
-    "-42m": barFourTwom,
-    "3m": Threem,
-    "mm2": mmTwo,
-    "-6m2": barSixmTwo,
-    "icoso": Icosohedral}
+    "m-3m": mbar_threem,
+    "432": four_three_two,
+    "4_mmm": four_mmm,
+    "422": four_two_two,
+    "-42m": bar_four_twom,
+    "3m": threem,
+    "mm2": mm_two,
+    "-6m2": bar_sixm_two,
+    "icoso": icosohedral}
 
 # A function that generates the invariant quaternions from the above group
 # definitions

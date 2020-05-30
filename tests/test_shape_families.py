@@ -64,13 +64,12 @@ def test_shape423():
 def test_shape523():
     family = Family523()
     s = family.s
-    S = family.S
     # Icosidodecahedron
-    assert len(family(1, S**2).vertices) == 30
-    assert len(family(1, S**2).faces) == 32
+    assert len(family(1, family.S**2).vertices) == 30
+    assert len(family(1, family.S**2).faces) == 32
     # Icosahedron
-    assert len(family(1 * s * np.sqrt(5), S**2).vertices) == 12
-    assert len(family(1 * s * np.sqrt(5), S**2).faces) == 20
+    assert len(family(1 * s * np.sqrt(5), family.S**2).vertices) == 12
+    assert len(family(1 * s * np.sqrt(5), family.S**2).faces) == 20
     # Dodecahedron
     assert len(family(1, 3).vertices) == 20
     assert len(family(1, 3).faces) == 12

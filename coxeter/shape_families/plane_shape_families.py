@@ -53,29 +53,37 @@ class TruncationPlaneShapeFamily(_ShapeFamily):
         planetypes = self.plane_types
         planelist = self.planes
 
+        # Generate all unique combinations of planes.
         num_planes = len(planetypes)
         indices = [(i, j, k) for i in range(num_planes) for j in
                    range(i + 1, num_planes) for k in range(j + 1, num_planes)]
 
-        # Set up and solve a system of equations for the planes that should be
-        # included.
-        As = planelist[indices]
+        # To identify the vertices of the shape, we set up a linear system of
+        # equations that finds points that simultaneously satisfy multiple
+        # plane equations, i.e. points of intersection of all planes at the
+        # specified distances.
+        coeffs = planelist[indices]
         alltypes = planetypes[indices]
         bs = dists[alltypes]
 
-        dets = np.linalg.det(As)
+        # A determinant of zero for the coefficient matrix indicates that the
+        # matrix is not full rank, meaning no solution exists, so we ignore
+        # those cases.
+        dets = np.linalg.det(coeffs)
         solution_indices = np.abs(dets) > thresh
-        xs = np.linalg.solve(As[solution_indices], bs[solution_indices])
+        xs = np.linalg.solve(coeffs[solution_indices], bs[solution_indices])
 
-        # Get for each x whether any of the planes fail.
+        # Reject any solutions that are intersections that lie beyond at least
+        # one of the bounding planes.
         dots = np.einsum('ik,jk', xs, planelist, optimize=True)
         alldists = dists[planetypes]
         dist_filter = (dots <= alldists[np.newaxis, :] + thresh).all(axis=1)
         passed_plane_test = xs[dist_filter]
 
-        # We don't want to lose precision in the vertices to ensure that the
-        # convex hull ends up finding the right faces, so get the unique
-        # indices based on rounding but then use the original vertices.
+        # Identify unique vertices.  We don't want to lose precision in the
+        # vertices to ensure that the convex hull ends up finding the right
+        # faces, so get the unique indices based on rounding but then use the
+        # original vertices.
         _, verts_indices = np.unique(
             passed_plane_test.round(6), axis=0, return_index=True)
         verts = passed_plane_test[verts_indices]
@@ -297,71 +305,69 @@ class Family523(TruncationPlaneShapeFamily):
 
         The set of planes used to truncate the shape.
         """
-        s = self.s
-        S = self.S
         return np.array([
-            [1.0, 0.0, s],
-            [-1.0, 0.0, -s],
-            [-1.0, 0.0, s],
-            [1.0, 0.0, -s],
-            [0.0, -s, -1.0],
-            [0.0, s, 1.0],
-            [0.0, s, -1.0],
-            [0.0, -s, 1.0],
-            [-s, -1.0, 0.0],
-            [s, 1.0, 0.0],
-            [s, -1.0, 0.0],
-            [-s, 1.0, 0.0],
+            [1.0, 0.0, self.s],
+            [-1.0, 0.0, -self.s],
+            [-1.0, 0.0, self.s],
+            [1.0, 0.0, -self.s],
+            [0.0, -self.s, -1.0],
+            [0.0, self.s, 1.0],
+            [0.0, self.s, -1.0],
+            [0.0, -self.s, 1.0],
+            [-self.s, -1.0, 0.0],
+            [self.s, 1.0, 0.0],
+            [self.s, -1.0, 0.0],
+            [-self.s, 1.0, 0.0],
             [-2.0, 0.0, 0.0],
             [2.0, 0.0, 0.0],
             [0.0, -2.0, 0.0],
             [0.0, 2.0, 0.0],
             [0.0, 0.0, -2.0],
             [0.0, 0.0, 2.0],
-            [S, S, S],
-            [-S, S, S],
-            [S, -S, S],
-            [S, S, -S],
-            [S, -S, -S],
-            [-S, -S, S],
-            [-S, S, -S],
-            [-S, -S, -S],
-            [1.0, 0.0, S**2],
-            [-1.0, 0.0, -S**2],
-            [-1.0, 0.0, S**2],
-            [1.0, 0.0, -S**2],
-            [0.0, -S**2, -1.0],
-            [0.0, S**2, 1.0],
-            [0.0, -S**2, 1.0],
-            [0.0, S**2, -1.0],
-            [-S**2, -1.0, 0.0],
-            [S**2, 1.0, 0.0],
-            [S**2, -1.0, 0.0],
-            [-S**2, 1.0, 0.0],
-            [S, -1.0, -s],
-            [-S, 1.0, -s],
-            [-S, -1.0, s],
-            [S, 1.0, s],
-            [S, -1.0, s],
-            [S, 1.0, -s],
-            [-S, 1.0, s],
-            [-S, -1.0, -s],
-            [s, S, 1.0],
-            [s, -S, -1.0],
-            [-s, -S, 1.0],
-            [-s, S, -1.0],
-            [-s, -S, -1.0],
-            [s, -S, 1.0],
-            [-s, S, 1.0],
-            [s, S, -1.0],
-            [1.0, -s, -S],
-            [-1.0, s, -S],
-            [-1.0, -s, S],
-            [1.0, s, S],
-            [1.0, s, -S],
-            [-1.0, s, S],
-            [1.0, -s, S],
-            [-1.0, -s, -S]
+            [self.self.S, self.self.S, self.self.S],
+            [-self.self.S, self.self.S, self.self.S],
+            [self.self.S, -self.self.S, self.self.S],
+            [self.self.S, self.self.S, -self.self.S],
+            [self.self.S, -self.self.S, -self.self.S],
+            [-self.self.S, -self.self.S, self.self.S],
+            [-self.self.S, self.self.S, -self.self.S],
+            [-self.self.S, -self.self.S, -self.self.S],
+            [1.0, 0.0, self.self.S**2],
+            [-1.0, 0.0, -self.self.S**2],
+            [-1.0, 0.0, self.self.S**2],
+            [1.0, 0.0, -self.self.S**2],
+            [0.0, -self.self.S**2, -1.0],
+            [0.0, self.self.S**2, 1.0],
+            [0.0, -self.self.S**2, 1.0],
+            [0.0, self.self.S**2, -1.0],
+            [-self.self.S**2, -1.0, 0.0],
+            [self.self.S**2, 1.0, 0.0],
+            [self.self.S**2, -1.0, 0.0],
+            [-self.self.S**2, 1.0, 0.0],
+            [self.self.S, -1.0, -self.s],
+            [-self.self.S, 1.0, -self.s],
+            [-self.self.S, -1.0, self.s],
+            [self.self.S, 1.0, self.s],
+            [self.self.S, -1.0, self.s],
+            [self.self.S, 1.0, -self.s],
+            [-self.self.S, 1.0, self.s],
+            [-self.self.S, -1.0, -self.s],
+            [self.s, self.self.S, 1.0],
+            [self.s, -self.self.S, -1.0],
+            [-self.s, -self.self.S, 1.0],
+            [-self.s, self.self.S, -1.0],
+            [-self.s, -self.self.S, -1.0],
+            [self.s, -self.self.S, 1.0],
+            [-self.s, self.self.S, 1.0],
+            [self.s, self.self.S, -1.0],
+            [1.0, -self.s, -self.self.S],
+            [-1.0, self.s, -self.self.S],
+            [-1.0, -self.s, self.self.S],
+            [1.0, self.s, self.self.S],
+            [1.0, self.s, -self.self.S],
+            [-1.0, self.s, self.self.S],
+            [1.0, -self.s, self.self.S],
+            [-1.0, -self.s, -self.self.S]
         ])
 
     @property

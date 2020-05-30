@@ -16,7 +16,7 @@ jobs:
       - run:
           name: style-check
           command: |
-            python -m pip install --user -U flake8, flake8-docstrings
+            python -m pip install --user -U flake8 flake8-docstrings pep8-naming
             python -m flake8 --show-source coxeter/ tests/
 
 
@@ -61,7 +61,7 @@ jobs:
       - run:
           name: Deploy dist and wheels
           command: |
-            python -m pip install --user flake8 flake8-docstrings
+            python -m pip install --user flake8 flake8-docstrings pep8-naming
             python -m pip install .[test] --user
             python -m flake8 --show-source coxeter/ tests/
             python -m pytest

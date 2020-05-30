@@ -53,7 +53,7 @@ def _doi_shape_collection_factory(doi):
     return families
 
 
-class _keyeddefaultdict(defaultdict):
+class _KeyedDefaultDict(defaultdict):
     """A defaultdict that passes the key to the default_factory.
 
     This class is used so that data files are read the first time data is
@@ -64,7 +64,7 @@ class _keyeddefaultdict(defaultdict):
         return ret
 
 
-_DOI_SHAPE_REPOSITORIES = _keyeddefaultdict(_doi_shape_collection_factory)
+_DOI_SHAPE_REPOSITORIES = _KeyedDefaultDict(_doi_shape_collection_factory)
 
 
 def family_from_doi(doi):

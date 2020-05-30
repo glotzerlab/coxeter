@@ -57,11 +57,11 @@ class Sphere(Shape3D):
     @property
     def inertia_tensor(self):
         """float: Get the inertia tensor. Assumes constant density of 1."""
-        V = self.volume
-        Ixx = V * 2 / 5 * self.radius**2
-        inertia_tensor = np.diag([Ixx, Ixx, Ixx])
+        vol = self.volume
+        i_xx = vol * 2 / 5 * self.radius**2
+        inertia_tensor = np.diag([i_xx, i_xx, i_xx])
         return translate_inertia_tensor(
-            self.center, inertia_tensor, self.volume)
+            self.center, inertia_tensor, vol)
 
     @property
     def iq(self):

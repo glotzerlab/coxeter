@@ -385,16 +385,16 @@ class Polyhedron(Shape3D):
                        + simplices[:, 2, :]))
             return np.sum((volumes / 20) * (fv1 + fv2 + fv3 + fvsum))
 
-        Ixx = triangle_integrate(lambda t: t[:, 1]**2 + t[:, 2]**2)
-        Ixy = triangle_integrate(lambda t: -t[:, 0] * t[:, 1])
-        Ixz = triangle_integrate(lambda t: -t[:, 0] * t[:, 2])
-        Iyy = triangle_integrate(lambda t: t[:, 0]**2 + t[:, 2]**2)
-        Iyz = triangle_integrate(lambda t: -t[:, 1] * t[:, 2])
-        Izz = triangle_integrate(lambda t: t[:, 0]**2 + t[:, 1]**2)
+        i_xx = triangle_integrate(lambda t: t[:, 1]**2 + t[:, 2]**2)
+        i_xy = triangle_integrate(lambda t: -t[:, 0] * t[:, 1])
+        i_xz = triangle_integrate(lambda t: -t[:, 0] * t[:, 2])
+        i_yy = triangle_integrate(lambda t: t[:, 0]**2 + t[:, 2]**2)
+        i_yz = triangle_integrate(lambda t: -t[:, 1] * t[:, 2])
+        i_zz = triangle_integrate(lambda t: t[:, 0]**2 + t[:, 1]**2)
 
-        return np.array([[Ixx, Ixy, Ixz],
-                         [Ixy, Iyy, Iyz],
-                         [Ixz, Iyz, Izz]])
+        return np.array([[i_xx, i_xy, i_xz],
+                         [i_xy, i_yy, i_yz],
+                         [i_xz, i_yz, i_zz]])
 
     @property
     def center(self):
@@ -454,9 +454,7 @@ class Polyhedron(Shape3D):
     def iq(self):
         """float: The isoperimetric quotient."""
         # TODO: allow for non-spherical reference ratio (changes the prefactor)
-        V = self.volume
-        S = self.surface_area
-        return np.pi * 36 * V * V / (S * S * S)
+        return np.pi * 36 * self.volume**2 / (self.surface_area**3)
 
     def get_dihedral(self, a, b):
         """Get the dihedral angle between a pair of faces.

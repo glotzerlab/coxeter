@@ -22,12 +22,11 @@ def test_surface_area(a, b, c):
 
 @given(floats(0.1, 1000), floats(0.1, 1000), floats(0.1, 1000))
 def test_volume(a, b, c):
-    V = 4 / 3 * np.pi * a * b * c
     ellipsoid = Ellipsoid(1, 1, 1)
     ellipsoid.a = a
     ellipsoid.b = b
     ellipsoid.c = c
-    assert ellipsoid.volume == V
+    assert ellipsoid.volume == 4 / 3 * np.pi * a * b * c
 
 
 def test_earth():

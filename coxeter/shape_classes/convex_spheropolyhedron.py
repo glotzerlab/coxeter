@@ -57,9 +57,9 @@ class ConvexSpheropolyhedron(Shape3D):
     @property
     def volume(self):
         """float: The volume."""
-        V_poly = self.polyhedron.volume
-        V_sphere = (4 / 3) * np.pi * self._radius**3
-        V_cyl = 0
+        v_poly = self.polyhedron.volume
+        v_sphere = (4 / 3) * np.pi * self._radius**3
+        v_cyl = 0
 
         # For every pair of faces, find the dihedral angle, divide by 2*pi to
         # get the fraction of a cylinder it includes, then multiply by the edge
@@ -68,11 +68,11 @@ class ConvexSpheropolyhedron(Shape3D):
             phi = self.polyhedron.get_dihedral(i, j)
             edge_length = np.linalg.norm(self.polyhedron.vertices[edge[0]]
                                          - self.polyhedron.vertices[edge[1]])
-            V_cyl += ((np.pi * self.radius**2)
+            v_cyl += ((np.pi * self.radius**2)
                       * (phi / (2 * np.pi))
                       * edge_length)
 
-        return V_poly + V_sphere + V_cyl
+        return v_poly + v_sphere + v_cyl
 
     @property
     def radius(self):
@@ -82,9 +82,9 @@ class ConvexSpheropolyhedron(Shape3D):
     @property
     def surface_area(self):
         """float: Get the surface area."""
-        A_poly = self.polyhedron.surface_area
-        A_sphere = 4 * np.pi * self._radius**2
-        A_cyl = 0
+        a_poly = self.polyhedron.surface_area
+        a_sphere = 4 * np.pi * self._radius**2
+        a_cyl = 0
 
         # For every pair of faces, find the dihedral angle, divide by 2*pi to
         # get the fraction of a cylinder it includes, then multiply by the edge
@@ -93,11 +93,11 @@ class ConvexSpheropolyhedron(Shape3D):
             phi = self.polyhedron.get_dihedral(i, j)
             edge_length = np.linalg.norm(self.polyhedron.vertices[edge[0]]
                                          - self.polyhedron.vertices[edge[1]])
-            A_cyl += ((2 * np.pi * self.radius)
+            a_cyl += ((2 * np.pi * self.radius)
                       * (phi / (2 * np.pi))
                       * edge_length)
 
-        return A_poly + A_sphere + A_cyl
+        return a_poly + a_sphere + a_cyl
 
     def is_inside(self, points):
         """Determine whether points are contained in this spheropolyhedron.

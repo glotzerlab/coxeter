@@ -107,16 +107,16 @@ class Ellipse(Shape2D):
         These formulas are given `here https://en.wikipedia.org/wiki/List_of_second_moments_of_area`__.
         Note that the product moment is zero by symmetry.
         """  # noqa: E501
-        A = self.area
-        Ix = A / 4 * self.b**2
-        Iy = A / 4 * self.a**2
-        Ixy = 0
+        area = self.area
+        i_x = area / 4 * self.b**2
+        i_y = area / 4 * self.a**2
+        i_xy = 0
 
         # Apply parallel axis theorem from the center
-        Ix += A * self.center[0]**2
-        Iy += A * self.center[1]**2
-        Ixy += A * self.center[0] * self.center[1]
-        return Ix, Iy, Ixy
+        i_x += area * self.center[0]**2
+        i_y += area * self.center[1]**2
+        i_xy += area * self.center[0] * self.center[1]
+        return i_x, i_y, i_xy
 
     @property
     def polar_moment_inertia(self):
@@ -133,6 +133,4 @@ class Ellipse(Shape2D):
     @property
     def iq(self):
         """float: The isoperimetric quotient."""
-        A = self.area
-        P = self.perimeter
-        return np.min([4 * np.pi * A / (P**2), 1])
+        return np.min([4 * np.pi * self.area / (self.perimeter**2), 1])
