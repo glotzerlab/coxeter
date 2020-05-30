@@ -4,9 +4,18 @@ The methods here provide routes for generating instances of
 :class:`~coxeter.shape_classes.Shape` based on certain pre-specified mappings.
 """
 
-from .shape_classes import (Circle, ConvexPolygon, ConvexPolyhedron,
-                            ConvexSpheropolygon, ConvexSpheropolyhedron,
-                            Ellipse, Ellipsoid, Polygon, Polyhedron, Sphere)
+from .shape_classes import (
+    Circle,
+    ConvexPolygon,
+    ConvexPolyhedron,
+    ConvexSpheropolygon,
+    ConvexSpheropolyhedron,
+    Ellipse,
+    Ellipsoid,
+    Polygon,
+    Polyhedron,
+    Sphere,
+)
 
 
 def from_gsd_type_shapes(params, dimensions=3):  # noqa: C901

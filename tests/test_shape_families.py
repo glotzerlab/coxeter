@@ -1,10 +1,14 @@
 import numpy as np
 import pytest
 
-from coxeter.shape_families import (Family323Plus, Family423, Family523,
-                                    RegularNGonFamily,
-                                    TruncatedTetrahedronFamily,
-                                    family_from_doi)
+from coxeter.shape_families import (
+    Family323Plus,
+    Family423,
+    Family523,
+    RegularNGonFamily,
+    TruncatedTetrahedronFamily,
+    family_from_doi,
+)
 
 
 @pytest.mark.parametrize('n', range(3, 100))

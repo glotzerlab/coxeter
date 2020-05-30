@@ -8,12 +8,10 @@ from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats, integers
 from scipy.spatial import ConvexHull
 
-from conftest import (get_oriented_cube_faces, get_oriented_cube_normals,
-                      get_valid_hull)
+from conftest import get_oriented_cube_faces, get_oriented_cube_normals, get_valid_hull
 from coxeter.shape_classes.convex_polyhedron import ConvexPolyhedron
 from coxeter.shape_classes.sphere import Sphere
-from coxeter.shape_classes.utils import (rotate_order2_tensor,
-                                         translate_inertia_tensor)
+from coxeter.shape_classes.utils import rotate_order2_tensor, translate_inertia_tensor
 from coxeter.shape_families import PlatonicFamily, family_from_doi
 from utils import compute_inertia_mc
 

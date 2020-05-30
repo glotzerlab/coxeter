@@ -12,8 +12,12 @@ analytically.
 
 from .common_families import PlatonicFamily, RegularNGonFamily
 from .doi_data_repositories import family_from_doi
-from .plane_shape_families import (Family323Plus, Family423, Family523,
-                                   TruncatedTetrahedronFamily)
+from .plane_shape_families import (
+    Family323Plus,
+    Family423,
+    Family523,
+    TruncatedTetrahedronFamily,
+)
 from .tabulated_shape_family import (TabulatedGSDShapeFamily,
                                      TabulatedShapeFamily)
 

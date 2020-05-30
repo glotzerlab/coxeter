@@ -12,8 +12,12 @@ import json
 import os
 from collections import defaultdict
 
-from .plane_shape_families import (Family323Plus, Family423, Family523,
-                                   TruncatedTetrahedronFamily)
+from .plane_shape_families import (
+    Family323Plus,
+    Family423,
+    Family523,
+    TruncatedTetrahedronFamily,
+)
 from .tabulated_shape_family import TabulatedGSDShapeFamily
 
 _DATA_FOLDER = os.path.join(os.path.dirname(__file__), 'data')
