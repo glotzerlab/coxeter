@@ -773,6 +773,7 @@ def isect_polygon__naive(points) -> list:
 # ABCTree
 
 from operator import attrgetter
+
 _sentinel = object()
 
 

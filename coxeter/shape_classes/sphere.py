@@ -1,7 +1,9 @@
 """Defines an circle."""
 
 import numpy as np
+
 from .utils import translate_inertia_tensor
+
 from.base_classes import Shape3D
 
 

@@ -1,5 +1,6 @@
-from coxeter import from_gsd_type_shapes
 import numpy as np
+
+from coxeter import from_gsd_type_shapes
 
 
 def test_gsd_shape_getter():

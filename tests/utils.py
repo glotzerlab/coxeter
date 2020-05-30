@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.spatial import Delaunay
+
 from coxeter.shape_classes import ConvexPolyhedron
 
 

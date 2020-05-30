@@ -5,6 +5,7 @@ polyhedron and a sphere of some radius.
 """
 
 import numpy as np
+
 from .base_classes import Shape3D
 from .convex_polyhedron import ConvexPolyhedron
 

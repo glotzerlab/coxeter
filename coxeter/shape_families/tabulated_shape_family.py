@@ -8,8 +8,9 @@ constructed from a JSON file that can be read into a dictionary with the
 appropriate formatting.
 """
 
-import json
 import copy
+import json
+
 from ..shape_getters import from_gsd_type_shapes
 from .shape_family import _ShapeFamily
 

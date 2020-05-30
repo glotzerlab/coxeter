@@ -2,10 +2,11 @@
 
 import numpy as np
 import rowan
-from ..polytri import polytri
+
 from ..bentley_ottman import poly_point_isect
-from .utils import translate_inertia_tensor, rotate_order2_tensor
+from ..polytri import polytri
 from .base_classes import Shape2D
+from .utils import rotate_order2_tensor, translate_inertia_tensor
 
 try:
     import miniball

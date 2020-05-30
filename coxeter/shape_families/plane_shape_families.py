@@ -6,10 +6,11 @@ generally taken from :cite:`Chen2014` and :cite:`Damasceno2012`.
 """
 
 from abc import abstractmethod
-from .shape_family import _ShapeFamily
-from ..shape_classes import ConvexPolyhedron
 import numpy as np
 from scipy.constants import golden_ratio
+
+from ..shape_classes import ConvexPolyhedron
+from .shape_family import _ShapeFamily
 
 
 class TruncationPlaneShapeFamily(_ShapeFamily):

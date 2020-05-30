@@ -1,8 +1,10 @@
 """Defines an ellipsoid."""
 
 import numpy as np
-from scipy.special import ellipkinc, ellipeinc
+from scipy.special import ellipeinc, ellipkinc
+
 from .utils import translate_inertia_tensor
+
 from.base_classes import Shape3D
 
 

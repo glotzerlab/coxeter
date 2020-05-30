@@ -1,13 +1,14 @@
-import pytest
 import numpy as np
 import numpy.testing as npt
+import pytest
 import rowan
-from coxeter.shape_classes import ConvexSpheropolygon
-from scipy.spatial import ConvexHull
-from hypothesis import given, assume, example
-from hypothesis.strategies import floats
+from hypothesis import assume, example, given
 from hypothesis.extra.numpy import arrays
+from hypothesis.strategies import floats
+from scipy.spatial import ConvexHull
+
 from conftest import get_valid_hull
+from coxeter.shape_classes import ConvexSpheropolygon
 
 
 def get_square_points():

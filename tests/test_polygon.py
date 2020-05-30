@@ -1,13 +1,14 @@
-import pytest
 import numpy as np
 import numpy.testing as npt
+import pytest
 import rowan
-from coxeter.shape_classes.polygon import Polygon
-from coxeter.shape_classes.convex_polygon import ConvexPolygon
-from hypothesis import given, example, assume
-from hypothesis.strategies import floats
+from hypothesis import assume, example, given
 from hypothesis.extra.numpy import arrays
+from hypothesis.strategies import floats
+
 from conftest import get_valid_hull
+from coxeter.shape_classes.convex_polygon import ConvexPolygon
+from coxeter.shape_classes.polygon import Polygon
 from coxeter.shape_families import RegularNGonFamily
 
 

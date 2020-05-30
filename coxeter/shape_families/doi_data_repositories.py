@@ -8,12 +8,13 @@ both, so this module provides utilities that generate shape families when
 given a particular DOI.
 """
 
-from .tabulated_shape_family import TabulatedGSDShapeFamily
-from .plane_shape_families import (Family323Plus, Family423, Family523,
-                                   TruncatedTetrahedronFamily)
-from collections import defaultdict
 import json
 import os
+from collections import defaultdict
+
+from .plane_shape_families import (Family323Plus, Family423, Family523,
+                                   TruncatedTetrahedronFamily)
+from .tabulated_shape_family import TabulatedGSDShapeFamily
 
 _DATA_FOLDER = os.path.join(os.path.dirname(__file__), 'data')
 

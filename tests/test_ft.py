@@ -1,6 +1,8 @@
 import unittest
+
 import numpy as np
 import numpy.testing as npt
+
 import coxeter.ft
 from coxeter.shape_families import PlatonicFamily
 

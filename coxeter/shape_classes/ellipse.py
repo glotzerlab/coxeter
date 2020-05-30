@@ -2,6 +2,7 @@
 
 import numpy as np
 from scipy.special import ellipe
+
 from.base_classes import Shape2D
 
 

@@ -1,10 +1,10 @@
-import pytest
 import numpy as np
-from coxeter.shape_classes import Polyhedron
-from coxeter.shape_classes import ConvexPolyhedron
-from coxeter.shape_classes import ConvexSpheropolyhedron
+import pytest
 from scipy.spatial import ConvexHull
 from scipy.spatial.qhull import QhullError
+
+from coxeter.shape_classes import (ConvexPolyhedron, ConvexSpheropolyhedron,
+                                   Polyhedron)
 
 
 # Need to declare this outside the fixture so that it can be used in multiple

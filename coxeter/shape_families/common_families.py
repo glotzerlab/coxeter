@@ -1,11 +1,13 @@
 """Certain common shape families that can be analytically generated."""
 
-from .tabulated_shape_family import TabulatedGSDShapeFamily
-from ..shape_classes import ConvexPolygon
-from .shape_family import _ShapeFamily
-from .doi_data_repositories import _DATA_FOLDER
-import numpy as np
 import os
+
+import numpy as np
+
+from ..shape_classes import ConvexPolygon
+from .doi_data_repositories import _DATA_FOLDER
+from .shape_family import _ShapeFamily
+from .tabulated_shape_family import TabulatedGSDShapeFamily
 
 
 class RegularNGonFamily(_ShapeFamily):

@@ -1,9 +1,10 @@
-import pytest
 import numpy as np
-from coxeter.shape_classes.circle import Circle
+import pytest
 from hypothesis import given
-from hypothesis.strategies import floats
 from hypothesis.extra.numpy import arrays
+from hypothesis.strategies import floats
+
+from coxeter.shape_classes.circle import Circle
 
 
 @given(floats(0.1, 1000))

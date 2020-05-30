@@ -1,19 +1,21 @@
-import pytest
+import os
+
 import numpy as np
+import pytest
+import rowan
+from hypothesis import assume, given
+from hypothesis.extra.numpy import arrays
+from hypothesis.strategies import floats, integers
+from scipy.spatial import ConvexHull
+
+from conftest import (get_oriented_cube_faces, get_oriented_cube_normals,
+                      get_valid_hull)
 from coxeter.shape_classes.convex_polyhedron import ConvexPolyhedron
 from coxeter.shape_classes.sphere import Sphere
+from coxeter.shape_classes.utils import (rotate_order2_tensor,
+                                         translate_inertia_tensor)
 from coxeter.shape_families import PlatonicFamily, family_from_doi
-from scipy.spatial import ConvexHull
-from hypothesis import given, assume
-from hypothesis.strategies import floats, integers
-from hypothesis.extra.numpy import arrays
-import os
-from conftest import get_oriented_cube_faces, get_oriented_cube_normals
 from utils import compute_inertia_mc
-import rowan
-from coxeter.shape_classes.utils import (translate_inertia_tensor,
-                                         rotate_order2_tensor)
-from conftest import get_valid_hull
 
 
 def polyhedron_from_hull(verts):

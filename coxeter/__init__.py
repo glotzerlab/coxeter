@@ -13,10 +13,7 @@ is especially designed for calculations of interest in physics-based
 applications such as inertia tensors.
 """
 
-from . import symmetry
-from . import ft
-from . import shape_classes
-from . import shape_families
+from . import ft, shape_classes, shape_families, symmetry
 from .shape_getters import from_gsd_type_shapes
 
 __all__ = [

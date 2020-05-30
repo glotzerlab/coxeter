@@ -1,6 +1,7 @@
 """Defines a circle."""
 
 import numpy as np
+
 from.base_classes import Shape2D
 
 

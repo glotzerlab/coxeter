@@ -1,9 +1,10 @@
-import pytest
 import numpy as np
-from coxeter.shape_classes.ellipsoid import Ellipsoid
+import pytest
 from hypothesis import given
-from hypothesis.strategies import floats
 from hypothesis.extra.numpy import arrays
+from hypothesis.strategies import floats
+
+from coxeter.shape_classes.ellipsoid import Ellipsoid
 from coxeter.shape_classes.utils import translate_inertia_tensor
 
 
