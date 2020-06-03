@@ -501,7 +501,7 @@ class Polyhedron(Shape3D):
         """
         # TODO: Generate axis if one is not provided.
         # Determine dimensionality.
-        for i, face in enumerate(self.faces):
+        for face in self.faces:
             verts = self.vertices[face]
             verts = np.concatenate((verts, verts[[0]]))
             ax.plot(verts[:, 0], verts[:, 1], verts[:, 2])

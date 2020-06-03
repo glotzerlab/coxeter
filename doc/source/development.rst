@@ -30,7 +30,7 @@ All code contributed to **coxeter** must adhere to the following guidelines:
 
     .. code-block:: bash
 
-        python -m pip install flake8 flake8-black flake8-docstrings flake8-rst-docstrings pep8-naming flake8-isort
+        python -m pip install flake8 flake8-black flake8-bugbear flake8-docstrings flake8-rst-docstrings pep8-naming flake8-isort
         python -m flake8 coxeter tests
 
     To avoid having commits fail in case you forget to run this, you can run the following commands to set up a git pre-commit hook that will ensure your code is compliant before committing:

@@ -31,11 +31,11 @@ def test_regular_ngon(n):
 
 def test_shape_repos():
     family = family_from_doi("10.1126/science.1220869")[0]
-    for key, shape_data in family.data.items():
-        if shape_data["name"] == "Cube":
+    for key in family.data:
+        if family.data[key]["name"] == "Cube":
             break
     else:
-        assert False, "Could not find a cube in the dataset."
+        raise AssertionError("Could not find a cube in the dataset.")
 
     cube = family(key)
     assert len(cube.vertices) == 8
