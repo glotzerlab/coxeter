@@ -48,6 +48,10 @@ class Circle(Shape2D):
         """float: Get the area of the circle."""
         return np.pi * self.radius ** 2
 
+    @area.setter
+    def area(self, value):
+        self._radius = np.sqrt(value / np.pi)
+
     @property
     def eccentricity(self):
         """float: Get the eccentricity of the circle.
