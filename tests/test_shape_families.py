@@ -74,7 +74,7 @@ def test_shape523():
     # Dodecahedron
     assert len(family(1, 3).vertices) == 20
     assert len(family(1, 3).faces) == 12
-    # Rhombic Tricontahedron
+    # Rhombic Triacontahedron
     assert len(family(1*s*np.sqrt(5), 3).vertices) == 32
     assert len(family(1*s*np.sqrt(5), 3).faces) == 30
 

@@ -100,6 +100,9 @@ class Family323Plus(TruncationPlaneShapeFamily):
       - :math:`c \in [1, 3]`
 
     The :math:`b` parameter is always equal to 1 for this family.
+
+    The extremal shapes in this shape family are an octahedron at (1, 1), a
+    tetrahedron at (3, 1) and (1, 3), and a cube at (3, 3).
     """
 
     def __call__(self, a, c):
@@ -141,6 +144,10 @@ class Family423(TruncationPlaneShapeFamily):
       - :math:`c \in [2, 3]`
 
     The :math:`b` parameter is always equal to 2 for this family.
+
+    The extremal shapes in this shape family are a cuboctahedron at (1, 2), an
+    octahedron at (2, 2), a cube at (1, 3), and a rhombic dodecahedron at
+    (2, 3).
     """
 
     def __call__(self, a, c):
@@ -195,8 +202,12 @@ class Family523(TruncationPlaneShapeFamily):
       - :math:`c \in [S^2, 3]`
 
     where :math:`s = \frac{1}{2}\left(\sqrt{5} - 1\right)` and
-    :math:`S = \frac{1}{2}\left(\sqrt{5} + 1\right)`.
-    The :math:`b` parameter is always equal to 2 for this family.
+    :math:`S = \frac{1}{2}\left(\sqrt{5} + 1\right)`. The :math:`b` parameter
+    is always equal to 2 for this family.
+
+    The extremal shapes in this shape family are an icosidodecahedron at
+    (1, S^2), an icosahedron at (s\u221A5, S^2), a dodecahedron at (1, 3), and
+    a rhombic triacontahedron at (s\u221A5, 3).
     """
 
     """The constant s (the inverse of the golden ratio)."""
