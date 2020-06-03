@@ -11,6 +11,7 @@ from .utils import translate_inertia_tensor
 
 try:
     import miniball
+
     MINIBALL = True
 except ImportError:
     MINIBALL = False
@@ -77,7 +78,8 @@ class Polyhedron(Shape3D):
             # are already ordered counterclockwise will point outward.
             normal = np.cross(
                 self.vertices[face[2]] - self.vertices[face[1]],
-                self.vertices[face[0]] - self.vertices[face[1]])
+                self.vertices[face[0]] - self.vertices[face[1]],
+            )
             normal /= np.linalg.norm(normal)
             self._equations[i, :3] = normal
             # Sign conventions chosen to match scipy.spatial.ConvexHull
@@ -101,8 +103,9 @@ class Polyhedron(Shape3D):
         """
         # First enumerate all edges of each neighbor. We include both
         # directions of the edges for comparison.
-        face_edges = [set(_face_to_edges(f)
-                          + _face_to_edges(f, True)) for f in self.faces]
+        face_edges = [
+            set(_face_to_edges(f) + _face_to_edges(f, True)) for f in self.faces
+        ]
 
         for i in range(self.num_faces):
             for j in range(i + 1, self.num_faces):
@@ -117,10 +120,11 @@ class Polyhedron(Shape3D):
     @property
     def gsd_shape_spec(self):
         """dict: Get a `complete GSD specification <shapes>`_."""  # noqa: D401
-        return {'type': 'Mesh',
-                'vertices': self._vertices.tolist(),
-                'faces': self._faces,
-                }
+        return {
+            "type": "Mesh",
+            "vertices": self._vertices.tolist(),
+            "faces": self._faces,
+        }
 
     def merge_faces(self, atol=1e-8, rtol=1e-5):
         """Merge coplanar faces to a given tolerance.
@@ -144,7 +148,8 @@ class Polyhedron(Shape3D):
             raise ValueError(
                 "Faces cannot be merged unless they are convex because the "
                 "correct ordering of vertices in a face cannot be determined "
-                "for nonconvex faces.")
+                "for nonconvex faces."
+            )
 
         # Construct a graph where connectivity indicates merging, then identify
         # connected components to merge.
@@ -152,12 +157,14 @@ class Polyhedron(Shape3D):
         for i in range(self.num_faces):
             for j in self._neighbors[i]:
                 eq1, eq2 = self._equations[[i, j]]
-                if np.allclose(eq1, eq2, atol=atol, rtol=rtol) or \
-                        np.allclose(eq1, -eq2, atol=atol, rtol=rtol):
+                if np.allclose(eq1, eq2, atol=atol, rtol=rtol) or np.allclose(
+                    eq1, -eq2, atol=atol, rtol=rtol
+                ):
                     merge_graph[i, j] = 1
 
-        _, labels = connected_components(merge_graph, directed=False,
-                                         return_labels=True)
+        _, labels = connected_components(
+            merge_graph, directed=False, return_labels=True
+        )
         new_faces = [set() for _ in range(len(np.unique(labels)))]
         for i, face in enumerate(self.faces):
             new_faces[labels[i]].update(face)
@@ -212,24 +219,28 @@ class Polyhedron(Shape3D):
             raise ValueError(
                 "Faces cannot be sorted unless they are convex because the "
                 "correct ordering of vertices in a face cannot be determined "
-                "for nonconvex faces.")
+                "for nonconvex faces."
+            )
 
         # We first ensure that face vertices are sequentially ordered by
         # constructing a Polygon and updating the face (in place), which
         # enables finding neighbors.
         for face in self.faces:
-            polygon = ConvexPolygon(
-                self.vertices[face], planar_tolerance=1e-4)
+            polygon = ConvexPolygon(self.vertices[face], planar_tolerance=1e-4)
             if _is_convex(polygon.vertices, polygon.normal):
-                face[:] = np.asarray([
-                    np.where(np.all(self.vertices == vertex, axis=1))[0][0]
-                    for vertex in polygon.vertices
-                ])
+                face[:] = np.asarray(
+                    [
+                        np.where(np.all(self.vertices == vertex, axis=1))[0][0]
+                        for vertex in polygon.vertices
+                    ]
+                )
             elif not _is_simple(polygon.vertices):
-                raise ValueError("The vertices of each face must be provided "
-                                 "in counterclockwise order relative to the "
-                                 "face normal unless the face is a convex "
-                                 "polygon.")
+                raise ValueError(
+                    "The vertices of each face must be provided "
+                    "in counterclockwise order relative to the "
+                    "face normal unless the face is a convex "
+                    "polygon."
+                )
         self._find_neighbors()
 
         # The initial face sets the order of the others.
@@ -285,7 +296,7 @@ class Polyhedron(Shape3D):
 
     @volume.setter
     def volume(self, new_volume):
-        scale_factor = (new_volume / self.volume)**(1 / 3)
+        scale_factor = (new_volume / self.volume) ** (1 / 3)
         self._vertices *= scale_factor
         self._equations[:, 3] *= scale_factor
 
@@ -380,21 +391,17 @@ class Polyhedron(Shape3D):
             fv1 = f(simplices[:, 0, :])
             fv2 = f(simplices[:, 1, :])
             fv3 = f(simplices[:, 2, :])
-            fvsum = (f(simplices[:, 0, :]
-                       + simplices[:, 1, :]
-                       + simplices[:, 2, :]))
+            fvsum = f(simplices[:, 0, :] + simplices[:, 1, :] + simplices[:, 2, :])
             return np.sum((volumes / 20) * (fv1 + fv2 + fv3 + fvsum))
 
-        i_xx = triangle_integrate(lambda t: t[:, 1]**2 + t[:, 2]**2)
+        i_xx = triangle_integrate(lambda t: t[:, 1] ** 2 + t[:, 2] ** 2)
         i_xy = triangle_integrate(lambda t: -t[:, 0] * t[:, 1])
         i_xz = triangle_integrate(lambda t: -t[:, 0] * t[:, 2])
-        i_yy = triangle_integrate(lambda t: t[:, 0]**2 + t[:, 2]**2)
+        i_yy = triangle_integrate(lambda t: t[:, 0] ** 2 + t[:, 2] ** 2)
         i_yz = triangle_integrate(lambda t: -t[:, 1] * t[:, 2])
-        i_zz = triangle_integrate(lambda t: t[:, 0]**2 + t[:, 1]**2)
+        i_zz = triangle_integrate(lambda t: t[:, 0] ** 2 + t[:, 1] ** 2)
 
-        return np.array([[i_xx, i_xy, i_xz],
-                         [i_xy, i_yy, i_yz],
-                         [i_xz, i_yz, i_zz]])
+        return np.array([[i_xx, i_xy, i_xz], [i_xy, i_yy, i_yz], [i_xz, i_yz, i_zz]])
 
     @property
     def center(self):
@@ -403,18 +410,19 @@ class Polyhedron(Shape3D):
 
     @center.setter
     def center(self, value):
-        self._vertices += (np.asarray(value) - self.center)
+        self._vertices += np.asarray(value) - self.center
         self._find_equations()
 
     @property
     def bounding_sphere(self):
         """tuple[float, float]: Get the center and radius of the bounding sphere."""  # noqa: E501
         if not MINIBALL:
-            raise ImportError("The miniball module must be installed. It can "
-                              "be installed as an extra with coxeter (e.g. "
-                              "with pip install coxeter[bounding_sphere], or "
-                              "directly from PyPI using pip install miniball."
-                              )
+            raise ImportError(
+                "The miniball module must be installed. It can "
+                "be installed as an extra with coxeter (e.g. "
+                "with pip install coxeter[bounding_sphere], or "
+                "directly from PyPI using pip install miniball."
+            )
 
         # The algorithm in miniball involves solving a linear system and
         # can therefore occasionally be somewhat unstable. Applying a
@@ -454,7 +462,7 @@ class Polyhedron(Shape3D):
     def iq(self):
         """float: The isoperimetric quotient."""
         # TODO: allow for non-spherical reference ratio (changes the prefactor)
-        return np.pi * 36 * self.volume**2 / (self.surface_area**3)
+        return np.pi * 36 * self.volume ** 2 / (self.surface_area ** 3)
 
     def get_dihedral(self, a, b):
         """Get the dihedral angle between a pair of faces.
@@ -499,13 +507,9 @@ class Polyhedron(Shape3D):
             ax.plot(verts[:, 0], verts[:, 1], verts[:, 2])
 
         if plot_verts:
-            ax.scatter(self.vertices[:, 0],
-                       self.vertices[:, 1],
-                       self.vertices[:, 2])
+            ax.scatter(self.vertices[:, 0], self.vertices[:, 1], self.vertices[:, 2])
         if label_verts:
             # Typically a good shift for plotting the labels
-            shift = (np.max(self.vertices[:, 2])
-                     - np.min(self.vertices[:, 2])) * 0.025
+            shift = (np.max(self.vertices[:, 2]) - np.min(self.vertices[:, 2])) * 0.025
             for i, vert in enumerate(self.vertices):
-                ax.text(vert[0], vert[1], vert[2] + shift, '{}'.format(i),
-                        fontsize=10)
+                ax.text(vert[0], vert[1], vert[2] + shift, "{}".format(i), fontsize=10)

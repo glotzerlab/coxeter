@@ -20,7 +20,7 @@ from .plane_shape_families import (
 )
 from .tabulated_shape_family import TabulatedGSDShapeFamily
 
-_DATA_FOLDER = os.path.join(os.path.dirname(__file__), 'data')
+_DATA_FOLDER = os.path.join(os.path.dirname(__file__), "data")
 
 
 def _doi_shape_collection_factory(doi):
@@ -35,13 +35,13 @@ def _doi_shape_collection_factory(doi):
     """
     # Set of DOIs for which data is stored within the data/ directory.
     doi_to_file = {
-        '10.1126/science.1220869': ['science1220869.json'],
+        "10.1126/science.1220869": ["science1220869.json"],
     }
 
     # Set of DOIs that are associated with a specific ShapeFamily subclass.
     doi_to_family = {
-        '10.1103/PhysRevX.4.011024': [Family323Plus, Family423, Family523],
-        '10.1021/nn204012y': [TruncatedTetrahedronFamily]
+        "10.1103/PhysRevX.4.011024": [Family323Plus, Family423, Family523],
+        "10.1021/nn204012y": [TruncatedTetrahedronFamily],
     }
 
     families = []
@@ -53,8 +53,9 @@ def _doi_shape_collection_factory(doi):
         for family_type in doi_to_family[doi]:
             families.append(family_type())
     else:
-        raise KeyError("Provided DOI is not associated with any known data or "
-                       "shape families.")
+        raise KeyError(
+            "Provided DOI is not associated with any known data or " "shape families."
+        )
     return families
 
 
@@ -91,5 +92,6 @@ def family_from_doi(doi):
     try:
         return _DOI_SHAPE_REPOSITORIES[doi]
     except KeyError:
-        raise ValueError("coxeter does not contain any data corresponding to "
-                         "the requested DOI.")
+        raise ValueError(
+            "coxeter does not contain any data corresponding to " "the requested DOI."
+        )

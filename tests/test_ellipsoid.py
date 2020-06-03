@@ -14,8 +14,11 @@ def test_surface_area(a, b, c):
     # Approximation from:
     # https://en.wikipedia.org/wiki/Ellipsoid#Approximate_formula
     p = 1.6075
-    approx_surface = 4 * np.pi * (
-        (a**p * b**p + a**p * c**p + b**p * c**p) / 3)**(1 / p)
+    approx_surface = (
+        4
+        * np.pi
+        * ((a ** p * b ** p + a ** p * c ** p + b ** p * c ** p) / 3) ** (1 / p)
+    )
 
     ellipsoid = Ellipsoid(a, b, c)
     assert ellipsoid.surface_area == pytest.approx(approx_surface, rel=0.015)
@@ -59,16 +62,19 @@ def test_iq_symmetry(a, b, c):
     assert ellipsoid2.iq == pytest.approx(ellipsoid3.iq)
 
 
-@given(floats(0.1, 1000), floats(0.1, 1000), floats(0.1, 1000),
-       arrays(np.float64, (3, ), elements=floats(-10, 10, width=64),
-              unique=True))
+@given(
+    floats(0.1, 1000),
+    floats(0.1, 1000),
+    floats(0.1, 1000),
+    arrays(np.float64, (3,), elements=floats(-10, 10, width=64), unique=True),
+)
 def test_inertia_tensor(a, b, c, center):
     # First just test a sphere.
     ellipsoid = Ellipsoid(a, a, a)
     assert np.all(ellipsoid.inertia_tensor >= 0)
 
     volume = ellipsoid.volume
-    expected = [2 / 5 * volume * a**2] * 3
+    expected = [2 / 5 * volume * a ** 2] * 3
     np.testing.assert_allclose(np.diag(ellipsoid.inertia_tensor), expected)
 
     ellipsoid.center = center
@@ -79,9 +85,9 @@ def test_inertia_tensor(a, b, c, center):
 @given(floats(0.1, 1000), floats(0.1, 1000), floats(0.1, 1000))
 def test_is_inside(a, b, c):
     ellipsoid = Ellipsoid(a, b, c)
-    points_inside = np.array([[a, 0, 0], [-a, 0, 0],
-                              [0, b, 0], [0, -b, 0],
-                              [0, 0, c], [0, 0, -c]])
+    points_inside = np.array(
+        [[a, 0, 0], [-a, 0, 0], [0, b, 0], [0, -b, 0], [0, 0, c], [0, 0, -c]]
+    )
     assert all(ellipsoid.is_inside(points_inside))
     assert all(ellipsoid.is_inside(points_inside / 2))
     assert not any(ellipsoid.is_inside(points_inside * 1.1))

@@ -52,7 +52,7 @@ class RegularNGonFamily(_ShapeFamily):
 
         # First normalize to guarantee that the limiting case of an infinite
         # number of vertices produces a circle of area r^2.
-        pos /= (np.sqrt(np.pi) / r)
+        pos /= np.sqrt(np.pi) / r
 
         # Area of an n-gon inscribed in a circle
         # A_poly = ((n*r**2)/2)*np.sin(2*np.pi/n)
@@ -74,5 +74,5 @@ class PlatonicFamily(TabulatedGSDShapeFamily):
     """
 
     def __init__(self):
-        fn = os.path.join(_DATA_FOLDER, 'platonic.json')
+        fn = os.path.join(_DATA_FOLDER, "platonic.json")
         super().__init__(fn)

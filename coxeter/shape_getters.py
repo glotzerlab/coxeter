@@ -43,37 +43,37 @@ def from_gsd_type_shapes(params, dimensions=3):  # noqa: C901
         list[:class:`~coxeter.shape_classes.Shape`]:
             The desired shape.
     """
-    if 'type' not in params:
-        raise ValueError("The parameters are malformed, there must be a type "
-                         "key indicating what type of shape this is.")
+    if "type" not in params:
+        raise ValueError(
+            "The parameters are malformed, there must be a type "
+            "key indicating what type of shape this is."
+        )
 
-    if params['type'] == 'Sphere':
+    if params["type"] == "Sphere":
         if dimensions == 2:
-            return Circle(params['diameter'] / 2)
+            return Circle(params["diameter"] / 2)
         else:
-            return Sphere(params['diameter'] / 2)
-    elif params['type'] == 'Ellipsoid':
+            return Sphere(params["diameter"] / 2)
+    elif params["type"] == "Ellipsoid":
         if dimensions == 2:
-            return Ellipse(params['a'], params['b'])
+            return Ellipse(params["a"], params["b"])
         else:
-            return Ellipsoid(params['a'], params['b'], params['c'])
-    elif params['type'] == 'Polygon':
-        if 'rounding_radius' in params:
-            return ConvexSpheropolygon(
-                params['vertices'], params['rounding_radius'])
+            return Ellipsoid(params["a"], params["b"], params["c"])
+    elif params["type"] == "Polygon":
+        if "rounding_radius" in params:
+            return ConvexSpheropolygon(params["vertices"], params["rounding_radius"])
         else:
             try:
-                return ConvexPolygon(params['vertices'])
+                return ConvexPolygon(params["vertices"])
             except ValueError:
                 # If it's not a convex polygon, return a simple polygon.
-                return Polygon(params['vertices'])
-    elif params['type'] == 'ConvexPolyhedron':
-        if 'rounding_radius' in params:
-            return ConvexSpheropolyhedron(
-                params['vertices'], params['rounding_radius'])
+                return Polygon(params["vertices"])
+    elif params["type"] == "ConvexPolyhedron":
+        if "rounding_radius" in params:
+            return ConvexSpheropolyhedron(params["vertices"], params["rounding_radius"])
         else:
-            return ConvexPolyhedron(params['vertices'])
-    elif params['type'] == 'Mesh':
-        return Polyhedron(params['vertices'], params['faces'])
+            return ConvexPolyhedron(params["vertices"])
+    elif params["type"] == "Mesh":
+        return Polyhedron(params["vertices"], params["faces"])
     else:
         raise ValueError("Unsupported shape type.")

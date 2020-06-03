@@ -36,8 +36,7 @@ class ConvexSpheropolygon(Shape2D):
             raise ValueError("The vertices do not define a convex polygon.")
         self._radius = radius
 
-    def reorder_verts(self, clockwise=False, ref_index=0,
-                      increasing_length=True):
+    def reorder_verts(self, clockwise=False, ref_index=0, increasing_length=True):
         """Sort the vertices.
 
         For more information see
@@ -65,9 +64,11 @@ class ConvexSpheropolygon(Shape2D):
     @property
     def gsd_shape_spec(self):
         """dict: Get a `complete GSD specification <shapes>`_."""  # noqa: D401
-        return {'type': 'Polygon',
-                'vertices': self._polygon._vertices.tolist(),
-                'rounding_radius': self._radius}
+        return {
+            "type": "Polygon",
+            "vertices": self._polygon._vertices.tolist(),
+            "rounding_radius": self._radius,
+        }
 
     @property
     def vertices(self):
@@ -92,8 +93,7 @@ class ConvexSpheropolygon(Shape2D):
         """
         poly_area = self._polygon.signed_area
 
-        drs = self.vertices - np.roll(self.vertices,
-                                      shift=-1, axis=0)
+        drs = self.vertices - np.roll(self.vertices, shift=-1, axis=0)
         edge_area = np.sum(np.linalg.norm(drs, axis=1)) * self.radius
         cap_area = np.pi * self.radius * self.radius
         sphero_area = edge_area + cap_area

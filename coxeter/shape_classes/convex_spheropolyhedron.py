@@ -32,9 +32,11 @@ class ConvexSpheropolyhedron(Shape3D):
     @property
     def gsd_shape_spec(self):
         """dict: Get a `complete GSD specification <shapes>`_."""  # noqa: D401
-        return {'type': 'ConvexPolyhedron',
-                'vertices': self.polyhedron._vertices.tolist(),
-                'rounding_radius': self._radius}
+        return {
+            "type": "ConvexPolyhedron",
+            "vertices": self.polyhedron._vertices.tolist(),
+            "rounding_radius": self._radius,
+        }
 
     @property
     def polyhedron(self):
@@ -59,7 +61,7 @@ class ConvexSpheropolyhedron(Shape3D):
     def volume(self):
         """float: The volume."""
         v_poly = self.polyhedron.volume
-        v_sphere = (4 / 3) * np.pi * self._radius**3
+        v_sphere = (4 / 3) * np.pi * self._radius ** 3
         v_cyl = 0
 
         # For every pair of faces, find the dihedral angle, divide by 2*pi to
@@ -67,11 +69,10 @@ class ConvexSpheropolyhedron(Shape3D):
         # length to get the cylinder contribution.
         for i, j, edge in self.polyhedron._get_face_intersections():
             phi = self.polyhedron.get_dihedral(i, j)
-            edge_length = np.linalg.norm(self.polyhedron.vertices[edge[0]]
-                                         - self.polyhedron.vertices[edge[1]])
-            v_cyl += ((np.pi * self.radius**2)
-                      * (phi / (2 * np.pi))
-                      * edge_length)
+            edge_length = np.linalg.norm(
+                self.polyhedron.vertices[edge[0]] - self.polyhedron.vertices[edge[1]]
+            )
+            v_cyl += (np.pi * self.radius ** 2) * (phi / (2 * np.pi)) * edge_length
 
         return v_poly + v_sphere + v_cyl
 
@@ -84,7 +85,7 @@ class ConvexSpheropolyhedron(Shape3D):
     def surface_area(self):
         """float: Get the surface area."""
         a_poly = self.polyhedron.surface_area
-        a_sphere = 4 * np.pi * self._radius**2
+        a_sphere = 4 * np.pi * self._radius ** 2
         a_cyl = 0
 
         # For every pair of faces, find the dihedral angle, divide by 2*pi to
@@ -92,11 +93,10 @@ class ConvexSpheropolyhedron(Shape3D):
         # length to get the cylinder contribution.
         for i, j, edge in self.polyhedron._get_face_intersections():
             phi = self.polyhedron.get_dihedral(i, j)
-            edge_length = np.linalg.norm(self.polyhedron.vertices[edge[0]]
-                                         - self.polyhedron.vertices[edge[1]])
-            a_cyl += ((2 * np.pi * self.radius)
-                      * (phi / (2 * np.pi))
-                      * edge_length)
+            edge_length = np.linalg.norm(
+                self.polyhedron.vertices[edge[0]] - self.polyhedron.vertices[edge[1]]
+            )
+            a_cyl += (2 * np.pi * self.radius) * (phi / (2 * np.pi)) * edge_length
 
         return a_poly + a_sphere + a_cyl
 
@@ -128,19 +128,20 @@ class ConvexSpheropolyhedron(Shape3D):
 
         # Compute extrusions of the faces
         extruded_faces = []
-        for face, normal in zip(self.polyhedron.faces,
-                                self.polyhedron.normals):
+        for face, normal in zip(self.polyhedron.faces, self.polyhedron.normals):
             base_vertices = self.polyhedron.vertices[face]
             extruded_vertices = base_vertices + self.radius * normal
             extruded_faces.append(
-                ConvexPolyhedron([*base_vertices, *extruded_vertices]))
+                ConvexPolyhedron([*base_vertices, *extruded_vertices])
+            )
 
         # Select the points between the inner polyhedron and extruded space
         # and then filter them using the point-face distances
         point_faces_in_polyhedron_hull = point_plane_distances <= 0
         point_faces_in_extruded_hull = point_plane_distances <= self.radius
-        point_faces_to_check = \
+        point_faces_to_check = (
             point_faces_in_extruded_hull & ~point_faces_in_polyhedron_hull
+        )
 
         # Exit early if there are no intersections to check between points
         # and rounded faces
@@ -158,8 +159,7 @@ class ConvexSpheropolyhedron(Shape3D):
                 return True
 
             # Check spherocylinders around the edges (excluding spherical caps)
-            face_points = self.polyhedron.vertices[
-                self.polyhedron.faces[face_id]]
+            face_points = self.polyhedron.vertices[self.polyhedron.faces[face_id]]
 
             # Vectors along the face edges
             face_edges = np.roll(face_points, -1, axis=0) - face_points
@@ -173,15 +173,16 @@ class ConvexSpheropolyhedron(Shape3D):
 
             # Compute the vector rejection (perpendicular projection) of point
             # along edge vectors and determine if the cylinders contain it
-            edge_projections = np.sum(point_to_edge_starts * face_edges_norm,
-                                      axis=1)
-            perpendicular_projections = point_to_edge_starts - \
-                edge_projections[:, np.newaxis] * face_edges_norm
-            cylinder_distances = np.linalg.norm(
-                perpendicular_projections, axis=-1)
-            in_cylinders = np.any((cylinder_distances <= self.radius)
-                                  & (edge_projections >= 0)
-                                  & (edge_projections <= face_edge_lengths))
+            edge_projections = np.sum(point_to_edge_starts * face_edges_norm, axis=1)
+            perpendicular_projections = (
+                point_to_edge_starts - edge_projections[:, np.newaxis] * face_edges_norm
+            )
+            cylinder_distances = np.linalg.norm(perpendicular_projections, axis=-1)
+            in_cylinders = np.any(
+                (cylinder_distances <= self.radius)
+                & (edge_projections >= 0)
+                & (edge_projections <= face_edge_lengths)
+            )
 
             # Exit early if the point is found in the cylinders
             if in_cylinders:

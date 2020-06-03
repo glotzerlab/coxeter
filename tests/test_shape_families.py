@@ -11,21 +11,28 @@ from coxeter.shape_families import (
 )
 
 
-@pytest.mark.parametrize('n', range(3, 100))
+@pytest.mark.parametrize("n", range(3, 100))
 def test_regular_ngon(n):
     family = RegularNGonFamily()
     poly = family(n)
     assert len(poly.vertices) == n
     # All side lengths should be the same.
-    assert len(np.unique(np.linalg.norm(
-        poly.vertices - np.roll(poly.vertices, shift=-1, axis=0),
-        axis=1).round(4))) == 1
+    assert (
+        len(
+            np.unique(
+                np.linalg.norm(
+                    poly.vertices - np.roll(poly.vertices, shift=-1, axis=0), axis=1
+                ).round(4)
+            )
+        )
+        == 1
+    )
 
 
 def test_shape_repos():
-    family = family_from_doi('10.1126/science.1220869')[0]
+    family = family_from_doi("10.1126/science.1220869")[0]
     for key, shape_data in family.data.items():
-        if shape_data['name'] == 'Cube':
+        if shape_data["name"] == "Cube":
             break
     else:
         assert False, "Could not find a cube in the dataset."
@@ -71,11 +78,11 @@ def test_shape523():
     family = Family523()
     s = family.s
     # Icosidodecahedron
-    assert len(family(1, family.S**2).vertices) == 30
-    assert len(family(1, family.S**2).faces) == 32
+    assert len(family(1, family.S ** 2).vertices) == 30
+    assert len(family(1, family.S ** 2).faces) == 32
     # Icosahedron
-    assert len(family(1 * s * np.sqrt(5), family.S**2).vertices) == 12
-    assert len(family(1 * s * np.sqrt(5), family.S**2).faces) == 20
+    assert len(family(1 * s * np.sqrt(5), family.S ** 2).vertices) == 12
+    assert len(family(1 * s * np.sqrt(5), family.S ** 2).faces) == 20
     # Dodecahedron
     assert len(family(1, 3).vertices) == 20
     assert len(family(1, 3).faces) == 12

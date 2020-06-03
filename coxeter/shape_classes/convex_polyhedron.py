@@ -45,8 +45,7 @@ class ConvexPolyhedron(Polyhedron):
     @property
     def gsd_shape_spec(self):
         """dict: Get a `complete GSD specification <shapes>`_."""  # noqa: D401
-        return {'type': 'ConvexPolyhedron',
-                'vertices': self._vertices.tolist()}
+        return {"type": "ConvexPolyhedron", "vertices": self._vertices.tolist()}
 
     @property
     def tau(self):
@@ -80,8 +79,7 @@ class ConvexPolyhedron(Polyhedron):
                 Boolean array indicating which points are contained in the
                 polyhedron.
         """
-        return np.logical_not(np.any(
-            self._point_plane_distances(points) > 0, axis=1))
+        return np.logical_not(np.any(self._point_plane_distances(points) > 0, axis=1))
 
     @property
     def insphere_from_center(self):
@@ -94,8 +92,10 @@ class ConvexPolyhedron(Polyhedron):
         center = self.center
         distances = self._point_plane_distances(center).squeeze()
         if any(distances > 0):
-            raise ValueError("The centroid is not contained in the shape. The "
-                             "insphere from center is not defined.")
+            raise ValueError(
+                "The centroid is not contained in the shape. The "
+                "insphere from center is not defined."
+            )
         min_distance = -np.max(distances)
         return center, min_distance
 
@@ -109,6 +109,8 @@ class ConvexPolyhedron(Polyhedron):
         """
         center = self.center
         if not self.is_inside(center):
-            raise ValueError("The centroid is not contained in the shape. The "
-                             "circumsphere from center is not defined.")
+            raise ValueError(
+                "The centroid is not contained in the shape. The "
+                "circumsphere from center is not defined."
+            )
         return center, np.max(np.linalg.norm(self._vertices - center, axis=-1))

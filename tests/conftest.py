@@ -9,32 +9,37 @@ from coxeter.shape_classes import ConvexPolyhedron, ConvexSpheropolyhedron, Poly
 # Need to declare this outside the fixture so that it can be used in multiple
 # fixtures (pytest does not allow fixtures to be called).
 def get_cube_points():
-    return np.asarray([[0, 0, 0],
-                       [0, 1, 0],
-                       [1, 1, 0],
-                       [1, 0, 0],
-                       [0, 0, 1],
-                       [0, 1, 1],
-                       [1, 1, 1],
-                       [1, 0, 1]])
+    return np.asarray(
+        [
+            [0, 0, 0],
+            [0, 1, 0],
+            [1, 1, 0],
+            [1, 0, 0],
+            [0, 0, 1],
+            [0, 1, 1],
+            [1, 1, 1],
+            [1, 0, 1],
+        ]
+    )
 
 
 def get_oriented_cube_faces():
-    return np.array([[0, 1, 2, 3],  # Bottom face
-                     [4, 7, 6, 5],  # Top face
-                     [0, 3, 7, 4],  # Left face
-                     [1, 5, 6, 2],  # Right face
-                     [3, 2, 6, 7],  # Front face
-                     [0, 4, 5, 1]])  # Back face
+    return np.array(
+        [
+            [0, 1, 2, 3],  # Bottom face
+            [4, 7, 6, 5],  # Top face
+            [0, 3, 7, 4],  # Left face
+            [1, 5, 6, 2],  # Right face
+            [3, 2, 6, 7],  # Front face
+            [0, 4, 5, 1],
+        ]
+    )  # Back face
 
 
 def get_oriented_cube_normals():
-    return np.asarray([[0, 0, -1],
-                       [0, 0, 1],
-                       [0, -1, 0],
-                       [0, 1, 0],
-                       [1, 0, 0],
-                       [-1, 0, 0]])
+    return np.asarray(
+        [[0, 0, -1], [0, 0, 1], [0, -1, 0], [0, 1, 0], [1, 0, 0], [-1, 0, 0]]
+    )
 
 
 def make_sphero_cube(radius=0):

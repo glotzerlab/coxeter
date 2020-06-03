@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from.base_classes import Shape2D
+from .base_classes import Shape2D
 
 
 class Circle(Shape2D):
@@ -23,7 +23,7 @@ class Circle(Shape2D):
     @property
     def gsd_shape_spec(self):
         """dict: Get a `complete GSD specification <shapes>`_."""  # noqa: D401
-        return {'type': 'Sphere', 'diameter': 2 * self._radius}
+        return {"type": "Sphere", "diameter": 2 * self._radius}
 
     @property
     def center(self):
@@ -46,7 +46,7 @@ class Circle(Shape2D):
     @property
     def area(self):
         """float: Get the area of the circle."""
-        return np.pi * self.radius**2
+        return np.pi * self.radius ** 2
 
     @property
     def eccentricity(self):
@@ -91,12 +91,12 @@ class Circle(Shape2D):
         that the product moment is zero by symmetry.
         """  # noqa: E501
         area = self.area
-        i_x = i_y = area / 4 * self.radius**2
+        i_x = i_y = area / 4 * self.radius ** 2
         i_xy = 0
 
         # Apply parallel axis theorem from the center
-        i_x += area * self.center[0]**2
-        i_y += area * self.center[1]**2
+        i_x += area * self.center[0] ** 2
+        i_y += area * self.center[1] ** 2
         i_xy += area * self.center[0] * self.center[1]
         return i_x, i_y, i_xy
 

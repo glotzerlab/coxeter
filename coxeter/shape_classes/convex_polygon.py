@@ -58,8 +58,7 @@ class ConvexPolygon(Polygon):
     """
 
     def __init__(self, vertices, normal=None, planar_tolerance=1e-5):
-        super(ConvexPolygon, self).__init__(vertices, normal, planar_tolerance,
-                                            False)
+        super(ConvexPolygon, self).__init__(vertices, normal, planar_tolerance, False)
         if _is_convex(self._vertices, self._normal):
             # If points form a convex set, then we can order the vertices. We
             # cannot directly use the output of scipy's convex hull because our
@@ -69,8 +68,7 @@ class ConvexPolygon(Polygon):
             # If the shape is nonconvex, the user must provide ordered vertices
             # to uniquely identify the polygon. We must check if there are any
             # intersections to avoid complex (self-intersecting) polygons.
-            raise ValueError("The provided vertices do not form a convex "
-                             "polygon.")
+            raise ValueError("The provided vertices do not form a convex " "polygon.")
 
     @property
     def incircle_from_center(self):

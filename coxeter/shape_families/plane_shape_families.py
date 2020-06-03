@@ -57,8 +57,12 @@ class TruncationPlaneShapeFamily(_ShapeFamily):
 
         # Generate all unique combinations of planes.
         num_planes = len(planetypes)
-        indices = [(i, j, k) for i in range(num_planes) for j in
-                   range(i + 1, num_planes) for k in range(j + 1, num_planes)]
+        indices = [
+            (i, j, k)
+            for i in range(num_planes)
+            for j in range(i + 1, num_planes)
+            for k in range(j + 1, num_planes)
+        ]
 
         # To identify the vertices of the shape, we set up a linear system of
         # equations that finds points that simultaneously satisfy multiple
@@ -77,7 +81,7 @@ class TruncationPlaneShapeFamily(_ShapeFamily):
 
         # Reject any solutions that are intersections that lie beyond at least
         # one of the bounding planes.
-        dots = np.einsum('ik,jk', xs, planelist, optimize=True)
+        dots = np.einsum("ik,jk", xs, planelist, optimize=True)
         alldists = dists[planetypes]
         dist_filter = (dots <= alldists[np.newaxis, :] + thresh).all(axis=1)
         passed_plane_test = xs[dist_filter]
@@ -87,7 +91,8 @@ class TruncationPlaneShapeFamily(_ShapeFamily):
         # faces, so get the unique indices based on rounding but then use the
         # original vertices.
         _, verts_indices = np.unique(
-            passed_plane_test.round(6), axis=0, return_index=True)
+            passed_plane_test.round(6), axis=0, return_index=True
+        )
         verts = passed_plane_test[verts_indices]
 
         return verts
@@ -151,21 +156,24 @@ class Family323Plus(TruncationPlaneShapeFamily):
 
         The set of planes used to truncate the shape.
         """
-        return np.array([
-            [1.0, 1.0, 1.0],
-            [-1.0, -1.0, 1.0],
-            [-1.0, 1.0, -1.0],
-            [1.0, -1.0, -1.0],
-            [1.0, 1.0, -1.0],
-            [-1.0, -1.0, -1.0],
-            [-1.0, 1.0, 1.0],
-            [1.0, -1.0, 1.0],
-            [1.0, 0.0, 0.0],
-            [-1.0, 0.0, 0.0],
-            [0.0, 1.0, 0.0],
-            [0.0, -1.0, 0.0],
-            [0.0, 0.0, 1.0],
-            [0.0, 0.0, -1.0]])
+        return np.array(
+            [
+                [1.0, 1.0, 1.0],
+                [-1.0, -1.0, 1.0],
+                [-1.0, 1.0, -1.0],
+                [1.0, -1.0, -1.0],
+                [1.0, 1.0, -1.0],
+                [-1.0, -1.0, -1.0],
+                [-1.0, 1.0, 1.0],
+                [1.0, -1.0, 1.0],
+                [1.0, 0.0, 0.0],
+                [-1.0, 0.0, 0.0],
+                [0.0, 1.0, 0.0],
+                [0.0, -1.0, 0.0],
+                [0.0, 0.0, 1.0],
+                [0.0, 0.0, -1.0],
+            ]
+        )
 
     @property
     def plane_types(self):
@@ -217,34 +225,36 @@ class Family423(TruncationPlaneShapeFamily):
 
         The set of planes used to truncate the shape.
         """
-        return np.array([
-            [1.0, 1.0, 1.0],
-            [-1.0, -1.0, 1.0],
-            [-1.0, 1.0, -1.0],
-            [1.0, -1.0, -1.0],
-            [1.0, 1.0, -1.0],
-            [-1.0, -1.0, -1.0],
-            [-1.0, 1.0, 1.0],
-            [1.0, -1.0, 1.0],
-            [1.0, 1.0, 0.0],
-            [1.0, -1.0, 0.0],
-            [-1.0, -1.0, 0.0],
-            [-1.0, 1.0, 0.0],
-            [1.0, 0.0, 1.0],
-            [1.0, 0.0, -1.0],
-            [-1.0, 0.0, -1.0],
-            [-1.0, 0.0, 1.0],
-            [0.0, 1.0, 1.0],
-            [0.0, 1.0, -1.0],
-            [0.0, -1.0, -1.0],
-            [0.0, -1.0, 1.0],
-            [1.0, 0.0, 0.0],
-            [-1.0, 0.0, 0.0],
-            [0.0, 1.0, 0.0],
-            [0.0, -1.0, 0.0],
-            [0.0, 0.0, 1.0],
-            [0.0, 0.0, -1.0]
-        ])
+        return np.array(
+            [
+                [1.0, 1.0, 1.0],
+                [-1.0, -1.0, 1.0],
+                [-1.0, 1.0, -1.0],
+                [1.0, -1.0, -1.0],
+                [1.0, 1.0, -1.0],
+                [-1.0, -1.0, -1.0],
+                [-1.0, 1.0, 1.0],
+                [1.0, -1.0, 1.0],
+                [1.0, 1.0, 0.0],
+                [1.0, -1.0, 0.0],
+                [-1.0, -1.0, 0.0],
+                [-1.0, 1.0, 0.0],
+                [1.0, 0.0, 1.0],
+                [1.0, 0.0, -1.0],
+                [-1.0, 0.0, -1.0],
+                [-1.0, 0.0, 1.0],
+                [0.0, 1.0, 1.0],
+                [0.0, 1.0, -1.0],
+                [0.0, -1.0, -1.0],
+                [0.0, -1.0, 1.0],
+                [1.0, 0.0, 0.0],
+                [-1.0, 0.0, 0.0],
+                [0.0, 1.0, 0.0],
+                [0.0, -1.0, 0.0],
+                [0.0, 0.0, 1.0],
+                [0.0, 0.0, -1.0],
+            ]
+        )
 
     @property
     def plane_types(self):
@@ -253,8 +263,36 @@ class Family423(TruncationPlaneShapeFamily):
         The types of the planes (type 0 corresponds to the parameter a, type 1
         corresponds to b, and type 2 corresponds to c).
         """
-        return np.array([2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 0, 0, 0, 0, 0, 0])
+        return np.array(
+            [
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+            ]
+        )
 
 
 class Family523(TruncationPlaneShapeFamily):
@@ -294,11 +332,15 @@ class Family523(TruncationPlaneShapeFamily):
                 The desired shape.
         """
         if not 1 <= a <= (self.s * np.sqrt(5)):
-            raise ValueError("The a parameter must be between 1 and s\u221A5 "
-                             "(where s is the inverse of the golden ratio).")
-        if not self.S**2 <= c <= 3:
-            raise ValueError("The c parameter must be between S^2 and 3 "
-                             "(where S is the golden ratio).")
+            raise ValueError(
+                "The a parameter must be between 1 and s\u221A5 "
+                "(where s is the inverse of the golden ratio)."
+            )
+        if not self.S ** 2 <= c <= 3:
+            raise ValueError(
+                "The c parameter must be between S^2 and 3 "
+                "(where S is the golden ratio)."
+            )
         return ConvexPolyhedron(self.make_vertices(a, 2, c))
 
     @property
@@ -307,70 +349,72 @@ class Family523(TruncationPlaneShapeFamily):
 
         The set of planes used to truncate the shape.
         """
-        return np.array([
-            [1.0, 0.0, self.s],
-            [-1.0, 0.0, -self.s],
-            [-1.0, 0.0, self.s],
-            [1.0, 0.0, -self.s],
-            [0.0, -self.s, -1.0],
-            [0.0, self.s, 1.0],
-            [0.0, self.s, -1.0],
-            [0.0, -self.s, 1.0],
-            [-self.s, -1.0, 0.0],
-            [self.s, 1.0, 0.0],
-            [self.s, -1.0, 0.0],
-            [-self.s, 1.0, 0.0],
-            [-2.0, 0.0, 0.0],
-            [2.0, 0.0, 0.0],
-            [0.0, -2.0, 0.0],
-            [0.0, 2.0, 0.0],
-            [0.0, 0.0, -2.0],
-            [0.0, 0.0, 2.0],
-            [self.self.S, self.self.S, self.self.S],
-            [-self.self.S, self.self.S, self.self.S],
-            [self.self.S, -self.self.S, self.self.S],
-            [self.self.S, self.self.S, -self.self.S],
-            [self.self.S, -self.self.S, -self.self.S],
-            [-self.self.S, -self.self.S, self.self.S],
-            [-self.self.S, self.self.S, -self.self.S],
-            [-self.self.S, -self.self.S, -self.self.S],
-            [1.0, 0.0, self.self.S**2],
-            [-1.0, 0.0, -self.self.S**2],
-            [-1.0, 0.0, self.self.S**2],
-            [1.0, 0.0, -self.self.S**2],
-            [0.0, -self.self.S**2, -1.0],
-            [0.0, self.self.S**2, 1.0],
-            [0.0, -self.self.S**2, 1.0],
-            [0.0, self.self.S**2, -1.0],
-            [-self.self.S**2, -1.0, 0.0],
-            [self.self.S**2, 1.0, 0.0],
-            [self.self.S**2, -1.0, 0.0],
-            [-self.self.S**2, 1.0, 0.0],
-            [self.self.S, -1.0, -self.s],
-            [-self.self.S, 1.0, -self.s],
-            [-self.self.S, -1.0, self.s],
-            [self.self.S, 1.0, self.s],
-            [self.self.S, -1.0, self.s],
-            [self.self.S, 1.0, -self.s],
-            [-self.self.S, 1.0, self.s],
-            [-self.self.S, -1.0, -self.s],
-            [self.s, self.self.S, 1.0],
-            [self.s, -self.self.S, -1.0],
-            [-self.s, -self.self.S, 1.0],
-            [-self.s, self.self.S, -1.0],
-            [-self.s, -self.self.S, -1.0],
-            [self.s, -self.self.S, 1.0],
-            [-self.s, self.self.S, 1.0],
-            [self.s, self.self.S, -1.0],
-            [1.0, -self.s, -self.self.S],
-            [-1.0, self.s, -self.self.S],
-            [-1.0, -self.s, self.self.S],
-            [1.0, self.s, self.self.S],
-            [1.0, self.s, -self.self.S],
-            [-1.0, self.s, self.self.S],
-            [1.0, -self.s, self.self.S],
-            [-1.0, -self.s, -self.self.S]
-        ])
+        return np.array(
+            [
+                [1.0, 0.0, self.s],
+                [-1.0, 0.0, -self.s],
+                [-1.0, 0.0, self.s],
+                [1.0, 0.0, -self.s],
+                [0.0, -self.s, -1.0],
+                [0.0, self.s, 1.0],
+                [0.0, self.s, -1.0],
+                [0.0, -self.s, 1.0],
+                [-self.s, -1.0, 0.0],
+                [self.s, 1.0, 0.0],
+                [self.s, -1.0, 0.0],
+                [-self.s, 1.0, 0.0],
+                [-2.0, 0.0, 0.0],
+                [2.0, 0.0, 0.0],
+                [0.0, -2.0, 0.0],
+                [0.0, 2.0, 0.0],
+                [0.0, 0.0, -2.0],
+                [0.0, 0.0, 2.0],
+                [self.self.S, self.self.S, self.self.S],
+                [-self.self.S, self.self.S, self.self.S],
+                [self.self.S, -self.self.S, self.self.S],
+                [self.self.S, self.self.S, -self.self.S],
+                [self.self.S, -self.self.S, -self.self.S],
+                [-self.self.S, -self.self.S, self.self.S],
+                [-self.self.S, self.self.S, -self.self.S],
+                [-self.self.S, -self.self.S, -self.self.S],
+                [1.0, 0.0, self.self.S ** 2],
+                [-1.0, 0.0, -self.self.S ** 2],
+                [-1.0, 0.0, self.self.S ** 2],
+                [1.0, 0.0, -self.self.S ** 2],
+                [0.0, -self.self.S ** 2, -1.0],
+                [0.0, self.self.S ** 2, 1.0],
+                [0.0, -self.self.S ** 2, 1.0],
+                [0.0, self.self.S ** 2, -1.0],
+                [-self.self.S ** 2, -1.0, 0.0],
+                [self.self.S ** 2, 1.0, 0.0],
+                [self.self.S ** 2, -1.0, 0.0],
+                [-self.self.S ** 2, 1.0, 0.0],
+                [self.self.S, -1.0, -self.s],
+                [-self.self.S, 1.0, -self.s],
+                [-self.self.S, -1.0, self.s],
+                [self.self.S, 1.0, self.s],
+                [self.self.S, -1.0, self.s],
+                [self.self.S, 1.0, -self.s],
+                [-self.self.S, 1.0, self.s],
+                [-self.self.S, -1.0, -self.s],
+                [self.s, self.self.S, 1.0],
+                [self.s, -self.self.S, -1.0],
+                [-self.s, -self.self.S, 1.0],
+                [-self.s, self.self.S, -1.0],
+                [-self.s, -self.self.S, -1.0],
+                [self.s, -self.self.S, 1.0],
+                [-self.s, self.self.S, 1.0],
+                [self.s, self.self.S, -1.0],
+                [1.0, -self.s, -self.self.S],
+                [-1.0, self.s, -self.self.S],
+                [-1.0, -self.s, self.self.S],
+                [1.0, self.s, self.self.S],
+                [1.0, self.s, -self.self.S],
+                [-1.0, self.s, self.self.S],
+                [1.0, -self.s, self.self.S],
+                [-1.0, -self.s, -self.self.S],
+            ]
+        )
 
     @property
     def plane_types(self):
@@ -379,10 +423,72 @@ class Family523(TruncationPlaneShapeFamily):
         The types of the planes (type 0 corresponds to the parameter a, type 1
         corresponds to b, and type 2 corresponds to c).
         """
-        return np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
-                         1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-                         2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+        return np.array(
+            [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+            ]
+        )
 
 
 class TruncatedTetrahedronFamily(Family323Plus):

@@ -31,10 +31,7 @@ def polygon_from_hull(verts):
 # Need to declare this outside the fixture so that it can be used in multiple
 # fixtures (pytest does not allow fixtures to be called).
 def get_square_points():
-    return np.asarray([[0, 0, 0],
-                       [0, 1, 0],
-                       [1, 1, 0],
-                       [1, 0, 0]])
+    return np.asarray([[0, 0, 0], [0, 1, 0], [1, 1, 0], [1, 0, 0]])
 
 
 @pytest.fixture
@@ -131,15 +128,15 @@ def test_moment_inertia(square):
     assert np.isclose(square.polar_moment_inertia, 1 / 6)
 
     # Use hypothesis to validate the simple parallel axis theorem.
-    @given(arrays(np.float64, (3, ), elements=floats(-5, 5, width=64),
-                  unique=True))
+    @given(arrays(np.float64, (3,), elements=floats(-5, 5, width=64), unique=True))
     def testfun(center):
         # Just move in the plane.
         center[2] = 0
         square.center = center
 
-        assert np.isclose(square.polar_moment_inertia,
-                          1 / 6 + square.area * np.dot(center, center))
+        assert np.isclose(
+            square.polar_moment_inertia, 1 / 6 + square.area * np.dot(center, center)
+        )
 
     testfun()
 
@@ -180,8 +177,9 @@ def test_inertia_tensor(square):
         for j in range(3):
             if i != j:
                 expected_diagonals[j] += area * delta * delta
-        assert np.allclose(np.diag(translated_square.inertia_tensor),
-                           expected_diagonals)
+        assert np.allclose(
+            np.diag(translated_square.inertia_tensor), expected_diagonals
+        )
 
 
 def test_nonplanar(square_points):
@@ -191,12 +189,8 @@ def test_nonplanar(square_points):
         Polygon(square_points)
 
 
-@given(arrays(np.float64, (4, 2), elements=floats(1, 5, width=64),
-              unique=True))
-@example(np.array([[1, 1],
-                   [1, 1.00041707],
-                   [2.78722762, 1],
-                   [2.72755193, 1.32128906]]))
+@given(arrays(np.float64, (4, 2), elements=floats(1, 5, width=64), unique=True))
+@example(np.array([[1, 1], [1, 1.00041707], [2.78722762, 1], [2.72755193, 1.32128906]]))
 def test_reordering_convex(points):
     """Test that vertices can be reordered appropriately."""
     hull = get_valid_hull(points)
@@ -208,12 +202,8 @@ def test_reordering_convex(points):
     assert np.all(poly.vertices[:, :2] == verts)
 
 
-@given(arrays(np.float64, (4, 2), elements=floats(-5, 5, width=64),
-              unique=True))
-@example(np.array([[1, 1],
-                   [1, 1.00041707],
-                   [2.78722762, 1],
-                   [2.72755193, 1.32128906]]))
+@given(arrays(np.float64, (4, 2), elements=floats(-5, 5, width=64), unique=True))
+@example(np.array([[1, 1], [1, 1.00041707], [2.78722762, 1], [2.72755193, 1.32128906]]))
 def test_convex_area(points):
     """Check the areas of various convex sets."""
     hull = get_valid_hull(points)
@@ -224,7 +214,7 @@ def test_convex_area(points):
     assert np.isclose(hull.volume, poly.area)
 
 
-@given(random_quat=arrays(np.float64, (4, ), elements=floats(-1, 1, width=64)))
+@given(random_quat=arrays(np.float64, (4,), elements=floats(-1, 1, width=64)))
 def test_rotation_signed_area(random_quat):
     """Ensure that rotating does not change the signed area."""
     assume(not np.all(random_quat == 0))
@@ -237,8 +227,7 @@ def test_rotation_signed_area(random_quat):
     assert np.isclose(poly.signed_area, -1)
 
 
-@given(arrays(np.float64, (4, 2), elements=floats(-5, 5, width=64),
-              unique=True))
+@given(arrays(np.float64, (4, 2), elements=floats(-5, 5, width=64), unique=True))
 def test_set_convex_area(points):
     """Test setting area of arbitrary convex sets."""
     hull = get_valid_hull(points)
@@ -255,8 +244,7 @@ def test_triangulate(square):
     triangles = [tri for tri in square._triangulation()]
     assert len(triangles) == 2
 
-    all_vertices = [tuple(vertex) for triangle in triangles for vertex in
-                    triangle]
+    all_vertices = [tuple(vertex) for triangle in triangles for vertex in triangle]
     assert len(set(all_vertices)) == 4
 
     assert not np.all(np.asarray(triangles[0]) == np.asarray(triangles[1]))
@@ -275,8 +263,7 @@ def test_bounding_circle_radius_regular_polygon():
         assert np.allclose(center, 0)
 
 
-@given(arrays(np.float64, (3, 2), elements=floats(-5, 5, width=64),
-              unique=True))
+@given(arrays(np.float64, (3, 2), elements=floats(-5, 5, width=64), unique=True))
 def test_bounding_circle_radius_random_hull(points):
     hull = get_valid_hull(points)
     assume(hull)
@@ -296,9 +283,10 @@ def test_bounding_circle_radius_random_hull(points):
     assert radius <= rmax + 1e-6
 
 
-@given(points=arrays(np.float64, (3, 2), elements=floats(-5, 5, width=64),
-                     unique=True),
-       rotation=arrays(np.float64, (4, ), elements=floats(-1, 1, width=64)))
+@given(
+    points=arrays(np.float64, (3, 2), elements=floats(-5, 5, width=64), unique=True),
+    rotation=arrays(np.float64, (4,), elements=floats(-1, 1, width=64)),
+)
 def test_bounding_circle_radius_random_hull_rotation(points, rotation):
     """Test that rotating vertices does not change the bounding radius."""
     assume(not np.all(rotation == 0))

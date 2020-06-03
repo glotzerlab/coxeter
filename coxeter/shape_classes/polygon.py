@@ -10,6 +10,7 @@ from .utils import rotate_order2_tensor, translate_inertia_tensor
 
 try:
     import miniball
+
     MINIBALL = True
 except ImportError:
     MINIBALL = False
@@ -38,8 +39,7 @@ def _align_points_by_normal(normal, points):
     # Since we are considering just a single vector, to avoid getting a pure
     # translation we need to consider mapping both the vector and its opposite
     # (which defines an oriented coordinate system).
-    rotation, _ = rowan.mapping.kabsch([normal, -normal],
-                                       [[0, 0, 1], [0, 0, -1]])
+    rotation, _ = rowan.mapping.kabsch([normal, -normal], [[0, 0, 1], [0, 0, -1]])
     return np.dot(points, rotation.T)
 
 
@@ -92,16 +92,13 @@ class Polygon(Shape2D):
             ``False`` with care.
     """
 
-    def __init__(self, vertices, normal=None, planar_tolerance=1e-5,
-                 test_simple=True):
+    def __init__(self, vertices, normal=None, planar_tolerance=1e-5, test_simple=True):
         vertices = np.array(vertices, dtype=np.float64)
 
         if len(vertices.shape) != 2 or vertices.shape[1] not in (2, 3):
-            raise ValueError(
-                "Vertices must be specified as an Nx2 or Nx3 array.")
+            raise ValueError("Vertices must be specified as an Nx2 or Nx3 array.")
         if len(vertices) < 3:
-            raise ValueError(
-                "A polygon must be composed of at least 3 vertices.")
+            raise ValueError("A polygon must be composed of at least 3 vertices.")
 
         _, indices = np.unique(vertices, axis=0, return_index=True)
         if len(indices) != vertices.shape[0]:
@@ -110,16 +107,17 @@ class Polygon(Shape2D):
         # For convenience, we support providing vertices without z components,
         # but the stored vertices are always Nx3.
         if vertices.shape[1] == 2:
-            self._vertices = np.hstack((vertices,
-                                        np.zeros((vertices.shape[0], 1))))
+            self._vertices = np.hstack((vertices, np.zeros((vertices.shape[0], 1))))
         else:
             self._vertices = vertices
 
         # Note: Vertices do not yet need to be ordered for the purpose of
         # determining the normal, this check can be performed irrespective of
         # ordering since any cross product of vectors will provide a normal.
-        computed_normal = np.cross(self._vertices[2, :] - self._vertices[1, :],
-                                   self._vertices[0, :] - self._vertices[1, :])
+        computed_normal = np.cross(
+            self._vertices[2, :] - self._vertices[1, :],
+            self._vertices[0, :] - self._vertices[1, :],
+        )
         computed_normal /= np.linalg.norm(computed_normal)
         if normal is None:
             self._normal = computed_normal
@@ -128,8 +126,9 @@ class Polygon(Shape2D):
             norm_normal /= np.linalg.norm(normal)
 
             if not np.isclose(np.abs(np.dot(computed_normal, norm_normal)), 1):
-                raise ValueError("The provided normal vector is not "
-                                 "orthogonal to the polygon.")
+                raise ValueError(
+                    "The provided normal vector is not " "orthogonal to the polygon."
+                )
             self._normal = norm_normal
 
         d = self._normal.dot(self.vertices[0, :])
@@ -142,17 +141,16 @@ class Polygon(Shape2D):
                 raise ValueError("Not all vertices are coplanar.")
 
         if test_simple:
-            planar_vertices = _align_points_by_normal(
-                self._normal, self._vertices)
+            planar_vertices = _align_points_by_normal(self._normal, self._vertices)
             if not _is_simple(planar_vertices):
                 raise ValueError(
                     "The vertices must be passed in counterclockwise order. "
                     "Note that the Polygon class only supports simple "
                     "polygons, so self-intersecting polygons are not "
-                    "permitted.")
+                    "permitted."
+                )
 
-    def reorder_verts(self, clockwise=False, ref_index=0,
-                      increasing_length=True):
+    def reorder_verts(self, clockwise=False, ref_index=0, increasing_length=True):
         """Sort the vertices.
 
         Sorting is done with respect to the direction of the normal vector. The
@@ -180,8 +178,7 @@ class Polygon(Shape2D):
                 comes first, otherwise the point further away comes first
                 (Default value: True).
         """
-        verts = _align_points_by_normal(self._normal,
-                                        self._vertices - self.center)
+        verts = _align_points_by_normal(self._normal, self._vertices - self.center)
 
         # Compute the angle of each vertex, shift so that the chosen
         # reference_index has a value of zero, then move into the [0, 2pi]
@@ -200,7 +197,7 @@ class Polygon(Shape2D):
     @property
     def gsd_shape_spec(self):
         """dict: Get a `complete GSD specification <shapes>`_."""  # noqa: D401
-        return {'type': 'Polygon', 'vertices': self._vertices.tolist()}
+        return {"type": "Polygon", "vertices": self._vertices.tolist()}
 
     @property
     def normal(self):
@@ -233,9 +230,11 @@ class Polygon(Shape2D):
         coord2 = np.mod(proj_coord + 2, 3)
 
         area = np.sum(
-            np.roll(self.vertices, shift=-1, axis=0)[:, coord1] * (
+            np.roll(self.vertices, shift=-1, axis=0)[:, coord1]
+            * (
                 np.roll(self.vertices, shift=-2, axis=0)[:, coord2]
-                - self.vertices[:, coord2])
+                - self.vertices[:, coord2]
+            )
         ) * (an / (2 * self._normal[proj_coord]))
 
         return area
@@ -308,8 +307,8 @@ class Polygon(Shape2D):
         # These are the terms in the formulas for Ix and Iy, which are computed
         # simulataneously since they're identical except that they use either
         # the x or y coordinates.
-        sv_sq = shifted_verts**2
-        verts_sq = verts**2
+        sv_sq = shifted_verts ** 2
+        verts_sq = verts ** 2
         prod = verts * shifted_verts
 
         # This accounts for the x_i*y_{i+1} and x_{i+1}*y_i terms in Ixy.
@@ -355,15 +354,17 @@ class Polygon(Shape2D):
         # the origin before translating to the actual centroid).
         center = self.center
         self.center = (0, 0, 0)
-        mat, _ = rowan.mapping.kabsch([self.normal, -self.normal],
-                                      [[0, 0, 1], [0, 0, -1]])
+        mat, _ = rowan.mapping.kabsch(
+            [self.normal, -self.normal], [[0, 0, 1], [0, 0, -1]]
+        )
         self._vertices = self._vertices.dot(mat.T)
         original_normal = self._normal
         self._normal = np.asarray([0, 0, 1])
 
         inertia_tensor = np.diag([0, 0, self.polar_moment_inertia])
         shifted_inertia_tensor = translate_inertia_tensor(
-            center, rotate_order2_tensor(mat, inertia_tensor), self.area)
+            center, rotate_order2_tensor(mat, inertia_tensor), self.area
+        )
 
         self.center = center
         self._vertices = self._vertices.dot(mat)
@@ -378,7 +379,7 @@ class Polygon(Shape2D):
 
     @center.setter
     def center(self, value):
-        self._vertices += (np.asarray(value) - self.center)
+        self._vertices += np.asarray(value) - self.center
 
     def _triangulation(self):
         """Generate a triangulation of the polygon.
@@ -424,17 +425,18 @@ class Polygon(Shape2D):
             # Typically a good shift for plotting the labels
             shift = (np.max(y) - np.min(y)) * 0.025
             for i, vert in enumerate(verts[:-1]):
-                ax.text(vert[0], vert[1] + shift, '{}'.format(i), fontsize=10)
+                ax.text(vert[0], vert[1] + shift, "{}".format(i), fontsize=10)
 
     @property
     def bounding_circle(self):
         """tuple[float, float]: Get the center and radius of the bounding circle."""  # noqa: E501
         if not MINIBALL:
-            raise ImportError("The miniball module must be installed. It can "
-                              "be installed as an extra with coxeter (e.g. "
-                              "with pip install coxeter[bounding_sphere], or "
-                              "directly from PyPI using pip install miniball."
-                              )
+            raise ImportError(
+                "The miniball module must be installed. It can "
+                "be installed as an extra with coxeter (e.g. "
+                "with pip install coxeter[bounding_sphere], or "
+                "directly from PyPI using pip install miniball."
+            )
 
         # The algorithm in miniball involves solving a linear system and
         # can therefore occasionally be somewhat unstable. Applying a
@@ -466,10 +468,12 @@ class Polygon(Shape2D):
         # Solves a linear system of equations to find a point equidistant from
         # all the vertices if it exists. Since the polygon is embedded in 3D,
         # we must constrain our solutions to the plane of the polygon.
-        points = np.concatenate((
-            self.vertices[1:] - self.vertices[0], self.normal[np.newaxis]))
-        half_point_lengths = np.concatenate((
-            np.sum(points[:-1] * points[:-1], axis=1) / 2, [0]))
+        points = np.concatenate(
+            (self.vertices[1:] - self.vertices[0], self.normal[np.newaxis])
+        )
+        half_point_lengths = np.concatenate(
+            (np.sum(points[:-1] * points[:-1], axis=1) / 2, [0])
+        )
         x, resids, _, _ = np.linalg.lstsq(points, half_point_lengths, None)
         if len(self.vertices) > 3 and not np.isclose(resids, 0):
             raise RuntimeError("No circumcircle for this polygon.")

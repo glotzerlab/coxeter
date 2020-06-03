@@ -49,7 +49,7 @@ class _FTbase:
         """
         k = np.asarray(k)
         if k.shape[1] != 3:
-            raise TypeError('K should be an Nx3 array')
+            raise TypeError("K should be an Nx3 array")
 
         self.NK = k.shape[0]
         self.K = k
@@ -82,12 +82,11 @@ class _FTbase:
         position = np.asarray(position)
         orientation = np.asarray(orientation)
         if position.shape[1] != 3:
-            raise TypeError('position should be an Nx3 array')
+            raise TypeError("position should be an Nx3 array")
         if orientation.shape[1] != 4:
-            raise TypeError('orientation should be an Nx4 array')
+            raise TypeError("orientation should be an Nx4 array")
         if position.shape[0] != orientation.shape[0]:
-            raise TypeError(
-                'position and orientation should have the same length')
+            raise TypeError("position and orientation should have the same length")
 
         self.position = position
         self.orientation = orientation
@@ -144,12 +143,17 @@ class FTsphere(_FTbase):
             for r in self.position:
                 k_sq = np.dot(k, k)
                 if k_sq == 0:
-                    f = (4. / 3. * np.pi * self.radius**3)
+                    f = 4.0 / 3.0 * np.pi * self.radius ** 3
                 else:
                     kr = np.sqrt(k_sq) * self.radius
                     # Note that np.sinc(x) gives sin(pi*x)/(pi*x)
-                    f = 4. * np.pi * self.radius / k_sq * \
-                        (np.sinc(kr / np.pi) - np.cos(kr))
+                    f = (
+                        4.0
+                        * np.pi
+                        * self.radius
+                        / k_sq
+                        * (np.sinc(kr / np.pi) - np.cos(kr))
+                    )
                 self.S[i] += self.density * f * np.exp(-1j * np.dot(k, r))
 
     def set_radius(self, radius):
@@ -219,9 +223,11 @@ class FTpolyhedron(_FTbase):
                                 k_dot_center = np.dot(k_projected, edge_center)
                                 k_dot_edge = np.dot(k_projected, edge_vec)
                                 # Note that np.sinc(x) gives sin(pi*x)/(pi*x)
-                                f_n = np.dot(norm, edge_cross_k) * \
-                                    np.sinc(0.5 * k_dot_edge / np.pi) / \
-                                    k_projected_sq
+                                f_n = (
+                                    np.dot(norm, edge_cross_k)
+                                    * np.sinc(0.5 * k_dot_edge / np.pi)
+                                    / k_projected_sq
+                                )
                                 f2d -= f_n * 1j * np.exp(-1j * k_dot_center)
                         d = self.d[face_id]
                         exp_kr = np.exp(-1j * k_dot_norm * d)
@@ -230,8 +236,11 @@ class FTpolyhedron(_FTbase):
                     f /= k_sq
                 # end if/else, f is now calculated
                 # S += rho * f * exp(-i k r)
-                self.S[i] += self.density * f * \
-                    np.exp(-1j * np.dot(k, rowan.rotate(rowan.inverse(q), r)))
+                self.S[i] += (
+                    self.density
+                    * f
+                    * np.exp(-1j * np.dot(k, rowan.rotate(rowan.inverse(q), r)))
+                )
 
     def set_params(self, verts, faces, norms, d, areas, volume):
         """Set polyhedron geometry.
@@ -252,7 +261,7 @@ class FTpolyhedron(_FTbase):
         """
         verts = np.asarray(verts)
         if verts.shape[1] != 3:
-            raise TypeError('verts should be an Nx3 array')
+            raise TypeError("verts should be an Nx3 array")
 
         face_offs = np.zeros((len(faces) + 1), dtype=np.uint32)
         for i, f in enumerate(faces):
@@ -264,7 +273,7 @@ class FTpolyhedron(_FTbase):
 
         norms = np.asarray(norms)
         if norms.shape[1] != 3:
-            raise TypeError('norms should be an Nx3 array')
+            raise TypeError("norms should be an Nx3 array")
 
         d = np.asarray(d)
 
@@ -272,16 +281,19 @@ class FTpolyhedron(_FTbase):
 
         if norms.shape[0] != face_offs.shape[0] - 1:
             raise RuntimeError(
-                ('Length of norms should be equal to number of face offsets'
-                    '- 1'))
+                ("Length of norms should be equal to number of face offsets" "- 1")
+            )
         if d.shape[0] != face_offs.shape[0] - 1:
             raise RuntimeError(
-                ('Length of face distances should be equal to number of face'
-                    'offsets - 1'))
+                (
+                    "Length of face distances should be equal to number of face"
+                    "offsets - 1"
+                )
+            )
         if areas.shape[0] != face_offs.shape[0] - 1:
             raise RuntimeError(
-                ('Length of areas should be equal to number of face offsets'
-                    '- 1'))
+                ("Length of areas should be equal to number of face offsets" "- 1")
+            )
         self.verts = verts
         self.face_offs = face_offs
         self.faces = faces
@@ -308,9 +320,10 @@ class FTconvexPolyhedron(FTpolyhedron):
         faces = self.hull.faces
         norms = self.hull._equations[:, 0:3]
         d = -self.hull._equations[:, 3] * self.scale
-        areas = [self.hull.get_face_area(i) * self.scale**2.0
-                 for i in range(len(faces))]
-        volume = self.hull.volume * self.scale**3.0
+        areas = [
+            self.hull.get_face_area(i) * self.scale ** 2.0 for i in range(len(faces))
+        ]
+        volume = self.hull.volume * self.scale ** 3.0
         self.set_params(verts, faces, norms, d, areas, volume)
 
     def set_radius(self, radius):
@@ -347,7 +360,7 @@ class FTconvexPolyhedron(FTpolyhedron):
                 :math:`S\left(i\right)`.
         """
         if np.dot(k, k) == 0.0:
-            ft = self.hull.getArea(i) * self.scale**2
+            ft = self.hull.getArea(i) * self.scale ** 2
         else:
             ft = 0.0
             nverts = self.hull.nverts[i]
@@ -360,13 +373,14 @@ class FTconvexPolyhedron(FTpolyhedron):
                 v1 = points[verts[j + 1]]
                 v0 = points[verts[j]]
                 edge = v1 - v0
-                centrum = np.array((v1 + v0) / 2.)
+                centrum = np.array((v1 + v0) / 2.0)
                 # Note that np.sinc(x) gives sin(pi*x)/(pi*x)
                 x = np.dot(k, edge) / np.pi
                 cpedgek = np.cross(edge, k)
-                ft += np.dot(n, cpedgek) * np.exp(
-                    -1.j * np.dot(k, centrum)) * np.sinc(x)
-            ft *= (-1.j / np.dot(k, k))
+                ft += (
+                    np.dot(n, cpedgek) * np.exp(-1.0j * np.dot(k, centrum)) * np.sinc(x)
+                )
+            ft *= -1.0j / np.dot(k, k)
         return ft
 
     def spoly_3d(self, k):
@@ -378,17 +392,16 @@ class FTconvexPolyhedron(FTpolyhedron):
                 :math:`S\left(i\right)`.
         """
         if np.dot(k, k) == 0.0:
-            ft = self.hull.getVolume() * self.scale**3
+            ft = self.hull.getVolume() * self.scale ** 3
         else:
             ft = 0.0
             # for face in faces
             for i in range(self.hull.nfaces):
                 # need to project k into plane of face
                 ni = self.hull.equations[i, 0:3]
-                di = - self.hull.equations[i, 3] * self.scale
+                di = -self.hull.equations[i, 3] * self.scale
                 dotkni = np.dot(k, ni)
                 k_proj = k - ni * dotkni
-                ft += dotkni * np.exp(-1.j * dotkni * di) * \
-                    self.Spoly2D(i, k_proj)
-            ft *= 1.j / (np.dot(k, k))
+                ft += dotkni * np.exp(-1.0j * dotkni * di) * self.Spoly2D(i, k_proj)
+            ft *= 1.0j / (np.dot(k, k))
         return ft

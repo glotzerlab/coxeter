@@ -2,9 +2,8 @@
 
 import numpy as np
 
+from .base_classes import Shape3D
 from .utils import translate_inertia_tensor
-
-from.base_classes import Shape3D
 
 
 class Sphere(Shape3D):
@@ -25,7 +24,7 @@ class Sphere(Shape3D):
     @property
     def gsd_shape_spec(self):
         """dict: Get a `complete GSD specification <shapes>`_."""  # noqa: D401
-        return {'type': 'Sphere', 'diameter': 2 * self._radius}
+        return {"type": "Sphere", "diameter": 2 * self._radius}
 
     @property
     def center(self):
@@ -49,21 +48,20 @@ class Sphere(Shape3D):
     @property
     def volume(self):
         """float: Get the volume of the sphere."""
-        return (4 / 3) * np.pi * self.radius**3
+        return (4 / 3) * np.pi * self.radius ** 3
 
     @property
     def surface_area(self):
         """float: Get the surface area."""
-        return 4 * np.pi * self.radius**2
+        return 4 * np.pi * self.radius ** 2
 
     @property
     def inertia_tensor(self):
         """float: Get the inertia tensor. Assumes constant density of 1."""
         vol = self.volume
-        i_xx = vol * 2 / 5 * self.radius**2
+        i_xx = vol * 2 / 5 * self.radius ** 2
         inertia_tensor = np.diag([i_xx, i_xx, i_xx])
-        return translate_inertia_tensor(
-            self.center, inertia_tensor, vol)
+        return translate_inertia_tensor(self.center, inertia_tensor, vol)
 
     @property
     def iq(self):

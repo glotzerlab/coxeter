@@ -3,9 +3,8 @@
 import numpy as np
 from scipy.special import ellipeinc, ellipkinc
 
+from .base_classes import Shape3D
 from .utils import translate_inertia_tensor
-
-from.base_classes import Shape3D
 
 
 class Ellipsoid(Shape3D):
@@ -32,7 +31,7 @@ class Ellipsoid(Shape3D):
     @property
     def gsd_shape_spec(self):
         """dict: Get a `complete GSD specification <shapes>`_."""  # noqa: D401
-        return {'type': 'Ellipsoid', 'a': self._a, 'b': self._b, 'c': self._c}
+        return {"type": "Ellipsoid", "a": self._a, "b": self._b, "c": self._c}
 
     @property
     def center(self):
@@ -84,14 +83,14 @@ class Ellipsoid(Shape3D):
         c, b, a = sorted([self.a, self.b, self.c])
         if a > c:
             phi = np.arccos(c / a)
-            m = (a**2 * (b**2 - c**2)) / (b**2 * (a**2 - c**2))
-            elliptic_part = ellipeinc(phi, m) * np.sin(phi)**2
-            elliptic_part += ellipkinc(phi, m) * np.cos(phi)**2
+            m = (a ** 2 * (b ** 2 - c ** 2)) / (b ** 2 * (a ** 2 - c ** 2))
+            elliptic_part = ellipeinc(phi, m) * np.sin(phi) ** 2
+            elliptic_part += ellipkinc(phi, m) * np.cos(phi) ** 2
             elliptic_part /= np.sin(phi)
         else:
             elliptic_part = 1
 
-        result = 2 * np.pi * (c**2 + a * b * elliptic_part)
+        result = 2 * np.pi * (c ** 2 + a * b * elliptic_part)
         return result
 
     @property
@@ -101,17 +100,16 @@ class Ellipsoid(Shape3D):
         Assumes a constant density of 1.
         """
         vol = self.volume
-        i_xx = vol / 5 * (self.b**2 + self.c**2)
-        i_yy = vol / 5 * (self.a**2 + self.c**2)
-        i_zz = vol / 5 * (self.a**2 + self.b**2)
+        i_xx = vol / 5 * (self.b ** 2 + self.c ** 2)
+        i_yy = vol / 5 * (self.a ** 2 + self.c ** 2)
+        i_zz = vol / 5 * (self.a ** 2 + self.b ** 2)
         inertia_tensor = np.diag([i_xx, i_yy, i_zz])
-        return translate_inertia_tensor(
-            self.center, inertia_tensor, vol)
+        return translate_inertia_tensor(self.center, inertia_tensor, vol)
 
     @property
     def iq(self):
         """float: Get the isoperimetric quotient."""
-        return np.pi * 36 * self.volume**2 / (self.surface_area**3)
+        return np.pi * 36 * self.volume ** 2 / (self.surface_area ** 3)
 
     def is_inside(self, points):
         """Determine whether a set of points are contained in this ellipsoid.

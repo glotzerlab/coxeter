@@ -3,7 +3,7 @@
 import numpy as np
 from scipy.special import ellipe
 
-from.base_classes import Shape2D
+from .base_classes import Shape2D
 
 
 class Ellipse(Shape2D):
@@ -27,7 +27,7 @@ class Ellipse(Shape2D):
     @property
     def gsd_shape_spec(self):
         """dict: Get a `complete GSD specification <shapes>`_."""  # noqa: D401
-        return {'type': 'Ellipsoid', 'a': self._a, 'b': self._b}
+        return {"type": "Ellipsoid", "a": self._a, "b": self._b}
 
     @property
     def center(self):
@@ -67,7 +67,7 @@ class Ellipse(Shape2D):
         """float: The eccentricity."""
         # Requires that a >= b, so we sort the principal axes:
         b, a = sorted([self.a, self.b])
-        e = np.sqrt(1 - b**2 / a**2)
+        e = np.sqrt(1 - b ** 2 / a ** 2)
         return e
 
     @property
@@ -77,7 +77,7 @@ class Ellipse(Shape2D):
         # https://scipython.com/book/chapter-8-scipy/examples/the-circumference-of-an-ellipse/
         # It requires that a >= b, so we sort the principal axes:
         b, a = sorted([self.a, self.b])
-        result = 4 * a * ellipe(self.eccentricity**2)
+        result = 4 * a * ellipe(self.eccentricity ** 2)
         return result
 
     @property
@@ -110,13 +110,13 @@ class Ellipse(Shape2D):
         that the product moment is zero by symmetry.
         """  # noqa: E501
         area = self.area
-        i_x = area / 4 * self.b**2
-        i_y = area / 4 * self.a**2
+        i_x = area / 4 * self.b ** 2
+        i_y = area / 4 * self.a ** 2
         i_xy = 0
 
         # Apply parallel axis theorem from the center
-        i_x += area * self.center[0]**2
-        i_y += area * self.center[1]**2
+        i_x += area * self.center[0] ** 2
+        i_y += area * self.center[1] ** 2
         i_xy += area * self.center[0] * self.center[1]
         return i_x, i_y, i_xy
 
@@ -135,4 +135,4 @@ class Ellipse(Shape2D):
     @property
     def iq(self):
         """float: The isoperimetric quotient."""
-        return np.min([4 * np.pi * self.area / (self.perimeter**2), 1])
+        return np.min([4 * np.pi * self.area / (self.perimeter ** 2), 1])

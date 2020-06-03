@@ -21,8 +21,9 @@ ExportString[N[PolyhedronData["ObtuseGoldenRhombohedron",
 def main():
     """Convert the output from Mathematica to a Python script."""
     import sys
+
     name = sys.argv[1]
-    outfile = open(name + '.py', 'w')
+    outfile = open(name + ".py", "w")
 
     # Set up some boiler plate
 
@@ -46,18 +47,18 @@ def main():
     pstrings = list()
     instring = sys.stdin.read()
     # Strip out quotes
-    instring = instring.replace('"', '')
+    instring = instring.replace('"', "")
     # merge wrapped lines
-    instring = instring.replace('\\\n', '')
+    instring = instring.replace("\\\n", "")
     # split input into list of lines
     lines = instring.splitlines()
     for line in lines:
         # Turn Mathematica syntax into Python syntax
-        line = line.replace('Sqrt', 'sqrt')
-        line = line.replace('[', '(').replace(']', ')')
-        line = line.replace('^', '**')
+        line = line.replace("Sqrt", "sqrt")
+        line = line.replace("[", "(").replace("]", ")")
+        line = line.replace("^", "**")
         # get string values of x,y,z
-        x, y, z = line.split(', ')
+        x, y, z = line.split(", ")
         pstring = "          ({x}, {y}, {z}),\n".format(x=x, y=y, z=z)
         pstrings.append(pstring)
 
@@ -73,5 +74,5 @@ def main():
     outfile.close()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
