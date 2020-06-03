@@ -14,6 +14,7 @@ and this project adheres to
 * Interoperability with the GSD shape specification.
 * Shape families and stored data for well-known families.
 * Extensive style checking using black, isort, and various other flake8 plugins.
+* Make Circle area settable.
 
 ### Changed
 * Inertia tensors for polyhedra and moments of inertia for polygons are calculated in global coordinates rather than the body frame.
