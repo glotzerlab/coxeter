@@ -1,0 +1,6 @@
+include README.md
+include LICENSE
+include ChangeLog.md
+include ContributorAgreement.md
+include CONTRIBUTING.md
+recursive-include coxeter/shape_families/data *.json

@@ -1,16 +1,6 @@
 {
-    "0": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Sphere",
-        "ShortName": "SPH",
-        "vertices": []
-    },
     "1": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Acute Golden Rhombohedron",
-        "ShortName": "O19",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.947214,
@@ -52,13 +42,14 @@
                 0.58541,
                 0.425325
             ]
-        ]
+        ],
+        "name": "Acute Golden Rhombohedron",
+        "short_name": "O19",
+        "alternative_name": null,
+        "comment": null
     },
     "2": {
-        "AlternativeName": null,
-        "Comment": "edge length=8",
-        "Name": "Square Antiprism",
-        "ShortName": "O08",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.5,
@@ -100,13 +91,14 @@
                 0.0,
                 0.420448208
             ]
-        ]
+        ],
+        "name": "Square Antiprism",
+        "short_name": "O08",
+        "alternative_name": null,
+        "comment": "edge length=8"
     },
     "3": {
-        "AlternativeName": null,
-        "Comment": "edge length=9",
-        "Name": "Pentagonal Antiprism",
-        "ShortName": "O09",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.850650808,
@@ -158,13 +150,14 @@
                 0.5,
                 -0.425325404
             ]
-        ]
+        ],
+        "name": "Pentagonal Antiprism",
+        "short_name": "O09",
+        "alternative_name": null,
+        "comment": "edge length=9"
     },
     "4": {
-        "AlternativeName": null,
-        "Comment": "edge length=10",
-        "Name": "Hexagonal Antiprism",
-        "ShortName": "O10",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -1.0,
@@ -226,13 +219,14 @@
                 0.5,
                 -0.427799839
             ]
-        ]
+        ],
+        "name": "Hexagonal Antiprism",
+        "short_name": "O10",
+        "alternative_name": null,
+        "comment": "edge length=10"
     },
     "5": {
-        "AlternativeName": null,
-        "Comment": "edge length=11",
-        "Name": "Heptagonal Antiprism",
-        "ShortName": "O11",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -1.038260698,
@@ -304,13 +298,14 @@
                 0.900968868,
                 0.429236598
             ]
-        ]
+        ],
+        "name": "Heptagonal Antiprism",
+        "short_name": "O11",
+        "alternative_name": null,
+        "comment": "edge length=11"
     },
     "6": {
-        "AlternativeName": null,
-        "Comment": "edge length=12",
-        "Name": "Octagonal Antiprism",
-        "ShortName": "O12",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.5,
@@ -392,13 +387,14 @@
                 0.923879533,
                 0.430147785
             ]
-        ]
+        ],
+        "name": "Octagonal Antiprism",
+        "short_name": "O12",
+        "alternative_name": null,
+        "comment": "edge length=12"
     },
     "7": {
-        "AlternativeName": null,
-        "Comment": "edge length=13",
-        "Name": "Nonagonal Antiprism",
-        "ShortName": "O13",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -1.37373871,
@@ -490,13 +486,14 @@
                 1.439692621,
                 0.430763044
             ]
-        ]
+        ],
+        "name": "Nonagonal Antiprism",
+        "short_name": "O13",
+        "alternative_name": null,
+        "comment": "edge length=13"
     },
     "8": {
-        "AlternativeName": null,
-        "Comment": "edge length=14",
-        "Name": "Decagonal Antiprism",
-        "ShortName": "O14",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 0.0,
@@ -598,13 +595,14 @@
                 0.951056516,
                 0.431198502
             ]
-        ]
+        ],
+        "name": "Decagonal Antiprism",
+        "short_name": "O14",
+        "alternative_name": null,
+        "comment": "edge length=14"
     },
     "9": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Augmented Dodecahedron",
-        "ShortName": "J58",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 0.047386905,
@@ -711,13 +709,14 @@
                 1.30902,
                 -0.529116476
             ]
-        ]
+        ],
+        "name": "Augmented Dodecahedron",
+        "short_name": "J58",
+        "alternative_name": null,
+        "comment": null
     },
     "10": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Augmented Hexagonal Prism",
-        "ShortName": "J54",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -1.104797692,
@@ -784,13 +783,14 @@
                 0.726060923,
                 0.0
             ]
-        ]
+        ],
+        "name": "Augmented Hexagonal Prism",
+        "short_name": "J54",
+        "alternative_name": null,
+        "comment": null
     },
     "11": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Augmented Pentagonal Prism",
-        "ShortName": "J52",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 0.748030818,
@@ -847,13 +847,14 @@
                 0.745577273,
                 0.0
             ]
-        ]
+        ],
+        "name": "Augmented Pentagonal Prism",
+        "short_name": "J52",
+        "alternative_name": null,
+        "comment": null
     },
     "12": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Augmented Sphenocorona",
-        "ShortName": "J87",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.802793436,
@@ -910,13 +911,14 @@
                 -0.345244536,
                 -0.023611364
             ]
-        ]
+        ],
+        "name": "Augmented Sphenocorona",
+        "short_name": "J87",
+        "alternative_name": null,
+        "comment": null
     },
     "13": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Augmented Triangular Prism",
-        "ShortName": "J49",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.359802286,
@@ -953,13 +955,14 @@
                 0.739176,
                 0.0
             ]
-        ]
+        ],
+        "name": "Augmented Triangular Prism",
+        "short_name": "J49",
+        "alternative_name": null,
+        "comment": null
     },
     "14": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Augmented Tridiminished Icosahedron",
-        "ShortName": "J64",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 0.0,
@@ -1011,13 +1014,14 @@
                 0.809017,
                 0.2821137
             ]
-        ]
+        ],
+        "name": "Augmented Tridiminished Icosahedron",
+        "short_name": "J64",
+        "alternative_name": null,
+        "comment": null
     },
     "15": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Augmented Truncated Cube",
-        "ShortName": "J66",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.5,
@@ -1159,13 +1163,14 @@
                 -1.20711,
                 0.226541429
             ]
-        ]
+        ],
+        "name": "Augmented Truncated Cube",
+        "short_name": "J66",
+        "alternative_name": null,
+        "comment": null
     },
     "16": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Augmented Truncated Dodecahedron",
-        "ShortName": "J68",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -3.133096349,
@@ -1492,13 +1497,14 @@
                 -0.526468263,
                 -0.037359274
             ]
-        ]
+        ],
+        "name": "Augmented Truncated Dodecahedron",
+        "short_name": "J68",
+        "alternative_name": null,
+        "comment": null
     },
     "17": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Augmented Truncated Tetrahedron",
-        "ShortName": "J65",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 0.0,
@@ -1575,13 +1581,14 @@
                 0.5,
                 -1.143096
             ]
-        ]
+        ],
+        "name": "Augmented Truncated Tetrahedron",
+        "short_name": "J65",
+        "alternative_name": null,
+        "comment": null
     },
     "18": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Biaugmented Pentagonal Prism",
-        "ShortName": "J53",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 0.8728575,
@@ -1643,13 +1650,14 @@
                 0.751790417,
                 0.0
             ]
-        ]
+        ],
+        "name": "Biaugmented Pentagonal Prism",
+        "short_name": "J53",
+        "alternative_name": null,
+        "comment": null
     },
     "19": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Biaugmented Triangular Prism",
-        "ShortName": "J50",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.226438625,
@@ -1691,13 +1699,14 @@
                 0.7545755,
                 0.0
             ]
-        ]
+        ],
+        "name": "Biaugmented Triangular Prism",
+        "short_name": "J50",
+        "alternative_name": null,
+        "comment": null
     },
     "20": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Biaugmented Truncated Cube",
-        "ShortName": "J67",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.5,
@@ -1859,13 +1868,14 @@
                 -1.20711,
                 0.5
             ]
-        ]
+        ],
+        "name": "Biaugmented Truncated Cube",
+        "short_name": "J67",
+        "alternative_name": null,
+        "comment": null
     },
     "21": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Bigyrate Diminished Rhombicosidodecahedron",
-        "ShortName": "J79",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -2.304394967,
@@ -2142,13 +2152,14 @@
                 -0.60602224,
                 -0.301970745
             ]
-        ]
+        ],
+        "name": "Bigyrate Diminished Rhombicosidodecahedron",
+        "short_name": "J79",
+        "alternative_name": null,
+        "comment": null
     },
     "22": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Bilunabirotunda",
-        "ShortName": "J91",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -1.068949879,
@@ -2220,13 +2231,14 @@
                 0.081979836,
                 -0.071567803
             ]
-        ]
+        ],
+        "name": "Bilunabirotunda",
+        "short_name": "J91",
+        "alternative_name": null,
+        "comment": null
     },
     "23": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Cube",
-        "ShortName": "P03",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.5,
@@ -2268,13 +2280,14 @@
                 0.5,
                 0.5
             ]
-        ]
+        ],
+        "name": "Cube",
+        "short_name": "P03",
+        "alternative_name": null,
+        "comment": null
     },
     "24": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Cuboctahedron",
-        "ShortName": "A01",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -1.0,
@@ -2336,13 +2349,14 @@
                 0.0,
                 0.0
             ]
-        ]
+        ],
+        "name": "Cuboctahedron",
+        "short_name": "A01",
+        "alternative_name": null,
+        "comment": null
     },
     "25": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Deltoidal Hexecontahedron",
-        "ShortName": "C09",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.0,
@@ -2654,13 +2668,14 @@
                 0.0,
                 0.973249
             ]
-        ]
+        ],
+        "name": "Deltoidal Hexecontahedron",
+        "short_name": "C09",
+        "alternative_name": null,
+        "comment": null
     },
     "26": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Deltoidal Icositetrahedron",
-        "ShortName": "C08",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -1.19448,
@@ -2792,13 +2807,14 @@
                 -0.92388,
                 -0.92388
             ]
-        ]
+        ],
+        "name": "Deltoidal Icositetrahedron",
+        "short_name": "C08",
+        "alternative_name": null,
+        "comment": null
     },
     "27": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Diminished Rhombicosidodecahedron",
-        "ShortName": "J76",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -2.170740182,
@@ -3075,13 +3091,14 @@
                 0.175413885,
                 0.035544333
             ]
-        ]
+        ],
+        "name": "Diminished Rhombicosidodecahedron",
+        "short_name": "J76",
+        "alternative_name": null,
+        "comment": null
     },
     "28": {
-        "AlternativeName": "Trinagular Dipyramid",
-        "Comment": null,
-        "Name": "Dipyramid 3",
-        "ShortName": "J12",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 0.0,
@@ -3108,13 +3125,14 @@
                 0.0,
                 0.0
             ]
-        ]
+        ],
+        "name": "Dipyramid 3",
+        "short_name": "J12",
+        "alternative_name": "Triangular Dipyramid",
+        "comment": null
     },
     "29": {
-        "AlternativeName": "Pentagonal Dipyramid",
-        "Comment": null,
-        "Name": "Dipyramid 5",
-        "ShortName": "J13",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 0.0,
@@ -3151,13 +3169,14 @@
                 0.5,
                 0.0
             ]
-        ]
+        ],
+        "name": "Dipyramid 5",
+        "short_name": "J13",
+        "alternative_name": "Pentagonal Dipyramid",
+        "comment": null
     },
     "30": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Disdyakis Dodecahedron",
-        "ShortName": "C10",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 0.0,
@@ -3289,13 +3308,14 @@
                 0.0,
                 1.84505
             ]
-        ]
+        ],
+        "name": "Disdyakis Dodecahedron",
+        "short_name": "C10",
+        "alternative_name": null,
+        "comment": null
     },
     "31": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Disdyakis Triacontahedron",
-        "ShortName": "C11",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.0,
@@ -3607,13 +3627,14 @@
                 1.55694,
                 -0.0
             ]
-        ]
+        ],
+        "name": "Disdyakis Triacontahedron",
+        "short_name": "C11",
+        "alternative_name": null,
+        "comment": null
     },
     "32": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Disphenocingulum",
-        "ShortName": "J90",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -1.171140619,
@@ -3695,13 +3716,14 @@
                 -0.246022794,
                 0.582776788
             ]
-        ]
+        ],
+        "name": "Disphenocingulum",
+        "short_name": "J90",
+        "alternative_name": null,
+        "comment": null
     },
     "33": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Dodecahedron",
-        "ShortName": "P05",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -1.37638,
@@ -3803,13 +3825,14 @@
                 1.30902,
                 -0.262866
             ]
-        ]
+        ],
+        "name": "Dodecahedron",
+        "short_name": "P05",
+        "alternative_name": null,
+        "comment": null
     },
     "34": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Duerers Solid",
-        "ShortName": "O20",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 0.0,
@@ -3871,13 +3894,14 @@
                 0.549093,
                 1.69574
             ]
-        ]
+        ],
+        "name": "Duerers Solid",
+        "short_name": "O20",
+        "alternative_name": null,
+        "comment": null
     },
     "35": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Elongated Dodecahedron",
-        "ShortName": "O21",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.866025,
@@ -3969,13 +3993,14 @@
                 0.866025,
                 0.5
             ]
-        ]
+        ],
+        "name": "Elongated Dodecahedron",
+        "short_name": "O21",
+        "alternative_name": null,
+        "comment": null
     },
     "36": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Elongated Pentagonal Cupola",
-        "ShortName": "J20",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -4e-08,
@@ -4102,13 +4127,14 @@
                 0.5,
                 0.2948538
             ]
-        ]
+        ],
+        "name": "Elongated Pentagonal Cupola",
+        "short_name": "J20",
+        "alternative_name": null,
+        "comment": null
     },
     "37": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Elongated Pentagonal Dipyramid",
-        "ShortName": "J16",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -1.67e-07,
@@ -4170,13 +4196,14 @@
                 0.5,
                 0.5
             ]
-        ]
+        ],
+        "name": "Elongated Pentagonal Dipyramid",
+        "short_name": "J16",
+        "alternative_name": null,
+        "comment": null
     },
     "38": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Elongated Pentagonal Gyrobicupola",
-        "ShortName": "J39",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.0,
@@ -4328,13 +4355,14 @@
                 0.5,
                 0.5
             ]
-        ]
+        ],
+        "name": "Elongated Pentagonal Gyrobicupola",
+        "short_name": "J39",
+        "alternative_name": null,
+        "comment": null
     },
     "39": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Elongated Pentagonal Gyrobirotunda",
-        "ShortName": "J43",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.0,
@@ -4536,13 +4564,14 @@
                 0.0,
                 1.35065
             ]
-        ]
+        ],
+        "name": "Elongated Pentagonal Gyrobirotunda",
+        "short_name": "J43",
+        "alternative_name": null,
+        "comment": null
     },
     "40": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Elongated Pentagonal Gyrocupolarotunda",
-        "ShortName": "J41",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 2.86e-07,
@@ -4719,13 +4748,14 @@
                 0.5,
                 1.561908571
             ]
-        ]
+        ],
+        "name": "Elongated Pentagonal Gyrocupolarotunda",
+        "short_name": "J41",
+        "alternative_name": null,
+        "comment": null
     },
     "41": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Elongated Pentagonal Orthobicupola",
-        "ShortName": "J38",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -6.7e-08,
@@ -4877,13 +4907,14 @@
                 0.5,
                 0.5
             ]
-        ]
+        ],
+        "name": "Elongated Pentagonal Orthobicupola",
+        "short_name": "J38",
+        "alternative_name": null,
+        "comment": null
     },
     "42": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Elongated Pentagonal Orthobirotunda",
-        "ShortName": "J42",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 5.5e-07,
@@ -5085,13 +5116,14 @@
                 0.5,
                 1.87638
             ]
-        ]
+        ],
+        "name": "Elongated Pentagonal Orthobirotunda",
+        "short_name": "J42",
+        "alternative_name": null,
+        "comment": null
     },
     "43": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Elongated Pentagonal Orthocupolarotunda",
-        "ShortName": "J40",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 3.43e-07,
@@ -5268,13 +5300,14 @@
                 0.0,
                 1.036178571
             ]
-        ]
+        ],
+        "name": "Elongated Pentagonal Orthocupolarotunda",
+        "short_name": "J40",
+        "alternative_name": null,
+        "comment": null
     },
     "44": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Elongated Pentagonal Pyramid",
-        "ShortName": "J09",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -1.82e-07,
@@ -5331,13 +5364,14 @@
                 0.5,
                 0.406751818
             ]
-        ]
+        ],
+        "name": "Elongated Pentagonal Pyramid",
+        "short_name": "J09",
+        "alternative_name": null,
+        "comment": null
     },
     "45": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Elongated Pentagonal Rotunda",
-        "ShortName": "J21",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 3.67e-07,
@@ -5489,13 +5523,14 @@
                 0.5,
                 1.3385415
             ]
-        ]
+        ],
+        "name": "Elongated Pentagonal Rotunda",
+        "short_name": "J21",
+        "alternative_name": null,
+        "comment": null
     },
     "46": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Elongated Square Cupola",
-        "ShortName": "J19",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.0,
@@ -5597,13 +5632,14 @@
                 0.5,
                 0.2585786
             ]
-        ]
+        ],
+        "name": "Elongated Square Cupola",
+        "short_name": "J19",
+        "alternative_name": null,
+        "comment": null
     },
     "47": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Elongated Square Dipyramid",
-        "ShortName": "J15",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 0.0,
@@ -5655,13 +5691,14 @@
                 0.0,
                 0.5
             ]
-        ]
+        ],
+        "name": "Elongated Square Dipyramid",
+        "short_name": "J15",
+        "alternative_name": null,
+        "comment": null
     },
     "48": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Elongated Square Gyrobicupola",
-        "ShortName": "J37",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.5,
@@ -5783,13 +5820,14 @@
                 0.5,
                 0.5
             ]
-        ]
+        ],
+        "name": "Elongated Square Gyrobicupola",
+        "short_name": "J37",
+        "alternative_name": null,
+        "comment": null
     },
     "49": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Elongated Square Pyramid",
-        "ShortName": "J08",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 0.0,
@@ -5836,13 +5874,14 @@
                 0.0,
                 0.365876667
             ]
-        ]
+        ],
+        "name": "Elongated Square Pyramid",
+        "short_name": "J08",
+        "alternative_name": null,
+        "comment": null
     },
     "50": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Elongated Triangular Cupola",
-        "ShortName": "J18",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 0.0,
@@ -5919,13 +5958,14 @@
                 0.5,
                 0.2367006
             ]
-        ]
+        ],
+        "name": "Elongated Triangular Cupola",
+        "short_name": "J18",
+        "alternative_name": null,
+        "comment": null
     },
     "51": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Elongated Triangular Dipyramid",
-        "ShortName": "J14",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 0.0,
@@ -5967,13 +6007,14 @@
                 0.0,
                 0.5
             ]
-        ]
+        ],
+        "name": "Elongated Triangular Dipyramid",
+        "short_name": "J14",
+        "alternative_name": null,
+        "comment": null
     },
     "52": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Elongated Triangular Gyrobicupola",
-        "ShortName": "J36",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 0.0,
@@ -6065,13 +6106,14 @@
                 0.5,
                 -1.3165
             ]
-        ]
+        ],
+        "name": "Elongated Triangular Gyrobicupola",
+        "short_name": "J36",
+        "alternative_name": null,
+        "comment": null
     },
     "53": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Elongated Triangular Orthobicupola",
-        "ShortName": "J35",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 0.0,
@@ -6163,13 +6205,14 @@
                 0.5,
                 0.5
             ]
-        ]
+        ],
+        "name": "Elongated Triangular Orthobicupola",
+        "short_name": "J35",
+        "alternative_name": null,
+        "comment": null
     },
     "54": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Elongated Triangular Pyramid",
-        "ShortName": "J07",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 0.0,
@@ -6206,13 +6249,14 @@
                 0.0,
                 0.311928571
             ]
-        ]
+        ],
+        "name": "Elongated Triangular Pyramid",
+        "short_name": "J07",
+        "alternative_name": null,
+        "comment": null
     },
     "55": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Truncated Icosidodecahedron",
-        "ShortName": "A11",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -1.0,
@@ -6814,13 +6858,14 @@
                 1.0,
                 1.30902
             ]
-        ]
+        ],
+        "name": "Truncated Icosidodecahedron",
+        "short_name": "A11",
+        "alternative_name": null,
+        "comment": null
     },
     "56": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Truncated Cuboctahedron",
-        "ShortName": "A10",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.5,
@@ -7062,13 +7107,14 @@
                 -1.20711,
                 0.5
             ]
-        ]
+        ],
+        "name": "Truncated Cuboctahedron",
+        "short_name": "A10",
+        "alternative_name": null,
+        "comment": null
     },
     "57": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Gyrate Bidiminished Rhombicosidodecahedron",
-        "ShortName": "J82",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -2.03400905,
@@ -7320,13 +7366,14 @@
                 -0.681575036,
                 0.602276826
             ]
-        ]
+        ],
+        "name": "Gyrate Bidiminished Rhombicosidodecahedron",
+        "short_name": "J82",
+        "alternative_name": null,
+        "comment": null
     },
     "58": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Gyrate Rhombicosidodecahedron",
-        "ShortName": "J72",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -2.180729817,
@@ -7628,13 +7675,14 @@
                 -0.476839117,
                 0.055880967
             ]
-        ]
+        ],
+        "name": "Gyrate Rhombicosidodecahedron",
+        "short_name": "J72",
+        "alternative_name": null,
+        "comment": null
     },
     "59": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Gyrobifastigium",
-        "ShortName": "J26",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.5,
@@ -7676,13 +7724,14 @@
                 0.5,
                 0.0
             ]
-        ]
+        ],
+        "name": "Gyrobifastigium",
+        "short_name": "J26",
+        "alternative_name": null,
+        "comment": null
     },
     "60": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Gyroelongated Pentagonal Bicupola",
-        "ShortName": "J46",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -1.618030033,
@@ -7834,13 +7883,14 @@
                 -3.3e-08,
                 0.431199
             ]
-        ]
+        ],
+        "name": "Gyroelongated Pentagonal Bicupola",
+        "short_name": "J46",
+        "alternative_name": null,
+        "comment": null
     },
     "61": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Gyroelongated Pentagonal Birotunda",
-        "ShortName": "J48",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 0.0,
@@ -8042,13 +8092,14 @@
                 0.262865556,
                 1.807580422
             ]
-        ]
+        ],
+        "name": "Gyroelongated Pentagonal Birotunda",
+        "short_name": "J48",
+        "alternative_name": null,
+        "comment": null
     },
     "62": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Gyroelongated Pentagonal Cupola",
-        "ShortName": "J24",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -4e-08,
@@ -8175,13 +8226,14 @@
                 0.5,
                 0.2398126
             ]
-        ]
+        ],
+        "name": "Gyroelongated Pentagonal Cupola",
+        "short_name": "J24",
+        "alternative_name": null,
+        "comment": null
     },
     "63": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Gyroelongated Pentagonal Cupolarotunda",
-        "ShortName": "J47",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -2.9e-08,
@@ -8358,13 +8410,14 @@
                 0.262865686,
                 1.502937143
             ]
-        ]
+        ],
+        "name": "Gyroelongated Pentagonal Cupolarotunda",
+        "short_name": "J47",
+        "alternative_name": null,
+        "comment": null
     },
     "64": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Gyroelongated Pentagonal Pyramid",
-        "ShortName": "J11",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 0.0,
@@ -8421,13 +8474,14 @@
                 0.5,
                 -0.511784727
             ]
-        ]
+        ],
+        "name": "Gyroelongated Pentagonal Pyramid",
+        "short_name": "J11",
+        "alternative_name": null,
+        "comment": null
     },
     "65": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Gyroelongated Pentagonal Rotunda",
-        "ShortName": "J25",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 3.67e-07,
@@ -8579,13 +8633,14 @@
                 0.5,
                 1.292673833
             ]
-        ]
+        ],
+        "name": "Gyroelongated Pentagonal Rotunda",
+        "short_name": "J25",
+        "alternative_name": null,
+        "comment": null
     },
     "66": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Gyroelongated Square Bicupola",
-        "ShortName": "J45",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 0.0,
@@ -8707,13 +8762,14 @@
                 0.653281,
                 1.13725
             ]
-        ]
+        ],
+        "name": "Gyroelongated Square Bicupola",
+        "short_name": "J45",
+        "alternative_name": null,
+        "comment": null
     },
     "67": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Gyroelongated Square Cupola",
-        "ShortName": "J23",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.0,
@@ -8815,13 +8871,14 @@
                 0.5,
                 0.202697
             ]
-        ]
+        ],
+        "name": "Gyroelongated Square Cupola",
+        "short_name": "J23",
+        "alternative_name": null,
+        "comment": null
     },
     "68": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Gyroelongated Square Dipyramid",
-        "ShortName": "J17",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.5,
@@ -8873,13 +8930,14 @@
                 0.0,
                 0.420448
             ]
-        ]
+        ],
+        "name": "Gyroelongated Square Dipyramid",
+        "short_name": "J17",
+        "alternative_name": null,
+        "comment": null
     },
     "69": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Gyroelongated Square Pyramid",
-        "ShortName": "J10",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.5,
@@ -8926,13 +8984,14 @@
                 0.0,
                 0.295164667
             ]
-        ]
+        ],
+        "name": "Gyroelongated Square Pyramid",
+        "short_name": "J10",
+        "alternative_name": null,
+        "comment": null
     },
     "70": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Gyroelongated Triangular Bicupola",
-        "ShortName": "J44",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -1.0,
@@ -9024,13 +9083,14 @@
                 0.5,
                 -0.4278
             ]
-        ]
+        ],
+        "name": "Gyroelongated Triangular Bicupola",
+        "short_name": "J44",
+        "alternative_name": null,
+        "comment": null
     },
     "71": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Gyroelongated Triangular Cupola",
-        "ShortName": "J22",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -1.0,
@@ -9107,13 +9167,14 @@
                 0.5,
                 0.1789406
             ]
-        ]
+        ],
+        "name": "Gyroelongated Triangular Cupola",
+        "short_name": "J22",
+        "alternative_name": null,
+        "comment": null
     },
     "72": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Hebesphenomegacorona",
-        "ShortName": "J89",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.871243429,
@@ -9185,13 +9246,14 @@
                 -0.081279886,
                 0.247896964
             ]
-        ]
+        ],
+        "name": "Hebesphenomegacorona",
+        "short_name": "J89",
+        "alternative_name": null,
+        "comment": null
     },
     "73": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Icosahedron",
-        "ShortName": "P04",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 0.0,
@@ -9253,13 +9315,14 @@
                 0.809017,
                 0.425325
             ]
-        ]
+        ],
+        "name": "Icosahedron",
+        "short_name": "P04",
+        "alternative_name": null,
+        "comment": null
     },
     "74": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Icosidodecahedron",
-        "ShortName": "A02",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.0,
@@ -9411,13 +9474,14 @@
                 0.809017,
                 1.37638
             ]
-        ]
+        ],
+        "name": "Icosidodecahedron",
+        "short_name": "A02",
+        "alternative_name": null,
+        "comment": null
     },
     "75": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Metabiaugmented Dodecahedron",
-        "ShortName": "J60",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 0.008638727,
@@ -9529,13 +9593,14 @@
                 -1.331046818,
                 -0.352743182
             ]
-        ]
+        ],
+        "name": "Metabiaugmented Dodecahedron",
+        "short_name": "J60",
+        "alternative_name": null,
+        "comment": null
     },
     "76": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Metabiaugmented Hexagonal Prism",
-        "ShortName": "J56",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -1.0,
@@ -9607,13 +9672,14 @@
                 0.674199429,
                 0.0
             ]
-        ]
+        ],
+        "name": "Metabiaugmented Hexagonal Prism",
+        "short_name": "J56",
+        "alternative_name": null,
+        "comment": null
     },
     "77": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Metabiaugmented Truncated Dodecahedron",
-        "ShortName": "J70",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -2.952571157,
@@ -9965,13 +10031,14 @@
                 -0.7568579,
                 0.615344683
             ]
-        ]
+        ],
+        "name": "Metabiaugmented Truncated Dodecahedron",
+        "short_name": "J70",
+        "alternative_name": null,
+        "comment": null
     },
     "78": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Metabidiminished Icosahedron",
-        "ShortName": "J62",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.5,
@@ -10023,13 +10090,14 @@
                 0.5,
                 0.1
             ]
-        ]
+        ],
+        "name": "Metabidiminished Icosahedron",
+        "short_name": "J62",
+        "alternative_name": null,
+        "comment": null
     },
     "79": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Metabidiminished Rhombicosidodecahedron",
-        "ShortName": "J81",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -2.034672474,
@@ -10281,13 +10349,14 @@
                 0.255351133,
                 0.755601728
             ]
-        ]
+        ],
+        "name": "Metabidiminished Rhombicosidodecahedron",
+        "short_name": "J81",
+        "alternative_name": null,
+        "comment": null
     },
     "80": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Metabigyrate Rhombicosidodecahedron",
-        "ShortName": "J74",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -2.15713033,
@@ -10589,13 +10658,14 @@
                 -0.198144717,
                 -0.147488093
             ]
-        ]
+        ],
+        "name": "Metabigyrate Rhombicosidodecahedron",
+        "short_name": "J74",
+        "alternative_name": null,
+        "comment": null
     },
     "81": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Metagyrate Diminished Rhombicosidodecahedron",
-        "ShortName": "J78",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -2.156463838,
@@ -10872,13 +10942,14 @@
                 -0.647556958,
                 -0.052051802
             ]
-        ]
+        ],
+        "name": "Metagyrate Diminished Rhombicosidodecahedron",
+        "short_name": "J78",
+        "alternative_name": null,
+        "comment": null
     },
     "82": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Obtuse Golden Rhombohedron",
-        "ShortName": "O18",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.947214,
@@ -10920,13 +10991,14 @@
                 -0.0854102,
                 -0.262866
             ]
-        ]
+        ],
+        "name": "Obtuse Golden Rhombohedron",
+        "short_name": "O18",
+        "alternative_name": null,
+        "comment": null
     },
     "83": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Octahedron",
-        "ShortName": "P02",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.707107,
@@ -10958,13 +11030,14 @@
                 0.0,
                 0.0
             ]
-        ]
+        ],
+        "name": "Octahedron",
+        "short_name": "P02",
+        "alternative_name": null,
+        "comment": null
     },
     "84": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Parabiaugmented Dodecahedron",
-        "ShortName": "J59",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 0.0,
@@ -11076,13 +11149,14 @@
                 1.30902,
                 -0.467086
             ]
-        ]
+        ],
+        "name": "Parabiaugmented Dodecahedron",
+        "short_name": "J59",
+        "alternative_name": null,
+        "comment": null
     },
     "85": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Parabiaugmented Hexagonal Prism",
-        "ShortName": "J55",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -1.0,
@@ -11154,13 +11228,14 @@
                 0.786566,
                 0.0
             ]
-        ]
+        ],
+        "name": "Parabiaugmented Hexagonal Prism",
+        "short_name": "J55",
+        "alternative_name": null,
+        "comment": null
     },
     "86": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Parabiaugmented Truncated Dodecahedron",
-        "ShortName": "J69",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -2.95761,
@@ -11512,13 +11587,14 @@
                 -0.246541,
                 0.096963
             ]
-        ]
+        ],
+        "name": "Parabiaugmented Truncated Dodecahedron",
+        "short_name": "J69",
+        "alternative_name": null,
+        "comment": null
     },
     "87": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Parabidiminished Rhombicosidodecahedron",
-        "ShortName": "J80",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -2.19149,
@@ -11770,13 +11846,14 @@
                 0.351484,
                 0.244698
             ]
-        ]
+        ],
+        "name": "Parabidiminished Rhombicosidodecahedron",
+        "short_name": "J80",
+        "alternative_name": null,
+        "comment": null
     },
     "88": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Parabigyrate Rhombicosidodecahedron",
-        "ShortName": "J73",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -2.19876998,
@@ -12078,13 +12155,14 @@
                 -0.279548017,
                 -0.270815
             ]
-        ]
+        ],
+        "name": "Parabigyrate Rhombicosidodecahedron",
+        "short_name": "J73",
+        "alternative_name": null,
+        "comment": null
     },
     "89": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Paragyrate Diminished Rhombicosidodecahedron",
-        "ShortName": "J77",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -2.147782129,
@@ -12361,13 +12439,14 @@
                 0.184534224,
                 0.140976873
             ]
-        ]
+        ],
+        "name": "Paragyrate Diminished Rhombicosidodecahedron",
+        "short_name": "J77",
+        "alternative_name": null,
+        "comment": null
     },
     "90": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Pentagonal Cupola",
-        "ShortName": "J05",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -6.7e-08,
@@ -12444,13 +12523,14 @@
                 0.5,
                 -0.175243667
             ]
-        ]
+        ],
+        "name": "Pentagonal Cupola",
+        "short_name": "J05",
+        "alternative_name": null,
+        "comment": null
     },
     "91": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Pentagonal Gyrobicupola",
-        "ShortName": "J31",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 0.0,
@@ -12552,13 +12632,14 @@
                 0.5,
                 0.0
             ]
-        ]
+        ],
+        "name": "Pentagonal Gyrobicupola",
+        "short_name": "J31",
+        "alternative_name": null,
+        "comment": null
     },
     "92": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Pentagonal Gyrocupolarotunda",
-        "ShortName": "J33",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 4e-07,
@@ -12685,13 +12766,14 @@
                 0.5,
                 1.03612
             ]
-        ]
+        ],
+        "name": "Pentagonal Gyrocupolarotunda",
+        "short_name": "J33",
+        "alternative_name": null,
+        "comment": null
     },
     "93": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Pentagonal Hexecontahedron",
-        "ShortName": "C13",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 0.0,
@@ -13153,13 +13235,14 @@
                 2.00227,
                 3.02648
             ]
-        ]
+        ],
+        "name": "Pentagonal Hexecontahedron",
+        "short_name": "C13",
+        "alternative_name": null,
+        "comment": null
     },
     "94": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Pentagonal Icositetrahedron",
-        "ShortName": "C12",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 0.0,
@@ -13351,13 +13434,14 @@
                 1.24722,
                 1.72488
             ]
-        ]
+        ],
+        "name": "Pentagonal Icositetrahedron",
+        "short_name": "C12",
+        "alternative_name": null,
+        "comment": null
     },
     "95": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Pentagonal Orthobicupola",
-        "ShortName": "J30",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -1e-07,
@@ -13459,13 +13543,14 @@
                 0.5,
                 0.0
             ]
-        ]
+        ],
+        "name": "Pentagonal Orthobicupola",
+        "short_name": "J30",
+        "alternative_name": null,
+        "comment": null
     },
     "96": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Pentagonal Orthobirotunda",
-        "ShortName": "J34",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 7.33e-07,
@@ -13617,13 +13702,14 @@
                 0.5,
                 1.37638
             ]
-        ]
+        ],
+        "name": "Pentagonal Orthobirotunda",
+        "short_name": "J34",
+        "alternative_name": null,
+        "comment": null
     },
     "97": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Pentagonal Orthocupolarotunda",
-        "ShortName": "J32",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 4.8e-07,
@@ -13750,13 +13836,14 @@
                 0.0,
                 0.510391
             ]
-        ]
+        ],
+        "name": "Pentagonal Orthocupolarotunda",
+        "short_name": "J32",
+        "alternative_name": null,
+        "comment": null
     },
     "98": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Pentagonal Rotunda",
-        "ShortName": "J06",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 5.5e-07,
@@ -13858,13 +13945,14 @@
                 0.5,
                 0.81962225
             ]
-        ]
+        ],
+        "name": "Pentagonal Rotunda",
+        "short_name": "J06",
+        "alternative_name": null,
+        "comment": null
     },
     "99": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Pentakis Dodecahedron",
-        "ShortName": "C06",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.958957,
@@ -14026,13 +14114,14 @@
                 1.30902,
                 -0.688191
             ]
-        ]
+        ],
+        "name": "Pentakis Dodecahedron",
+        "short_name": "C06",
+        "alternative_name": null,
+        "comment": null
     },
     "100": {
-        "AlternativeName": null,
-        "Comment": "edge length=1",
-        "Name": "Triangular Prism",
-        "ShortName": "O01",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.288675,
@@ -14064,13 +14153,14 @@
                 0.0,
                 0.5
             ]
-        ]
+        ],
+        "name": "Triangular Prism",
+        "short_name": "O01",
+        "alternative_name": null,
+        "comment": "edge length=1"
     },
     "101": {
-        "AlternativeName": null,
-        "Comment": "edge length=2",
-        "Name": "Pentagonal Prism",
-        "ShortName": "O02",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 0.850650808,
@@ -14122,13 +14212,14 @@
                 0.809016994,
                 0.5
             ]
-        ]
+        ],
+        "name": "Pentagonal Prism",
+        "short_name": "O02",
+        "alternative_name": null,
+        "comment": "edge length=2"
     },
     "102": {
-        "AlternativeName": null,
-        "Comment": "edge length=3",
-        "Name": "Hexagonal Prism",
-        "ShortName": "O03",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -1.0,
@@ -14190,13 +14281,14 @@
                 0.0,
                 0.5
             ]
-        ]
+        ],
+        "name": "Hexagonal Prism",
+        "short_name": "O03",
+        "alternative_name": null,
+        "comment": "edge length=3"
     },
     "103": {
-        "AlternativeName": null,
-        "Comment": "edge length=4",
-        "Name": "Heptagonal Prism",
-        "ShortName": "O04",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -1.038260698,
@@ -14268,13 +14360,14 @@
                 0.900968868,
                 0.5
             ]
-        ]
+        ],
+        "name": "Heptagonal Prism",
+        "short_name": "O04",
+        "alternative_name": null,
+        "comment": "edge length=4"
     },
     "104": {
-        "AlternativeName": null,
-        "Comment": "edge length=5",
-        "Name": "Octagonal Prism",
-        "ShortName": "O05",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.0,
@@ -14356,13 +14449,14 @@
                 0.923879533,
                 0.5
             ]
-        ]
+        ],
+        "name": "Octagonal Prism",
+        "short_name": "O05",
+        "alternative_name": null,
+        "comment": "edge length=5"
     },
     "105": {
-        "AlternativeName": null,
-        "Comment": "edge length=6",
-        "Name": "Nonagonal Prism",
-        "ShortName": "O06",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -1.37373871,
@@ -14454,13 +14548,14 @@
                 1.439692621,
                 0.5
             ]
-        ]
+        ],
+        "name": "Nonagonal Prism",
+        "short_name": "O06",
+        "alternative_name": null,
+        "comment": "edge length=6"
     },
     "106": {
-        "AlternativeName": null,
-        "Comment": "edge length=7",
-        "Name": "Decagonal Prism",
-        "ShortName": "O07",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -1.618033989,
@@ -14562,13 +14657,14 @@
                 0.951056516,
                 0.5
             ]
-        ]
+        ],
+        "name": "Decagonal Prism",
+        "short_name": "O07",
+        "alternative_name": null,
+        "comment": "edge length=7"
     },
     "107": {
-        "AlternativeName": "Square Pyramid",
-        "Comment": null,
-        "Name": "Pyramid 4",
-        "ShortName": "J01",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 0.0,
@@ -14595,13 +14691,14 @@
                 0.0,
                 -0.141421356
             ]
-        ]
+        ],
+        "name": "Pyramid 4",
+        "short_name": "J01",
+        "alternative_name": "Square Pyramid",
+        "comment": null
     },
     "108": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Pyramid 5",
-        "ShortName": "J02",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 0.0,
@@ -14633,13 +14730,14 @@
                 0.5,
                 -0.087621852
             ]
-        ]
+        ],
+        "name": "Pyramid 5",
+        "short_name": "J02",
+        "alternative_name": null,
+        "comment": null
     },
     "109": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Rhombic Dodecahedron",
-        "ShortName": "C01",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.816497,
@@ -14711,13 +14809,14 @@
                 0.816497,
                 0.0
             ]
-        ]
+        ],
+        "name": "Rhombic Dodecahedron",
+        "short_name": "C01",
+        "alternative_name": null,
+        "comment": null
     },
     "110": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Rhombic Enneacontahedron",
-        "ShortName": "O17",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -2.41202,
@@ -15179,13 +15278,14 @@
                 0.0,
                 0.460655562
             ]
-        ]
+        ],
+        "name": "Rhombic Enneacontahedron",
+        "short_name": "O17",
+        "alternative_name": null,
+        "comment": null
     },
     "111": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Rhombic Icosahedron",
-        "ShortName": "O16",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -1.44721,
@@ -15297,13 +15397,14 @@
                 0.0,
                 -0.223607
             ]
-        ]
+        ],
+        "name": "Rhombic Icosahedron",
+        "short_name": "O16",
+        "alternative_name": null,
+        "comment": null
     },
     "112": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Rhombic Triacontahedron",
-        "ShortName": "C02",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.0,
@@ -15465,13 +15566,14 @@
                 0.850651,
                 -1.17082
             ]
-        ]
+        ],
+        "name": "Rhombic Triacontahedron",
+        "short_name": "C02",
+        "alternative_name": null,
+        "comment": null
     },
     "113": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Rhombicosidodecahedron",
-        "ShortName": "A09",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.5,
@@ -15773,13 +15875,14 @@
                 0.0,
                 1.30902
             ]
-        ]
+        ],
+        "name": "Rhombicosidodecahedron",
+        "short_name": "A09",
+        "alternative_name": null,
+        "comment": null
     },
     "114": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Rhombicuboctahedron",
-        "ShortName": "A08",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.5,
@@ -15901,13 +16004,14 @@
                 0.5,
                 0.5
             ]
-        ]
+        ],
+        "name": "Rhombicuboctahedron",
+        "short_name": "A08",
+        "alternative_name": null,
+        "comment": null
     },
     "115": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Triakis Octahedron",
-        "ShortName": "C05",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.5,
@@ -15979,13 +16083,14 @@
                 0.0,
                 0.0
             ]
-        ]
+        ],
+        "name": "Triakis Octahedron",
+        "short_name": "C05",
+        "alternative_name": null,
+        "comment": null
     },
     "116": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Snub Cuboctahedron",
-        "ShortName": "A12",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -1.14261,
@@ -16107,13 +16212,14 @@
                 0.337754,
                 1.14261
             ]
-        ]
+        ],
+        "name": "Snub Cuboctahedron",
+        "short_name": "A12",
+        "alternative_name": null,
+        "comment": null
     },
     "117": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Snub Disphenoid",
-        "ShortName": "J84",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.5,
@@ -16155,13 +16261,14 @@
                 0.0,
                 0.20556175
             ]
-        ]
+        ],
+        "name": "Snub Disphenoid",
+        "short_name": "J84",
+        "alternative_name": null,
+        "comment": null
     },
     "118": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Snub Icosidodecahedron",
-        "ShortName": "A13",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -2.05022,
@@ -16463,13 +16570,14 @@
                 -1.10316,
                 -1.84093
             ]
-        ]
+        ],
+        "name": "Snub Icosidodecahedron",
+        "short_name": "A13",
+        "alternative_name": null,
+        "comment": null
     },
     "119": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Snub Square Antiprism",
-        "ShortName": "J85",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -1.093170494,
@@ -16551,13 +16659,14 @@
                 -0.261824081,
                 0.040684156
             ]
-        ]
+        ],
+        "name": "Snub Square Antiprism",
+        "short_name": "J85",
+        "alternative_name": null,
+        "comment": null
     },
     "120": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Spenocorona",
-        "ShortName": "J86",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 0.0,
@@ -16609,13 +16718,14 @@
                 -0.789428,
                 0.2941572
             ]
-        ]
+        ],
+        "name": "Spenocorona",
+        "short_name": "J86",
+        "alternative_name": null,
+        "comment": null
     },
     "121": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Sphenomegacorona",
-        "ShortName": "J88",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.708649899,
@@ -16677,13 +16787,14 @@
                 0.636760333,
                 -0.843384192
             ]
-        ]
+        ],
+        "name": "Sphenomegacorona",
+        "short_name": "J88",
+        "alternative_name": null,
+        "comment": null
     },
     "122": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Square Cupola",
-        "ShortName": "J04",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 0,
@@ -16745,13 +16856,14 @@
                 0.5,
                 0
             ]
-        ]
+        ],
+        "name": "Square Cupola",
+        "short_name": "J04",
+        "alternative_name": null,
+        "comment": null
     },
     "123": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Square Gyrobicupola",
-        "ShortName": "J29",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.5,
@@ -16833,13 +16945,14 @@
                 0.5,
                 0.0
             ]
-        ]
+        ],
+        "name": "Square Gyrobicupola",
+        "short_name": "J29",
+        "alternative_name": null,
+        "comment": null
     },
     "124": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Square Orthobicupola",
-        "ShortName": "J28",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 0.0,
@@ -16921,13 +17034,14 @@
                 0.5,
                 0.0
             ]
-        ]
+        ],
+        "name": "Square Orthobicupola",
+        "short_name": "J28",
+        "alternative_name": null,
+        "comment": null
     },
     "125": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Squashed Dodecahedron",
-        "ShortName": "O15",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -1.732050357,
@@ -16999,13 +17113,14 @@
                 0.288675357,
                 -0.288675357
             ]
-        ]
+        ],
+        "name": "Squashed Dodecahedron",
+        "short_name": "O15",
+        "alternative_name": null,
+        "comment": null
     },
     "126": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Tetrahedron",
-        "ShortName": "P01",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 0.0,
@@ -17027,13 +17142,14 @@
                 0.0,
                 -0.204124
             ]
-        ]
+        ],
+        "name": "Tetrahedron",
+        "short_name": "P01",
+        "alternative_name": null,
+        "comment": null
     },
     "127": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Tetrakis Hexahedron",
-        "ShortName": "C04",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.942809,
@@ -17105,13 +17221,14 @@
                 0.0,
                 0.666667
             ]
-        ]
+        ],
+        "name": "Tetrakis Hexahedron",
+        "short_name": "C04",
+        "alternative_name": null,
+        "comment": null
     },
     "128": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Triakis Icosahedron",
-        "ShortName": "C07",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.0,
@@ -17273,13 +17390,14 @@
                 1.39443,
                 -0.733094
             ]
-        ]
+        ],
+        "name": "Triakis Icosahedron",
+        "short_name": "C07",
+        "alternative_name": null,
+        "comment": null
     },
     "129": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Triakis Tetrahedron",
-        "ShortName": "C03",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 0.0,
@@ -17321,13 +17439,14 @@
                 0.0,
                 -0.204124125
             ]
-        ]
+        ],
+        "name": "Triakis Tetrahedron",
+        "short_name": "C03",
+        "alternative_name": null,
+        "comment": null
     },
     "130": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Triangular Cupola",
-        "ShortName": "J03",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 0.0,
@@ -17374,13 +17493,14 @@
                 0.5,
                 -0.272165667
             ]
-        ]
+        ],
+        "name": "Triangular Cupola",
+        "short_name": "J03",
+        "alternative_name": null,
+        "comment": null
     },
     "131": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Triangular Hebesphenorotunda",
-        "ShortName": "J92",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.960178539,
@@ -17472,13 +17592,14 @@
                 -0.153697667,
                 0.272736356
             ]
-        ]
+        ],
+        "name": "Triangular Hebesphenorotunda",
+        "short_name": "J92",
+        "alternative_name": null,
+        "comment": null
     },
     "132": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Triangular Orthobicupola",
-        "ShortName": "J27",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 0.0,
@@ -17540,13 +17661,14 @@
                 0.5,
                 0.0
             ]
-        ]
+        ],
+        "name": "Triangular Orthobicupola",
+        "short_name": "J27",
+        "alternative_name": null,
+        "comment": null
     },
     "133": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Triaugmented Dodecahedron",
-        "ShortName": "J61",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.026740043,
@@ -17663,13 +17785,14 @@
                 -1.39443,
                 -0.337406522
             ]
-        ]
+        ],
+        "name": "Triaugmented Dodecahedron",
+        "short_name": "J61",
+        "alternative_name": null,
+        "comment": null
     },
     "134": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Triaugmented Hexagonal Prism",
-        "ShortName": "J57",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -1.0,
@@ -17746,13 +17869,14 @@
                 0.786565867,
                 0.0
             ]
-        ]
+        ],
+        "name": "Triaugmented Hexagonal Prism",
+        "short_name": "J57",
+        "alternative_name": null,
+        "comment": null
     },
     "135": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Triaugmented Triangular Prism",
-        "ShortName": "J51",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.288675,
@@ -17799,13 +17923,14 @@
                 0.862372,
                 0.0
             ]
-        ]
+        ],
+        "name": "Triaugmented Triangular Prism",
+        "short_name": "J51",
+        "alternative_name": null,
+        "comment": null
     },
     "136": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Triaugmented Truncated Dodecahedron",
-        "ShortName": "J71",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -2.829466198,
@@ -18182,13 +18307,14 @@
                 -0.107549952,
                 0.497948307
             ]
-        ]
+        ],
+        "name": "Triaugmented Truncated Dodecahedron",
+        "short_name": "J71",
+        "alternative_name": null,
+        "comment": null
     },
     "137": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Tridiminished Icosahedron",
-        "ShortName": "J63",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.57735,
@@ -18235,13 +18361,14 @@
                 0.0,
                 0.118940667
             ]
-        ]
+        ],
+        "name": "Tridiminished Icosahedron",
+        "short_name": "J63",
+        "alternative_name": null,
+        "comment": null
     },
     "138": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Tridiminished Rhombicosidodecahedron",
-        "ShortName": "J83",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -2.079718862,
@@ -18468,13 +18595,14 @@
                 -1.477344978,
                 -0.712099556
             ]
-        ]
+        ],
+        "name": "Tridiminished Rhombicosidodecahedron",
+        "short_name": "J83",
+        "alternative_name": null,
+        "comment": null
     },
     "139": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Trigyrate Rhombicosidodecahedron",
-        "ShortName": "J75",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -2.189130133,
@@ -18776,13 +18904,14 @@
                 0.439998902,
                 0.013079983
             ]
-        ]
+        ],
+        "name": "Trigyrate Rhombicosidodecahedron",
+        "short_name": "J75",
+        "alternative_name": null,
+        "comment": null
     },
     "140": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Truncated Cube",
-        "ShortName": "A05",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.5,
@@ -18904,13 +19033,14 @@
                 -1.20711,
                 0.5
             ]
-        ]
+        ],
+        "name": "Truncated Cube",
+        "short_name": "A05",
+        "alternative_name": null,
+        "comment": null
     },
     "141": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Truncated Dodecahedron",
-        "ShortName": "A07",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.0,
@@ -19212,13 +19342,14 @@
                 2.92705,
                 -0.262866
             ]
-        ]
+        ],
+        "name": "Truncated Dodecahedron",
+        "short_name": "A07",
+        "alternative_name": null,
+        "comment": null
     },
     "142": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Truncated Icosahedron",
-        "ShortName": "A06",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -0.16246,
@@ -19520,13 +19651,14 @@
                 1.61803,
                 1.80171
             ]
-        ]
+        ],
+        "name": "Truncated Icosahedron",
+        "short_name": "A06",
+        "alternative_name": null,
+        "comment": null
     },
     "143": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Truncated Octahedron",
-        "ShortName": "A04",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -1.5,
@@ -19648,13 +19780,14 @@
                 0.5,
                 0.0
             ]
-        ]
+        ],
+        "name": "Truncated Octahedron",
+        "short_name": "A04",
+        "alternative_name": null,
+        "comment": null
     },
     "144": {
-        "AlternativeName": null,
-        "Comment": null,
-        "Name": "Truncated Tetrahedron",
-        "ShortName": "A03",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 0,
@@ -19716,13 +19849,14 @@
                 0.5,
                 -0.612372
             ]
-        ]
+        ],
+        "name": "Truncated Tetrahedron",
+        "short_name": "A03",
+        "alternative_name": null,
+        "comment": null
     },
     "145": {
-        "AlternativeName": null,
-        "Comment": "height/edge length=1/2",
-        "Name": "Square Pyramid",
-        "ShortName": "O22",
+        "type": "ConvexPolyhedron",
         "vertices": [
             [
                 -1.9,
@@ -19884,6 +20018,10 @@
                 -0.5,
                 -0.3
             ]
-        ]
+        ],
+        "name": "Square Pyramid",
+        "short_name": "O22",
+        "alternative_name": null,
+        "comment": "height/edge length=1/2"
     }
 }

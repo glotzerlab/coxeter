@@ -12,6 +12,7 @@ and this project adheres to
 * Simple name-based shape getter for damasceno SHAPES dictionary.
 * Polygons moment of inertia calculation.
 * Interoperability with the GSD shape specification.
+* Shape families and stored data for well-known families.
 
 ### Changed
 * Inertia tensors for polyhedra and moments of inertia for polygons are calculated in global coordinates rather than the body frame.

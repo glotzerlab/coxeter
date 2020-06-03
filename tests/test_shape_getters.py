@@ -11,7 +11,8 @@ def test_gsd_shape_getter():
         {
             'type': 'Ellipsoid',
             'a': 1,
-            'b': 2
+            'b': 2,
+            'dimensions': 2
         },
         {
             'type': 'Ellipsoid',
@@ -87,7 +88,8 @@ def test_gsd_shape_getter():
 
     for shape_spec in test_specs:
         # First create and validate the shape.
-        shape = from_gsd_type_shapes(shape_spec)
+        dimensions = shape_spec.pop('dimensions', 3)
+        shape = from_gsd_type_shapes(shape_spec, dimensions=dimensions)
         for param, value in shape_spec.items():
             if param == 'diameter':
                 assert shape.radius == value/2

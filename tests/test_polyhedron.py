@@ -2,16 +2,15 @@ import pytest
 import numpy as np
 from coxeter.shape_classes.convex_polyhedron import ConvexPolyhedron
 from coxeter.shape_classes.sphere import Sphere
+from coxeter.shape_families import PlatonicFamily, family_from_doi
 from scipy.spatial import ConvexHull
 from hypothesis import given, assume
 from hypothesis.strategies import floats, integers
 from hypothesis.extra.numpy import arrays
-from coxeter.damasceno import SHAPES
 import os
 from conftest import get_oriented_cube_faces, get_oriented_cube_normals
 from utils import compute_inertia_mc
 import rowan
-from coxeter.damasceno import get_shape_by_name
 from coxeter.shape_classes.utils import (translate_inertia_tensor,
                                          rotate_order2_tensor)
 from conftest import get_valid_hull
@@ -35,11 +34,18 @@ def polyhedron_from_hull(verts):
     return poly
 
 
+def damasceno_shapes():
+    """For efficiency, we don't construct all the shape classes, but rather
+    just yield the raw shape dicts."""
+    family = family_from_doi('10.1126/science.1220869')[0]
+    for shape_data in family.data.values():
+        yield shape_data
+
+
 def platonic_solids():
-    PLATONIC_SOLIDS = ('Tetrahedron', 'Cube', 'Octahedron', 'Dodecahedron',
-                       'Icosahedron')
-    for shape in PLATONIC_SOLIDS:
-        yield get_shape_by_name(shape)
+    family = PlatonicFamily()
+    for shape_name in family.data:
+        yield family(shape_name)
 
 
 def test_normal_detection(convex_cube):
@@ -143,12 +149,13 @@ def test_moment_inertia(cube):
     assert np.allclose(cube.inertia_tensor, np.diag([1/6]*3))
 
 
-@pytest.mark.parametrize('shape', SHAPES)
+@pytest.mark.parametrize('shape', damasceno_shapes())
 def test_volume_damasceno_shapes(shape):
-    if shape.Name in ('RESERVED', 'Sphere'):
+    if shape['name'] in ('RESERVED', 'Sphere'):
         return
-    poly = ConvexPolyhedron(shape.vertices)
-    hull = ConvexHull(shape.vertices)
+    vertices = shape['vertices']
+    poly = ConvexPolyhedron(vertices)
+    hull = ConvexHull(vertices)
     assert np.isclose(poly.volume, hull.volume)
 
 
@@ -156,7 +163,7 @@ def test_volume_damasceno_shapes(shape):
 @pytest.mark.skipif(os.getenv('CI', 'false') != 'true' and
                     os.getenv('CIRCLECI', 'false') != 'true',
                     reason="Test is too slow to run during rapid development")
-@pytest.mark.parametrize('shape', SHAPES)
+@pytest.mark.parametrize('shape', damasceno_shapes())
 def test_moment_inertia_damasceno_shapes(shape):
     # These shapes pass the test for a sufficiently high number of samples, but
     # the number is too high to be worth running them regularly.
@@ -173,18 +180,18 @@ def test_moment_inertia_damasceno_shapes(shape):
         'Triaugmented Truncated Dodecahedron',
         'Parabiaugmented Truncated Dodecahedron',
     ]
-    if shape.Name in ['RESERVED', 'Sphere'] + bad_shapes:
+    if shape['name'] in ['RESERVED', 'Sphere'] + bad_shapes:
         return
 
     np.random.seed(0)
-    poly = ConvexPolyhedron(shape.vertices)
+    poly = ConvexPolyhedron(shape['vertices'])
     num_samples = 1000
     accept = False
     # Loop over different sampling rates to minimize the test runtime.
     while num_samples < 1e8:
         try:
             coxeter_result = poly.inertia_tensor
-            mc_result = compute_inertia_mc(shape.vertices, num_samples)
+            mc_result = compute_inertia_mc(shape['vertices'], num_samples)
             assert np.allclose(coxeter_result, mc_result, atol=1e-1)
             accept = True
             break
@@ -194,7 +201,7 @@ def test_moment_inertia_damasceno_shapes(shape):
     if not accept:
         raise AssertionError("The test failed for shape {}.\nMC Result: "
                              "\n{}\ncoxeter result: \n{}".format(
-                                 shape.Name, mc_result, coxeter_result
+                                 shape['name'], mc_result, coxeter_result
                              ))
 
 
@@ -213,11 +220,13 @@ def test_dihedrals():
         'Dodecahedron':  np.pi - np.arctan(2),
         'Icosahedron': np.pi - np.arccos(np.sqrt(5)/3),
     }
+    family = PlatonicFamily()
     for name, dihedral in known_shapes.items():
-        poly = get_shape_by_name(name)
-        # The dodecahedron in SHAPES needs a slightly more expansive merge
-        # to get all the faces joined.
-        poly.merge_faces(rtol=1e-4)
+        poly = family(name)
+        # The dodecahedron needs a more expansive merge to get all the
+        # faces joined.
+        if name == 'Dodecahedron':
+            poly.merge_faces(rtol=1)
         for i in range(poly.num_faces):
             for j in poly.neighbors[i]:
                 assert np.isclose(poly.get_dihedral(i, j), dihedral)
@@ -225,16 +234,20 @@ def test_dihedrals():
 
 def test_curvature():
     """Regression test against values computed with older method."""
+    # The shapes in the PlatonicFamily are normalized to unit volume.
     known_shapes = {
         'Cube': 0.75,
-        'Dodecahedron': 1.3215637405498626,
-        'Icosahedron': 0.8710482367460449,
-        'Octahedron': 0.5877400099213849,
-        'Tetrahedron': 0.4561299069097583,
+        'Dodecahedron': 0.6703242780091758,
+        'Icosahedron': 0.6715997848012972,
+        'Octahedron': 0.75518565565632,
+        'Tetrahedron': 0.9303430847680867,
     }
 
+    family = PlatonicFamily()
     for name, curvature in known_shapes.items():
-        poly = get_shape_by_name(name)
+        poly = family(name)
+        if name == 'Dodecahedron':
+            poly.merge_faces(rtol=1)
         assert np.isclose(
             poly.mean_curvature, curvature)
 
@@ -281,21 +294,21 @@ def test_circumsphere_from_center():
     polyhedron. Note that this is a necessary but not sufficient condition for
     correctness."""
     # Building convex polyhedra is the slowest part of this test, so rather
-    # than testing all shapes every time we test a random subset each time the
-    # test runs. To further speed the tests, we build all convex polyhedra
-    # ahead of time. Each set of random points is tested against a different
-    # random polyhedron.
-    #
+    # than testing all the shapes from this particular dataset every time we
+    # instead test a random subset each time the test runs. To further speed
+    # the tests, we build all convex polyhedra ahead of time. Each set of
+    # random points is tested against a different random polyhedron.
+    import random
+    family = family_from_doi('10.1126/science.1220869')[0]
+    shapes = [ConvexPolyhedron(s['vertices']) for s in
+              random.sample([s for s in family.data.values() if
+                             len(s['vertices'])], len(family.data)//5)]
+
     # Use a nested function to avoid warnings from hypothesis. While the shape
     # does get modified inside the testfun, it's simply being recentered each
     # time, which is not destructive since it can be overwritten in subsequent
     # calls.
     # See https://github.com/HypothesisWorks/hypothesis/issues/377
-    import random
-    shapes = [ConvexPolyhedron(s.vertices) for s in
-              random.sample([s for s in SHAPES if len(s.vertices)],
-                            len(SHAPES)//5)]
-
     @given(center=arrays(np.float64, (3, ), elements=floats(-10, 10, width=64),
                          unique=True),
            points=arrays(np.float64, (50, 3), elements=floats(-1, 1, width=64),
@@ -329,7 +342,7 @@ def test_bounding_sphere_platonic(poly):
     poly.center = [0, 0, 0]
     r2 = np.sum(poly.vertices**2, axis=1)
 
-    assert np.allclose(r2, radius*radius)
+    assert np.allclose(r2, radius*radius, rtol=1e-4)
 
 
 def test_inside_boundaries(convex_cube):
@@ -379,7 +392,7 @@ def test_insphere_from_center_convex_hulls(points, test_points):
 def test_rotate_inertia(points):
     # Use the input as noise rather than the base points to avoid precision and
     # degenerate cases provided by hypothesis.
-    tet = get_shape_by_name('Tetrahedron')
+    tet = PlatonicFamily()('Tetrahedron')
     vertices = tet.vertices + points
 
     rotation = rowan.random.rand()
@@ -397,7 +410,7 @@ def test_rotate_inertia(points):
 @given(arrays(np.float64, (3, ), elements=floats(-0.2, 0.2, width=64),
               unique=True))
 def test_translate_inertia(translation):
-    shape = get_shape_by_name('Cube')
+    shape = PlatonicFamily()('Cube')
     # Choose a volume > 1 to test the volume scaling, but don't choose one
     # that's too large because the uncentered polyhedral calculation has
     # massive error without fixing that.
