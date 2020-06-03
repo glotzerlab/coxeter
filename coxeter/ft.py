@@ -164,7 +164,7 @@ class FTsphere(_FTbase):
         """Get radius parameter.
 
         If appropriate, return value should be scaled by
-        :py:meth:`~.get_scale` for interpretation.
+        :meth:`~.get_scale` for interpretation.
 
         Returns:
             float: Unscaled radius.

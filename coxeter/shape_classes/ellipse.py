@@ -105,8 +105,9 @@ class Ellipse(Shape2D):
                 I_{xy} &= {\int \int}_A xy dA = 0 \\
             \end{align}
 
-        These formulas are given `here https://en.wikipedia.org/wiki/List_of_second_moments_of_area`__.
-        Note that the product moment is zero by symmetry.
+        These formulas are given
+        `here <https://en.wikipedia.org/wiki/List_of_second_moments_of_area>`__. Note
+        that the product moment is zero by symmetry.
         """  # noqa: E501
         area = self.area
         i_x = area / 4 * self.b**2

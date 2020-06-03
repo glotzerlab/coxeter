@@ -6,6 +6,7 @@ generally taken from :cite:`Chen2014` and :cite:`Damasceno2012`.
 """
 
 from abc import abstractmethod
+
 import numpy as np
 from scipy.constants import golden_ratio
 

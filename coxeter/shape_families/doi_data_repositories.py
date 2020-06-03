@@ -64,6 +64,7 @@ class _KeyedDefaultDict(defaultdict):
     This class is used so that data files are read the first time data is
     requested for shapes corresponding to a given key.
     """
+
     def __missing__(self, key):
         ret = self[key] = self.default_factory(key)
         return ret

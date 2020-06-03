@@ -18,8 +18,7 @@ from .plane_shape_families import (
     Family523,
     TruncatedTetrahedronFamily,
 )
-from .tabulated_shape_family import (TabulatedGSDShapeFamily,
-                                     TabulatedShapeFamily)
+from .tabulated_shape_family import TabulatedGSDShapeFamily, TabulatedShapeFamily
 
 __all__ = ['TabulatedShapeFamily', 'TabulatedGSDShapeFamily',
            'shape_repositories', 'Family323Plus', 'Family423', 'Family523',
