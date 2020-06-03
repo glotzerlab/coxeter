@@ -53,6 +53,15 @@ Imports should be formatted using `isort`_.
 For guidance on the style, see `PEP 8 <https://www.python.org/dev/peps/pep-0008/>`_ and the `Google Python Style Guide <https://google.github.io/styleguide/pyguide.html>`_, but any ambiguities should be resolved automatically by running black.
 All code should of course also follow the principles in `PEP 20 <https://www.python.org/dev/peps/pep-0020/>`_.
 
+.. tip::
+
+    Developers should format their code using black and isort locally using the commands:
+
+    .. code-block:: bash
+
+        black --exclude "coxeter/[polytri|bentley_ottman]" coxeter/ tests/
+        isort -rc coxeter/ tests/
+
 .. _black: https://black.readthedocs.io/
 .. _isort: https://timothycrosley.github.io/isort/
 
