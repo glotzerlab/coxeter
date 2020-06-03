@@ -3,6 +3,7 @@ import pytest
 from hypothesis import given
 from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats
+from pytest import approx
 
 from coxeter.shape_classes.circle import Circle
 
@@ -20,6 +21,15 @@ def test_area(r):
     circle = Circle(1)
     circle.radius = r
     assert circle.area == np.pi * r ** 2
+
+
+@given(floats(0.1, 1000))
+def test_set_area(area):
+    """Test setting the area."""
+    circle = Circle(1)
+    circle.area = area
+    assert circle.area == approx(area)
+    assert circle.radius == approx((area / np.pi) ** 0.5)
 
 
 @given(floats(0.1, 1000))
