@@ -9,19 +9,20 @@ from .shape_classes import (Circle, ConvexPolygon, ConvexPolyhedron,
                             Ellipse, Ellipsoid, Polygon, Polyhedron, Sphere)
 
 
-def from_gsd_type_shapes(params, ndim=3):  # noqa: C901
+def from_gsd_type_shapes(params, dimensions=3):  # noqa: C901
     """Create a :class:`~.Shape` from a dict conforming to the GSD schema.
 
     See :ref:`here <shapes>` for the specification of the schema. Note that the
-    schema does not differentiate between 2D and 3D shapes for Spheres and
-    Ellipsoids because in context those can be inferred from simulation boxes.
-    To address this ambiguity, this function accepts an ndim parameter that can
-    be used to disambiguate explicitly between these two cases.
+    schema does not differentiate between 2D and 3D shapes for spheres (vs
+    circles) and ellipsoids (vs ellipses) because in context those can be
+    inferred from simulation boxes.  To address this ambiguity, this function
+    accepts an dimensions parameter that can be used to disambiguate explicitly
+    between these two cases.
 
     Args:
         params (dict):
             The parameters of the shape to construct.
-        ndim (int):
+        dimensions (int):
             The dimensionality of the shape (either 2 or 3). Ignored except
             when the shape is a sphere or an ellipsoid, in which case a value
             of 2 is used to indicate generating a
@@ -38,12 +39,12 @@ def from_gsd_type_shapes(params, ndim=3):  # noqa: C901
                          "key indicating what type of shape this is.")
 
     if params['type'] == 'Sphere':
-        if ndim == 2:
+        if dimensions == 2:
             return Circle(params['diameter']/2)
         else:
             return Sphere(params['diameter']/2)
     elif params['type'] == 'Ellipsoid':
-        if ndim == 2:
+        if dimensions == 2:
             return Ellipse(params['a'], params['b'])
         else:
             return Ellipsoid(params['a'], params['b'], params['c'])

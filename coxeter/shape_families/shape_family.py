@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-class ShapeFamily(ABC):
+class _ShapeFamily(ABC):
     """A functor that generates :class:`~coxeter.shape_classes.Shape`s.
 
     This class represents a simple promise of a __call__ method that accepts

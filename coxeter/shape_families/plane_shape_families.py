@@ -1,10 +1,11 @@
 from abc import abstractmethod
-from .shape_family import ShapeFamily
+from .shape_family import _ShapeFamily
 from ..shape_classes import ConvexPolyhedron
 import numpy as np
+from scipy.constants import golden_ratio
 
 
-class TruncationPlaneShapeFamily(ShapeFamily):
+class TruncationPlaneShapeFamily(_ShapeFamily):
     """A family of shapes that can be constructed based on the intersection of
     a set of half spaces defined by a symmetric set of planes.
 
@@ -49,6 +50,8 @@ class TruncationPlaneShapeFamily(ShapeFamily):
         indices = [(i, j, k) for i in range(num_planes) for j in
                    range(i+1, num_planes) for k in range(j+1, num_planes)]
 
+        # Set up and solve a system of equations for the planes that should be
+        # included.
         As = planelist[indices]
         alltypes = planetypes[indices]
         bs = dists[alltypes]
@@ -142,9 +145,9 @@ class Family423(TruncationPlaneShapeFamily):
 
     def __call__(self, a, c):
         if not 1 <= a <= 2:
-            raise ValueError("The a parameter must be between 1 and 3.")
+            raise ValueError("The a parameter must be between 1 and 2.")
         if not 2 <= c <= 3:
-            raise ValueError("The c parameter must be between 1 and 3.")
+            raise ValueError("The c parameter must be between 2 and 3.")
         return ConvexPolyhedron(self.make_vertices(a, 2, c))
 
     @property
@@ -196,17 +199,19 @@ class Family523(TruncationPlaneShapeFamily):
     The :math:`b` parameter is always equal to 2 for this family.
     """
 
-    """The constant s."""
-    s = ((5**0.5) - 1)/2
+    """The constant s (the inverse of the golden ratio)."""
+    s = 1 / golden_ratio
 
-    """The constant S."""
-    S = ((5**0.5) + 1)/2
+    """The constant S (the golden ratio)."""
+    S = golden_ratio
 
     def __call__(self, a, c):
         if not 1 <= a <= (self.s*np.sqrt(5)):
-            raise ValueError("The a parameter must be between 1 and 3.")
+            raise ValueError("The a parameter must be between 1 and s\u221A5 "
+                             "(where s is the inverse of the golden ratio).")
         if not self.S**2 <= c <= 3:
-            raise ValueError("The c parameter must be between 1 and 3.")
+            raise ValueError("The c parameter must be between S^2 and 3 "
+                             "(where S is the golden ratio).")
         return ConvexPolyhedron(self.make_vertices(a, 2, c))
 
     @property
@@ -291,15 +296,15 @@ class TruncatedTetrahedronFamily(Family323Plus):
 
     The following parameters are required by this class:
 
-      - :math:`truncation \in [0, 1]`
+      - truncation :math:`\in [0, 1]`
 
     This family is constructed as a limiting case of :class:`~.Family323Plus`
     with a = 1. The c value is then directly related to a linear interpolation
-    over truncations.
+    over truncations. In particular, :math:`c = 3 - 2(\text{truncation})`.
     """
 
     def __call__(self, truncation):
         if not 0 <= truncation <= 1:
             raise ValueError("The truncation must be between 0 and 1.")
-        c = (2 * ((-truncation) + 1) + 1)
+        c = 3 - 2 * truncation
         return super().__call__(1, c)

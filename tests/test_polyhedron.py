@@ -234,6 +234,7 @@ def test_dihedrals():
 
 def test_curvature():
     """Regression test against values computed with older method."""
+    # The shapes in the PlatonicFamily are normalized to unit volume.
     known_shapes = {
         'Cube': 0.75,
         'Dodecahedron': 0.6703242780091758,
@@ -293,22 +294,21 @@ def test_circumsphere_from_center():
     polyhedron. Note that this is a necessary but not sufficient condition for
     correctness."""
     # Building convex polyhedra is the slowest part of this test, so rather
-    # than testing all shapes every time we test a random subset each time the
-    # test runs. To further speed the tests, we build all convex polyhedra
-    # ahead of time. Each set of random points is tested against a different
-    # random polyhedron.
-    #
-    # Use a nested function to avoid warnings from hypothesis. While the shape
-    # does get modified inside the testfun, it's simply being recentered each
-    # time, which is not destructive since it can be overwritten in subsequent
-    # calls.
-    # See https://github.com/HypothesisWorks/hypothesis/issues/377
+    # than testing all the shapes from this particular dataset every time we
+    # instead test a random subset each time the test runs. To further speed
+    # the tests, we build all convex polyhedra ahead of time. Each set of
+    # random points is tested against a different random polyhedron.
     import random
     family = family_from_doi('10.1126/science.1220869')[0]
     shapes = [ConvexPolyhedron(s['vertices']) for s in
               random.sample([s for s in family.data.values() if
                              len(s['vertices'])], len(family.data)//5)]
 
+    # Use a nested function to avoid warnings from hypothesis. While the shape
+    # does get modified inside the testfun, it's simply being recentered each
+    # time, which is not destructive since it can be overwritten in subsequent
+    # calls.
+    # See https://github.com/HypothesisWorks/hypothesis/issues/377
     @given(center=arrays(np.float64, (3, ), elements=floats(-10, 10, width=64),
                          unique=True),
            points=arrays(np.float64, (50, 3), elements=floats(-1, 1, width=64),

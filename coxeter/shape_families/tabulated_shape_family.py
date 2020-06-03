@@ -1,10 +1,10 @@
 import json
 import copy
 from ..shape_getters import from_gsd_type_shapes
-from .shape_family import ShapeFamily
+from .shape_family import _ShapeFamily
 
 
-class TabulatedShapeFamily(ShapeFamily):
+class TabulatedShapeFamily(_ShapeFamily):
     """A shape family corresponding to a tabulated set of shapes.
 
     Data can either be read from a file or provided in the form of a

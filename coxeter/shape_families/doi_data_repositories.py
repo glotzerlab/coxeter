@@ -12,51 +12,47 @@ import os
 _DATA_FOLDER = os.path.join(os.path.dirname(__file__), 'data')
 
 
-def _shape_collection_factory(key):
+def _doi_shape_collection_factory(doi):
     """Factory function used in a defaultdict for generating
     :class:`~coxeter.shape_families.ShapeFamily` instances based on a given
-    key."""
+    DOI."""
 
-    # Set of keys for which data is stored within the data/ directory. Keys may
-    # either be DOIs or any other identifier for a particular dataset.
-    key_to_file = {
+    # Set of DOIs for which data is stored within the data/ directory.
+    doi_to_file = {
         '10.1126/science.1220869': ['science1220869.json'],
     }
 
-    # Set of keys that are associated with a specific ShapeFamily subclass.
-    key_to_family = {
+    # Set of DOIs that are associated with a specific ShapeFamily subclass.
+    doi_to_family = {
         '10.1103/PhysRevX.4.011024': [Family323Plus, Family423, Family523],
         '10.1021/nn204012y': [TruncatedTetrahedronFamily]
     }
 
     families = []
-    if key in key_to_file:
-        for fn in key_to_file[key]:
+    if doi in doi_to_file:
+        for fn in doi_to_file[doi]:
             with open(os.path.join(_DATA_FOLDER, fn)) as f:
                 families.append(TabulatedGSDShapeFamily(json.load(f)))
-    elif key in key_to_family:
-        for family_type in key_to_family[key]:
+    elif doi in doi_to_family:
+        for family_type in doi_to_family[doi]:
             families.append(family_type())
     else:
-        raise KeyError("Provided key is not associated with any known data or "
+        raise KeyError("Provided DOI is not associated with any known data or "
                        "shape families.")
     return families
 
 
-class _shape_repo_dict(defaultdict):
+class _keyeddefaultdict(defaultdict):
     """A defaultdict that passes the key to the default_factory.
 
     This class is used so that data files are read the first time data is
-    requested for shapes corresponding to a given DOI."""
-    def __init__(self):
-        self.default_factory = _shape_collection_factory
-
+    requested for shapes corresponding to a given key."""
     def __missing__(self, key):
         ret = self[key] = self.default_factory(key)
         return ret
 
 
-_DOI_SHAPE_REPOSITORIES = _shape_repo_dict()
+_DOI_SHAPE_REPOSITORIES = _keyeddefaultdict(_doi_shape_collection_factory)
 
 
 def family_from_doi(doi):
