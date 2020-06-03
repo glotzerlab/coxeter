@@ -1,6 +1,9 @@
+"""Defines an ellipse."""
+
 import numpy as np
 from scipy.special import ellipe
-from.base_classes import Shape2D
+
+from .base_classes import Shape2D
 
 
 class Ellipse(Shape2D):
@@ -15,6 +18,7 @@ class Ellipse(Shape2D):
             The coordinates of the center of the ellipse (Default
             value: (0, 0, 0)).
     """
+
     def __init__(self, a, b, center=(0, 0, 0)):
         self._a = a
         self._b = b
@@ -22,22 +26,22 @@ class Ellipse(Shape2D):
 
     @property
     def gsd_shape_spec(self):
-        """dict: A complete description of this shape corresponding to the
-        shape specification in the GSD file format as described
-        `here <https://gsd.readthedocs.io/en/stable/shapes.html>`_."""
-        return {'type': 'Ellipsoid', 'a': self._a, 'b': self._b}
+        """dict: Get a `complete GSD specification <shapes>`_."""  # noqa: D401
+        return {"type": "Ellipsoid", "a": self._a, "b": self._b}
 
     @property
     def center(self):
+        """:math:`(3, )` :class:`numpy.ndarray` of float: Get or set the centroid of the shape."""  # noqa: E501
         return self._center
 
     @center.setter
     def center(self, value):
+        """:math:`(3, )` :class:`numpy.ndarray` of float: Get or set the centroid of the shape."""  # noqa: E501
         self._center = np.asarray(value)
 
     @property
     def a(self):
-        """float: Length of principal axis a (radius in the x direction)."""
+        """float: Length of principal axis a (radius in the x direction)."""  # noqa: D402, E501
         return self._a
 
     @a.setter
@@ -46,7 +50,7 @@ class Ellipse(Shape2D):
 
     @property
     def b(self):
-        """float: Length of principal axis b (radius in the y direction)."""
+        """float: Length of principal axis b (radius in the y direction)."""  # noqa: D402, E501
         return self._b
 
     @b.setter
@@ -63,7 +67,7 @@ class Ellipse(Shape2D):
         """float: The eccentricity."""
         # Requires that a >= b, so we sort the principal axes:
         b, a = sorted([self.a, self.b])
-        e = np.sqrt(1 - b**2/a**2)
+        e = np.sqrt(1 - b ** 2 / a ** 2)
         return e
 
     @property
@@ -73,7 +77,7 @@ class Ellipse(Shape2D):
         # https://scipython.com/book/chapter-8-scipy/examples/the-circumference-of-an-ellipse/
         # It requires that a >= b, so we sort the principal axes:
         b, a = sorted([self.a, self.b])
-        result = 4 * a * ellipe(self.eccentricity**2)
+        result = 4 * a * ellipe(self.eccentricity ** 2)
         return result
 
     @property
@@ -83,13 +87,16 @@ class Ellipse(Shape2D):
 
     @property
     def planar_moments_inertia(self):
-        R"""Get the planar moments with respect to the x and y axis as well as
-        the product of inertia.
+        r"""Get the planar moments of inertia.
+
+        Moments are computed with respect to the x and y axis. In addition to
+        the two planar moments, this property also provides the product of
+        inertia.
 
         The `planar moments <https://en.wikipedia.org/wiki/Polar_moment_of_inertia>`__
         and the
-        `product moment <https://en.wikipedia.org/wiki/Second_moment_of_area#Product_moment_of_area>`__
-        are defined by the formulas:
+        `product <https://en.wikipedia.org/wiki/Second_moment_of_area#Product_moment_of_area>`__
+        of inertia are defined by the formulas:
 
         .. math::
             \begin{align}
@@ -98,23 +105,24 @@ class Ellipse(Shape2D):
                 I_{xy} &= {\int \int}_A xy dA = 0 \\
             \end{align}
 
-        These formulas are given `here https://en.wikipedia.org/wiki/List_of_second_moments_of_area`__.
-        Note that the product moment is zero by symmetry.
+        These formulas are given
+        `here <https://en.wikipedia.org/wiki/List_of_second_moments_of_area>`__. Note
+        that the product moment is zero by symmetry.
         """  # noqa: E501
-        A = self.area
-        Ix = A/4 * self.b**2
-        Iy = A/4 * self.a**2
-        Ixy = 0
+        area = self.area
+        i_x = area / 4 * self.b ** 2
+        i_y = area / 4 * self.a ** 2
+        i_xy = 0
 
         # Apply parallel axis theorem from the center
-        Ix += A*self.center[0]**2
-        Iy += A*self.center[1]**2
-        Ixy += A*self.center[0]*self.center[1]
-        return Ix, Iy, Ixy
+        i_x += area * self.center[0] ** 2
+        i_y += area * self.center[1] ** 2
+        i_xy += area * self.center[0] * self.center[1]
+        return i_x, i_y, i_xy
 
     @property
     def polar_moment_inertia(self):
-        """The polar moment of inertia.
+        """float: Get the polar moment of inertia.
 
         The `polar moment of inertia <https://en.wikipedia.org/wiki/Polar_moment_of_inertia>`__
         is always calculated about an axis perpendicular to the ellipse (i.e. the
@@ -127,6 +135,4 @@ class Ellipse(Shape2D):
     @property
     def iq(self):
         """float: The isoperimetric quotient."""
-        A = self.area
-        P = self.perimeter
-        return np.min([4 * np.pi * A / (P**2), 1])
+        return np.min([4 * np.pi * self.area / (self.perimeter ** 2), 1])

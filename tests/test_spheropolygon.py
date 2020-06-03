@@ -1,20 +1,18 @@
-import pytest
 import numpy as np
 import numpy.testing as npt
+import pytest
 import rowan
-from coxeter.shape_classes import ConvexSpheropolygon
-from scipy.spatial import ConvexHull
-from hypothesis import given, assume, example
-from hypothesis.strategies import floats
+from hypothesis import assume, example, given
 from hypothesis.extra.numpy import arrays
+from hypothesis.strategies import floats
+from scipy.spatial import ConvexHull
+
 from conftest import get_valid_hull
+from coxeter.shape_classes import ConvexSpheropolygon
 
 
 def get_square_points():
-    return np.asarray([[0, 0, 0],
-                       [0, 1, 0],
-                       [1, 1, 0],
-                       [1, 0, 0]])
+    return np.asarray([[0, 0, 0], [0, 1, 0], [1, 1, 0], [1, 0, 0]])
 
 
 @pytest.fixture
@@ -93,14 +91,12 @@ def test_center(square_points, unit_rounded_square):
 
 def test_nonplanar(square_points):
     """Ensure that nonplanar vertices raise an error."""
-
     with pytest.raises(ValueError):
         square_points[0, 2] += 1
         ConvexSpheropolygon(square_points, 1)
 
 
-@given(arrays(np.float64, (4, 2), elements=floats(1, 5, width=64),
-              unique=True))
+@given(arrays(np.float64, (4, 2), elements=floats(1, 5, width=64), unique=True))
 def test_reordering_convex(points):
     """Test that vertices can be reordered appropriately."""
     hull = get_valid_hull(points)
@@ -110,8 +106,7 @@ def test_reordering_convex(points):
     assert np.all(poly.vertices[:, :2] == verts)
 
 
-@given(arrays(np.float64, (4, 2), elements=floats(-5, 5, width=64),
-              unique=True))
+@given(arrays(np.float64, (4, 2), elements=floats(-5, 5, width=64), unique=True))
 def test_convex_area(points):
     """Check the areas of various convex sets."""
     hull = get_valid_hull(points)
@@ -120,19 +115,20 @@ def test_convex_area(points):
     r = 1
     poly = ConvexSpheropolygon(verts, radius=r)
 
-    cap_area = np.pi*r*r
-    edge_area = np.sum(np.linalg.norm(verts - np.roll(verts, 1, 0), axis=1),
-                       axis=0)
+    cap_area = np.pi * r * r
+    edge_area = np.sum(np.linalg.norm(verts - np.roll(verts, 1, 0), axis=1), axis=0)
     assert np.isclose(hull.volume + edge_area + cap_area, poly.area)
 
 
 def test_convex_signed_area(square_points):
     """Ensure that rotating does not change the signed area."""
 
-    @given(random_quat=arrays(np.float64, (4, ),
-                              elements=floats(-1, 1, width=64)))
-    @example(random_quat=np.array([0.00000000e+00, 2.22044605e-16,
-                                   2.60771169e-08, 2.60771169e-08]))
+    @given(random_quat=arrays(np.float64, (4,), elements=floats(-1, 1, width=64)))
+    @example(
+        random_quat=np.array(
+            [0.00000000e00, 2.22044605e-16, 2.60771169e-08, 2.60771169e-08]
+        )
+    )
     def testfun(random_quat):
         assume(not np.all(random_quat == 0))
         random_quat = rowan.normalize(random_quat)
@@ -142,14 +138,14 @@ def test_convex_signed_area(square_points):
 
         hull = ConvexHull(square_points[:, :2])
 
-        cap_area = np.pi*r*r
+        cap_area = np.pi * r * r
         edge_area = np.sum(
-            np.linalg.norm(square_points - np.roll(square_points, 1, 0),
-                           axis=1),
-            axis=0)
+            np.linalg.norm(square_points - np.roll(square_points, 1, 0), axis=1), axis=0
+        )
         sphero_area = cap_area + edge_area
         assert np.isclose(poly.signed_area, hull.volume + sphero_area)
 
         poly.reorder_verts(clockwise=True)
         assert np.isclose(poly.signed_area, -hull.volume - sphero_area)
+
     testfun()

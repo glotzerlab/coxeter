@@ -1,3 +1,11 @@
+"""Define base classes for shapes.
+
+This module defines the core API for shapes. The only real commonality is a
+location in three dimensional space. However, creating an abstract parent
+class is valuable here because it serves as part of the expected API in other
+parts of the code base that either require or return shapes.
+"""
+
 from abc import ABC, abstractmethod
 
 
@@ -7,7 +15,7 @@ class Shape(ABC):
     @property
     @abstractmethod
     def center(self):
-        """float: Get or set the centroid of the shape."""
+        """:math:`(3, )` :class:`numpy.ndarray` of float: Get or set the centroid of the shape."""  # noqa: E501
         pass
 
     @center.setter
@@ -17,9 +25,7 @@ class Shape(ABC):
 
     @property
     def gsd_shape_spec(self):
-        """dict: A complete description of this shape corresponding to the
-        shape specification in the GSD file format as described
-        :ref:`here <shapes>`."""
+        """dict: Get a `complete GSD specification <shapes>`_."""  # noqa: D401
         return {}
 
 
@@ -44,7 +50,7 @@ class Shape3D(Shape):
     @property
     @abstractmethod
     def volume(self):
-        """float: Get or set the centroid of the shape."""
+        """float: Get or set the volume of the shape."""
         pass
 
     @volume.setter
@@ -55,7 +61,7 @@ class Shape3D(Shape):
     @property
     @abstractmethod
     def surface_area(self):
-        """float: Get or set the centroid of the shape."""
+        """float: Get or set the surface area of the shape."""
         pass
 
     @surface_area.setter

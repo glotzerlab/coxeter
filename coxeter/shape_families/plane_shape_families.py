@@ -1,13 +1,21 @@
+"""Shape families defined by the intersection of half spaces.
+
+This module defines a set of shape families that are defined as the
+intersection of half spaces defined by a set of planes. The families here are
+generally taken from :cite:`Chen2014` and :cite:`Damasceno2012`.
+"""
+
 from abc import abstractmethod
-from .shape_family import _ShapeFamily
-from ..shape_classes import ConvexPolyhedron
+
 import numpy as np
 from scipy.constants import golden_ratio
 
+from ..shape_classes import ConvexPolyhedron
+from .shape_family import _ShapeFamily
+
 
 class TruncationPlaneShapeFamily(_ShapeFamily):
-    """A family of shapes that can be constructed based on the intersection of
-    a set of half spaces defined by a symmetric set of planes.
+    """A shape famly defined by plane half-space intersections.
 
     This family of shapes is defined in :cite:`Chen2014`. A set of planes are
     symmetrically placed about a central point, and shapes are defined by the
@@ -26,6 +34,7 @@ class TruncationPlaneShapeFamily(_ShapeFamily):
     See :cite:`Chen2014` for descriptions of these parameters. The bounds of
     each parameter are set by the subclasses.
     """
+
     def make_vertices(self, a, b, c):
         """Generate vertices from the a, b, and c parameters.
 
@@ -46,31 +55,44 @@ class TruncationPlaneShapeFamily(_ShapeFamily):
         planetypes = self.plane_types
         planelist = self.planes
 
+        # Generate all unique combinations of planes.
         num_planes = len(planetypes)
-        indices = [(i, j, k) for i in range(num_planes) for j in
-                   range(i+1, num_planes) for k in range(j+1, num_planes)]
+        indices = [
+            (i, j, k)
+            for i in range(num_planes)
+            for j in range(i + 1, num_planes)
+            for k in range(j + 1, num_planes)
+        ]
 
-        # Set up and solve a system of equations for the planes that should be
-        # included.
-        As = planelist[indices]
+        # To identify the vertices of the shape, we set up a linear system of
+        # equations that finds points that simultaneously satisfy multiple
+        # plane equations, i.e. points of intersection of all planes at the
+        # specified distances.
+        coeffs = planelist[indices]
         alltypes = planetypes[indices]
         bs = dists[alltypes]
 
-        dets = np.linalg.det(As)
+        # A determinant of zero for the coefficient matrix indicates that the
+        # matrix is not full rank, meaning no solution exists, so we ignore
+        # those cases.
+        dets = np.linalg.det(coeffs)
         solution_indices = np.abs(dets) > thresh
-        xs = np.linalg.solve(As[solution_indices], bs[solution_indices])
+        xs = np.linalg.solve(coeffs[solution_indices], bs[solution_indices])
 
-        # Get for each x whether any of the planes fail.
-        dots = np.einsum('ik,jk', xs, planelist, optimize=True)
+        # Reject any solutions that are intersections that lie beyond at least
+        # one of the bounding planes.
+        dots = np.einsum("ik,jk", xs, planelist, optimize=True)
         alldists = dists[planetypes]
         dist_filter = (dots <= alldists[np.newaxis, :] + thresh).all(axis=1)
         passed_plane_test = xs[dist_filter]
 
-        # We don't want to lose precision in the vertices to ensure that the
-        # convex hull ends up finding the right faces, so get the unique
-        # indices based on rounding but then use the original vertices.
+        # Identify unique vertices.  We don't want to lose precision in the
+        # vertices to ensure that the convex hull ends up finding the right
+        # faces, so get the unique indices based on rounding but then use the
+        # original vertices.
         _, verts_indices = np.unique(
-            passed_plane_test.round(6), axis=0, return_index=True)
+            passed_plane_test.round(6), axis=0, return_index=True
+        )
         verts = passed_plane_test[verts_indices]
 
         return verts
@@ -78,21 +100,25 @@ class TruncationPlaneShapeFamily(_ShapeFamily):
     @property
     @abstractmethod
     def planes(self):
-        """(:math:`N_{planes}`, 3) :class:`numpy.ndarray` of float: The set of
-        defining planes"""
+        """(:math:`N_{planes}`, 3) :class:`numpy.ndarray` of float: Planes.
+
+        The set of planes used to truncate the shape.
+        """
         pass
 
     @property
     @abstractmethod
     def plane_types(self):
-        """(:math:`N_{planes}`, ) :class:`numpy.ndarray` of int: The types of
-        the planes (type 0 corresponds to the parameter a, type 1 corresponds
-        to b, and type 2 corresponds to c)."""
+        """(:math:`N_{planes}`, ) :class:`numpy.ndarray` of int: Plane types.
+
+        The types of the planes (type 0 corresponds to the parameter a, type 1
+        corresponds to b, and type 2 corresponds to c).
+        """
         pass
 
 
 class Family323Plus(TruncationPlaneShapeFamily):
-    R"""The 323+ shape family defined in :cite:`Chen2014`.
+    r"""The 323+ shape family defined in :cite:`Chen2014`.
 
     The following parameters are required by this class:
 
@@ -106,6 +132,18 @@ class Family323Plus(TruncationPlaneShapeFamily):
     """
 
     def __call__(self, a, c):
+        r"""Generate a shape for the provided parameters.
+
+        Args:
+            a (float):
+                The parameter :math:`a \in [1, 3]`.
+            c (float):
+                The parameter :math:`c \in [1, 3]`.
+
+        Returns:
+            :class:`~coxeter.shape_classes.ConvexPolyhedron`:
+                The desired shape.
+        """
         if not 1 <= a <= 3:
             raise ValueError("The a parameter must be between 1 and 3.")
         if not 1 <= c <= 3:
@@ -114,29 +152,41 @@ class Family323Plus(TruncationPlaneShapeFamily):
 
     @property
     def planes(self):
-        return np.array([
-            [1.0, 1.0, 1.0],
-            [-1.0, -1.0, 1.0],
-            [-1.0, 1.0, -1.0],
-            [1.0, -1.0, -1.0],
-            [1.0, 1.0, -1.0],
-            [-1.0, -1.0, -1.0],
-            [-1.0, 1.0, 1.0],
-            [1.0, -1.0, 1.0],
-            [1.0, 0.0, 0.0],
-            [-1.0, 0.0, 0.0],
-            [0.0, 1.0, 0.0],
-            [0.0, -1.0, 0.0],
-            [0.0, 0.0, 1.0],
-            [0.0, 0.0, -1.0]])
+        """(:math:`N_{planes}`, 3) :class:`numpy.ndarray` of float: Planes.
+
+        The set of planes used to truncate the shape.
+        """
+        return np.array(
+            [
+                [1.0, 1.0, 1.0],
+                [-1.0, -1.0, 1.0],
+                [-1.0, 1.0, -1.0],
+                [1.0, -1.0, -1.0],
+                [1.0, 1.0, -1.0],
+                [-1.0, -1.0, -1.0],
+                [-1.0, 1.0, 1.0],
+                [1.0, -1.0, 1.0],
+                [1.0, 0.0, 0.0],
+                [-1.0, 0.0, 0.0],
+                [0.0, 1.0, 0.0],
+                [0.0, -1.0, 0.0],
+                [0.0, 0.0, 1.0],
+                [0.0, 0.0, -1.0],
+            ]
+        )
 
     @property
     def plane_types(self):
+        """(:math:`N_{planes}`, ) :class:`numpy.ndarray` of int: Plane types.
+
+        The types of the planes (type 0 corresponds to the parameter a, type 1
+        corresponds to b, and type 2 corresponds to c).
+        """
         return np.array([2, 2, 2, 2, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1])
 
 
 class Family423(TruncationPlaneShapeFamily):
-    R"""The 423 shape family defined in :cite:`Chen2014`.
+    r"""The 423 shape family defined in :cite:`Chen2014`.
 
     The following parameters are required by this class:
 
@@ -151,6 +201,18 @@ class Family423(TruncationPlaneShapeFamily):
     """
 
     def __call__(self, a, c):
+        r"""Generate a shape for the provided parameters.
+
+        Args:
+            a (float):
+                The parameter :math:`a \in [1, 2]`.
+            c (float):
+                The parameter :math:`c \in [2, 3]`.
+
+        Returns:
+            :class:`~coxeter.shape_classes.ConvexPolyhedron`:
+                The desired shape.
+        """
         if not 1 <= a <= 2:
             raise ValueError("The a parameter must be between 1 and 2.")
         if not 2 <= c <= 3:
@@ -159,42 +221,82 @@ class Family423(TruncationPlaneShapeFamily):
 
     @property
     def planes(self):
-        return np.array([
-             [1.0, 1.0, 1.0],
-             [-1.0, -1.0, 1.0],
-             [-1.0, 1.0, -1.0],
-             [1.0, -1.0, -1.0],
-             [1.0, 1.0, -1.0],
-             [-1.0, -1.0, -1.0],
-             [-1.0, 1.0, 1.0],
-             [1.0, -1.0, 1.0],
-             [1.0, 1.0, 0.0],
-             [1.0, -1.0, 0.0],
-             [-1.0, -1.0, 0.0],
-             [-1.0, 1.0, 0.0],
-             [1.0, 0.0, 1.0],
-             [1.0, 0.0, -1.0],
-             [-1.0, 0.0, -1.0],
-             [-1.0, 0.0, 1.0],
-             [0.0, 1.0, 1.0],
-             [0.0, 1.0, -1.0],
-             [0.0, -1.0, -1.0],
-             [0.0, -1.0, 1.0],
-             [1.0, 0.0, 0.0],
-             [-1.0, 0.0, 0.0],
-             [0.0, 1.0, 0.0],
-             [0.0, -1.0, 0.0],
-             [0.0,  0.0,  1.0],
-             [0.0, 0.0, -1.0]])
+        """(:math:`N_{planes}`, 3) :class:`numpy.ndarray` of float: Planes.
+
+        The set of planes used to truncate the shape.
+        """
+        return np.array(
+            [
+                [1.0, 1.0, 1.0],
+                [-1.0, -1.0, 1.0],
+                [-1.0, 1.0, -1.0],
+                [1.0, -1.0, -1.0],
+                [1.0, 1.0, -1.0],
+                [-1.0, -1.0, -1.0],
+                [-1.0, 1.0, 1.0],
+                [1.0, -1.0, 1.0],
+                [1.0, 1.0, 0.0],
+                [1.0, -1.0, 0.0],
+                [-1.0, -1.0, 0.0],
+                [-1.0, 1.0, 0.0],
+                [1.0, 0.0, 1.0],
+                [1.0, 0.0, -1.0],
+                [-1.0, 0.0, -1.0],
+                [-1.0, 0.0, 1.0],
+                [0.0, 1.0, 1.0],
+                [0.0, 1.0, -1.0],
+                [0.0, -1.0, -1.0],
+                [0.0, -1.0, 1.0],
+                [1.0, 0.0, 0.0],
+                [-1.0, 0.0, 0.0],
+                [0.0, 1.0, 0.0],
+                [0.0, -1.0, 0.0],
+                [0.0, 0.0, 1.0],
+                [0.0, 0.0, -1.0],
+            ]
+        )
 
     @property
     def plane_types(self):
-        return np.array([2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 0, 0, 0, 0, 0, 0])
+        """(:math:`N_{planes}`, ) :class:`numpy.ndarray` of int: Plane types.
+
+        The types of the planes (type 0 corresponds to the parameter a, type 1
+        corresponds to b, and type 2 corresponds to c).
+        """
+        return np.array(
+            [
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+            ]
+        )
 
 
 class Family523(TruncationPlaneShapeFamily):
-    R"""The 423 shape family defined in :cite:`Chen2014`.
+    r"""The 423 shape family defined in :cite:`Chen2014`.
 
     The following parameters are required by this class:
 
@@ -217,93 +319,180 @@ class Family523(TruncationPlaneShapeFamily):
     S = golden_ratio
 
     def __call__(self, a, c):
-        if not 1 <= a <= (self.s*np.sqrt(5)):
-            raise ValueError("The a parameter must be between 1 and s\u221A5 "
-                             "(where s is the inverse of the golden ratio).")
-        if not self.S**2 <= c <= 3:
-            raise ValueError("The c parameter must be between S^2 and 3 "
-                             "(where S is the golden ratio).")
+        r"""Generate a shape for the provided parameters.
+
+        Args:
+            a (float):
+                The parameter :math:`a \in [1, s\sqrt{5}]`.
+            c (float):
+                The parameter :math:`c \in [S^2, 3]`.
+
+        Returns:
+            :class:`~coxeter.shape_classes.ConvexPolyhedron`:
+                The desired shape.
+        """
+        if not 1 <= a <= (self.s * np.sqrt(5)):
+            raise ValueError(
+                "The a parameter must be between 1 and s\u221A5 "
+                "(where s is the inverse of the golden ratio)."
+            )
+        if not self.S ** 2 <= c <= 3:
+            raise ValueError(
+                "The c parameter must be between S^2 and 3 "
+                "(where S is the golden ratio)."
+            )
         return ConvexPolyhedron(self.make_vertices(a, 2, c))
 
     @property
     def planes(self):
-        s = self.s
-        S = self.S
-        return np.array([
-            [1.0, 0.0, s],
-            [-1.0, 0.0, -s],
-            [-1.0, 0.0, s],
-            [1.0, 0.0, -s],
-            [0.0, -s, -1.0],
-            [0.0, s, 1.0],
-            [0.0, s, -1.0],
-            [0.0, -s, 1.0],
-            [-s, -1.0, 0.0],
-            [s, 1.0, 0.0],
-            [s, -1.0, 0.0],
-            [-s, 1.0, 0.0],
-            [-2.0, 0.0, 0.0],
-            [2.0, 0.0, 0.0],
-            [0.0, -2.0, 0.0],
-            [0.0, 2.0, 0.0],
-            [0.0, 0.0, -2.0],
-            [0.0, 0.0, 2.0],
-            [S, S, S],
-            [-S, S, S],
-            [S, -S, S],
-            [S, S, -S],
-            [S, -S, -S],
-            [-S, -S, S],
-            [-S, S, -S],
-            [-S, -S, -S],
-            [1.0, 0.0, S**2],
-            [-1.0, 0.0, -S**2],
-            [-1.0, 0.0, S**2],
-            [1.0, 0.0, -S**2],
-            [0.0, -S**2, -1.0],
-            [0.0, S**2, 1.0],
-            [0.0, -S**2, 1.0],
-            [0.0, S**2, -1.0],
-            [-S**2, -1.0, 0.0],
-            [S**2, 1.0, 0.0],
-            [S**2, -1.0, 0.0],
-            [-S**2, 1.0, 0.0],
-            [S, -1.0, -s],
-            [-S, 1.0, -s],
-            [-S, -1.0, s],
-            [S, 1.0, s],
-            [S, -1.0, s],
-            [S, 1.0, -s],
-            [-S, 1.0, s],
-            [-S, -1.0, -s],
-            [s, S, 1.0],
-            [s, -S, -1.0],
-            [-s, -S, 1.0],
-            [-s, S, -1.0],
-            [-s, -S, -1.0],
-            [s, -S, 1.0],
-            [-s, S, 1.0],
-            [s, S, -1.0],
-            [1.0, -s, -S],
-            [-1.0, s, -S],
-            [-1.0, -s, S],
-            [1.0, s, S],
-            [1.0, s, -S],
-            [-1.0, s, S],
-            [1.0, -s, S],
-            [-1.0, -s, -S]
-            ])
+        """(:math:`N_{planes}`, 3) :class:`numpy.ndarray` of float: Planes.
+
+        The set of planes used to truncate the shape.
+        """
+        return np.array(
+            [
+                [1.0, 0.0, self.s],
+                [-1.0, 0.0, -self.s],
+                [-1.0, 0.0, self.s],
+                [1.0, 0.0, -self.s],
+                [0.0, -self.s, -1.0],
+                [0.0, self.s, 1.0],
+                [0.0, self.s, -1.0],
+                [0.0, -self.s, 1.0],
+                [-self.s, -1.0, 0.0],
+                [self.s, 1.0, 0.0],
+                [self.s, -1.0, 0.0],
+                [-self.s, 1.0, 0.0],
+                [-2.0, 0.0, 0.0],
+                [2.0, 0.0, 0.0],
+                [0.0, -2.0, 0.0],
+                [0.0, 2.0, 0.0],
+                [0.0, 0.0, -2.0],
+                [0.0, 0.0, 2.0],
+                [self.S, self.S, self.S],
+                [-self.S, self.S, self.S],
+                [self.S, -self.S, self.S],
+                [self.S, self.S, -self.S],
+                [self.S, -self.S, -self.S],
+                [-self.S, -self.S, self.S],
+                [-self.S, self.S, -self.S],
+                [-self.S, -self.S, -self.S],
+                [1.0, 0.0, self.S ** 2],
+                [-1.0, 0.0, -self.S ** 2],
+                [-1.0, 0.0, self.S ** 2],
+                [1.0, 0.0, -self.S ** 2],
+                [0.0, -self.S ** 2, -1.0],
+                [0.0, self.S ** 2, 1.0],
+                [0.0, -self.S ** 2, 1.0],
+                [0.0, self.S ** 2, -1.0],
+                [-self.S ** 2, -1.0, 0.0],
+                [self.S ** 2, 1.0, 0.0],
+                [self.S ** 2, -1.0, 0.0],
+                [-self.S ** 2, 1.0, 0.0],
+                [self.S, -1.0, -self.s],
+                [-self.S, 1.0, -self.s],
+                [-self.S, -1.0, self.s],
+                [self.S, 1.0, self.s],
+                [self.S, -1.0, self.s],
+                [self.S, 1.0, -self.s],
+                [-self.S, 1.0, self.s],
+                [-self.S, -1.0, -self.s],
+                [self.s, self.S, 1.0],
+                [self.s, -self.S, -1.0],
+                [-self.s, -self.S, 1.0],
+                [-self.s, self.S, -1.0],
+                [-self.s, -self.S, -1.0],
+                [self.s, -self.S, 1.0],
+                [-self.s, self.S, 1.0],
+                [self.s, self.S, -1.0],
+                [1.0, -self.s, -self.S],
+                [-1.0, self.s, -self.S],
+                [-1.0, -self.s, self.S],
+                [1.0, self.s, self.S],
+                [1.0, self.s, -self.S],
+                [-1.0, self.s, self.S],
+                [1.0, -self.s, self.S],
+                [-1.0, -self.s, -self.S],
+            ]
+        )
 
     @property
     def plane_types(self):
-        return np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
-                         1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-                         2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+        """(:math:`N_{planes}`, ) :class:`numpy.ndarray` of int: Plane types.
+
+        The types of the planes (type 0 corresponds to the parameter a, type 1
+        corresponds to b, and type 2 corresponds to c).
+        """
+        return np.array(
+            [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+            ]
+        )
 
 
 class TruncatedTetrahedronFamily(Family323Plus):
-    R"""The truncated tetrahedron family used in :cite:`Damasceno2012`.
+    r"""The truncated tetrahedron family used in :cite:`Damasceno2012`.
 
     The following parameters are required by this class:
 
@@ -315,6 +504,16 @@ class TruncatedTetrahedronFamily(Family323Plus):
     """
 
     def __call__(self, truncation):
+        r"""Generate a shape for a given truncation value.
+
+        Args:
+            truncation (float):
+                The parameter :math:`truncation \in [0, 1]`.
+
+        Returns:
+            :class:`~coxeter.shape_classes.ConvexPolyhedron`:
+                The desired truncated tetrahedron.
+        """
         if not 0 <= truncation <= 1:
             raise ValueError("The truncation must be between 0 and 1.")
         c = 3 - 2 * truncation

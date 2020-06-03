@@ -1,19 +1,20 @@
+"""Defines some symmetry operators.
+
+They have been given the name of space groups, however they represent only the
+rotational analogs of these groups. This means that any operation involving an
+inversion or reflection was not included. Half the elements are built from the
+rotation operators, the other half are these same operators after a quaternion
+rotation by [-1,0,0,0].
+"""
+
 import numpy as np
 import rowan
-
-# Here some symmetry operators groups are defined
-# They have been given the name of space groups,
-# however they represent only the rotational analogs
-# of these groups. This means that any operation involving
-# an inversion or reflection was not included. Half the elements
-# are built from the rotation operators, the other half are these
-# same operators after a quaternion rotation by [-1,0,0,0]
 
 # The elements are listed as (n-fold, axis) tuples, with
 # angle = 2pi/n
 
 # http://it.iucr.org/Ab/ch7o1v0001/sgtable7o1o225/
-mbarThreem = [
+mbar_threem = [
     (1, [1, 1, 1]),  # 1
     (2, [0, 0, 1]),
     (2, [0, 1, 0]),
@@ -41,10 +42,10 @@ mbarThreem = [
 ]
 
 # http://it.iucr.org/Ab/ch7o1v0001/sgtable7o1o209/
-FourThreeTwo = mbarThreem[0:24]
+four_three_two = mbar_threem[0:24]
 
 # http://onlinelibrary.wiley.com/iucr/itc/Ab/ch7o1v0001/sgtable7o1o123/
-Four_mmm = [
+four_mmm = [
     (1, [1, 0, 0]),
     (2, [0, 0, 1]),
     (4, [0, 0, 1]),
@@ -52,11 +53,11 @@ Four_mmm = [
     (2, [0, 1, 0]),
     (2, [1, 0, 0]),
     (2, [1, 1, 0]),
-    (2, [1, -1, 0])
+    (2, [1, -1, 0]),
 ]
 
 # http://onlinelibrary.wiley.com/iucr/itc/Ab/ch7o1v0001/sgtable7o1o089/
-FourTwoTwo = [
+four_two_two = [
     (1, [1, 0, 0]),
     (2, [0, 0, 1]),
     (4, [0, 0, 1]),
@@ -64,40 +65,28 @@ FourTwoTwo = [
     (2, [0, 1, 0]),
     (2, [1, 0, 0]),
     (2, [1, 1, 0]),
-    (2, [1, -1, 0])
+    (2, [1, -1, 0]),
 ]
 
 # http://onlinelibrary.wiley.com/iucr/itc/Ab/ch7o1v0001/sgtable7o1o111/
-barFourTwom = [
-    (1, [1, 0, 0]),
-    (2, [0, 0, 1]),
-    (2, [0, 1, 0]),
-    (2, [1, 0, 0])
-]
+bar_four_twom = [(1, [1, 0, 0]), (2, [0, 0, 1]), (2, [0, 1, 0]), (2, [1, 0, 0])]
 
 # http://onlinelibrary.wiley.com/iucr/itc/Ab/ch7o1v0001/sgtable7o1o160/
-Threem = [
-    (1, [1, 0, 0]),
-    (3, [0, 0, 1]),
-    (-3, [0, 0, 1])
-]
+threem = [(1, [1, 0, 0]), (3, [0, 0, 1]), (-3, [0, 0, 1])]
 
 # http://onlinelibrary.wiley.com/iucr/itc/Ab/ch7o1v0001/sgtable7o1o025/
-mmTwo = [
-    (1, [1, 0, 0]),
-    (2, [0, 0, 1])
-]
+mm_two = [(1, [1, 0, 0]), (2, [0, 0, 1])]
 
 # http://onlinelibrary.wiley.com/iucr/itc/Ab/ch7o1v0001/sgtable7o1o187/
 # This group does not follow the definition exactly, the axis of
 # the two fold axes have been modified
-barSixmTwo = [
+bar_sixm_two = [
     (1, [1, 0, 0]),
     (3, [0, 0, 1]),
     (-3, [0, 0, 1]),
     (2, [1, 0, 0]),
     (2, [np.cos(np.pi / 3), np.sin(np.pi / 3), 0]),
-    (2, [-np.cos(np.pi / 3), np.sin(np.pi / 3), 0])
+    (2, [-np.cos(np.pi / 3), np.sin(np.pi / 3), 0]),
 ]
 
 # http://www-history.mcs.st-and.ac.uk/~john/geometry/Lectures/L10.html
@@ -108,18 +97,19 @@ picodi = -np.pi / 2 + np.arctan(2)  # pi/2 - the dihedral angle
 # a face vector that will be used a lot
 face1 = [np.cos(picodi), 0, -np.sin(picodi)]
 # the vector to the crown edges
-lat_edge = rowan.rotate(rowan.from_axis_angle(
-    axes=[0, 1, 0], angles=icodi / 2), [0, 0, 1])
+lat_edge = rowan.rotate(
+    rowan.from_axis_angle(axes=[0, 1, 0], angles=icodi / 2), [0, 0, 1]
+)
 # the vector to the mid-latitude edges
-crown_edge = rowan.rotate(rowan.from_axis_angle(axes=face1,
-                                                angles=2 * 2 * np.pi / 5),
-                          lat_edge)
-crown_vert = [-0.850651, 0., 1.11352]  # A vertex in the top pentagon
-equi_vert = rowan.rotate(rowan.from_axis_angle(axes=face1,
-                                               angles=1 * 2 * np.pi / 5),
-                         crown_vert)
+crown_edge = rowan.rotate(
+    rowan.from_axis_angle(axes=face1, angles=2 * 2 * np.pi / 5), lat_edge
+)
+crown_vert = [-0.850651, 0.0, 1.11352]  # A vertex in the top pentagon
+equi_vert = rowan.rotate(
+    rowan.from_axis_angle(axes=face1, angles=1 * 2 * np.pi / 5), crown_vert
+)
 
-Icosohedral = [
+icosohedral = [
     (1, [1, 0, 0]),
     # first face pair
     (5, [0, 0, 1]),
@@ -132,177 +122,309 @@ Icosohedral = [
     (5 / 3, face1),
     (5 / 4, face1),
     # third face pair
-    (5, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                           angles=2 * np.pi / 5),
-                     face1)),
-    (5 / 2, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                               angles=2 * np.pi / 5),
-                         face1)),
-    (5 / 3, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                               angles=2 * np.pi / 5),
-                         face1)),
-    (5 / 4, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                               angles=2 * np.pi / 5),
-                         face1)),
+    (
+        5,
+        rowan.rotate(
+            rowan.from_axis_angle(axes=[0, 0, 1], angles=2 * np.pi / 5), face1
+        ),
+    ),
+    (
+        5 / 2,
+        rowan.rotate(
+            rowan.from_axis_angle(axes=[0, 0, 1], angles=2 * np.pi / 5), face1
+        ),
+    ),
+    (
+        5 / 3,
+        rowan.rotate(
+            rowan.from_axis_angle(axes=[0, 0, 1], angles=2 * np.pi / 5), face1
+        ),
+    ),
+    (
+        5 / 4,
+        rowan.rotate(
+            rowan.from_axis_angle(axes=[0, 0, 1], angles=2 * np.pi / 5), face1
+        ),
+    ),
     # Fourth face pair
-    (5, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                           angles=2 * 2 * np.pi / 5),
-                     face1)),
-    (5 / 2, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                               angles=2 * 2 * np.pi / 5),
-                         face1)),
-    (5 / 3, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                               angles=2 * 2 * np.pi / 5),
-                         face1)),
-    (5 / 4, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                               angles=2 * 2 * np.pi / 5),
-                         face1)),
+    (
+        5,
+        rowan.rotate(
+            rowan.from_axis_angle(axes=[0, 0, 1], angles=2 * 2 * np.pi / 5), face1
+        ),
+    ),
+    (
+        5 / 2,
+        rowan.rotate(
+            rowan.from_axis_angle(axes=[0, 0, 1], angles=2 * 2 * np.pi / 5), face1
+        ),
+    ),
+    (
+        5 / 3,
+        rowan.rotate(
+            rowan.from_axis_angle(axes=[0, 0, 1], angles=2 * 2 * np.pi / 5), face1
+        ),
+    ),
+    (
+        5 / 4,
+        rowan.rotate(
+            rowan.from_axis_angle(axes=[0, 0, 1], angles=2 * 2 * np.pi / 5), face1
+        ),
+    ),
     # Fifth face pair
-    (5, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                           angles=3 * 2 * np.pi / 5),
-                     face1)),
-    (5 / 2, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                               angles=3 * 2 * np.pi / 5),
-                         face1)),
-    (5 / 3, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                               angles=3 * 2 * np.pi / 5),
-                         face1)),
-    (5 / 4, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                               angles=3 * 2 * np.pi / 5),
-                         face1)),
+    (
+        5,
+        rowan.rotate(
+            rowan.from_axis_angle(axes=[0, 0, 1], angles=3 * 2 * np.pi / 5), face1
+        ),
+    ),
+    (
+        5 / 2,
+        rowan.rotate(
+            rowan.from_axis_angle(axes=[0, 0, 1], angles=3 * 2 * np.pi / 5), face1
+        ),
+    ),
+    (
+        5 / 3,
+        rowan.rotate(
+            rowan.from_axis_angle(axes=[0, 0, 1], angles=3 * 2 * np.pi / 5), face1
+        ),
+    ),
+    (
+        5 / 4,
+        rowan.rotate(
+            rowan.from_axis_angle(axes=[0, 0, 1], angles=3 * 2 * np.pi / 5), face1
+        ),
+    ),
     # Sixth face pair
-    (5, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                           angles=4 * 2 * np.pi / 5),
-                     face1)),
-    (5 / 2, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                               angles=4 * 2 * np.pi / 5),
-                         face1)),
-    (5 / 3, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                               angles=4 * 2 * np.pi / 5),
-                         face1)),
-    (5 / 4, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                               angles=4 * 2 * np.pi / 5),
-                         face1)),
+    (
+        5,
+        rowan.rotate(
+            rowan.from_axis_angle(axes=[0, 0, 1], angles=4 * 2 * np.pi / 5), face1
+        ),
+    ),
+    (
+        5 / 2,
+        rowan.rotate(
+            rowan.from_axis_angle(axes=[0, 0, 1], angles=4 * 2 * np.pi / 5), face1
+        ),
+    ),
+    (
+        5 / 3,
+        rowan.rotate(
+            rowan.from_axis_angle(axes=[0, 0, 1], angles=4 * 2 * np.pi / 5), face1
+        ),
+    ),
+    (
+        5 / 4,
+        rowan.rotate(
+            rowan.from_axis_angle(axes=[0, 0, 1], angles=4 * 2 * np.pi / 5), face1
+        ),
+    ),
     # equitorial band of edges
     (2, [0, 1, 0]),
-    (2, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                           angles=1 * 2 * np.pi / 10),
-                     [0, 1, 0])),
-    (2, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                           angles=2 * 2 * np.pi / 10),
-                     [0, 1, 0])),
-    (2, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                           angles=3 * 2 * np.pi / 10),
-                     [0, 1, 0])),
-    (2, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                           angles=4 * 2 * np.pi / 10),
-                     [0, 1, 0])),
+    (
+        2,
+        rowan.rotate(
+            rowan.from_axis_angle(axes=[0, 0, 1], angles=1 * 2 * np.pi / 10), [0, 1, 0]
+        ),
+    ),
+    (
+        2,
+        rowan.rotate(
+            rowan.from_axis_angle(axes=[0, 0, 1], angles=2 * 2 * np.pi / 10), [0, 1, 0]
+        ),
+    ),
+    (
+        2,
+        rowan.rotate(
+            rowan.from_axis_angle(axes=[0, 0, 1], angles=3 * 2 * np.pi / 10), [0, 1, 0]
+        ),
+    ),
+    (
+        2,
+        rowan.rotate(
+            rowan.from_axis_angle(axes=[0, 0, 1], angles=4 * 2 * np.pi / 10), [0, 1, 0]
+        ),
+    ),
     (2, crown_edge),  # the crown edges
-    (2, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                           angles=1 * 2 * np.pi / 5),
-                     crown_edge)),
-    (2, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                           angles=2 * 2 * np.pi / 5),
-                     crown_edge)),
-    (2, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                           angles=3 * 2 * np.pi / 5),
-                     crown_edge)),
-    (2, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                           angles=4 * 2 * np.pi / 5),
-                     crown_edge)),
+    (
+        2,
+        rowan.rotate(
+            rowan.from_axis_angle(axes=[0, 0, 1], angles=1 * 2 * np.pi / 5), crown_edge
+        ),
+    ),
+    (
+        2,
+        rowan.rotate(
+            rowan.from_axis_angle(axes=[0, 0, 1], angles=2 * 2 * np.pi / 5), crown_edge
+        ),
+    ),
+    (
+        2,
+        rowan.rotate(
+            rowan.from_axis_angle(axes=[0, 0, 1], angles=3 * 2 * np.pi / 5), crown_edge
+        ),
+    ),
+    (
+        2,
+        rowan.rotate(
+            rowan.from_axis_angle(axes=[0, 0, 1], angles=4 * 2 * np.pi / 5), crown_edge
+        ),
+    ),
     (2, lat_edge),  # mid latitude edges
-    (2, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                           angles=1 * 2 * np.pi / 5),
-                     lat_edge)),
-    (2, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                           angles=2 * 2 * np.pi / 5),
-                     lat_edge)),
-    (2, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                           angles=3 * 2 * np.pi / 5),
-                     lat_edge)),
-    (2, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                           angles=4 * 2 * np.pi / 5),
-                     lat_edge)),
+    (
+        2,
+        rowan.rotate(
+            rowan.from_axis_angle(axes=[0, 0, 1], angles=1 * 2 * np.pi / 5), lat_edge
+        ),
+    ),
+    (
+        2,
+        rowan.rotate(
+            rowan.from_axis_angle(axes=[0, 0, 1], angles=2 * 2 * np.pi / 5), lat_edge
+        ),
+    ),
+    (
+        2,
+        rowan.rotate(
+            rowan.from_axis_angle(axes=[0, 0, 1], angles=3 * 2 * np.pi / 5), lat_edge
+        ),
+    ),
+    (
+        2,
+        rowan.rotate(
+            rowan.from_axis_angle(axes=[0, 0, 1], angles=4 * 2 * np.pi / 5), lat_edge
+        ),
+    ),
     (3, crown_vert),  # The vertices in the top pentagon
     (-3, crown_vert),
-    (3, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                           angles=1 * 2 * np.pi / 5),
-                     crown_vert)),
-    (-3, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                            angles=1 * 2 * np.pi / 5),
-                      crown_vert)),
-    (3, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                           angles=2 * 2 * np.pi / 5),
-                     crown_vert)),
-    (-3, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                            angles=2 * 2 * np.pi / 5),
-                      crown_vert)),
-    (3, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                           angles=3 * 2 * np.pi / 5),
-                     crown_vert)),
-    (-3, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                            angles=3 * 2 * np.pi / 5),
-                      crown_vert)),
-    (3, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                           angles=4 * 2 * np.pi / 5),
-                     crown_vert)),
-    (-3, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                            angles=4 * 2 * np.pi / 5),
-                      crown_vert)),
+    (
+        3,
+        rowan.rotate(
+            rowan.from_axis_angle(axes=[0, 0, 1], angles=1 * 2 * np.pi / 5), crown_vert
+        ),
+    ),
+    (
+        -3,
+        rowan.rotate(
+            rowan.from_axis_angle(axes=[0, 0, 1], angles=1 * 2 * np.pi / 5), crown_vert
+        ),
+    ),
+    (
+        3,
+        rowan.rotate(
+            rowan.from_axis_angle(axes=[0, 0, 1], angles=2 * 2 * np.pi / 5), crown_vert
+        ),
+    ),
+    (
+        -3,
+        rowan.rotate(
+            rowan.from_axis_angle(axes=[0, 0, 1], angles=2 * 2 * np.pi / 5), crown_vert
+        ),
+    ),
+    (
+        3,
+        rowan.rotate(
+            rowan.from_axis_angle(axes=[0, 0, 1], angles=3 * 2 * np.pi / 5), crown_vert
+        ),
+    ),
+    (
+        -3,
+        rowan.rotate(
+            rowan.from_axis_angle(axes=[0, 0, 1], angles=3 * 2 * np.pi / 5), crown_vert
+        ),
+    ),
+    (
+        3,
+        rowan.rotate(
+            rowan.from_axis_angle(axes=[0, 0, 1], angles=4 * 2 * np.pi / 5), crown_vert
+        ),
+    ),
+    (
+        -3,
+        rowan.rotate(
+            rowan.from_axis_angle(axes=[0, 0, 1], angles=4 * 2 * np.pi / 5), crown_vert
+        ),
+    ),
     # the equitorial vertices
     (3, equi_vert),
     (-3, equi_vert),
-    (3, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                           angles=1 * 2 * np.pi / 5),
-                     equi_vert)),
-    (-3, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                            angles=1 * 2 * np.pi / 5),
-                      equi_vert)),
-    (3, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                           angles=2 * 2 * np.pi / 5),
-                     equi_vert)),
-    (-3, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                            angles=2 * 2 * np.pi / 5),
-                      equi_vert)),
-    (3, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                           angles=3 * 2 * np.pi / 5),
-                     equi_vert)),
-    (-3, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                            angles=3 * 2 * np.pi / 5),
-                      equi_vert)),
-    (3, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                           angles=4 * 2 * np.pi / 5),
-                     equi_vert)),
-    (-3, rowan.rotate(rowan.from_axis_angle(axes=[0, 0, 1],
-                                            angles=4 * 2 * np.pi / 5),
-                      equi_vert))
+    (
+        3,
+        rowan.rotate(
+            rowan.from_axis_angle(axes=[0, 0, 1], angles=1 * 2 * np.pi / 5), equi_vert
+        ),
+    ),
+    (
+        -3,
+        rowan.rotate(
+            rowan.from_axis_angle(axes=[0, 0, 1], angles=1 * 2 * np.pi / 5), equi_vert
+        ),
+    ),
+    (
+        3,
+        rowan.rotate(
+            rowan.from_axis_angle(axes=[0, 0, 1], angles=2 * 2 * np.pi / 5), equi_vert
+        ),
+    ),
+    (
+        -3,
+        rowan.rotate(
+            rowan.from_axis_angle(axes=[0, 0, 1], angles=2 * 2 * np.pi / 5), equi_vert
+        ),
+    ),
+    (
+        3,
+        rowan.rotate(
+            rowan.from_axis_angle(axes=[0, 0, 1], angles=3 * 2 * np.pi / 5), equi_vert
+        ),
+    ),
+    (
+        -3,
+        rowan.rotate(
+            rowan.from_axis_angle(axes=[0, 0, 1], angles=3 * 2 * np.pi / 5), equi_vert
+        ),
+    ),
+    (
+        3,
+        rowan.rotate(
+            rowan.from_axis_angle(axes=[0, 0, 1], angles=4 * 2 * np.pi / 5), equi_vert
+        ),
+    ),
+    (
+        -3,
+        rowan.rotate(
+            rowan.from_axis_angle(axes=[0, 0, 1], angles=4 * 2 * np.pi / 5), equi_vert
+        ),
+    ),
 ]
 
 symgroups = {
-    "m-3m": mbarThreem,
-    "432": FourThreeTwo,
-    "4_mmm": Four_mmm,
-    "422": FourTwoTwo,
-    "-42m": barFourTwom,
-    "3m": Threem,
-    "mm2": mmTwo,
-    "-6m2": barSixmTwo,
-    "icoso": Icosohedral}
+    "m-3m": mbar_threem,
+    "432": four_three_two,
+    "4_mmm": four_mmm,
+    "422": four_two_two,
+    "-42m": bar_four_twom,
+    "3m": threem,
+    "mm2": mm_two,
+    "-6m2": bar_sixm_two,
+    "icoso": icosohedral,
+}
 
 # A function that generates the invariant quaternions from the above group
 # definitions
 
 
 def gen_sym_quats(group):
+    """Generate symmetric quaternions for a set of point groups."""
     operations = symgroups[group]
     quats = []
     for operation in operations:
-        qtemp = rowan.from_axis_angle(axes=operation[1],
-                                      angles=2 * np.pi / operation[0])
+        qtemp = rowan.from_axis_angle(
+            axes=operation[1], angles=2 * np.pi / operation[0]
+        )
         quats.append(qtemp.tolist())
         quats.append(rowan.multiply([-1, 0, 0, 0], qtemp).tolist())
 
     return quats
-
-# This is a json loadable string that has the quaternions that bring the shape
-# definitions of Damsceno into alignment with the above symmetry definitions

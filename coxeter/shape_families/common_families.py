@@ -1,11 +1,13 @@
 """Certain common shape families that can be analytically generated."""
 
-from .tabulated_shape_family import TabulatedGSDShapeFamily
-from ..shape_classes import ConvexPolygon
-from .shape_family import _ShapeFamily
-from .doi_data_repositories import _DATA_FOLDER
-import numpy as np
 import os
+
+import numpy as np
+
+from ..shape_classes import ConvexPolygon
+from .doi_data_repositories import _DATA_FOLDER
+from .shape_family import _ShapeFamily
+from .tabulated_shape_family import TabulatedGSDShapeFamily
 
 
 class RegularNGonFamily(_ShapeFamily):
@@ -21,24 +23,43 @@ class RegularNGonFamily(_ShapeFamily):
 
       - :math:`n`: The number of vertices of the polygon
     """
+
     def __call__(self, n):
+        """Generate an n-gon.
+
+        Args:
+            n (int):
+                An integer (greater than 3)s
+
+        Returns:
+             :class:`~.ConvexPolygon`: The corresponding regular polygon.
+        """  # noqa: E501
         return ConvexPolygon(self.make_vertices(n))
 
     def make_vertices(self, n):
+        """Generate vertices of an n-gon.
+
+        Args:
+            n (int):
+                An integer (greater than 3)s
+
+        Returns:
+            :math:`(N_{verts}, 3)` :class:`numpy.ndarray` of float: The vertices of the polygon.
+        """  # noqa: E501
         r = 1  # The radius of the circle
-        theta = np.linspace(0, 2*np.pi, num=n, endpoint=False)
+        theta = np.linspace(0, 2 * np.pi, num=n, endpoint=False)
         pos = np.array([np.cos(theta), np.sin(theta)])
 
         # First normalize to guarantee that the limiting case of an infinite
         # number of vertices produces a circle of area r^2.
-        pos /= (np.sqrt(np.pi)/r)
+        pos /= np.sqrt(np.pi) / r
 
         # Area of an n-gon inscribed in a circle
         # A_poly = ((n*r**2)/2)*np.sin(2*np.pi/n)
         # A_circ = np.pi*r**2
         # pos *= np.sqrt(A_circ/A_poly)
-        A_circ_A_poly_sq = np.pi/((n/2)*np.sin(2*np.pi/n))
-        pos *= np.sqrt(A_circ_A_poly_sq)
+        a_circ_a_poly_sq = np.pi / ((n / 2) * np.sin(2 * np.pi / n))
+        pos *= np.sqrt(a_circ_a_poly_sq)
 
         return pos.T
 
@@ -48,9 +69,10 @@ class PlatonicFamily(TabulatedGSDShapeFamily):
 
     The following parameters are required by this class:
 
-      - name: The name of the Platonic solid. Options are "Cube",
-      "Dodecahedron", "Icosahedron", "Octahedron", and "Tetrahedron".
+      - name: The name of the Platonic solid. Options are "Cube", "Dodecahedron",
+              "Icosahedron", "Octahedron", and "Tetrahedron".
     """
+
     def __init__(self):
-        fn = os.path.join(_DATA_FOLDER, 'platonic.json')
+        fn = os.path.join(_DATA_FOLDER, "platonic.json")
         super().__init__(fn)

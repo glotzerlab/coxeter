@@ -16,8 +16,10 @@ jobs:
       - run:
           name: style-check
           command: |
-            python -m pip install --user -U flake8==3.7.1
-            python -m flake8 --show-source coxeter/ tests/
+            python -m pip install --user -U flake8 flake8-black flake8-bugbear flake8-docstrings flake8-rst-docstrings pep8-naming flake8-isort
+            python -m flake8 --show-source coxeter/
+            # Ignore isort errors in tests that are due to ambiguity over whether or not coxeter is third party.
+            python -m flake8 --extend-ignore=I001,I004 --show-source tests/
 
 
   test-3.8: &test-template
@@ -61,9 +63,11 @@ jobs:
       - run:
           name: Deploy dist and wheels
           command: |
-            python -m pip install --user flake8
+            python -m pip install --user -U flake8 flake8-black flake8-bugbear flake8-docstrings flake8-rst-docstrings pep8-naming flake8-isort
             python -m pip install .[test] --user
-            python -m flake8 --show-source coxeter/ tests/
+            python -m flake8 --show-source coxeter/
+            # Ignore isort errors in tests that are due to ambiguity over whether or not coxeter is third party.
+            python -m flake8 --extend-ignore=I001,I004 --show-source tests/
             python -m pytest
             python --version
             python -m pip --version

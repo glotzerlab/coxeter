@@ -1,5 +1,16 @@
-import json
+"""Define tabulated shape families.
+
+Tabulated shape families are defined by a dictionary of data that can be
+converted into a shape by some well-defined schema. One example is the
+`GSD shape schema <shapes>`, which defines how to translates dictionaries with
+the appropriate formatting into a shape. These shape families may be
+constructed from a JSON file that can be read into a dictionary with the
+appropriate formatting.
+"""
+
 import copy
+import json
+
 from ..shape_getters import from_gsd_type_shapes
 from .shape_family import _ShapeFamily
 
@@ -21,6 +32,7 @@ class TabulatedShapeFamily(_ShapeFamily):
             A dictionary containing valid shape definitions or a JSON file that
             can be read into such a dictionary.
     """
+
     def __init__(self, filename_or_dict):
         if type(filename_or_dict) is str:
             with open(filename_or_dict) as f:
@@ -35,7 +47,7 @@ class TabulatedShapeFamily(_ShapeFamily):
         return self._data
 
     def get_params(self, name):
-        """dict: Get the full dictionary of data stored for a given file."""
+        """dict: Get the full dictionary of data stored for a given file."""  # noqa: D401, E501
         return self._data[name]
 
 
@@ -52,5 +64,15 @@ class TabulatedGSDShapeFamily(TabulatedShapeFamily):
             A dictionary containing valid shape definitions or a JSON file that
             can be read into such a dictionary.
     """
+
     def __call__(self, name):
+        """Use the class's data to produce a shape for the given name.
+
+        Args:
+            name (str):
+                The key of the desired shape in the data dict.
+
+        Returns:
+            :class:`~coxeter.shape_classes.Shape`: The requested shape.
+        """
         return from_gsd_type_shapes(self.get_params(name))

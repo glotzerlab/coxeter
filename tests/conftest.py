@@ -1,41 +1,45 @@
-import pytest
 import numpy as np
-from coxeter.shape_classes import Polyhedron
-from coxeter.shape_classes import ConvexPolyhedron
-from coxeter.shape_classes import ConvexSpheropolyhedron
+import pytest
 from scipy.spatial import ConvexHull
 from scipy.spatial.qhull import QhullError
+
+from coxeter.shape_classes import ConvexPolyhedron, ConvexSpheropolyhedron, Polyhedron
 
 
 # Need to declare this outside the fixture so that it can be used in multiple
 # fixtures (pytest does not allow fixtures to be called).
 def get_cube_points():
-    return np.asarray([[0, 0, 0],
-                       [0, 1, 0],
-                       [1, 1, 0],
-                       [1, 0, 0],
-                       [0, 0, 1],
-                       [0, 1, 1],
-                       [1, 1, 1],
-                       [1, 0, 1]])
+    return np.asarray(
+        [
+            [0, 0, 0],
+            [0, 1, 0],
+            [1, 1, 0],
+            [1, 0, 0],
+            [0, 0, 1],
+            [0, 1, 1],
+            [1, 1, 1],
+            [1, 0, 1],
+        ]
+    )
 
 
 def get_oriented_cube_faces():
-    return np.array([[0, 1, 2, 3],  # Bottom face
-                     [4, 7, 6, 5],  # Top face
-                     [0, 3, 7, 4],  # Left face
-                     [1, 5, 6, 2],  # Right face
-                     [3, 2, 6, 7],  # Front face
-                     [0, 4, 5, 1]])  # Back face
+    return np.array(
+        [
+            [0, 1, 2, 3],  # Bottom face
+            [4, 7, 6, 5],  # Top face
+            [0, 3, 7, 4],  # Left face
+            [1, 5, 6, 2],  # Right face
+            [3, 2, 6, 7],  # Front face
+            [0, 4, 5, 1],
+        ]
+    )  # Back face
 
 
 def get_oriented_cube_normals():
-    return np.asarray([[0, 0, -1],
-                       [0, 0, 1],
-                       [0, -1, 0],
-                       [0, 1, 0],
-                       [1, 0, 0],
-                       [-1, 0, 0]])
+    return np.asarray(
+        [[0, 0, -1], [0, 0, 1], [0, -1, 0], [0, 1, 0], [1, 0, 0], [-1, 0, 0]]
+    )
 
 
 def make_sphero_cube(radius=0):
@@ -59,7 +63,7 @@ def oriented_cube():
 
 @pytest.fixture
 def unoriented_cube():
-    """A cube with the faces disordered (but still provided)."""
+    """Get a cube with the faces out of order on construction."""
     faces = get_oriented_cube_faces()
     for face in faces:
         np.random.shuffle(face)
@@ -74,7 +78,9 @@ def cube(request):
 
 
 def get_valid_hull(points, min_hull_area=1e-2):
-    """To avoid issues from floating point error, we require any test that
+    """Get a convex hull that adheres to our requirements.
+
+    To avoid issues from floating point error, we require any test that
     computes a convex hull from a random set of points to successfully build a
     hull, and the hull must have a reasonable finite area.
 

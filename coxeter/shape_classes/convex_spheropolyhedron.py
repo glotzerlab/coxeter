@@ -1,4 +1,11 @@
+"""Defines a convex spheropolyhedron.
+
+A convex spheropolyhedron is defined by the Minkowski sum of a convex
+polyhedron and a sphere of some radius.
+"""
+
 import numpy as np
+
 from .base_classes import Shape3D
 from .convex_polyhedron import ConvexPolyhedron
 
@@ -17,23 +24,23 @@ class ConvexSpheropolyhedron(Shape3D):
         radius (float):
             The rounding radius of the spheropolyhedron.
     """
+
     def __init__(self, vertices, radius):
         self._polyhedron = ConvexPolyhedron(vertices)
         self._radius = radius
 
     @property
     def gsd_shape_spec(self):
-        """dict: A complete description of this shape corresponding to the
-        shape specification in the GSD file format as described
-        `here <https://gsd.readthedocs.io/en/stable/shapes.html>`_."""
-        return {'type': 'ConvexPolyhedron',
-                'vertices': self.polyhedron._vertices.tolist(),
-                'rounding_radius': self._radius}
+        """dict: Get a `complete GSD specification <shapes>`_."""  # noqa: D401
+        return {
+            "type": "ConvexPolyhedron",
+            "vertices": self.polyhedron._vertices.tolist(),
+            "rounding_radius": self._radius,
+        }
 
     @property
     def polyhedron(self):
-        """:class:`~coxeter.shape_classes.convex_polyhedron.ConvexPolyhedron`:
-        The underlying polyhedron."""
+        """:class:`~coxeter.shape_classes.convex_polyhedron.ConvexPolyhedron`: The underlying polyhedron."""  # noqa: E501
         return self._polyhedron
 
     @property
@@ -43,6 +50,7 @@ class ConvexSpheropolyhedron(Shape3D):
 
     @property
     def center(self):
+        """:math:`(3, )` :class:`numpy.ndarray` of float: Get or set the centroid of the shape."""  # noqa: E501
         return self._polyhedron.center
 
     @center.setter
@@ -52,20 +60,21 @@ class ConvexSpheropolyhedron(Shape3D):
     @property
     def volume(self):
         """float: The volume."""
-        V_poly = self.polyhedron.volume
-        V_sphere = (4/3)*np.pi*self._radius**3
-        V_cyl = 0
+        v_poly = self.polyhedron.volume
+        v_sphere = (4 / 3) * np.pi * self._radius ** 3
+        v_cyl = 0
 
         # For every pair of faces, find the dihedral angle, divide by 2*pi to
         # get the fraction of a cylinder it includes, then multiply by the edge
         # length to get the cylinder contribution.
         for i, j, edge in self.polyhedron._get_face_intersections():
             phi = self.polyhedron.get_dihedral(i, j)
-            edge_length = np.linalg.norm(self.polyhedron.vertices[edge[0]] -
-                                         self.polyhedron.vertices[edge[1]])
-            V_cyl += (np.pi*self.radius**2)*(phi/(2*np.pi))*edge_length
+            edge_length = np.linalg.norm(
+                self.polyhedron.vertices[edge[0]] - self.polyhedron.vertices[edge[1]]
+            )
+            v_cyl += (np.pi * self.radius ** 2) * (phi / (2 * np.pi)) * edge_length
 
-        return V_poly + V_sphere + V_cyl
+        return v_poly + v_sphere + v_cyl
 
     @property
     def radius(self):
@@ -74,25 +83,25 @@ class ConvexSpheropolyhedron(Shape3D):
 
     @property
     def surface_area(self):
-        """float: The surface area."""
-        A_poly = self.polyhedron.surface_area
-        A_sphere = 4*np.pi*self._radius**2
-        A_cyl = 0
+        """float: Get the surface area."""
+        a_poly = self.polyhedron.surface_area
+        a_sphere = 4 * np.pi * self._radius ** 2
+        a_cyl = 0
 
         # For every pair of faces, find the dihedral angle, divide by 2*pi to
         # get the fraction of a cylinder it includes, then multiply by the edge
         # length to get the cylinder contribution.
         for i, j, edge in self.polyhedron._get_face_intersections():
             phi = self.polyhedron.get_dihedral(i, j)
-            edge_length = np.linalg.norm(self.polyhedron.vertices[edge[0]] -
-                                         self.polyhedron.vertices[edge[1]])
-            A_cyl += (2*np.pi*self.radius)*(phi/(2*np.pi))*edge_length
+            edge_length = np.linalg.norm(
+                self.polyhedron.vertices[edge[0]] - self.polyhedron.vertices[edge[1]]
+            )
+            a_cyl += (2 * np.pi * self.radius) * (phi / (2 * np.pi)) * edge_length
 
-        return A_poly + A_sphere + A_cyl
+        return a_poly + a_sphere + a_cyl
 
     def is_inside(self, points):
-        """Determine whether a set of points are contained in this
-        spheropolyhedron.
+        """Determine whether points are contained in this spheropolyhedron.
 
         .. note::
 
@@ -119,19 +128,20 @@ class ConvexSpheropolyhedron(Shape3D):
 
         # Compute extrusions of the faces
         extruded_faces = []
-        for face, normal in zip(self.polyhedron.faces,
-                                self.polyhedron.normals):
+        for face, normal in zip(self.polyhedron.faces, self.polyhedron.normals):
             base_vertices = self.polyhedron.vertices[face]
             extruded_vertices = base_vertices + self.radius * normal
             extruded_faces.append(
-                ConvexPolyhedron([*base_vertices, *extruded_vertices]))
+                ConvexPolyhedron([*base_vertices, *extruded_vertices])
+            )
 
         # Select the points between the inner polyhedron and extruded space
         # and then filter them using the point-face distances
         point_faces_in_polyhedron_hull = point_plane_distances <= 0
         point_faces_in_extruded_hull = point_plane_distances <= self.radius
-        point_faces_to_check = \
+        point_faces_to_check = (
             point_faces_in_extruded_hull & ~point_faces_in_polyhedron_hull
+        )
 
         # Exit early if there are no intersections to check between points
         # and rounded faces
@@ -139,7 +149,7 @@ class ConvexSpheropolyhedron(Shape3D):
             return in_polyhedron
 
         def check_face(point_id, face_id):
-            """Checks for intersection of the point with rounded faces."""
+            """Check for intersection of the point with rounded faces."""
             point = points[point_id]
             extruded_face = extruded_faces[face_id]
             in_extruded_face = extruded_face.is_inside(point)[0]
@@ -149,8 +159,7 @@ class ConvexSpheropolyhedron(Shape3D):
                 return True
 
             # Check spherocylinders around the edges (excluding spherical caps)
-            face_points = self.polyhedron.vertices[
-                self.polyhedron.faces[face_id]]
+            face_points = self.polyhedron.vertices[self.polyhedron.faces[face_id]]
 
             # Vectors along the face edges
             face_edges = np.roll(face_points, -1, axis=0) - face_points
@@ -164,15 +173,16 @@ class ConvexSpheropolyhedron(Shape3D):
 
             # Compute the vector rejection (perpendicular projection) of point
             # along edge vectors and determine if the cylinders contain it
-            edge_projections = np.sum(point_to_edge_starts * face_edges_norm,
-                                      axis=1)
-            perpendicular_projections = point_to_edge_starts - \
-                edge_projections[:, np.newaxis] * face_edges_norm
-            cylinder_distances = np.linalg.norm(
-                perpendicular_projections, axis=-1)
-            in_cylinders = np.any((cylinder_distances <= self.radius) &
-                                  (edge_projections >= 0) &
-                                  (edge_projections <= face_edge_lengths))
+            edge_projections = np.sum(point_to_edge_starts * face_edges_norm, axis=1)
+            perpendicular_projections = (
+                point_to_edge_starts - edge_projections[:, np.newaxis] * face_edges_norm
+            )
+            cylinder_distances = np.linalg.norm(perpendicular_projections, axis=-1)
+            in_cylinders = np.any(
+                (cylinder_distances <= self.radius)
+                & (edge_projections >= 0)
+                & (edge_projections <= face_edge_lengths)
+            )
 
             # Exit early if the point is found in the cylinders
             if in_cylinders:

@@ -1,5 +1,8 @@
-from scipy.spatial import ConvexHull
+"""Defines a convex polyhedron."""
+
 import numpy as np
+from scipy.spatial import ConvexHull
+
 from .polyhedron import Polyhedron
 
 
@@ -16,6 +19,7 @@ class ConvexPolyhedron(Polyhedron):
         vertices (:math:`(N, 3)` :class:`numpy.ndarray`):
             The vertices of the polyhedron.
     """
+
     def __init__(self, vertices):
         hull = ConvexHull(vertices)
         super(ConvexPolyhedron, self).__init__(vertices, hull.simplices, True)
@@ -23,45 +27,44 @@ class ConvexPolyhedron(Polyhedron):
 
     @property
     def mean_curvature(self):
-        R"""float: The integrated, normalized mean curvature
+        r"""float: The integrated, normalized mean curvature.
+
+        This quantity is calculated by the formula
         :math:`R = \sum_i (1/2) L_i (\pi - \phi_i) / (4 \pi)` with edge lengths
         :math:`L_i` and dihedral angles :math:`\phi_i` (see :cite:`Irrgang2017`
         for more information).
         """
-        R = 0
+        unnorm_r = 0
         for i, j, edge in self._get_face_intersections():
             phi = self.get_dihedral(i, j)
             edge_vector = self.vertices[edge[0]] - self.vertices[edge[1]]
             edge_length = np.linalg.norm(edge_vector)
-            R += edge_length * (np.pi - phi)
-        return R / (8 * np.pi)
+            unnorm_r += edge_length * (np.pi - phi)
+        return unnorm_r / (8 * np.pi)
 
     @property
     def gsd_shape_spec(self):
-        """dict: A complete description of this shape corresponding to the
-        shape specification in the GSD file format as described
-        `here <https://gsd.readthedocs.io/en/stable/shapes.html>`_."""
-        return {'type': 'ConvexPolyhedron',
-                'vertices': self._vertices.tolist()}
+        """dict: Get a `complete GSD specification <shapes>`_."""  # noqa: D401
+        return {"type": "ConvexPolyhedron", "vertices": self._vertices.tolist()}
 
     @property
     def tau(self):
-        R"""float: The parameter :math:`tau = \frac{4\pi R^2}{S}` defined in
-        :cite:`Naumann19841` that is closely related to the Pitzer acentric
-        factor. This quantity appears relevant to the third and fourth virial
-        coefficient for hard polyhedron fluids.
+        r"""float: Get the parameter :math:`tau = \frac{4\pi R^2}{S}`.
+
+        This parameter is defined in :cite:`Naumann19841` and is closely
+        related to the Pitzer acentric factor. This quantity appears relevant
+        to the third and fourth virial coefficient for hard polyhedron fluids.
         """
-        R = self.mean_curvature
-        return 4*np.pi*R*R/self.surface_area
+        mc = self.mean_curvature
+        return 4 * np.pi * mc * mc / self.surface_area
 
     @property
     def asphericity(self):
-        """float: The asphericity as defined in :cite:`Irrgang2017`."""
-        return self.mean_curvature*self.surface_area/(3*self.volume)
+        """float: Get the asphericity as defined in :cite:`Irrgang2017`."""
+        return self.mean_curvature * self.surface_area / (3 * self.volume)
 
     def is_inside(self, points):
-        """Determine whether a set of points are contained in this
-        polyhedron.
+        """Determine whether points are contained in this polyhedron.
 
         .. note::
 
@@ -76,27 +79,38 @@ class ConvexPolyhedron(Polyhedron):
                 Boolean array indicating which points are contained in the
                 polyhedron.
         """
-        return np.logical_not(np.any(
-            self._point_plane_distances(points) > 0, axis=1))
+        return np.logical_not(np.any(self._point_plane_distances(points) > 0, axis=1))
 
     @property
     def insphere_from_center(self):
-        """The largest sphere centered at the centroid that fits inside the
-        convex polyhedron, given by a center and a radius."""
+        """Get the largest inscribed sphere centered at the centroid.
+
+        The requirement that the sphere be centered at the centroid of the
+        shape distinguishes this sphere from most typical insphere
+        calculations.
+        """
         center = self.center
         distances = self._point_plane_distances(center).squeeze()
         if any(distances > 0):
-            raise ValueError("The centroid is not contained in the shape. The "
-                             "insphere from center is not defined.")
+            raise ValueError(
+                "The centroid is not contained in the shape. The "
+                "insphere from center is not defined."
+            )
         min_distance = -np.max(distances)
         return center, min_distance
 
     @property
     def circumsphere_from_center(self):
-        """The smallest sphere centered at the centroid that contains the
-        convex polyhedron, given by a center and a radius."""
+        """Get the smallest circumscribed sphere centered at the centroid.
+
+        The requirement that the sphere be centered at the centroid of the
+        shape distinguishes this sphere from most typical circumsphere
+        calculations.
+        """
         center = self.center
         if not self.is_inside(center):
-            raise ValueError("The centroid is not contained in the shape. The "
-                             "circumsphere from center is not defined.")
+            raise ValueError(
+                "The centroid is not contained in the shape. The "
+                "circumsphere from center is not defined."
+            )
         return center, np.max(np.linalg.norm(self._vertices - center, axis=-1))

@@ -1,25 +1,24 @@
 import numpy as np
-from coxeter.shape_classes.sphere import Sphere
 from hypothesis import given
-from hypothesis.strategies import floats
 from hypothesis.extra.numpy import arrays
+from hypothesis.strategies import floats
+
+from coxeter.shape_classes.sphere import Sphere
 from coxeter.shape_classes.utils import translate_inertia_tensor
 
 
 @given(floats(0.1, 1000))
 def test_surface_area(r):
-    S = 4 * np.pi * r**2
     sphere = Sphere(1)
     sphere.radius = r
-    assert sphere.surface_area == S
+    assert sphere.surface_area == 4 * np.pi * r ** 2
 
 
 @given(floats(0.1, 1000))
 def test_volume(r):
-    V = 4/3 * np.pi * r**3
     sphere = Sphere(1)
     sphere.radius = r
-    assert sphere.volume == V
+    assert sphere.volume == 4 / 3 * np.pi * r ** 3
 
 
 @given(floats(0.1, 1000))
@@ -28,15 +27,16 @@ def test_iq(r):
     assert sphere.iq == 1
 
 
-@given(floats(0.1, 1000),
-       arrays(np.float64, (3, ), elements=floats(-10, 10, width=64),
-              unique=True))
+@given(
+    floats(0.1, 1000),
+    arrays(np.float64, (3,), elements=floats(-10, 10, width=64), unique=True),
+)
 def test_inertia_tensor(r, center):
     sphere = Sphere(r)
     assert np.all(sphere.inertia_tensor >= 0)
 
-    volume = 4/3 * np.pi * r**3
-    expected = [2/5 * volume * r**2]*3
+    volume = 4 / 3 * np.pi * r ** 3
+    expected = [2 / 5 * volume * r ** 2] * 3
     np.testing.assert_allclose(np.diag(sphere.inertia_tensor), expected)
 
     sphere.center = center

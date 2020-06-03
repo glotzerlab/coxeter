@@ -1,5 +1,4 @@
-"""Calculates Fourier transforms of collections of delta peaks, spheres, and
-(convex) polyhedra at specified k-space vectors.
+"""Calculates Fourier transforms for form factors.
 
 Ported from freud.kspace by Bradley Dice.
 Original authors: Eric Irrgang, Jens Glaser.
@@ -9,11 +8,8 @@ import numpy as np
 import rowan
 
 
-class _FTbase(object):
-    """Compute the Fourier transform of a set of delta peaks at a list of
-    :math:`K` points.
-
-    .. moduleauthor:: Jens Glaser <jsglaser@umich.edu>
+class _FTbase:
+    """Compute the Fourier transform of some function at some :math:`K` points.
 
     Attributes:
         FT (:class:`np.ndarray`): The Fourier transform.
@@ -29,35 +25,34 @@ class _FTbase(object):
         self.orientation[0][0] = 1.0
         self.NK = 0
 
-    def _computeFT(self):
+    def _compute_ft(self):
         pass
 
     def compute(self):
-        self._computeFT()
+        self._compute_ft()
         return self
 
-    def getFT(self):
+    def get_ft(self):
         """Return Fourier Transform.
 
         Returns:
             :class:`numpy.ndarray`: Fourier Transform.
         """
-
         return self.S
 
-    def set_K(self, K):
+    def set_k(self, k):
         """Set the :math:`K` values to evaluate.
 
         Args:
             K((:math:`N_{K}`, 3) :class:`numpy.ndarray`):
                 :math:`K` values to evaluate.
         """
-        K = np.asarray(K)
-        if K.shape[1] != 3:
-            raise TypeError('K should be an Nx3 array')
+        k = np.asarray(k)
+        if k.shape[1] != 3:
+            raise TypeError("K should be an Nx3 array")
 
-        self.NK = K.shape[0]
-        self.K = K
+        self.NK = k.shape[0]
+        self.K = k
 
     def set_scale(self, scale):
         """Set scale.
@@ -87,12 +82,11 @@ class _FTbase(object):
         position = np.asarray(position)
         orientation = np.asarray(orientation)
         if position.shape[1] != 3:
-            raise TypeError('position should be an Nx3 array')
+            raise TypeError("position should be an Nx3 array")
         if orientation.shape[1] != 4:
-            raise TypeError('orientation should be an Nx4 array')
+            raise TypeError("orientation should be an Nx4 array")
         if position.shape[0] != orientation.shape[0]:
-            raise TypeError(
-                'position and orientation should have the same length')
+            raise TypeError("position and orientation should have the same length")
 
         self.position = position
         self.orientation = orientation
@@ -115,10 +109,7 @@ class _FTbase(object):
 
 
 class FTdelta(_FTbase):
-    """Compute the Fourier transform of a set of delta peaks at a list of
-    :math:`K` points.
-
-    .. moduleauthor:: Jens Glaser <jsglaser@umich.edu>
+    """Compute the Fourier transform of a set of delta functions.
 
     Attributes:
         FT (:class:`np.ndarray`): The Fourier transform.
@@ -127,7 +118,7 @@ class FTdelta(_FTbase):
     def __init__(self):
         super(FTdelta, self).__init__()
 
-    def _computeFT(self):
+    def _compute_ft(self):
         self.S = np.zeros((len(self.K),), dtype=np.complex128)
         for i, k in enumerate(self.K):
             for r in self.position:
@@ -136,7 +127,7 @@ class FTdelta(_FTbase):
 
 class FTsphere(_FTbase):
     """
-    .. moduleauthor:: Jens Glaser <jsglaser@umich.edu>
+    Generate the Fourier transform of a sphere.
 
     Attributes:
         FT (:class:`np.ndarray`): The Fourier transform.
@@ -146,18 +137,23 @@ class FTsphere(_FTbase):
         super(FTsphere, self).__init__()
         self.radius = 0.5
 
-    def _computeFT(self):
+    def _compute_ft(self):
         self.S = np.zeros((len(self.K),), dtype=np.complex128)
         for i, k in enumerate(self.K):
             for r in self.position:
                 k_sq = np.dot(k, k)
                 if k_sq == 0:
-                    f = (4. / 3. * np.pi * self.radius**3)
+                    f = 4.0 / 3.0 * np.pi * self.radius ** 3
                 else:
                     kr = np.sqrt(k_sq) * self.radius
                     # Note that np.sinc(x) gives sin(pi*x)/(pi*x)
-                    f = 4. * np.pi * self.radius / k_sq * \
-                        (np.sinc(kr / np.pi) - np.cos(kr))
+                    f = (
+                        4.0
+                        * np.pi
+                        * self.radius
+                        / k_sq
+                        * (np.sinc(kr / np.pi) - np.cos(kr))
+                    )
                 self.S[i] += self.density * f * np.exp(-1j * np.dot(k, r))
 
     def set_radius(self, radius):
@@ -172,7 +168,7 @@ class FTsphere(_FTbase):
         """Get radius parameter.
 
         If appropriate, return value should be scaled by
-        :py:meth:`~.get_scale` for interpretation.
+        :meth:`~.get_scale` for interpretation.
 
         Returns:
             float: Unscaled radius.
@@ -182,7 +178,7 @@ class FTsphere(_FTbase):
 
 class FTpolyhedron(_FTbase):
     """
-    .. moduleauthor:: Jens Glaser <jsglaser@umich.edu>
+    Generate the form factor of a polyhedron.
 
     Attributes:
         FT (:class:`np.ndarray`): The Fourier transform.
@@ -191,7 +187,7 @@ class FTpolyhedron(_FTbase):
     def __init__(self):
         super(FTpolyhedron, self).__init__()
 
-    def _computeFT(self):
+    def _compute_ft(self):
         self.S = np.zeros((len(self.K),), dtype=np.complex128)
         for i, k in enumerate(self.K):
             for r, q in zip(self.position, self.orientation):
@@ -213,9 +209,9 @@ class FTpolyhedron(_FTbase):
                         k_dot_norm = np.dot(norm, k)
                         k_projected = k - k_dot_norm * norm
                         k_projected_sq = np.dot(k_projected, k_projected)
-                        f_2D = 0
+                        f2d = 0
                         if k_projected_sq == 0:
-                            f_2D = self.areas[face_id]
+                            f2d = self.areas[face_id]
                         else:
                             n_verts = len(face)
                             for edge_id in range(n_verts):
@@ -227,19 +223,24 @@ class FTpolyhedron(_FTbase):
                                 k_dot_center = np.dot(k_projected, edge_center)
                                 k_dot_edge = np.dot(k_projected, edge_vec)
                                 # Note that np.sinc(x) gives sin(pi*x)/(pi*x)
-                                f_n = np.dot(norm, edge_cross_k) * \
-                                    np.sinc(0.5 * k_dot_edge / np.pi) / \
-                                    k_projected_sq
-                                f_2D -= f_n * 1j * np.exp(-1j * k_dot_center)
+                                f_n = (
+                                    np.dot(norm, edge_cross_k)
+                                    * np.sinc(0.5 * k_dot_edge / np.pi)
+                                    / k_projected_sq
+                                )
+                                f2d -= f_n * 1j * np.exp(-1j * k_dot_center)
                         d = self.d[face_id]
                         exp_kr = np.exp(-1j * k_dot_norm * d)
-                        f += k_dot_norm * (1j * f_2D * exp_kr)
+                        f += k_dot_norm * (1j * f2d * exp_kr)
                     # end loop over faces
                     f /= k_sq
                 # end if/else, f is now calculated
                 # S += rho * f * exp(-i k r)
-                self.S[i] += self.density * f * \
-                    np.exp(-1j * np.dot(k, rowan.rotate(rowan.inverse(q), r)))
+                self.S[i] += (
+                    self.density
+                    * f
+                    * np.exp(-1j * np.dot(k, rowan.rotate(rowan.inverse(q), r)))
+                )
 
     def set_params(self, verts, faces, norms, d, areas, volume):
         """Set polyhedron geometry.
@@ -260,7 +261,7 @@ class FTpolyhedron(_FTbase):
         """
         verts = np.asarray(verts)
         if verts.shape[1] != 3:
-            raise TypeError('verts should be an Nx3 array')
+            raise TypeError("verts should be an Nx3 array")
 
         face_offs = np.zeros((len(faces) + 1), dtype=np.uint32)
         for i, f in enumerate(faces):
@@ -272,7 +273,7 @@ class FTpolyhedron(_FTbase):
 
         norms = np.asarray(norms)
         if norms.shape[1] != 3:
-            raise TypeError('norms should be an Nx3 array')
+            raise TypeError("norms should be an Nx3 array")
 
         d = np.asarray(d)
 
@@ -280,16 +281,19 @@ class FTpolyhedron(_FTbase):
 
         if norms.shape[0] != face_offs.shape[0] - 1:
             raise RuntimeError(
-                ('Length of norms should be equal to number of face offsets'
-                    '- 1'))
+                ("Length of norms should be equal to number of face offsets" "- 1")
+            )
         if d.shape[0] != face_offs.shape[0] - 1:
             raise RuntimeError(
-                ('Length of face distances should be equal to number of face'
-                    'offsets - 1'))
+                (
+                    "Length of face distances should be equal to number of face"
+                    "offsets - 1"
+                )
+            )
         if areas.shape[0] != face_offs.shape[0] - 1:
             raise RuntimeError(
-                ('Length of areas should be equal to number of face offsets'
-                    '- 1'))
+                ("Length of areas should be equal to number of face offsets" "- 1")
+            )
         self.verts = verts
         self.face_offs = face_offs
         self.faces = faces
@@ -316,9 +320,10 @@ class FTconvexPolyhedron(FTpolyhedron):
         faces = self.hull.faces
         norms = self.hull._equations[:, 0:3]
         d = -self.hull._equations[:, 3] * self.scale
-        areas = [self.hull.get_face_area(i) * self.scale**2.0
-                 for i in range(len(faces))]
-        volume = self.hull.volume * self.scale**3.0
+        areas = [
+            self.hull.get_face_area(i) * self.scale ** 2.0 for i in range(len(faces))
+        ]
+        volume = self.hull.volume * self.scale ** 3.0
         self.set_params(verts, faces, norms, d, areas, volume)
 
     def set_radius(self, radius):
@@ -344,20 +349,20 @@ class FTconvexPolyhedron(FTpolyhedron):
         # Find current in-sphere radius
         return self.hull.getInsphereRadius()
 
-    def Spoly2D(self, i, k):
-        """Calculate Fourier transform of polygon.
+    def spoly_2d(self, i, k):
+        r"""Calculate Fourier transform of polygon.
 
         Args:
             i (float):
                 Face index into self.hull simplex list.
             k (:class:`numpy.ndarray`):
                 Angular wave vector at which to calculate
-                :math:`S\\left(i\\right)`.
+                :math:`S\left(i\right)`.
         """
         if np.dot(k, k) == 0.0:
-            S = self.hull.getArea(i) * self.scale**2
+            ft = self.hull.getArea(i) * self.scale ** 2
         else:
-            S = 0.0
+            ft = 0.0
             nverts = self.hull.nverts[i]
             verts = list(self.hull.faces[i, 0:nverts])
             # apply periodic boundary condition for convenience
@@ -368,35 +373,35 @@ class FTconvexPolyhedron(FTpolyhedron):
                 v1 = points[verts[j + 1]]
                 v0 = points[verts[j]]
                 edge = v1 - v0
-                centrum = np.array((v1 + v0) / 2.)
+                centrum = np.array((v1 + v0) / 2.0)
                 # Note that np.sinc(x) gives sin(pi*x)/(pi*x)
                 x = np.dot(k, edge) / np.pi
                 cpedgek = np.cross(edge, k)
-                S += np.dot(n, cpedgek) * np.exp(
-                    -1.j * np.dot(k, centrum)) * np.sinc(x)
-            S *= (-1.j / np.dot(k, k))
-        return S
+                ft += (
+                    np.dot(n, cpedgek) * np.exp(-1.0j * np.dot(k, centrum)) * np.sinc(x)
+                )
+            ft *= -1.0j / np.dot(k, k)
+        return ft
 
-    def Spoly3D(self, k):
-        """Calculate Fourier transform of polyhedron.
+    def spoly_3d(self, k):
+        r"""Calculate Fourier transform of polyhedron.
 
         Args:
             k (int):
                 Angular wave vector at which to calculate
-                :math:`S\\left(i\\right)`.
+                :math:`S\left(i\right)`.
         """
         if np.dot(k, k) == 0.0:
-            S = self.hull.getVolume() * self.scale**3
+            ft = self.hull.getVolume() * self.scale ** 3
         else:
-            S = 0.0
+            ft = 0.0
             # for face in faces
             for i in range(self.hull.nfaces):
                 # need to project k into plane of face
                 ni = self.hull.equations[i, 0:3]
-                di = - self.hull.equations[i, 3] * self.scale
+                di = -self.hull.equations[i, 3] * self.scale
                 dotkni = np.dot(k, ni)
                 k_proj = k - ni * dotkni
-                S += dotkni * np.exp(-1.j * dotkni * di) * \
-                    self.Spoly2D(i, k_proj)
-            S *= 1.j / (np.dot(k, k))
-        return S
+                ft += dotkni * np.exp(-1.0j * dotkni * di) * self.Spoly2D(i, k_proj)
+            ft *= 1.0j / (np.dot(k, k))
+        return ft
