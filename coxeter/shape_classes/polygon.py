@@ -196,7 +196,7 @@ class Polygon(Shape2D):
 
     @property
     def gsd_shape_spec(self):
-        """dict: Get a `complete GSD specification <shapes>`_."""  # noqa: D401
+        """dict: Get a :ref:`complete GSD specification <shapes>`."""  # noqa: D401
         return {"type": "Polygon", "vertices": self._vertices.tolist()}
 
     @property

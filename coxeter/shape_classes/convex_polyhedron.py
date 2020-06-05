@@ -44,7 +44,7 @@ class ConvexPolyhedron(Polyhedron):
 
     @property
     def gsd_shape_spec(self):
-        """dict: Get a `complete GSD specification <shapes>`_."""  # noqa: D401
+        """dict: Get a :ref:`complete GSD specification <shapes>`."""  # noqa: D401
         return {"type": "ConvexPolyhedron", "vertices": self._vertices.tolist()}
 
     @property
