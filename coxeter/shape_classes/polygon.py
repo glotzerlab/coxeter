@@ -201,12 +201,12 @@ class Polygon(Shape2D):
 
     @property
     def normal(self):
-        """:math:`(3, ) :class:`numpy.ndarray` of float: Get the the normal vector."""  # noqa: E501
+        """:math:`(3, )` :class:`numpy.ndarray` of float: Get the the normal vector."""  # noqa: E501
         return self._normal
 
     @property
     def vertices(self):
-        """:math:`(N_{verts}, 3) :class:`numpy.ndarray` of float: Get the vertices of the polygon."""  # noqa: E501
+        """:math:`(N_{verts}, 3)` :class:`numpy.ndarray` of float: Get the vertices of the polygon."""  # noqa: E501
         return self._vertices
 
     @property
