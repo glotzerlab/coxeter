@@ -68,3 +68,8 @@ class Shape3D(Shape):
     @abstractmethod
     def surface_area(self, value):
         pass
+
+    @abstractmethod
+    def inertia_tensor(self):
+        """:math:`(3, 3)` :class:`numpy.ndarray`: Get the inertia tensor."""
+        pass

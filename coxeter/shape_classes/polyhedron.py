@@ -513,3 +513,13 @@ class Polyhedron(Shape3D):
             shift = (np.max(self.vertices[:, 2]) - np.min(self.vertices[:, 2])) * 0.025
             for i, vert in enumerate(self.vertices):
                 ax.text(vert[0], vert[1], vert[2] + shift, "{}".format(i), fontsize=10)
+
+    def diagonalize_inertia(self):
+        """Orient the shape along its principal axes.
+
+        The principal axes of a shape are defined by the eigenvectors of the inertia
+        tensor. This method computes the inertia tensor of the shape, diagonalizes it,
+        and then rotates the shape by the corresponding orthogonal transformation.
+        """
+        principal_moments, principal_axes = np.linalg.eigh(self.inertia_tensor)
+        self._vertices = np.dot(self._vertices, principal_axes)
