@@ -200,3 +200,11 @@ class ConvexSpheropolyhedron(Shape3D):
                 in_sphero_shape[point_id] = check_face(point_id, face_id)
 
         return in_polyhedron | in_sphero_shape
+
+    def inertia_tensor(self):
+        """:math:`(3, 3)` :class:`numpy.ndarray`: Get the inertia tensor.
+
+        Warnings:
+            This calculation is not implemented for :class:`~.ConvexSpheropolyhedron`.
+        """
+        raise NotImplementedError

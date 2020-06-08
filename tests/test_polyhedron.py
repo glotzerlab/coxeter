@@ -455,3 +455,19 @@ def test_translate_inertia(translation):
 
     assert np.allclose(mc_tensor, translated_inertia, atol=1e-2, rtol=1e-2)
     assert np.allclose(mc_tensor, translated_shape.inertia_tensor, atol=1e-2, rtol=1e-2)
+
+
+@given(arrays(np.float64, (5, 3), elements=floats(-10, 10, width=64), unique=True))
+def test_diagonalize_inertia(points):
+    """Test that we can orient a polyhedron along its principal axes."""
+    hull = get_valid_hull(points)
+    assume(hull)
+
+    poly = polyhedron_from_hull(points[hull.vertices])
+    assume(poly)
+
+    it = poly.inertia_tensor
+    if not np.allclose(np.diag(np.diag(it)), it):
+        poly.diagonalize_inertia()
+        it = poly.inertia_tensor
+        assert np.allclose(np.diag(np.diag(it)), it)

@@ -8,6 +8,8 @@ parts of the code base that either require or return shapes.
 
 from abc import ABC, abstractmethod
 
+import numpy as np
+
 
 class Shape(ABC):
     """An abstract representation of a shape in N dimensions."""
@@ -68,3 +70,18 @@ class Shape3D(Shape):
     @abstractmethod
     def surface_area(self, value):
         pass
+
+    @abstractmethod
+    def inertia_tensor(self):
+        """:math:`(3, 3)` :class:`numpy.ndarray`: Get the inertia tensor."""
+        pass
+
+    def diagonalize_inertia(self):
+        """Orient the shape along its principal axes.
+
+        The principal axes of a shape are defined by the eigenvectors of the inertia
+        tensor. This method computes the inertia tensor of the shape, diagonalizes it,
+        and then rotates the shape by the corresponding orthogonal transformation.
+        """
+        principal_moments, principal_axes = np.linalg.eigh(self.inertia_tensor)
+        self._vertices = np.dot(self._vertices, principal_axes)
