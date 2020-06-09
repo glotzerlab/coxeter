@@ -1,8 +1,6 @@
 import numpy as np
 import pytest
 from hypothesis.strategies import builds, floats, integers
-from scipy.spatial import ConvexHull
-from scipy.spatial.qhull import QhullError
 
 from coxeter.shape_classes import ConvexPolyhedron, ConvexSpheropolyhedron, Polyhedron
 
@@ -78,35 +76,6 @@ def cube(request):
     return request.getfixturevalue(request.param)
 
 
-def get_valid_hull(points, min_hull_area=1e-2):
-    """Get a convex hull that adheres to our requirements.
-
-    To avoid issues from floating point error, we require any test that
-    computes a convex hull from a random set of points to successfully build a
-    hull, and the hull must have a reasonable finite area.
-
-    Args:
-        points (np.array):
-            The points to compute a hull for.
-
-    Returns:
-        hull (scipy.spatial.ConvexHull) or False:
-            A ConvexHull if the construction succeeded, otherwise False.
-        min_hull_area (float):
-            The minimum size of the hull required.
-    """
-    try:
-        hull = ConvexHull(points)
-    except QhullError:
-        return False
-    else:
-        # Avoid cases where numerical imprecision make tests fail.
-        if hull.volume > min_hull_area:
-            return hull
-        else:
-            return False
-
-
 def points_from_ellipsoid_surface(a, b, c=0, n=10):
     """Sample points on an ellipsoid.
 
@@ -132,17 +101,9 @@ def points_from_ellipsoid_surface(a, b, c=0, n=10):
     points[:, 1] = np.random.normal(0, b, n)
     if c > 0:
         points[:, 2] = np.random.normal(0, c, n)
-    ds = np.linalg.norm(points / [a, b, c], axis=-1)
+    ds = np.linalg.norm(points / [a, b, c if c else 1], axis=-1)
     points /= ds[:, np.newaxis]
     return points if c else points[:, :2]
-
-
-def polyhedron_from_ellipsoid_surface(a, b, c, n):
-    """Generate a polyhedron from points on an ellipsoidal surface.
-
-    See :func:`points_from_ellipsoid_surface` for the parameters.
-    """
-    return ConvexPolyhedron(points_from_ellipsoid_surface(a, b, c, n))
 
 
 EllipsoidSurfaceStrategy = builds(
