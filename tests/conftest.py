@@ -1,5 +1,6 @@
 import numpy as np
 import pytest
+from hypothesis.strategies import builds, floats, integers
 from scipy.spatial import ConvexHull
 from scipy.spatial.qhull import QhullError
 
@@ -104,3 +105,55 @@ def get_valid_hull(points, min_hull_area=1e-2):
             return hull
         else:
             return False
+
+
+def points_from_ellipsoid_surface(a, b, c=0, n=10):
+    """Sample points on an ellipsoid.
+
+    The ellipsoid is given by the equation :math:`x^2/a^2 + y^2/b^2 + z^2/c^2 = 1`.
+
+    Args:
+        a (float):
+            The semi-major axis along x.
+        b (float):
+            The semi-major axis along y.
+        c (float, optional):
+            The semi-major axis along z. If it is ``0``, the returned array is an array
+            of 2D points on the surface of an ellipse.
+        n (int, optional):
+            The number of points on the surface of the ellipsoid (ellipse).
+
+    Returns:
+        :math:`(N, 3)` or :math:`(N, 2)` :class:`numpy.ndarray`: The points.
+    """
+    points = []
+    points = np.zeros((n, 3))
+    points[:, 0] = np.random.normal(0, a, n)
+    points[:, 1] = np.random.normal(0, b, n)
+    if c > 0:
+        points[:, 2] = np.random.normal(0, c, n)
+    ds = np.linalg.norm(points / [a, b, c], axis=-1)
+    points /= ds[:, np.newaxis]
+    return points if c else points[:, :2]
+
+
+def polyhedron_from_ellipsoid_surface(a, b, c, n):
+    """Generate a polyhedron from points on an ellipsoidal surface.
+
+    See :func:`points_from_ellipsoid_surface` for the parameters.
+    """
+    return ConvexPolyhedron(points_from_ellipsoid_surface(a, b, c, n))
+
+
+EllipsoidSurfaceStrategy = builds(
+    points_from_ellipsoid_surface,
+    floats(0.1, 5),
+    floats(0.1, 5),
+    floats(0.1, 5),
+    integers(5, 15),
+)
+
+
+EllipseSurfaceStrategy = builds(
+    points_from_ellipsoid_surface, floats(0.1, 5), floats(0.1, 5), n=integers(5, 15)
+)

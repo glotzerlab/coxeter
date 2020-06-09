@@ -55,7 +55,7 @@ class Polyhedron(Shape3D):
             The vertices of the polyhedron.
         faces (list(list)):
             The faces of the polyhedron.
-        faces_are_convex (bool):
+        faces_are_convex (bool, optional):
             Whether or not the faces of the polyhedron are all convex.
             This is used to determine whether certain operations like
             coplanar face merging are allowed (Default value: False).

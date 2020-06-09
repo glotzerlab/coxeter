@@ -5,8 +5,9 @@ import rowan
 from hypothesis import assume, example, given
 from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats
+from scipy.spatial import ConvexHull
 
-from conftest import get_valid_hull
+from conftest import EllipseSurfaceStrategy
 from coxeter.shape_classes.convex_polygon import ConvexPolygon
 from coxeter.shape_classes.polygon import Polygon
 from coxeter.shape_families import RegularNGonFamily
@@ -189,28 +190,22 @@ def test_nonplanar(square_points):
         Polygon(square_points)
 
 
-@given(arrays(np.float64, (4, 2), elements=floats(1, 5, width=64), unique=True))
+@given(EllipseSurfaceStrategy)
 @example(np.array([[1, 1], [1, 1.00041707], [2.78722762, 1], [2.72755193, 1.32128906]]))
 def test_reordering_convex(points):
     """Test that vertices can be reordered appropriately."""
-    hull = get_valid_hull(points)
-    assume(hull)
-
+    hull = ConvexHull(points)
     verts = points[hull.vertices]
     poly = polygon_from_hull(points[hull.vertices])
-    assume(poly)
     assert np.all(poly.vertices[:, :2] == verts)
 
 
-@given(arrays(np.float64, (4, 2), elements=floats(-5, 5, width=64), unique=True))
+@given(EllipseSurfaceStrategy)
 @example(np.array([[1, 1], [1, 1.00041707], [2.78722762, 1], [2.72755193, 1.32128906]]))
 def test_convex_area(points):
     """Check the areas of various convex sets."""
-    hull = get_valid_hull(points)
-    assume(hull)
-
+    hull = ConvexHull(points)
     poly = polygon_from_hull(points[hull.vertices])
-    assume(poly)
     assert np.isclose(hull.volume, poly.area)
 
 
@@ -227,14 +222,11 @@ def test_rotation_signed_area(random_quat):
     assert np.isclose(poly.signed_area, -1)
 
 
-@given(arrays(np.float64, (4, 2), elements=floats(-5, 5, width=64), unique=True))
+@given(EllipseSurfaceStrategy)
 def test_set_convex_area(points):
     """Test setting area of arbitrary convex sets."""
-    hull = get_valid_hull(points)
-    assume(hull)
-
+    hull = ConvexHull(points)
     poly = polygon_from_hull(points[hull.vertices])
-    assume(poly)
     original_area = poly.area
     poly.area *= 2
     assert np.isclose(poly.area, 2 * original_area)
@@ -263,13 +255,10 @@ def test_bounding_circle_radius_regular_polygon():
         assert np.allclose(center, 0)
 
 
-@given(arrays(np.float64, (3, 2), elements=floats(-5, 5, width=64), unique=True))
+@given(EllipseSurfaceStrategy)
 def test_bounding_circle_radius_random_hull(points):
-    hull = get_valid_hull(points)
-    assume(hull)
-
-    vertices = points[hull.vertices]
-    poly = Polygon(vertices)
+    hull = ConvexHull(points)
+    poly = Polygon(points[hull.vertices])
 
     # For an arbitrary convex polygon, the furthest vertex from the origin is
     # an upper bound on the bounding sphere radius, but need not be the radius
@@ -284,18 +273,15 @@ def test_bounding_circle_radius_random_hull(points):
 
 
 @given(
-    points=arrays(np.float64, (3, 2), elements=floats(-5, 5, width=64), unique=True),
+    EllipseSurfaceStrategy,
     rotation=arrays(np.float64, (4,), elements=floats(-1, 1, width=64)),
 )
 def test_bounding_circle_radius_random_hull_rotation(points, rotation):
     """Test that rotating vertices does not change the bounding radius."""
     assume(not np.all(rotation == 0))
 
-    hull = get_valid_hull(points)
-    assume(hull)
-
-    vertices = points[hull.vertices]
-    poly = Polygon(vertices)
+    hull = ConvexHull(points)
+    poly = Polygon(points[hull.vertices])
 
     rotation = rowan.normalize(rotation)
     rotated_vertices = rowan.rotate(rotation, poly.vertices)

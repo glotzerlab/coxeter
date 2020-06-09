@@ -3,12 +3,16 @@ import os
 import numpy as np
 import pytest
 import rowan
-from hypothesis import assume, given
+from hypothesis import given
 from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats, integers
 from scipy.spatial import ConvexHull
 
-from conftest import get_oriented_cube_faces, get_oriented_cube_normals, get_valid_hull
+from conftest import (
+    EllipsoidSurfaceStrategy,
+    get_oriented_cube_faces,
+    get_oriented_cube_normals,
+)
 from coxeter.shape_classes.convex_polyhedron import ConvexPolyhedron
 from coxeter.shape_classes.sphere import Sphere
 from coxeter.shape_classes.utils import rotate_order2_tensor, translate_inertia_tensor
@@ -90,25 +94,19 @@ def test_merge_faces(convex_cube):
     assert len(convex_cube.faces) == 6
 
 
-@given(arrays(np.float64, (5, 3), elements=floats(-10, 10, width=64), unique=True))
+@given(EllipsoidSurfaceStrategy)
 def test_convex_volume(points):
     """Check the volumes of various convex sets."""
-    hull = get_valid_hull(points)
-    assume(hull)
-
-    poly = polyhedron_from_hull(points[hull.vertices])
-    assume(poly)
+    hull = ConvexHull(points)
+    poly = ConvexPolyhedron(hull.points[hull.vertices])
     assert np.isclose(hull.volume, poly.volume)
 
 
-@given(arrays(np.float64, (5, 3), elements=floats(-10, 10, width=64), unique=True))
+@given(EllipsoidSurfaceStrategy)
 def test_convex_surface_area(points):
     """Check the surface areas of various convex sets."""
-    hull = get_valid_hull(points)
-    assume(hull)
-
+    hull = ConvexHull(points)
     poly = polyhedron_from_hull(points[hull.vertices])
-    assume(poly)
     assert np.isclose(hull.area, poly.surface_area)
 
 
@@ -388,16 +386,15 @@ def test_inside(convex_cube):
 
 
 @given(
-    arrays(np.float64, (5, 3), elements=floats(-10, 10, width=64), unique=True),
+    EllipsoidSurfaceStrategy,
     arrays(np.float64, (100, 3), elements=floats(0, 1, width=64), unique=True),
 )
 def test_insphere_from_center_convex_hulls(points, test_points):
-    hull = get_valid_hull(points)
-    assume(hull)
-    verts = points[hull.vertices]
-    poly = ConvexPolyhedron(verts)
+    hull = ConvexHull(points)
+    poly = ConvexPolyhedron(points[hull.vertices])
     center, radius = poly.insphere_from_center
     assert poly.is_inside(center)
+
     poly.center = [0, 0, 0]
     insphere = Sphere(radius)
     test_points -= np.mean(test_points, axis=0)
