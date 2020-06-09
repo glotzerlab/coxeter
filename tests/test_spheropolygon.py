@@ -2,7 +2,7 @@ import numpy as np
 import numpy.testing as npt
 import pytest
 import rowan
-from hypothesis import assume, example, given
+from hypothesis import assume, example, given, settings
 from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats
 from scipy.spatial import ConvexHull
@@ -96,6 +96,7 @@ def test_nonplanar(square_points):
         ConvexSpheropolygon(square_points, 1)
 
 
+@settings(deadline=500)
 @given(EllipseSurfaceStrategy)
 def test_reordering_convex(points):
     """Test that vertices can be reordered appropriately."""
@@ -105,6 +106,7 @@ def test_reordering_convex(points):
     assert np.all(poly.vertices[:, :2] == verts)
 
 
+@settings(deadline=500)
 @given(EllipseSurfaceStrategy)
 def test_convex_area(points):
     """Check the areas of various convex sets."""

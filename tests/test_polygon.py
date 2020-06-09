@@ -2,7 +2,7 @@ import numpy as np
 import numpy.testing as npt
 import pytest
 import rowan
-from hypothesis import assume, example, given
+from hypothesis import assume, example, given, settings
 from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats
 from scipy.spatial import ConvexHull
@@ -190,6 +190,7 @@ def test_nonplanar(square_points):
         Polygon(square_points)
 
 
+@settings(deadline=500)
 @given(EllipseSurfaceStrategy)
 @example(np.array([[1, 1], [1, 1.00041707], [2.78722762, 1], [2.72755193, 1.32128906]]))
 def test_reordering_convex(points):
@@ -200,6 +201,7 @@ def test_reordering_convex(points):
     assert np.all(poly.vertices[:, :2] == verts)
 
 
+@settings(deadline=500)
 @given(EllipseSurfaceStrategy)
 @example(np.array([[1, 1], [1, 1.00041707], [2.78722762, 1], [2.72755193, 1.32128906]]))
 def test_convex_area(points):
@@ -222,6 +224,7 @@ def test_rotation_signed_area(random_quat):
     assert np.isclose(poly.signed_area, -1)
 
 
+@settings(deadline=500)
 @given(EllipseSurfaceStrategy)
 def test_set_convex_area(points):
     """Test setting area of arbitrary convex sets."""
@@ -272,8 +275,9 @@ def test_bounding_circle_radius_random_hull(points):
     assert radius <= rmax + 1e-6
 
 
+@settings(deadline=500)
 @given(
-    EllipseSurfaceStrategy,
+    points=EllipseSurfaceStrategy,
     rotation=arrays(np.float64, (4,), elements=floats(-1, 1, width=64)),
 )
 def test_bounding_circle_radius_random_hull_rotation(points, rotation):

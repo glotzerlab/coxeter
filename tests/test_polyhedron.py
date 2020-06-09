@@ -3,7 +3,7 @@ import os
 import numpy as np
 import pytest
 import rowan
-from hypothesis import given
+from hypothesis import given, settings
 from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats, integers
 from scipy.spatial import ConvexHull
@@ -94,6 +94,7 @@ def test_merge_faces(convex_cube):
     assert len(convex_cube.faces) == 6
 
 
+@settings(deadline=500)
 @given(EllipsoidSurfaceStrategy)
 def test_convex_volume(points):
     """Check the volumes of various convex sets."""
@@ -102,6 +103,7 @@ def test_convex_volume(points):
     assert np.isclose(hull.volume, poly.volume)
 
 
+@settings(deadline=500)
 @given(EllipsoidSurfaceStrategy)
 def test_convex_surface_area(points):
     """Check the surface areas of various convex sets."""
@@ -385,6 +387,7 @@ def test_inside(convex_cube):
     testfun()
 
 
+@settings(deadline=500)
 @given(
     EllipsoidSurfaceStrategy,
     arrays(np.float64, (100, 3), elements=floats(0, 1, width=64), unique=True),
