@@ -2,12 +2,12 @@ import numpy as np
 import numpy.testing as npt
 import pytest
 import rowan
-from hypothesis import assume, example, given
+from hypothesis import assume, example, given, settings
 from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats
 from scipy.spatial import ConvexHull
 
-from conftest import get_valid_hull
+from conftest import EllipseSurfaceStrategy
 from coxeter.shape_classes import ConvexSpheropolygon
 
 
@@ -96,21 +96,21 @@ def test_nonplanar(square_points):
         ConvexSpheropolygon(square_points, 1)
 
 
-@given(arrays(np.float64, (4, 2), elements=floats(1, 5, width=64), unique=True))
+@settings(deadline=500)
+@given(EllipseSurfaceStrategy)
 def test_reordering_convex(points):
     """Test that vertices can be reordered appropriately."""
-    hull = get_valid_hull(points)
-    assume(hull)
+    hull = ConvexHull(points)
     verts = points[hull.vertices]
     poly = ConvexSpheropolygon(verts, radius=1)
     assert np.all(poly.vertices[:, :2] == verts)
 
 
-@given(arrays(np.float64, (4, 2), elements=floats(-5, 5, width=64), unique=True))
+@settings(deadline=500)
+@given(EllipseSurfaceStrategy)
 def test_convex_area(points):
     """Check the areas of various convex sets."""
-    hull = get_valid_hull(points)
-    assume(hull)
+    hull = ConvexHull(points)
     verts = points[hull.vertices]
     r = 1
     poly = ConvexSpheropolygon(verts, radius=r)

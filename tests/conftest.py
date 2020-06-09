@@ -1,7 +1,6 @@
 import numpy as np
 import pytest
-from scipy.spatial import ConvexHull
-from scipy.spatial.qhull import QhullError
+from hypothesis.strategies import builds, floats, integers
 
 from coxeter.shape_classes import ConvexPolyhedron, ConvexSpheropolyhedron, Polyhedron
 
@@ -77,30 +76,45 @@ def cube(request):
     return request.getfixturevalue(request.param)
 
 
-def get_valid_hull(points, min_hull_area=1e-2):
-    """Get a convex hull that adheres to our requirements.
+def points_from_ellipsoid_surface(a, b, c=0, n=10):
+    """Sample points on an ellipsoid.
 
-    To avoid issues from floating point error, we require any test that
-    computes a convex hull from a random set of points to successfully build a
-    hull, and the hull must have a reasonable finite area.
+    The ellipsoid is given by the equation :math:`x^2/a^2 + y^2/b^2 + z^2/c^2 = 1`.
 
     Args:
-        points (np.array):
-            The points to compute a hull for.
+        a (float):
+            The semi-major axis along x.
+        b (float):
+            The semi-major axis along y.
+        c (float, optional):
+            The semi-major axis along z. If it is ``0``, the returned array is an array
+            of 2D points on the surface of an ellipse.
+        n (int, optional):
+            The number of points on the surface of the ellipsoid (ellipse).
 
     Returns:
-        hull (scipy.spatial.ConvexHull) or False:
-            A ConvexHull if the construction succeeded, otherwise False.
-        min_hull_area (float):
-            The minimum size of the hull required.
+        :math:`(N, 3)` or :math:`(N, 2)` :class:`numpy.ndarray`: The points.
     """
-    try:
-        hull = ConvexHull(points)
-    except QhullError:
-        return False
-    else:
-        # Avoid cases where numerical imprecision make tests fail.
-        if hull.volume > min_hull_area:
-            return hull
-        else:
-            return False
+    points = []
+    points = np.zeros((n, 3))
+    points[:, 0] = np.random.normal(0, a, n)
+    points[:, 1] = np.random.normal(0, b, n)
+    if c > 0:
+        points[:, 2] = np.random.normal(0, c, n)
+    ds = np.linalg.norm(points / [a, b, c if c else 1], axis=-1)
+    points /= ds[:, np.newaxis]
+    return points if c else points[:, :2]
+
+
+EllipsoidSurfaceStrategy = builds(
+    points_from_ellipsoid_surface,
+    floats(0.1, 5),
+    floats(0.1, 5),
+    floats(0.1, 5),
+    integers(5, 15),
+)
+
+
+EllipseSurfaceStrategy = builds(
+    points_from_ellipsoid_surface, floats(0.1, 5), floats(0.1, 5), n=integers(5, 15)
+)

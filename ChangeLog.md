@@ -19,6 +19,7 @@ and this project adheres to
 
 ### Changed
 * Inertia tensors for polyhedra and moments of inertia for polygons are calculated in global coordinates rather than the body frame.
+* Modified testing of convex hulls to generate points on ellipsoids to avoid degenerate simplices.
 
 ## v0.2.0 - 2020-04-09
 
