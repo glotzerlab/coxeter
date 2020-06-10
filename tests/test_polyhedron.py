@@ -20,28 +20,6 @@ from coxeter.shape_families import PlatonicFamily, family_from_doi
 from utils import compute_inertia_mc
 
 
-def polyhedron_from_hull(verts):
-    """Generate a polyhedron from a hull if possible.
-
-    This function tries to generate a polyhedron from a hull, and returns False
-    if it fails so that Hypothesis can simply assume(False) if the hull is
-    nearly degenerate.
-    """
-    try:
-        poly = ConvexPolyhedron(verts)
-    except ValueError as e:
-        # Don't worry about failures caused by bad hulls.
-        allowed_errors = [
-            "The provided vertices do not form a convex polygon.",
-            "Not all vertices are coplanar.",
-        ]
-        if any([ae in str(e) for ae in allowed_errors]):
-            return False
-        else:
-            raise e
-    return poly
-
-
 def damasceno_shapes():
     """Generate the shapes from :cite:`Damasceno2012a`.
 
@@ -108,7 +86,7 @@ def test_convex_volume(points):
 def test_convex_surface_area(points):
     """Check the surface areas of various convex sets."""
     hull = ConvexHull(points)
-    poly = polyhedron_from_hull(points[hull.vertices])
+    poly = ConvexPolyhedron(points[hull.vertices])
     assert np.isclose(hull.area, poly.surface_area)
 
 
@@ -457,14 +435,12 @@ def test_translate_inertia(translation):
     assert np.allclose(mc_tensor, translated_shape.inertia_tensor, atol=1e-2, rtol=1e-2)
 
 
-@given(arrays(np.float64, (5, 3), elements=floats(-10, 10, width=64), unique=True))
+@settings(deadline=500)
+@given(EllipsoidSurfaceStrategy)
 def test_diagonalize_inertia(points):
     """Test that we can orient a polyhedron along its principal axes."""
-    hull = get_valid_hull(points)
-    assume(hull)
-
-    poly = polyhedron_from_hull(points[hull.vertices])
-    assume(poly)
+    hull = ConvexHull(points)
+    poly = ConvexPolyhedron(points[hull.vertices])
 
     it = poly.inertia_tensor
     if not np.allclose(np.diag(np.diag(it)), it):
