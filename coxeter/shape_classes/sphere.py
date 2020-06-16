@@ -50,6 +50,10 @@ class Sphere(Shape3D):
         """float: Get the volume of the sphere."""
         return (4 / 3) * np.pi * self.radius ** 3
 
+    @volume.setter
+    def volume(self, value):
+        self._radius = (3 * value / (4 * np.pi)) ** (1 / 3)
+
     @property
     def surface_area(self):
         """float: Get the surface area."""

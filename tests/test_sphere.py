@@ -2,6 +2,7 @@ import numpy as np
 from hypothesis import given
 from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats
+from pytest import approx
 
 from coxeter.shape_classes.sphere import Sphere
 from coxeter.shape_classes.utils import translate_inertia_tensor
@@ -19,6 +20,15 @@ def test_volume(r):
     sphere = Sphere(1)
     sphere.radius = r
     assert sphere.volume == 4 / 3 * np.pi * r ** 3
+
+
+@given(floats(0.1, 1000))
+def test_set_volume(volume):
+    """Test setting the volume."""
+    sphere = Sphere(1)
+    sphere.volume = volume
+    assert sphere.volume == approx(volume)
+    assert sphere.radius == approx((3 * volume / (4 * np.pi)) ** (1 / 3))
 
 
 @given(floats(0.1, 1000))
