@@ -28,7 +28,9 @@ Vyas Ramasubramani - **Creator and former lead developer**
 * Define proper inertia tensor calculations and transformations for polygons and polyhedra.
 * Added interoperability with the GSD shape specification.
 * Developed shape families and all associated shape repository APIs.
-* Add ability to diagonlize the inertia tensors of shapes.
+* Add ability to diagonalize the inertia tensors of shapes.
+* Defined base classes for all shapes.
+* Standardize usage of Sphere/Circle classes for circum, in, and bounding sphere/circle calculations.
 
 Bryan VanSaders - **Original maintainer of euclid package**
 
