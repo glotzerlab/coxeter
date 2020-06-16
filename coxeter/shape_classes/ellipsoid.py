@@ -127,6 +127,6 @@ class Ellipsoid(Shape3D):
                 Boolean array indicating which points are contained in the
                 ellipsoid.
         """
-        points = np.atleast_2d(points)
+        points = np.atleast_2d(points) - self.center
         scale = np.array([self.a, self.b, self.c])
         return np.linalg.norm(points / scale, axis=-1) <= 1

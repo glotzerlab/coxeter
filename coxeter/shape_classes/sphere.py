@@ -91,5 +91,5 @@ class Sphere(Shape3D):
                 Boolean array indicating which points are contained in the
                 sphere.
         """
-        points = np.atleast_2d(points)
+        points = np.atleast_2d(points) - self.center
         return np.linalg.norm(points, axis=-1) <= self.radius

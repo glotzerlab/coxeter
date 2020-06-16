@@ -54,10 +54,13 @@ def test_inertia_tensor(r, center):
     np.testing.assert_allclose(sphere.inertia_tensor, expected)
 
 
-@given(floats(0.1, 10))
-def test_is_inside(r):
-    sphere = Sphere(1)
-    assert sphere.is_inside([r, 0, 0]).squeeze() == (r <= 1)
+@given(
+    floats(0.1, 10),
+    arrays(np.float64, (3,), elements=floats(-10, 10, width=64), unique=True),
+)
+def test_is_inside(radius, center):
+    sphere = Sphere(1, center)
+    assert sphere.is_inside([radius, 0, 0] + center).squeeze() == (radius <= 1)
 
 
 def test_center():
