@@ -8,6 +8,7 @@ from .base_classes import Shape3D
 from .convex_polygon import ConvexPolygon, _is_convex
 from .polygon import Polygon, _is_simple
 from .utils import translate_inertia_tensor
+from . import Sphere
 
 try:
     import miniball
@@ -449,14 +450,14 @@ class Polyhedron(Shape3D):
 
     @property
     def circumsphere(self):
-        """float: Get the polyhedron's circumsphere."""
+        """:class:`~.Sphere`: Get the polyhedron's circumsphere."""
         points = self.vertices[1:] - self.vertices[0]
         half_point_lengths = np.sum(points * points, axis=1) / 2
         x, resids, _, _ = np.linalg.lstsq(points, half_point_lengths, None)
         if len(self.vertices) > 4 and not np.isclose(resids, 0):
             raise RuntimeError("No circumsphere for this polyhedron.")
 
-        return x + self.vertices[0], np.linalg.norm(x)
+        return Sphere(x + self.vertices[0], np.linalg.norm(x))
 
     @property
     def iq(self):
