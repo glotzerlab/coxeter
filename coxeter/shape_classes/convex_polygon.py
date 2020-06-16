@@ -3,8 +3,8 @@
 import numpy as np
 from scipy.spatial import ConvexHull
 
-from .polygon import Polygon, _align_points_by_normal
 from .circle import Circle
+from .polygon import Polygon, _align_points_by_normal
 
 
 def _is_convex(vertices, normal):

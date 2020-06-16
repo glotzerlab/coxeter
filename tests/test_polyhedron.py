@@ -321,9 +321,7 @@ def test_circumsphere_from_center():
 
         # Verify that all points outside the circumsphere are also outside the
         # polyhedron.
-        assert not np.any(
-            np.logical_and(points_outside, poly.is_inside(scaled_points))
-        )
+        assert not np.any(np.logical_and(points_outside, poly.is_inside(scaled_points)))
 
     testfun()
 

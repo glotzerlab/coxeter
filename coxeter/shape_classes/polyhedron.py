@@ -7,8 +7,8 @@ from scipy.sparse.csgraph import connected_components
 from .base_classes import Shape3D
 from .convex_polygon import ConvexPolygon, _is_convex
 from .polygon import Polygon, _is_simple
-from .utils import translate_inertia_tensor
 from .sphere import Sphere
+from .utils import translate_inertia_tensor
 
 try:
     import miniball
