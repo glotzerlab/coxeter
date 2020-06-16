@@ -4,6 +4,7 @@ import numpy as np
 from scipy.spatial import ConvexHull
 
 from .polyhedron import Polyhedron
+from .sphere import Sphere
 
 
 class ConvexPolyhedron(Polyhedron):
@@ -83,7 +84,7 @@ class ConvexPolyhedron(Polyhedron):
 
     @property
     def insphere_from_center(self):
-        """Get the largest inscribed sphere centered at the centroid.
+        """:class:`~.Sphere`: Get the largest inscribed sphere centered at the centroid.
 
         The requirement that the sphere be centered at the centroid of the
         shape distinguishes this sphere from most typical insphere
@@ -97,11 +98,11 @@ class ConvexPolyhedron(Polyhedron):
                 "insphere from center is not defined."
             )
         min_distance = -np.max(distances)
-        return center, min_distance
+        return Sphere(min_distance, center)
 
     @property
     def circumsphere_from_center(self):
-        """Get the smallest circumscribed sphere centered at the centroid.
+        """:class:`~.Sphere`: Get the smallest circumscribed sphere centered at the centroid.
 
         The requirement that the sphere be centered at the centroid of the
         shape distinguishes this sphere from most typical circumsphere
@@ -113,4 +114,4 @@ class ConvexPolyhedron(Polyhedron):
                 "The centroid is not contained in the shape. The "
                 "circumsphere from center is not defined."
             )
-        return center, np.max(np.linalg.norm(self._vertices - center, axis=-1))
+        return Sphere(np.max(np.linalg.norm(self._vertices - center, axis=-1)), center)

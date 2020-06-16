@@ -252,10 +252,10 @@ def test_bounding_circle_radius_regular_polygon():
         rmax = np.max(np.linalg.norm(vertices, axis=-1))
 
         poly = Polygon(vertices)
-        center, radius = poly.bounding_circle
+        circle = poly.bounding_circle
 
-        assert np.isclose(rmax, radius)
-        assert np.allclose(center, 0)
+        assert np.isclose(rmax, circle.radius)
+        assert np.allclose(circle.center, 0)
 
 
 @given(EllipseSurfaceStrategy)
@@ -267,12 +267,12 @@ def test_bounding_circle_radius_random_hull(points):
     # an upper bound on the bounding sphere radius, but need not be the radius
     # because the ball need not be centered at the centroid.
     rmax = np.max(np.linalg.norm(poly.vertices, axis=-1))
-    center, radius = poly.bounding_circle
-    assert radius <= rmax + 1e-6
+    circle = poly.bounding_circle
+    assert circle.radius <= rmax + 1e-6
 
     poly.center = [0, 0, 0]
-    center, radius = poly.bounding_circle
-    assert radius <= rmax + 1e-6
+    circle = poly.bounding_circle
+    assert circle.radius <= rmax + 1e-6
 
 
 @settings(deadline=500)
@@ -291,9 +291,9 @@ def test_bounding_circle_radius_random_hull_rotation(points, rotation):
     rotated_vertices = rowan.rotate(rotation, poly.vertices)
     poly_rotated = Polygon(rotated_vertices)
 
-    _, radius = poly.bounding_circle
-    _, rotated_radius = poly_rotated.bounding_circle
-    assert np.isclose(radius, rotated_radius)
+    circle = poly.bounding_circle
+    rotated_circle = poly_rotated.bounding_circle
+    assert np.isclose(circle.radius, rotated_circle.radius)
 
 
 def test_circumcircle():
@@ -303,13 +303,13 @@ def test_circumcircle():
         rmax = np.max(np.linalg.norm(vertices, axis=-1))
 
         poly = Polygon(vertices)
-        center, radius = poly.circumcircle
+        circle = poly.circumcircle
 
-        assert np.isclose(rmax, radius)
-        assert np.allclose(center, 0)
+        assert np.isclose(rmax, circle.radius)
+        assert np.allclose(circle.center, 0)
 
 
 def test_incircle_from_center(convex_square):
-    center, radius = convex_square.incircle_from_center
-    assert np.all(center == convex_square.center)
-    assert radius == 0.5
+    circle = convex_square.incircle_from_center
+    assert np.all(circle.center == convex_square.center)
+    assert circle.radius == 0.5

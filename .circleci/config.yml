@@ -16,7 +16,7 @@ jobs:
       - run:
           name: style-check
           command: |
-            python -m pip install --user -U flake8 flake8-black flake8-bugbear flake8-docstrings flake8-rst-docstrings pep8-naming flake8-isort
+            python -m pip install --progress-bar off --user -U flake8 flake8-black flake8-bugbear flake8-docstrings flake8-rst-docstrings pep8-naming flake8-isort
             python -m flake8 --show-source coxeter/
             # Ignore isort errors in tests that are due to ambiguity over whether or not coxeter is third party.
             python -m flake8 --extend-ignore=I001,I004 --show-source tests/
@@ -36,7 +36,7 @@ jobs:
           name: Run tests
           command: |
             python --version
-            python -m pip install .[test] --user
+            python -m pip install .[test] --progress-bar off --user
             python -c "import numpy; print('numpy', numpy.__version__)"
             python -c "import scipy; print('scipy', scipy.__version__)"
             pytest
@@ -63,15 +63,15 @@ jobs:
       - run:
           name: Deploy dist and wheels
           command: |
-            python -m pip install --user -U flake8 flake8-black flake8-bugbear flake8-docstrings flake8-rst-docstrings pep8-naming flake8-isort
-            python -m pip install .[test] --user
+            python -m pip install --progress-bar off --user -U flake8 flake8-black flake8-bugbear flake8-docstrings flake8-rst-docstrings pep8-naming flake8-isort
+            python -m pip install .[test] --progress-bar off --user
             python -m flake8 --show-source coxeter/
             # Ignore isort errors in tests that are due to ambiguity over whether or not coxeter is third party.
             python -m flake8 --extend-ignore=I001,I004 --show-source tests/
             python -m pytest
             python --version
             python -m pip --version
-            python -m pip install --user -U twine wheel setuptools
+            python -m pip install --progress-bar off --user -U twine wheel setuptools
             python -m twine --version
             python -m wheel version
             python setup.py sdist

@@ -3,6 +3,7 @@
 import numpy as np
 from scipy.spatial import ConvexHull
 
+from .circle import Circle
 from .polygon import Polygon, _align_points_by_normal
 
 
@@ -72,7 +73,7 @@ class ConvexPolygon(Polygon):
 
     @property
     def incircle_from_center(self):
-        """Get the largest inscribed circle centered at the centroid.
+        """`~.Circle`: Get the largest inscribed circle centered at the centroid.
 
         The requirement that the circle be centered at the centroid of the
         shape distinguishes this circle from most typical incircle
@@ -87,4 +88,4 @@ class ConvexPolygon(Polygon):
         distances = np.linalg.norm(np.cross(points, deltas), axis=-1)
 
         radius = np.min(distances)
-        return self.center, radius
+        return Circle(radius, self.center)

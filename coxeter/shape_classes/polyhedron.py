@@ -7,6 +7,7 @@ from scipy.sparse.csgraph import connected_components
 from .base_classes import Shape3D
 from .convex_polygon import ConvexPolygon, _is_convex
 from .polygon import Polygon, _is_simple
+from .sphere import Sphere
 from .utils import translate_inertia_tensor
 
 try:
@@ -415,7 +416,7 @@ class Polyhedron(Shape3D):
 
     @property
     def bounding_sphere(self):
-        """tuple[float, float]: Get the center and radius of the bounding sphere."""  # noqa: E501
+        """:class:`~.Sphere`: Get the center and radius of the bounding sphere."""
         if not MINIBALL:
             raise ImportError(
                 "The miniball module must be installed. It can "
@@ -445,18 +446,18 @@ class Polyhedron(Shape3D):
         # The center must be rotated back to undo any rotation.
         center = rowan.rotate(rowan.conjugate(current_rotation), center)
 
-        return center, np.sqrt(r2)
+        return Sphere(np.sqrt(r2), center)
 
     @property
     def circumsphere(self):
-        """float: Get the polyhedron's circumsphere."""
+        """:class:`~.Sphere`: Get the polyhedron's circumsphere."""
         points = self.vertices[1:] - self.vertices[0]
         half_point_lengths = np.sum(points * points, axis=1) / 2
         x, resids, _, _ = np.linalg.lstsq(points, half_point_lengths, None)
         if len(self.vertices) > 4 and not np.isclose(resids, 0):
             raise RuntimeError("No circumsphere for this polyhedron.")
 
-        return x + self.vertices[0], np.linalg.norm(x)
+        return Sphere(np.linalg.norm(x), x + self.vertices[0])
 
     @property
     def iq(self):
