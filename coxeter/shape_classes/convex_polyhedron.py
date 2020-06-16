@@ -4,7 +4,7 @@ import numpy as np
 from scipy.spatial import ConvexHull
 
 from .polyhedron import Polyhedron
-from . import Sphere
+from .sphere import Sphere
 
 
 class ConvexPolyhedron(Polyhedron):
@@ -98,7 +98,7 @@ class ConvexPolyhedron(Polyhedron):
                 "insphere from center is not defined."
             )
         min_distance = -np.max(distances)
-        return Sphere(center, min_distance)
+        return Sphere(min_distance, center)
 
     @property
     def circumsphere_from_center(self):
@@ -114,4 +114,4 @@ class ConvexPolyhedron(Polyhedron):
                 "The centroid is not contained in the shape. The "
                 "circumsphere from center is not defined."
             )
-        return center, np.max(np.linalg.norm(self._vertices - center, axis=-1))
+        return Sphere(np.max(np.linalg.norm(self._vertices - center, axis=-1)), center)

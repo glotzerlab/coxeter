@@ -7,6 +7,7 @@ from ..bentley_ottman import poly_point_isect
 from ..polytri import polytri
 from .base_classes import Shape2D
 from .utils import rotate_order2_tensor, translate_inertia_tensor
+from .circle import Circle
 
 try:
     import miniball
@@ -460,11 +461,11 @@ class Polygon(Shape2D):
         # The center must be rotated back to undo any rotation.
         center = rowan.rotate(rowan.conjugate(current_rotation), center)
 
-        return center, np.sqrt(r2)
+        return Circle(np.sqrt(r2), center)
 
     @property
     def circumcircle(self):
-        """float: Get the polygon's circumcircle."""
+        """:class:`~.Circle`: Get the polygon's circumcircle."""
         # Solves a linear system of equations to find a point equidistant from
         # all the vertices if it exists. Since the polygon is embedded in 3D,
         # we must constrain our solutions to the plane of the polygon.
@@ -478,4 +479,4 @@ class Polygon(Shape2D):
         if len(self.vertices) > 3 and not np.isclose(resids, 0):
             raise RuntimeError("No circumcircle for this polygon.")
 
-        return x + self.vertices[0], np.linalg.norm(x)
+        return Circle(np.linalg.norm(x), x + self.vertices[0])

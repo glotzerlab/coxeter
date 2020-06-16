@@ -4,7 +4,7 @@ import numpy as np
 from scipy.spatial import ConvexHull
 
 from .polygon import Polygon, _align_points_by_normal
-from . import Circle
+from .circle import Circle
 
 
 def _is_convex(vertices, normal):
@@ -88,4 +88,4 @@ class ConvexPolygon(Polygon):
         distances = np.linalg.norm(np.cross(points, deltas), axis=-1)
 
         radius = np.min(distances)
-        return Circle(self.center, radius)
+        return Circle(radius, self.center)

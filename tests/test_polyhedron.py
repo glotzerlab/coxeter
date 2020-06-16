@@ -14,7 +14,6 @@ from conftest import (
     get_oriented_cube_normals,
 )
 from coxeter.shape_classes.convex_polyhedron import ConvexPolyhedron
-from coxeter.shape_classes.sphere import Sphere
 from coxeter.shape_classes.utils import rotate_order2_tensor, translate_inertia_tensor
 from coxeter.shape_families import PlatonicFamily, family_from_doi
 from utils import compute_inertia_mc
@@ -266,13 +265,13 @@ def test_asphericity():
 
 @pytest.mark.parametrize("poly", platonic_solids())
 def test_circumsphere_platonic(poly):
-    center, radius = poly.circumsphere
+    circumsphere = poly.circumsphere
 
     # Ensure polyhedron is centered, then compute distances.
     poly.center = [0, 0, 0]
     r2 = np.sum(poly.vertices ** 2, axis=1)
 
-    assert np.allclose(r2, radius * radius)
+    assert np.allclose(r2, circumsphere.radius ** 2)
 
 
 def test_circumsphere_from_center():
@@ -316,17 +315,14 @@ def test_circumsphere_from_center():
         poly = shapes[shape_index]
         poly.center = center
 
-        centroid, radius = poly.circumsphere_from_center
-        sphere = Sphere(radius)
-
-        scaled_points = points * radius
+        sphere = poly.circumsphere_from_center
+        scaled_points = points * sphere.radius + sphere.center
         points_outside = np.logical_not(sphere.is_inside(scaled_points))
 
         # Verify that all points outside the circumsphere are also outside the
         # polyhedron.
-        shifted_points = scaled_points + centroid
         assert not np.any(
-            np.logical_and(points_outside, poly.is_inside(shifted_points))
+            np.logical_and(points_outside, poly.is_inside(scaled_points))
         )
 
     testfun()
@@ -334,13 +330,11 @@ def test_circumsphere_from_center():
 
 @pytest.mark.parametrize("poly", platonic_solids())
 def test_bounding_sphere_platonic(poly):
-    center, radius = poly.bounding_sphere
-
     # Ensure polyhedron is centered, then compute distances.
     poly.center = [0, 0, 0]
     r2 = np.sum(poly.vertices ** 2, axis=1)
 
-    assert np.allclose(r2, radius * radius, rtol=1e-4)
+    assert np.allclose(r2, poly.bounding_sphere.radius ** 2, rtol=1e-4)
 
 
 def test_inside_boundaries(convex_cube):
@@ -373,13 +367,12 @@ def test_inside(convex_cube):
 def test_insphere_from_center_convex_hulls(points, test_points):
     hull = ConvexHull(points)
     poly = ConvexPolyhedron(points[hull.vertices])
-    center, radius = poly.insphere_from_center
-    assert poly.is_inside(center)
+    insphere = poly.insphere_from_center
+    assert poly.is_inside(insphere.center)
 
     poly.center = [0, 0, 0]
-    insphere = Sphere(radius)
     test_points -= np.mean(test_points, axis=0)
-    test_points *= radius * 3
+    test_points *= insphere.radius * 3
     points_in_sphere = insphere.is_inside(test_points)
     points_in_poly = poly.is_inside(test_points)
     assert np.all(points_in_sphere <= points_in_poly)
