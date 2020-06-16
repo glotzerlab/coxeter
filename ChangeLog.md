@@ -16,6 +16,7 @@ and this project adheres to
 * Extensive style checking using black, isort, and various other flake8 plugins.
 * Make Circle area settable.
 * 3D shapes can be oriented by their principal axes.
+* Make Sphere volume settable.
 
 ### Changed
 * Inertia tensors for polyhedra and moments of inertia for polygons are calculated in global coordinates rather than the body frame.
