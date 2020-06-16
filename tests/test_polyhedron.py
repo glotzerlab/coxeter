@@ -368,8 +368,6 @@ def test_insphere_from_center_convex_hulls(points, test_points):
     insphere = poly.insphere_from_center
     assert poly.is_inside(insphere.center)
 
-    poly.center = [0, 0, 0]
-    test_points -= np.mean(test_points, axis=0)
     test_points *= insphere.radius * 3
     points_in_sphere = insphere.is_inside(test_points)
     points_in_poly = poly.is_inside(test_points)
