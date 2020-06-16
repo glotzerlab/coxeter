@@ -13,6 +13,7 @@ and this project adheres to
 * Polygons moment of inertia calculation.
 * Interoperability with the GSD shape specification.
 * Shape families and stored data for well-known families.
+* All shapes can be centered anywhere in 3D Euclidean space.
 * Extensive style checking using black, isort, and various other flake8 plugins.
 * Make Circle area settable.
 * 3D shapes can be oriented by their principal axes.
