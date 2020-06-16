@@ -28,7 +28,7 @@ def test_set_volume(volume):
     sphere = Sphere(1)
     sphere.volume = volume
     assert sphere.volume == approx(volume)
-    assert sphere.radius == approx((3*volume / (4*np.pi)) ** (1/3))
+    assert sphere.radius == approx((3 * volume / (4 * np.pi)) ** (1 / 3))
 
 
 @given(floats(0.1, 1000))

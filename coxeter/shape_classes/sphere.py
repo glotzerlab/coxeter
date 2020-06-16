@@ -52,7 +52,7 @@ class Sphere(Shape3D):
 
     @volume.setter
     def volume(self, value):
-        self._radius = (3*value/(4*np.pi))**(1/3)
+        self._radius = (3 * value / (4 * np.pi)) ** (1 / 3)
 
     @property
     def surface_area(self):
