@@ -6,7 +6,7 @@ from setuptools import find_packages, setup
 # Read README for PyPI, fallback if it fails.
 desc = "Tools for creating and manipulating shapes."
 try:
-    readme_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "README.md")
+    readme_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "README.rst")
     with open(readme_file) as f:
         readme = f.read()
 except ImportError:
@@ -44,7 +44,7 @@ setup(
     version=version,
     description=desc,
     long_description=readme,
-    long_description_content_type="text/markdown",
+    long_description_content_type="text/x-rst",
     url="https://github.com/glotzerlab/coxeter",
     author="Vyas Ramasubramani",
     author_email="vramasub@umich.edu",
