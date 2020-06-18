@@ -48,7 +48,7 @@ Style Guidelines
 ----------------
 
 The **coxeter** package adheres to a relatively strict set of style guidelines.
-All code in **coexter** should be formatted using `black`_.
+All code in **coxeter** should be formatted using `black`_.
 Imports should be formatted using `isort`_.
 For guidance on the style, see `PEP 8 <https://www.python.org/dev/peps/pep-0008/>`_ and the `Google Python Style Guide <https://google.github.io/styleguide/pyguide.html>`_, but any ambiguities should be resolved automatically by running black.
 All code should of course also follow the principles in `PEP 20 <https://www.python.org/dev/peps/pep-0020/>`_.
