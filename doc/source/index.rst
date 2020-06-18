@@ -1,9 +1,8 @@
-===================================
-Welcome to coxeter's documentation!
-===================================
+.. include:: ../README.rst
 
-Welcome to the documentation for coxeter, a package for working with various geometric shapes.
-The package works with both two- and three-dimensional shapes such as polygons and polyhedra.
+
+Table of Contents
+=================
 
 .. toctree::
    :maxdepth: 2
@@ -14,69 +13,15 @@ The package works with both two- and three-dimensional shapes such as polygons a
    development
    zreferences
 
+.. toctree::
+   :maxdepth: 1
+   :caption: Reference:
 
-Getting Started
-===============
+   development
+   license
+   changelog
+   credits
 
-Requirements
-------------
-
-The minimum requirements for using coxeter are:
-
-* Python >= 3.6
-* NumPy
-* rowan >= 1.2
-* SciPy
-
-Installation
-------------
-
-The package can be installed from source by cloning `the repository <https://github.com/glotzerlab/coxeter>`_ and running the setup script:
-
-.. code-block:: bash
-
-    $ git clone https://github.com/glotzerlab/coxeter.git
-    $ cd coxeter
-    $ python setup.py install
-
-Running Tests
--------------
-
-The package is currently tested for Python versions 3.6+ on Unix-like systems.
-Continuous integrated testing is performed using CircleCI.
-
-To run the packaged unit tests, execute the following line from the root of the repository:
-
-.. code-block:: bash
-
-    python -m unittest discover tests
-
-Building Documentation
-----------------------
-
-You can also build this documentation from source if you clone the repository.
-The documentation is written in `reStructuredText <http://docutils.sourceforge.net/rst.html>`_ and compiled using `Sphinx <http://www.sphinx-doc.org/en/master/>`_.
-To build from source, first install Sphinx:
-
-.. code-block:: bash
-
-    pip install sphinx sphinx_rtd_theme
-
-You can then use Sphinx to create the actual documentation in either PDF or HTML form by running the following commands in the coxeter root directory:
-
-.. code-block:: bash
-
-    cd doc
-    make html # For html output
-    make latexpdf # For a LaTeX compiled PDF file
-    open build/html/index.html
-
-Support and Contribution
-========================
-
-This package is hosted on `GitHub <https://github.com/glotzerlab/coxeter>`_.
-Please report any bugs or problems that you find on the `issue tracker <https://github.com/glotzerlab/coxeter/issues>`_.
-All contributions to coxeter are welcomed via pull requests!
 
 Indices and tables
 ==================
