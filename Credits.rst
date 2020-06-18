@@ -1,6 +1,3 @@
-Credits
-=======
-
 coxeter Developers
 ------------------
 

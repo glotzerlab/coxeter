@@ -9,18 +9,16 @@ Table of Contents
    :caption: Contents:
 
    modules
-   credits
-   development
-   zreferences
 
 .. toctree::
    :maxdepth: 1
    :caption: Reference:
 
    development
-   license
    changelog
    credits
+   license
+   zreferences
 
 
 Indices and tables
