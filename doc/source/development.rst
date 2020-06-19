@@ -23,6 +23,9 @@ All code contributed to **coxeter** must adhere to the following guidelines:
   * All code should adhere to the source code conventions and satisfy the documentation and testing requirements discussed below.
   * Preserve backwards-compatibility whenever possible. Make clear if something must change, and notify package maintainers that merging such changes will require a major release.
 
+To provide a reasonable balance between a high level of backwards compatibility and a reasonable maintenance burden, **coxeter** has adopted `NEP 29`_ to limit the Python and NumPy versions that will be supported.
+
+
 .. tip::
 
     During continuous integration, the code is checked automatically with `flake8`_, including a number of plugins that validate parts of the style.
@@ -33,7 +36,7 @@ All code contributed to **coxeter** must adhere to the following guidelines:
         python -m pip install flake8 flake8-black flake8-bugbear flake8-docstrings flake8-rst-docstrings pep8-naming flake8-isort
         python -m flake8 coxeter tests
 
-    To avoid having commits fail in case you forget to run this, you can run the following commands to set up a git pre-commit hook that will ensure your code is compliant before committing:
+    To avoid having commits fail in case you forget to run this, you can set up a git pre-commit hook using `pre-commit`_ (recommended) or run the following commands to use flake8's built-in hooks installation to ensure your code is compliant before committing:
 
     .. code-block:: bash
 
@@ -42,6 +45,7 @@ All code contributed to **coxeter** must adhere to the following guidelines:
 
 .. _OneFlow: https://www.endoflineblog.com/oneflow-a-git-branching-model-and-workflow
 .. _flake8: http://flake8.pycqa.org/en/latest/
+.. _pre-commit: https://pre-commit.com/
 
 
 Style Guidelines
