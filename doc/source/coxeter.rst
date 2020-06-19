@@ -6,8 +6,8 @@ Subpackages
 
 .. toctree::
 
-   coxeter.shape_classes
-   coxeter.shape_families
+   package-shape-classes
+   package-shape-families
 
 Submodules
 ----------
