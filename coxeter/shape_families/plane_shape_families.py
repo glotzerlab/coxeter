@@ -120,10 +120,11 @@ class TruncationPlaneShapeFamily(_ShapeFamily):
 class Family323Plus(TruncationPlaneShapeFamily):
     r"""The 323+ shape family defined in :cite:`Chen2014`.
 
-    The following parameters are required by this class:
+    This class requires the parameters
 
-      - :math:`a \in [1, 3]`
-      - :math:`c \in [1, 3]`
+    :math:`a \in [1, 3]`
+
+    :math:`c \in [1, 3]`
 
     The :math:`b` parameter is always equal to 1 for this family.
 
@@ -188,10 +189,11 @@ class Family323Plus(TruncationPlaneShapeFamily):
 class Family423(TruncationPlaneShapeFamily):
     r"""The 423 shape family defined in :cite:`Chen2014`.
 
-    The following parameters are required by this class:
+    This class requires the parameters
 
-      - :math:`a \in [1, 2]`
-      - :math:`c \in [2, 3]`
+    :math:`a \in [1, 2]`
+
+    :math:`c \in [2, 3]`
 
     The :math:`b` parameter is always equal to 2 for this family.
 
@@ -296,20 +298,22 @@ class Family423(TruncationPlaneShapeFamily):
 
 
 class Family523(TruncationPlaneShapeFamily):
-    r"""The 423 shape family defined in :cite:`Chen2014`.
+    r"""The 523 shape family defined in :cite:`Chen2014`.
 
-    The following parameters are required by this class:
+    This class requires the parameters
 
-      - :math:`a \in [1, s\sqrt{5}]`
-      - :math:`c \in [S^2, 3]`
+    :math:`a \in [1, s\sqrt{5}]`
+
+    :math:`c \in [S^2, 3]`
 
     where :math:`s = \frac{1}{2}\left(\sqrt{5} - 1\right)` and
     :math:`S = \frac{1}{2}\left(\sqrt{5} + 1\right)`. The :math:`b` parameter
     is always equal to 2 for this family.
 
     The extremal shapes in this shape family are an icosidodecahedron at
-    (1, S^2), an icosahedron at (s\u221A5, S^2), a dodecahedron at (1, 3), and
-    a rhombic triacontahedron at (s\u221A5, 3).
+    (:math:`1`, :math:`S^2`), an icosahedron at (:math:`s\sqrt{5}`, :math:`S^2`), a
+    dodecahedron at (:math:`1`, :math:`3`), and a rhombic triacontahedron at
+    (:math:`s\sqrt{5}`, :math:`3`).
     """
 
     """The constant s (the inverse of the golden ratio)."""

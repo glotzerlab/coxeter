@@ -1,8 +1,4 @@
-"""Calculates Fourier transforms for form factors.
-
-Ported from freud.kspace by Bradley Dice.
-Original authors: Eric Irrgang, Jens Glaser.
-"""
+"""Calculates Fourier transforms for form factors."""
 
 import numpy as np
 import rowan

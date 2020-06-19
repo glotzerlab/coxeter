@@ -1,38 +1,22 @@
-coxeter package
-===============
+coxeter
+=======
 
 Subpackages
 -----------
 
 .. toctree::
-
-   coxeter.shape_classes
-   coxeter.shape_families
+   package-shape-classes
+   package-shape-families
 
 Submodules
 ----------
 
-coxeter.ft module
------------------
+.. toctree::
 
-.. automodule:: coxeter.ft
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-coxeter.shape\_getters module
------------------------------
-
-.. automodule:: coxeter.shape_getters
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
-Module contents
----------------
+   module-ft
+   module-shape-getters
 
 .. automodule:: coxeter
+   :autosummary:
    :members:
-   :undoc-members:
    :show-inheritance:

@@ -82,7 +82,7 @@ class Ellipse(Shape2D):
 
     @property
     def circumference(self):
-        """float: Alias for :meth:`~.perimeter`."""
+        """float: Alias for :meth:`~.Ellipse.perimeter`."""
         return self.perimeter
 
     @property

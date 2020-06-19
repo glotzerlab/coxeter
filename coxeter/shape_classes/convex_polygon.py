@@ -73,7 +73,7 @@ class ConvexPolygon(Polygon):
 
     @property
     def incircle_from_center(self):
-        """`~.Circle`: Get the largest inscribed circle centered at the centroid.
+        """`coxeter.shape_classes.Circle`: Get the largest concentric inscribed circle.
 
         The requirement that the circle be centered at the centroid of the
         shape distinguishes this circle from most typical incircle
