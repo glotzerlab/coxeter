@@ -33,6 +33,7 @@ Module contents
 ---------------
 
 .. automodule:: coxeter
+   :autosummary:
    :members:
    :undoc-members:
    :show-inheritance:

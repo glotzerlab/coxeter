@@ -61,6 +61,7 @@ intersphinx_mapping = {
 autodoc_default_options = {
     "inherited-members": True,
     "show-inheritance": True,
+    "autosummary": True,
 }
 
 

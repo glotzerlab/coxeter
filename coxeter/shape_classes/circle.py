@@ -67,7 +67,7 @@ class Circle(Shape2D):
 
     @property
     def circumference(self):
-        """float: Get the circumference, alias for :meth:`~.perimeter`."""
+        """float: Get the circumference, alias for :meth:`~.Circle.perimeter`."""
         return self.perimeter
 
     @property

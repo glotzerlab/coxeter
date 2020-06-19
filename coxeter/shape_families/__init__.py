@@ -23,7 +23,6 @@ from .tabulated_shape_family import TabulatedGSDShapeFamily, TabulatedShapeFamil
 __all__ = [
     "TabulatedShapeFamily",
     "TabulatedGSDShapeFamily",
-    "shape_repositories",
     "Family323Plus",
     "Family423",
     "Family523",
