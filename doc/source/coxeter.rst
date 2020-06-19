@@ -1,12 +1,6 @@
 coxeter
 =======
 
-.. automodule:: coxeter
-   :autosummary:
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Subpackages
 -----------
 
@@ -21,3 +15,8 @@ Submodules
 
    module-ft
    module-shape-getters
+
+.. automodule:: coxeter
+   :autosummary:
+   :members:
+   :show-inheritance:

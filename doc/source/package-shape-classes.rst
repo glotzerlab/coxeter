@@ -5,5 +5,4 @@ coxeter.shape\_classes package
 
 .. automodule:: coxeter.shape_classes
    :members:
-   :undoc-members:
    :show-inheritance:
