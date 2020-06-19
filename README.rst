@@ -1,13 +1,15 @@
 coxeter
 =======
 
+.. contents::
+   :local:
+
 About
 -----
 
 Welcome to the documentation for **coxeter**!
 The **coxeter** Python library provides tools for working with common geometric objects in two and three dimensions.
-Named for the 20th century geometer best known for his work on polytopes, **coxeter** is especially focused on polygons and polyhedra, but it also support various standard curved shapes such as spheres and ellipsoids.
-If you have any questions about how to work with coxeter, please visit the `ReadTheDocs page <http://coxeter.readthedocs.io/en/latest/>`__.
+Named for the `20th century geometer <https://en.wikipedia.org/wiki/Harold_Scott_MacDonald_Coxeter>`__ best known for his work on polytopes, **coxeter** is especially focused on polygons and polyhedra, but it also support various standard curved shapes such as spheres and ellipsoids.
 
 Setup
 -----

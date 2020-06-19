@@ -1,14 +1,14 @@
-.. include:: ../../README.rst
-
-
 Table of Contents
 =================
+
+.. include:: ../../README.rst
+
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-   modules
+   coxeter
 
 .. toctree::
    :maxdepth: 1

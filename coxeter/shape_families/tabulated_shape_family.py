@@ -47,7 +47,11 @@ class TabulatedShapeFamily(_ShapeFamily):
         return self._data
 
     def get_params(self, name):
-        """dict: Get the full dictionary of data stored for a given file."""  # noqa: D401, E501
+        """Get the full dictionary of data stored for a given file.
+
+        Returns:
+            dict: The dictionary of data for a given key in the :attr:`~.data`.
+        """  # noqa: D401, E501
         return self._data[name]
 
 

@@ -69,7 +69,7 @@ class PlatonicFamily(TabulatedGSDShapeFamily):
 
     The following parameters are required by this class:
 
-      - name: The name of the Platonic solid. Options are "Cube", "Dodecahedron",
+      - name: The name of the Platonic solid. Options are "Cube", "Dodecahedron", \
               "Icosahedron", "Octahedron", and "Tetrahedron".
     """
 
