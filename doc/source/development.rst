@@ -6,7 +6,7 @@ Development Guide
 
 
 All contributions to **coxeter** are welcome!
-Developers are invited to contribute to the framework by pull request to the package repository on `github`_, and all users are welcome to provide contributions in the form of **user feedback** and **bug reports**.
+Developers are invited to contribute to the framework by pull request to the package repository on `GitHub`_, and all users are welcome to provide contributions in the form of **user feedback** and **bug reports**.
 We recommend discussing new features in form of a proposal on the issue tracker for the appropriate project prior to development.
 
 .. _github: https://github.com/glotzerlab/coxeter
@@ -46,6 +46,7 @@ To provide a reasonable balance between a high level of backwards compatibility 
 .. _OneFlow: https://www.endoflineblog.com/oneflow-a-git-branching-model-and-workflow
 .. _flake8: http://flake8.pycqa.org/en/latest/
 .. _pre-commit: https://pre-commit.com/
+.. _NEP 29: https://numpy.org/neps/nep-0029-deprecation_policy.html
 
 
 Style Guidelines

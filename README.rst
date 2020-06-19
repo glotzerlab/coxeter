@@ -4,8 +4,19 @@ coxeter
 .. contents::
    :local:
 
-About
------
+|ReadTheDocs|
+|CircleCI|
+|PyPI|
+|conda-forge|
+
+.. |ReadTheDocs| image:: https://readthedocs.org/projects/coxeter/badge/?version=latest
+    :target: http://coxeter.readthedocs.io/en/latest/?badge=latest
+.. |CircleCI| image:: https://circleci.com/gh/glotzerlab/coxeter.svg?style=svg
+    :target: https://circleci.com/gh/glotzerlab/coxeter
+.. |PyPI| image:: https://img.shields.io/pypi/v/coxeter.svg
+    :target: https://pypi.org/project/coxeter/
+.. |conda-forge| image:: https://img.shields.io/conda/vn/conda-forge/coxeter.svg
+   :target: https://anaconda.org/conda-forge/coxeter
 
 Welcome to the documentation for **coxeter**!
 The **coxeter** Python library provides tools for working with common geometric objects in two and three dimensions.
