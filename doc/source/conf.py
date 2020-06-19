@@ -11,18 +11,19 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../../'))
+
+sys.path.insert(0, os.path.abspath("../../"))
 
 
 # -- Project information -----------------------------------------------------
 
-project = 'coxeter'
-copyright = '2015-2020, The Regents of the University of Michigan'
-author = 'Vyas Ramasubramani'
+project = "coxeter"
+copyright = "2015-2020, The Regents of the University of Michigan"
+author = "Vyas Ramasubramani"
 
 # The full version, including alpha/beta/rc tags
-version = '0.2.0'
-release = '0.2.0'
+version = "0.2.0"
+release = "0.2.0"
 
 
 # -- General configuration ---------------------------------------------------
@@ -31,18 +32,18 @@ release = '0.2.0'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.autosummary',
-    'sphinx.ext.napoleon',
-    'sphinx.ext.intersphinx',
-    'sphinx.ext.mathjax',
-    'sphinxcontrib.bibtex',
-    'autodocsumm',
+    "sphinx.ext.autodoc",
+    "sphinx.ext.autosummary",
+    "sphinx.ext.napoleon",
+    "sphinx.ext.intersphinx",
+    "sphinx.ext.mathjax",
+    "sphinxcontrib.bibtex",
+    "autodocsumm",
 ]
 
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ["_templates"]
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -51,26 +52,26 @@ exclude_patterns = []
 
 
 intersphinx_mapping = {
-    'python': ('https://docs.python.org/3', None),
-    'numpy': ('https://docs.scipy.org/doc/numpy', None),
-    'matplotlib': ('https://matplotlib.org', None),
-    'gsd': ('https://gsd.readthedocs.io/en/stable/', None),
+    "python": ("https://docs.python.org/3", None),
+    "numpy": ("https://docs.scipy.org/doc/numpy", None),
+    "matplotlib": ("https://matplotlib.org", None),
+    "gsd": ("https://gsd.readthedocs.io/en/stable/", None),
 }
 
 autodoc_default_options = {
-    'inherited-members': True,
-    'show-inheritance': True,
+    "inherited-members": True,
+    "show-inheritance": True,
 }
 
 
 # The reST default role to use for all documents.
-default_role = 'any'
+default_role = "any"
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'sphinx_rtd_theme'
+html_theme = "sphinx_rtd_theme"
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
