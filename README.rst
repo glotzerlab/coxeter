@@ -102,13 +102,13 @@ To build the documentation, first install Sphinx:
 
 .. code:: bash
 
-   pip install sphinx sphinx_rtd_theme
+   cd doc
+   pip install -r requirements.txt
 
 You can then use Sphinx to create the actual documentation in either PDF or HTML form by running the following commands in the coxeter root directory:
 
 .. code:: bash
 
-   cd doc
    make html # For html output
    make latexpdf # For a LaTeX compiled PDF file
    open build/html/index.html
