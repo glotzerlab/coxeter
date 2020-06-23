@@ -208,3 +208,27 @@ class ConvexSpheropolyhedron(Shape3D):
             This calculation is not implemented for :class:`~.ConvexSpheropolyhedron`.
         """
         raise NotImplementedError
+
+    @property
+    def circumsphere_from_center(self):
+        """:class:`~.Sphere`: Get the smallest circumscribed sphere centered at the centroid.
+
+        The requirement that the sphere be centered at the centroid of the
+        shape distinguishes this sphere from most typical circumsphere
+        calculations.
+        """
+        circumsphere = self._polyhedron.circumsphere_from_center
+        circumsphere.radius += self._radius
+        return circumsphere
+
+    @property
+    def insphere_from_center(self):
+        """:class:`~.Sphere`: Get the largest inscribed sphere centered at the centroid.
+
+        The requirement that the sphere be centered at the centroid of the
+        shape distinguishes this sphere from most typical insphere
+        calculations.
+        """
+        insphere = self._polyhedron.insphere_from_center
+        insphere.radius += self._radius
+        return insphere
