@@ -60,9 +60,20 @@ class ConvexSpheropolyhedron(Shape3D):
     @property
     def volume(self):
         """float: The volume."""
+        # Compute the volume as the sum of 4 terms:
+        # 1) the volume of the underlying polyhedron.
+        # 2) The volume of the spherical caps on the vertices, which sum up to
+        #    a single sphere with the spheropolyhedron's rounding radius.
+        # 3) The volume of cylindrical wedges along the edges, which are
+        #    computed using a standard cylinder formula then using the dihedral
+        #    angle of the face to determine what fraction of the cylinder to
+        #    include.
+        # 4) The volume of the extruded faces, which is the surface area of
+        #    each face multiplied by the rounding radius.
         v_poly = self.polyhedron.volume
         v_sphere = (4 / 3) * np.pi * self._radius ** 3
         v_cyl = 0
+        v_face = self.polyhedron.surface_area * self._radius
 
         # For every pair of faces, find the dihedral angle, divide by 2*pi to
         # get the fraction of a cylinder it includes, then multiply by the edge
@@ -74,7 +85,7 @@ class ConvexSpheropolyhedron(Shape3D):
             )
             v_cyl += (np.pi * self.radius ** 2) * (phi / (2 * np.pi)) * edge_length
 
-        return v_poly + v_sphere + v_cyl
+        return v_poly + v_sphere + v_face + v_cyl
 
     @property
     def radius(self):
