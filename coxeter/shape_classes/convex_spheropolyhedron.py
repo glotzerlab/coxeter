@@ -60,9 +60,20 @@ class ConvexSpheropolyhedron(Shape3D):
     @property
     def volume(self):
         """float: The volume."""
+        # Compute the volume as the sum of 4 terms:
+        # 1) The volume of the underlying polyhedron.
+        # 2) The volume of the spherical caps on the vertices, which sum up to
+        #    a single sphere with the spheropolyhedron's rounding radius.
+        # 3) The volume of cylindrical wedges along the edges, which are
+        #    computed using a standard cylinder formula then using the dihedral
+        #    angle of the face to determine what fraction of the cylinder to
+        #    include.
+        # 4) The volume of the extruded faces, which is the surface area of
+        #    each face multiplied by the rounding radius.
         v_poly = self.polyhedron.volume
         v_sphere = (4 / 3) * np.pi * self._radius ** 3
         v_cyl = 0
+        v_face = self.polyhedron.surface_area * self._radius
 
         # For every pair of faces, find the dihedral angle, divide by 2*pi to
         # get the fraction of a cylinder it includes, then multiply by the edge
@@ -74,7 +85,7 @@ class ConvexSpheropolyhedron(Shape3D):
             )
             v_cyl += (np.pi * self.radius ** 2) * (phi / (2 * np.pi)) * edge_length
 
-        return v_poly + v_sphere + v_cyl
+        return v_poly + v_sphere + v_face + v_cyl
 
     @property
     def radius(self):
@@ -84,6 +95,14 @@ class ConvexSpheropolyhedron(Shape3D):
     @property
     def surface_area(self):
         """float: Get the surface area."""
+        # Compute the surface area as the sum of 3 terms:
+        # 1) The (now extruded) surface area of the underlying polyhedron.
+        # 2) The surface are of the spherical vertex caps, which is just the
+        #    surface area of a single sphere with the rounding radius.
+        # 3) The surface area of cylindrical wedges along the edges, which are
+        #    computed using a standard cylinder formula then using the dihedral
+        #    angle of the face to determine what fraction of the cylinder to
+        #    include.
         a_poly = self.polyhedron.surface_area
         a_sphere = 4 * np.pi * self._radius ** 2
         a_cyl = 0
@@ -208,3 +227,27 @@ class ConvexSpheropolyhedron(Shape3D):
             This calculation is not implemented for :class:`~.ConvexSpheropolyhedron`.
         """
         raise NotImplementedError
+
+    @property
+    def circumsphere_from_center(self):
+        """:class:`~.Sphere`: Get the smallest circumscribed sphere centered at the centroid.
+
+        The requirement that the sphere be centered at the centroid of the
+        shape distinguishes this sphere from most typical circumsphere
+        calculations.
+        """
+        circumsphere = self._polyhedron.circumsphere_from_center
+        circumsphere.radius += self._radius
+        return circumsphere
+
+    @property
+    def insphere_from_center(self):
+        """:class:`~.Sphere`: Get the largest inscribed sphere centered at the centroid.
+
+        The requirement that the sphere be centered at the centroid of the
+        shape distinguishes this sphere from most typical insphere
+        calculations.
+        """
+        insphere = self._polyhedron.insphere_from_center
+        insphere.radius += self._radius
+        return insphere

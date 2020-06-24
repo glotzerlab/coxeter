@@ -11,7 +11,8 @@ def test_volume(radius):
     v_cube = 1
     v_sphere = (4 / 3) * np.pi * radius ** 3
     v_cyl = 12 * (np.pi * radius ** 2) / 4
-    assert np.isclose(sphero_cube.volume, v_cube + v_sphere + v_cyl)
+    v_face = sphero_cube.polyhedron.surface_area * radius
+    assert np.isclose(sphero_cube.volume, v_cube + v_sphere + v_face + v_cyl)
 
 
 def test_volume_polyhedron(convex_cube, cube_points):
