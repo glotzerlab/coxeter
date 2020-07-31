@@ -91,6 +91,37 @@ class Polygon(Shape2D):
             omitted, the class may produce invalid results if the user
             inputs incorrect coordinates, so this flag should be set to
             ``False`` with care.
+    Example::
+        >>> triangle = coxeter.shape_classes.Polygon([[-1,0],[0,1],[1,0]])
+        >>> triangle.area
+        1.0
+        >>> circle = triangle.bounding_circle
+        >>> circle.radius
+        1.0
+        >>> triangle.center
+        array([0.        , 0.33333333, 0.        ])
+        >>> circle = triangle.circumcircle
+        >>> circle.radius
+        1.0
+        >>> triangle.gsd_shape_spec
+        {'type': 'Polygon', 'vertices': [[-1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [1.0, 0.0, 0.0]]}
+        >>> triangle.inertia_tensor
+        array([[0.11111111, 0.        , 0.        ],
+               [0.        , 0.        , 0.        ],
+               [0.        , 0.        , 0.33333333]])
+        >>> triangle.normal
+        array([ 0., -0., -1.])
+        >>> triangle.planar_moments_inertia
+        (0.16666666666666666, 0.16666666666666666, 0.0)
+        >>> triangle.polar_moment_inertia
+        0.3333333333333333
+        >>> triangle.signed_area
+        1.0
+        >>> triangle.vertices
+        array([[-1.00000000e+00, -5.55111512e-17,  0.00000000e+00],
+               [ 0.00000000e+00,  1.00000000e+00,  0.00000000e+00],
+               [ 1.00000000e+00, -5.55111512e-17,  0.00000000e+00]])
+
     """
 
     def __init__(self, vertices, normal=None, planar_tolerance=1e-5, test_simple=True):
@@ -178,6 +209,19 @@ class Polygon(Shape2D):
                 center, when this flag is True the point closer to the center
                 comes first, otherwise the point further away comes first
                 (Default value: True).
+        Example::
+            >>> square = coxeter.shape_classes.ConvexPolygon([[-1,-1],[1,-1],[-1,1],[1,1]])
+            >>> print(square.vertices)
+            [[-1. -1.  0.]
+             [ 1. -1.  0.]
+             [ 1.  1.  0.]
+             [-1.  1.  0.]]
+            >>> square.reorder_verts(clockwise=True)
+            >>> print(square.vertices)
+            [[-1. -1.  0.]
+             [-1.  1.  0.]
+             [ 1.  1.  0.]
+             [ 1. -1.  0.]]
         """
         verts = _align_points_by_normal(self._normal, self._vertices - self.center)
 
