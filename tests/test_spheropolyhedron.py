@@ -1,8 +1,7 @@
 import numpy as np
+from conftest import make_sphero_cube
 from hypothesis import given
 from hypothesis.strategies import floats
-
-from conftest import make_sphero_cube
 
 
 @given(radius=floats(0.1, 1))
