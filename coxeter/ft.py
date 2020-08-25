@@ -11,8 +11,8 @@ class _FTbase:
         FT (:class:`np.ndarray`): The Fourier transform.
     """
 
-    def __init__(self):
-        self.scale = 1.0
+    def __init__(self, scale=1.0):
+        self.scale = scale
         self.density = 1.0
         self.S = np.zeros((0, 0), dtype=np.complex128)
         self.K = np.zeros((1, 3))
@@ -49,22 +49,6 @@ class _FTbase:
 
         self.NK = k.shape[0]
         self.K = k
-
-    def set_scale(self, scale):
-        """Set scale.
-
-        Args:
-            scale (float): Scale.
-        """
-        self.scale = scale
-
-    def get_scale(self):
-        """Get scale.
-
-        Returns:
-            float: Scale.
-        """
-        return self.scale
 
     def set_rq(self, position, orientation):
         """Set particle positions and orientations.
@@ -180,8 +164,8 @@ class FTpolyhedron(_FTbase):
         FT (:class:`np.ndarray`): The Fourier transform.
     """
 
-    def __init__(self):
-        super(FTpolyhedron, self).__init__()
+    def __init__(self, scale=1.0):
+        super(FTpolyhedron, self).__init__(scale)
 
     def _compute_ft(self):
         self.S = np.zeros((len(self.K),), dtype=np.complex128)
@@ -307,8 +291,8 @@ class FTconvexPolyhedron(FTpolyhedron):
             Convex polyhedron object.
     """
 
-    def __init__(self, hull):
-        super(FTconvexPolyhedron, self).__init__()
+    def __init__(self, hull, scale=1.0):
+        super(FTconvexPolyhedron, self).__init__(scale)
         self.hull = hull
 
         # set convex hull geometry
