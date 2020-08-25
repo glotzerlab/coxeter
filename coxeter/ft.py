@@ -113,9 +113,9 @@ class FTsphere(_FTbase):
         FT (:class:`np.ndarray`): The Fourier transform.
     """
 
-    def __init__(self):
+    def __init__(self, radius=0.5):
         super(FTsphere, self).__init__()
-        self.radius = 0.5
+        self.radius = radius
 
     def _compute_ft(self):
         self.S = np.zeros((len(self.K),), dtype=np.complex128)
@@ -135,25 +135,6 @@ class FTsphere(_FTbase):
                         * (np.sinc(kr / np.pi) - np.cos(kr))
                     )
                 self.S[i] += self.density * f * np.exp(-1j * np.dot(k, r))
-
-    def set_radius(self, radius):
-        """Set particle radius.
-
-        Args:
-            radius (float): Particle radius.
-        """
-        self.radius = radius
-
-    def get_radius(self):
-        """Get radius parameter.
-
-        If appropriate, return value should be scaled by
-        :meth:`~.get_scale` for interpretation.
-
-        Returns:
-            float: Unscaled radius.
-        """
-        return self.radius
 
 
 class FTpolyhedron(_FTbase):

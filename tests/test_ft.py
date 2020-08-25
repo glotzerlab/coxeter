@@ -76,14 +76,14 @@ class TestFormFactors(unittest.TestCase):
 
     def test_ft_sphere(self):
         ft = coxeter.ft.FTsphere()
-        self.assertEqual(ft.get_radius(), 0.5)
+        self.assertEqual(ft.radius, 0.5)
         ft.set_k(self.K)
 
         positions = np.array([[0, 0, 0]], dtype=np.float)
         orientations = np.array([[1, 0, 0, 0]] * len(positions), dtype=np.float)
         ft.set_rq(positions, orientations)
         ft.compute()
-        npt.assert_equal(ft.S[0], 4 / 3 * np.pi * ft.get_radius() ** 3)
+        npt.assert_equal(ft.S[0], 4 / 3 * np.pi * ft.radius ** 3)
         npt.assert_almost_equal(
             ft.S,
             [
