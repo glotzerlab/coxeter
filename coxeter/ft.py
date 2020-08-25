@@ -11,9 +11,9 @@ class _FTbase:
         FT (:class:`np.ndarray`): The Fourier transform.
     """
 
-    def __init__(self, scale=1.0):
+    def __init__(self, scale=1.0, density=1.0):
         self.scale = scale
-        self.density = 1.0
+        self.density = density
         self.S = np.zeros((0, 0), dtype=np.complex128)
         self.K = np.zeros((1, 3))
         self.position = np.zeros((1, 3))
@@ -71,22 +71,6 @@ class _FTbase:
         self.position = position
         self.orientation = orientation
 
-    def set_density(self, density):
-        """Set scattering density.
-
-        Args:
-            density (complex): Complex value of scattering density.
-        """
-        self.density = density
-
-    def get_density(self):
-        """Get density.
-
-        Returns:
-            complex: Density.
-        """
-        return self.density
-
 
 class FTdelta(_FTbase):
     """Compute the Fourier transform of a set of delta functions.
@@ -95,8 +79,8 @@ class FTdelta(_FTbase):
         FT (:class:`np.ndarray`): The Fourier transform.
     """
 
-    def __init__(self):
-        super(FTdelta, self).__init__()
+    def __init__(self, density=1.0):
+        super(FTdelta, self).__init__(density)
 
     def _compute_ft(self):
         self.S = np.zeros((len(self.K),), dtype=np.complex128)
@@ -113,8 +97,8 @@ class FTsphere(_FTbase):
         FT (:class:`np.ndarray`): The Fourier transform.
     """
 
-    def __init__(self, radius=0.5):
-        super(FTsphere, self).__init__()
+    def __init__(self, radius=0.5, density=1.0):
+        super(FTsphere, self).__init__(density)
         self.radius = radius
 
     def _compute_ft(self):
@@ -145,8 +129,8 @@ class FTpolyhedron(_FTbase):
         FT (:class:`np.ndarray`): The Fourier transform.
     """
 
-    def __init__(self, scale=1.0):
-        super(FTpolyhedron, self).__init__(scale)
+    def __init__(self, scale=1.0, density=1.0):
+        super(FTpolyhedron, self).__init__(scale, density)
 
     def _compute_ft(self):
         self.S = np.zeros((len(self.K),), dtype=np.complex128)
@@ -272,8 +256,8 @@ class FTconvexPolyhedron(FTpolyhedron):
             Convex polyhedron object.
     """
 
-    def __init__(self, hull, scale=1.0):
-        super(FTconvexPolyhedron, self).__init__(scale)
+    def __init__(self, hull, scale=1.0, density=1.0):
+        super(FTconvexPolyhedron, self).__init__(scale, density)
         self.hull = hull
 
         # set convex hull geometry
