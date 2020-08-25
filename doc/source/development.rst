@@ -36,12 +36,12 @@ To provide a reasonable balance between a high level of backwards compatibility 
         python -m pip install flake8 flake8-black flake8-bugbear flake8-docstrings flake8-rst-docstrings pep8-naming flake8-isort
         python -m flake8 coxeter tests
 
-    To avoid having commits fail in case you forget to run this, you can set up a git pre-commit hook using `pre-commit`_ (recommended) or run the following commands to use flake8's built-in hooks installation to ensure your code is compliant before committing:
+    To avoid having commits fail in case you forget to run this, you can set up a git pre-commit hook using `pre-commit`_:
 
     .. code-block:: bash
 
-        flake8 --install-hook git
-        git config --bool flake8.strict true
+        python -m pip install pre-commit
+        pre-commit install
 
 .. _OneFlow: https://www.endoflineblog.com/oneflow-a-git-branching-model-and-workflow
 .. _flake8: http://flake8.pycqa.org/en/latest/
