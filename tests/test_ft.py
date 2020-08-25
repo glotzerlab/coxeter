@@ -32,7 +32,7 @@ class TestFormFactors(unittest.TestCase):
             coxeter.ft.FTpolyhedron,
         ]:
             ft = ft_class()
-            self.assertEqual(ft.NK, 0)
+            self.assertEqual(len(ft.K), 1)
             npt.assert_array_equal(ft.K, np.zeros((1, 3)))
             self.assertEqual(ft.S.shape, (0, 0))
             self.assertEqual(ft.density, 1.0)

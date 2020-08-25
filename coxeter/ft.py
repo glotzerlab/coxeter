@@ -19,7 +19,6 @@ class _FTbase:
         self.position = np.zeros((1, 3))
         self.orientation = np.zeros((1, 4))
         self.orientation[0][0] = 1.0
-        self.NK = 0
 
     def _compute_ft(self):
         pass
@@ -39,7 +38,6 @@ class _FTbase:
         if k.shape[1] != 3:
             raise TypeError("K should be an Nx3 array")
 
-        self.NK = k.shape[0]
         self.K = k
 
     def set_rq(self, position, orientation):
