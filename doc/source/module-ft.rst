@@ -5,4 +5,3 @@ coxeter.ft module
    :members:
    :undoc-members:
    :show-inheritance:
-
