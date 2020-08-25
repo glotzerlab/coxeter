@@ -43,8 +43,7 @@ class TestFormFactors(unittest.TestCase):
             self.assertEqual(ft.scale, 1.0)
 
     def test_ft_delta(self):
-        ft = coxeter.ft.FTdelta()
-        ft.set_k(self.K)
+        ft = coxeter.ft.FTdelta(k=self.K)
 
         positions = np.array([[0, 0, 0]], dtype=np.float)
         orientations = np.array([[1, 0, 0, 0]] * len(positions), dtype=np.float)
@@ -75,9 +74,8 @@ class TestFormFactors(unittest.TestCase):
         )
 
     def test_ft_sphere(self):
-        ft = coxeter.ft.FTsphere()
+        ft = coxeter.ft.FTsphere(k=self.K)
         self.assertEqual(ft.radius, 0.5)
-        ft.set_k(self.K)
 
         positions = np.array([[0, 0, 0]], dtype=np.float)
         orientations = np.array([[1, 0, 0, 0]] * len(positions), dtype=np.float)
@@ -124,8 +122,7 @@ class TestFormFactors(unittest.TestCase):
         cube = PlatonicFamily()("Cube")
         cube.volume = 8
         npt.assert_almost_equal(cube.volume, 8)
-        ft = coxeter.ft.FTconvexPolyhedron(cube)
-        ft.set_k(self.K)
+        ft = coxeter.ft.FTconvexPolyhedron(cube, k=self.K)
 
         positions = np.array([[0, 0, 0]], dtype=np.float)
         orientations = np.array([[1, 0, 0, 0]] * len(positions), dtype=np.float)

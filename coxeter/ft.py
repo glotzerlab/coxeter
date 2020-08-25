@@ -11,11 +11,17 @@ class _FTbase:
         FT (:class:`np.ndarray`): The Fourier transform.
     """
 
-    def __init__(self, scale=1.0, density=1.0):
+    def __init__(self, scale=1.0, density=1.0, k=None):
         self.scale = scale
         self.density = density
         self.S = np.zeros((0, 0), dtype=np.complex128)
-        self.K = np.zeros((1, 3))
+        if k is not None:
+            k = np.asarray(k)
+            if k.shape[1] != 3:
+                raise TypeError("K should be an Nx3 array")
+        else:
+            k = np.zeros((1, 3))
+        self.K = k
         self.position = np.zeros((1, 3))
         self.orientation = np.zeros((1, 4))
         self.orientation[0][0] = 1.0
@@ -26,19 +32,6 @@ class _FTbase:
     def compute(self):
         self._compute_ft()
         return self
-
-    def set_k(self, k):
-        """Set the :math:`K` values to evaluate.
-
-        Args:
-            K((:math:`N_{K}`, 3) :class:`numpy.ndarray`):
-                :math:`K` values to evaluate.
-        """
-        k = np.asarray(k)
-        if k.shape[1] != 3:
-            raise TypeError("K should be an Nx3 array")
-
-        self.K = k
 
     def set_rq(self, position, orientation):
         """Set particle positions and orientations.
@@ -69,8 +62,8 @@ class FTdelta(_FTbase):
         FT (:class:`np.ndarray`): The Fourier transform.
     """
 
-    def __init__(self, density=1.0):
-        super(FTdelta, self).__init__(density)
+    def __init__(self, density=1.0, k=None):
+        super(FTdelta, self).__init__(density=density, k=k)
 
     def _compute_ft(self):
         self.S = np.zeros((len(self.K),), dtype=np.complex128)
@@ -87,8 +80,8 @@ class FTsphere(_FTbase):
         FT (:class:`np.ndarray`): The Fourier transform.
     """
 
-    def __init__(self, radius=0.5, density=1.0):
-        super(FTsphere, self).__init__(density)
+    def __init__(self, radius=0.5, density=1.0, k=None):
+        super(FTsphere, self).__init__(density=density, k=k)
         self.radius = radius
 
     def _compute_ft(self):
@@ -119,8 +112,8 @@ class FTpolyhedron(_FTbase):
         FT (:class:`np.ndarray`): The Fourier transform.
     """
 
-    def __init__(self, scale=1.0, density=1.0):
-        super(FTpolyhedron, self).__init__(scale, density)
+    def __init__(self, scale=1.0, density=1.0, k=None):
+        super(FTpolyhedron, self).__init__(scale=scale, density=density, k=k)
 
     def _compute_ft(self):
         self.S = np.zeros((len(self.K),), dtype=np.complex128)
@@ -246,8 +239,8 @@ class FTconvexPolyhedron(FTpolyhedron):
             Convex polyhedron object.
     """
 
-    def __init__(self, hull, scale=1.0, density=1.0):
-        super(FTconvexPolyhedron, self).__init__(scale, density)
+    def __init__(self, hull, scale=1.0, density=1.0, k=None):
+        super(FTconvexPolyhedron, self).__init__(scale=scale, density=density, k=k)
         self.hull = hull
 
         # set convex hull geometry
