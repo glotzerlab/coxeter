@@ -28,14 +28,6 @@ class _FTbase:
         self._compute_ft()
         return self
 
-    def get_ft(self):
-        """Return Fourier Transform.
-
-        Returns:
-            :class:`numpy.ndarray`: Fourier Transform.
-        """
-        return self.S
-
     def set_k(self, k):
         """Set the :math:`K` values to evaluate.
 
