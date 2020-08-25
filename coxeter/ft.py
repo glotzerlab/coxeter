@@ -254,29 +254,6 @@ class FTconvexPolyhedron(FTpolyhedron):
         volume = self.hull.volume * self.scale ** 3.0
         self.set_params(verts, faces, norms, d, areas, volume)
 
-    def set_radius(self, radius):
-        """Set radius of in-sphere.
-
-        Args:
-            radius (float):
-                Radius of inscribed sphere without scale applied.
-        """
-        # Find original in-sphere radius, determine necessary scale factor,
-        # and scale vertices and surface distances
-        self.hull.setInsphereRadius(float(radius))
-
-    def get_radius(self):
-        """Get radius parameter.
-
-        If appropriate, return value should be scaled by
-        get_parambyname('scale') for interpretation.
-
-        Returns:
-            float: Unscaled radius.
-        """
-        # Find current in-sphere radius
-        return self.hull.getInsphereRadius()
-
     def spoly_2d(self, i, k):
         r"""Calculate Fourier transform of polygon.
 
