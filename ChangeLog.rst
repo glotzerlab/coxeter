@@ -14,6 +14,11 @@ Fixed
 ~~~~~
 - Volume calculation for ConvexSpheropolyhedron includes area of extruded faces in addition to vertices and edges.
 
+Removed
+~~~~~~~
+
+-  The symmetry.py module.
+
 v0.3.0 - 2020-06-18
 -------------------
 
