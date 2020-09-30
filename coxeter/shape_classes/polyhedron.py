@@ -371,7 +371,6 @@ class Polyhedron(Shape3D):
 
         Returns:
             :class:`numpy.ndarray`: The area of each face.
-
         Example::
             >>> cube  = coxeter.shape_classes.ConvexPolyhedron([[1,1,1],
             [1,-1,1],[1,1,-1],[1,-1,-1],[-1,1,1],[-1,-1,1],
