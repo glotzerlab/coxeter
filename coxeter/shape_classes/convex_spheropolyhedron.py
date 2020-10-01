@@ -178,7 +178,9 @@ class ConvexSpheropolyhedron(Shape3D):
                 Boolean array indicating which points are contained in the
                 spheropolyhedron.
         Example::
-            >>> sphero = coxeter.shape_classes.ConvexSpheropolyhedron([[1,1,1],[1,-1,1],[1,1,-1],[1,-1,-1],[-1,1,1],[-1,-1,1],[-1,1,-1],[-1,-1,-1]],radius=0.5)
+            >>> sphero = coxeter.shape_classes.ConvexSpheropolyhedron([
+            [1,1,1],[1,-1,1],[1,1,-1],[1,-1,-1],[-1,1,1],[-1,-1,1],
+            [-1,1,-1],[-1,-1,-1]],radius=0.5)
             >>> sphero.is_inside([[0,0,0],[10,10,10]])
             array([ True, False])
         """  # noqa: E501
@@ -298,8 +300,9 @@ class ConvexSpheropolyhedron(Shape3D):
         Example:
             >>> sphero = coxeter.shape_classes.ConvexSpheropolyhedron([[1,1,1],[1,-1,1],
             [1,1,-1],[1,-1,-1],[-1,1,1],[-1,-1,1],[-1,1,-1],[-1,-1,-1]],radius=0.5)
-            >>> sphero.is_inside([[0,0,0],[10,10,10]])
-            array([ True, False])
+            >>> sphere = sphero.insphere_from_center
+            >>> sphere.radius
+            1.5
         """
         insphere = self._polyhedron.insphere_from_center
         insphere.radius += self._radius

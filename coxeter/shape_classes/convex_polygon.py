@@ -58,7 +58,8 @@ class ConvexPolygon(Polygon):
             number of vertices and are rotated significantly out of the
             plane.
     Example::
-        >>> square = coxeter.shape_classes.ConvexPolygon([[1,1],[-1,-1],[1,-1],[-1,1]])
+        >>> square = coxeter.shape_classes.ConvexPolygon([[1,1],[-1,-1],
+                                                          [1,-1],[-1,1]])
         >>> square.area
         4.0
         >>> circle = square.bounding_circle
@@ -74,7 +75,8 @@ class ConvexPolygon(Polygon):
         >>> circle.area
         6.2831853071795845
         >>> square.gsd_shape_spec
-        {'type': 'Polygon', 'vertices': [[1.0, 1.0, 0.0], [-1.0, 1.0, 0.0], [-1.0, -1.0, 0.0], [1.0, -1.0, 0.0]]}
+        {'type': 'Polygon', 'vertices': [[1.0, 1.0, 0.0],
+        [-1.0, 1.0, 0.0], [-1.0, -1.0, 0.0], [1.0, -1.0, 0.0]]}
         >>> circle = square.incircle_from_center
         >>> circle.radius
         1.0

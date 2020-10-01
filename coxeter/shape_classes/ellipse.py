@@ -18,7 +18,8 @@ class Ellipse(Shape2D):
             The coordinates of the center of the ellipse (Default
             value: (0, 0, 0)).
     Example::
-        >>> circle = coxeter.shape_classes.circle.Circle(radius=1.0,center=(1,1,1))
+        >>> circle = coxeter.shape_classes.circle.Circle
+        (radius=1.0,center=(1,1,1))
         >>> ellipse = coxeter.shape_classes.Ellipse(1.0,2.0)
         >>> ellipse.a
         1.0
