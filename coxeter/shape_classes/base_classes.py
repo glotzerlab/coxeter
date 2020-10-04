@@ -28,6 +28,38 @@ class Shape(ABC):
         """dict: Get a :ref:`complete GSD specification <shapes>`."""  # noqa: D401
         return {}
 
+    def compute_form_factor_amplitude(self, q):
+        r"""Calculate the form factor intensity.
+
+        In solid state physics, scattering theory is concerned with understanding the
+        ways in which light is scattered from a sample. For a single point particle at
+        position P, the the amplitude of a scattered wave observed at position Q is the
+        product of the incoming wave amplitude (which follows the standard equation for
+        a traveling wave) and the scattering density at P. For a crystal composed of
+        many point particles, the intensity of the resulting superposition of waves can
+        be identified as the Fourier transform of the total scattering density. When the
+        particles are not point particles, the scattering density of the particles in
+        their local coordinate systems are no longer identical. Conveniently, this
+        component is separable in the Fourier transform of the total density; as a
+        result, the scattering scattering intensity can be decomposed into two terms,
+        the Fourier transform of the distribution of scatterers and the Fourier
+        transform of each scatterer in its local coordinate system. The first term is
+        known as the static structure factor :math:`S(\vec{q})` and describes the
+        spatial distribution of scatterers, while the second term is called the form
+        factor :math:`F(\vec{q})` and describes the local scattering profile.
+
+        While the form factor (the scattering intensity) can be measured from
+        diffraction experiments, the Fourier transform of a single particle cannot.
+        However, it can be computed theoretically for a known scattering volume and can
+        be inserted directly into the expression for the total scattering intensity.
+        This local profile directly describes the wave emitted from a single scatterer
+        (in reciprocal space) and is known as the form factor amplitude. This function
+        computes the form factor amplitude for a given wavevector :math:`q`.
+        """
+        raise NotImplementedError(
+            "The form factor calculation is not implemented for this shape."
+        )
+
 
 class Shape2D(Shape):
     """An abstract representation of a shape in 2 dimensions."""
