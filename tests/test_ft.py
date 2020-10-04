@@ -28,7 +28,6 @@ class TestFormFactors(unittest.TestCase):
         for ft_class in [
             coxeter.ft._FTbase,
             coxeter.ft.FTdelta,
-            coxeter.ft.FTsphere,
             coxeter.ft.FTpolyhedron,
         ]:
             ft = ft_class()
@@ -71,50 +70,6 @@ class TestFormFactors(unittest.TestCase):
                 -1.20254791,
             ],
             decimal=6,
-        )
-
-    def test_ft_sphere(self):
-        ft = coxeter.ft.FTsphere(k=self.K)
-        self.assertEqual(ft.radius, 0.5)
-
-        positions = np.array([[0, 0, 0]], dtype=np.float)
-        orientations = np.array([[1, 0, 0, 0]] * len(positions), dtype=np.float)
-        ft.set_rq(positions, orientations)
-        ft.compute()
-        npt.assert_equal(ft.S[0], 4 / 3 * np.pi * ft.radius ** 3)
-        npt.assert_almost_equal(
-            ft.S,
-            [
-                0.52359878,
-                0.51062514,
-                0.51062514,
-                0.47307465,
-                0.51062514,
-                0.51062514,
-                0.36181941,
-                0.11702976,
-            ],
-        )
-
-        positions = np.array(
-            [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]],
-            dtype=np.float,
-        )
-        orientations = np.array([[1, 0, 0, 0]] * len(positions), dtype=np.float)
-        ft.set_rq(positions, orientations)
-        ft.compute()
-        npt.assert_almost_equal(
-            ft.S,
-            [
-                3.14159265,
-                2.59428445,
-                2.59428445,
-                1.49856158,
-                2.59428445,
-                2.59428445,
-                -0.62655329,
-                -0.14073389,
-            ],
         )
 
     def test_ft_convex_polyhedron(self):

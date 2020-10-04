@@ -72,38 +72,6 @@ class FTdelta(_FTbase):
                 self.S[i] += self.density * np.exp(-1j * np.dot(k, r))
 
 
-class FTsphere(_FTbase):
-    """
-    Generate the Fourier transform of a sphere.
-
-    Attributes:
-        FT (:class:`np.ndarray`): The Fourier transform.
-    """
-
-    def __init__(self, radius=0.5, density=1.0, k=None):
-        super(FTsphere, self).__init__(density=density, k=k)
-        self.radius = radius
-
-    def _compute_ft(self):
-        self.S = np.zeros((len(self.K),), dtype=np.complex128)
-        for i, k in enumerate(self.K):
-            for r in self.position:
-                k_sq = np.dot(k, k)
-                if k_sq == 0:
-                    f = 4.0 / 3.0 * np.pi * self.radius ** 3
-                else:
-                    kr = np.sqrt(k_sq) * self.radius
-                    # Note that np.sinc(x) gives sin(pi*x)/(pi*x)
-                    f = (
-                        4.0
-                        * np.pi
-                        * self.radius
-                        / k_sq
-                        * (np.sinc(kr / np.pi) - np.cos(kr))
-                    )
-                self.S[i] += self.density * f * np.exp(-1j * np.dot(k, r))
-
-
 class FTpolyhedron(_FTbase):
     """
     Generate the form factor of a polyhedron.
@@ -292,7 +260,7 @@ class FTconvexPolyhedron(FTpolyhedron):
         r"""Calculate Fourier transform of polyhedron.
 
         Args:
-            k (int):
+            k (:class:`numpy.ndarray`):
                 Angular wave vector at which to calculate
                 :math:`S\left(i\right)`.
         """
@@ -307,6 +275,6 @@ class FTconvexPolyhedron(FTpolyhedron):
                 di = -self.hull.equations[i, 3] * self.scale
                 dotkni = np.dot(k, ni)
                 k_proj = k - ni * dotkni
-                ft += dotkni * np.exp(-1.0j * dotkni * di) * self.Spoly2D(i, k_proj)
+                ft += dotkni * np.exp(-1.0j * dotkni * di) * self.spoly_2d(i, k_proj)
             ft *= 1.0j / (np.dot(k, k))
         return ft
