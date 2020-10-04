@@ -71,3 +71,56 @@ def test_center():
     center = (1, 1, 1)
     sphere.center = center
     assert all(sphere.center == center)
+
+
+def test_form_factor():
+    """Validate the form factor of a sphere.
+
+    At the moment this is primarily a regression test, and should be expanded for more
+    rigorous validation.
+    """
+    from coxeter.shape_classes import Sphere
+
+    q = np.array(
+        [
+            [0, 0, 0],
+            [1, 0, 0],
+            [-1, 0, 0],
+            [2, 0, 0],
+            [0, 1, 0],
+            [0, 0, 1],
+            [1, 2, 3],
+            [-2, 4, -5.2],
+        ],
+        dtype=np.float,
+    )
+
+    sphere = Sphere(0.5)
+    np.testing.assert_almost_equal(
+        sphere.compute_form_factor_amplitude(q),
+        [
+            0.52359878,
+            0.51062514,
+            0.51062514,
+            0.47307465,
+            0.51062514,
+            0.51062514,
+            0.36181941,
+            0.11702976,
+        ],
+    )
+
+    sphere.center = [1, 1, 1]
+    np.testing.assert_almost_equal(
+        sphere.compute_form_factor_amplitude(q),
+        [
+            0.52359878 + 0.0j,
+            0.27589194 - 0.42967624j,
+            0.27589194 + 0.42967624j,
+            -0.19686852 - 0.43016557j,
+            0.27589194 - 0.42967624j,
+            0.27589194 - 0.42967624j,
+            0.34740824 + 0.10109795j,
+            -0.11683018 - 0.00683151j,
+        ],
+    )

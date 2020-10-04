@@ -104,7 +104,7 @@ class Sphere(Shape3D):
         form_factor = np.empty(q.shape[0], dtype=np.complex128)
         qsq = np.sum(q * q, axis=-1)
         zero_q = np.isclose(qsq, 0)
-        form_factor[zero_q] == 4 / 3 * np.pi * self.radius ** 3
+        form_factor[zero_q] = 4 / 3 * np.pi * self.radius ** 3
         # Two notes are in order for the formula below:
         #   - np.sinc(x) gives sin(pi*x)/(pi*x)
         #   - The expression below is the familiar expression for the form factor of a
