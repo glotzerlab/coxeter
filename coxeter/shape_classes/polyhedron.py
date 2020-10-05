@@ -589,8 +589,15 @@ class Polyhedron(Shape3D):
             # S += rho * f * exp(-i k r)
             form_factor[i] *= (
                 density
-                # Use the line below if orientations are added to this class.
-                #  * np.exp(-1j * np.dot(k, rowan.rotate(rowan.inverse(q), r)))
-                * np.exp(-1j * np.dot(k, self.center))
+                # The line below could be used to effect a translational and
+                # orientational shift if one were necessary. However, the translational
+                # shift would be doubly applied, because the current implementation does
+                # not store a position for the polyhedron; rather, the position is
+                # simply determined by the centroid of the vertices, and setting the
+                # center results in a shift of the vertices and a recomputation of the
+                # plane equations. The simplest application of an orientation would
+                # likely be to just rotate the vertices as well, in which case this form
+                # factor calculation would continue to require no additional input.
+                #  * np.exp(-1j * np.dot(k, rowan.rotate(rowan.inverse(self.orientation), self.center)))  # noqa: E501
             )
         return form_factor
