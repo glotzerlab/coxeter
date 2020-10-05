@@ -453,3 +453,47 @@ def test_diagonalize_inertia(points):
         poly.diagonalize_inertia()
         it = poly.inertia_tensor
         assert np.allclose(np.diag(np.diag(it)), it)
+
+
+def test_form_factor():
+    """Validate the form factor of a polyhedron.
+
+    At the moment this is primarily a regression test, and should be expanded for more
+    rigorous validation.
+    """
+    from coxeter.shape_families import PlatonicFamily
+    import coxeter
+    cube = PlatonicFamily()("Cube")
+    cube.volume = 8
+
+    ks = np.array(
+        [
+            [0, 0, 0],
+            [1, 0, 0],
+            [-1, 0, 0],
+            [2, 0, 0],
+            [0, 1, 0],
+            [0, 0, 1],
+            [1, 2, 3],
+            [-2, 4, -5.2],
+        ],
+        dtype=np.float,
+    )
+    ft = coxeter.ft.FTconvexPolyhedron(cube, k=ks)
+    positions = np.array([[0, 0, 0]], dtype=np.float)
+    orientations = np.array([[1, 0, 0, 0]] * len(positions), dtype=np.float)
+    ft.set_rq(positions, orientations)
+    ft.compute()
+    np.testing.assert_almost_equal(
+        cube.compute_form_factor_amplitude(ks),
+        [
+            8.0,
+            6.73176788,
+            6.73176788,
+            3.63718971,
+            6.73176788,
+            6.73176788,
+            0.14397014,
+            0.1169148,
+        ],
+    )
