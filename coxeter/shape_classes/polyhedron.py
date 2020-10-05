@@ -535,69 +535,67 @@ class Polyhedron(Shape3D):
         # volume integral over a polyhedron into a series of line integrals around the
         # boundaries of each polygonal face.
         form_factor = np.zeros((len(q), ), dtype=np.complex128)
-        for i, k in enumerate(q):
-            k_sq = np.dot(k, k)
-            """
-            The FT of an object with orientation q at a given k-space point
-            is the same as the FT of the unrotated object at a k-space
-            point rotated the opposite way. The opposite of the rotation
-            represented by a quaternion is the conjugate of the quaternion,
-            found by inverting the sign of the imaginary components.
 
-            The below logic can be used if orientations are added to this class.
-            """
-            # k = rowan.rotate(rowan.inverse(self.orientation), k)
-            if k_sq == 0:
-                form_factor[i] = self.volume
-            else:
-                for face_id, face in enumerate(self.faces):
-                    # Project each k vector onto the current face.
-                    norm = self._equations[face_id, :3]
-                    k_dot_norm = np.dot(norm, k)
-                    k_projected = k - k_dot_norm * norm
-                    k_projected_sq = np.dot(k_projected, k_projected)
-                    f2d = 0
-                    if k_projected_sq == 0:
-                        f2d = self.get_face_area(face_id)
-                    else:
-                        # Add the contribution over all edges of the face.
-                        verts = self._vertices[face]
-                        verts_shifted = np.roll(verts, axis=0, shift=-1)
-                        edges = verts_shifted - verts
-                        midpoints = (verts + verts_shifted) / 2
-                        edges_cross_k = np.cross(edges, k_projected)
-                        k_dot_midpoints = np.dot(k_projected, midpoints.T)
-                        k_dot_edges = np.dot(k_projected, edges.T)
-                        f_ns = (
-                            np.dot(norm, edges_cross_k.T)
-                            # Note that np.sinc(x) gives sin(pi*x)/(pi*x)
-                            * np.sinc(0.5 * k_dot_edges / np.pi)
-                            / k_projected_sq
-                        )
-                        # Apply translational shift relative to the center of the
-                        # polygonal face relative to the polyhedron centroid.
-                        f2d = -np.sum(f_ns * 1j * np.exp(-1j * k_dot_midpoints))
-                    # Now that all face shifts were performed in the local coordinate
-                    # system of the polyhedron, perform an additional global shift for
-                    # the polyhedron's centroid. Note that we have to negate the
-                    # distance in the line below due to our equation sign convention.
-                    exp_kr = np.exp(-1j * k_dot_norm * (-self._equations[face_id, 3]))
-                    form_factor[i] += k_dot_norm * (1j * f2d * exp_kr)
-                # end loop over faces
-                form_factor[i] /= k_sq
-            # end if/else, f is now calculated
-            # S += rho * f * exp(-i k r)
-            form_factor[i] *= (
-                density
-                # The line below could be used to effect a translational and
-                # orientational shift if one were necessary. However, the translational
-                # shift would be doubly applied, because the current implementation does
-                # not store a position for the polyhedron; rather, the position is
-                # simply determined by the centroid of the vertices, and setting the
-                # center results in a shift of the vertices and a recomputation of the
-                # plane equations. The simplest application of an orientation would
-                # likely be to just rotate the vertices as well, in which case this form
-                # factor calculation would continue to require no additional input.
-                #  * np.exp(-1j * np.dot(k, rowan.rotate(rowan.inverse(self.orientation), self.center)))  # noqa: E501
-            )
+        # Handle zeros q vector cases up front to allow looping over faces without
+        # double checking internally.
+        q_sqs = np.sum(q * q, axis=-1)
+        zero_q = np.isclose(q_sqs, 0)
+        form_factor[zero_q] = self.volume
+
+        for face_id, face in enumerate(self.faces):
+            for i, k, k_sq in zip(np.argwhere(~zero_q), q[~zero_q], q_sqs[~zero_q]):
+                # The FT of an object with orientation q at a given k-space point is
+                # the same as the FT of the unrotated object at a k-space point rotated
+                # the opposite way. The below logic can be used if orientations are
+                # added to this class, although most likely those would be implemented
+                # by directly rotating the vertices (in which case the plane equations
+                # would implicitly contain the orientation and no such explicit rotation
+                # would be required here).
+                # k = rowan.rotate(rowan.conjugate(self.orientation), k)
+                # Project each k vector onto the current face.
+                norm = self._equations[face_id, :3]
+                k_dot_norm = np.dot(norm, k)
+                k_projected = k - k_dot_norm * norm
+                k_projected_sq = np.dot(k_projected, k_projected)
+                if k_projected_sq == 0:
+                    f2d = self.get_face_area(face_id)
+                else:
+                    # Add the contribution over all edges of the face.
+                    verts = self._vertices[face]
+                    verts_shifted = np.roll(verts, axis=0, shift=-1)
+                    edges = verts_shifted - verts
+                    midpoints = (verts + verts_shifted) / 2
+                    edges_cross_k = np.cross(edges, k_projected)
+                    k_dot_midpoints = np.dot(k_projected, midpoints.T)
+                    k_dot_edges = np.dot(k_projected, edges.T)
+                    f_ns = (
+                        np.dot(norm, edges_cross_k.T)
+                        # Note that np.sinc(x) gives sin(pi*x)/(pi*x)
+                        * np.sinc(0.5 * k_dot_edges / np.pi)
+                        / k_projected_sq
+                    )
+                    # Apply translational shift relative to the center of the
+                    # polygonal face relative to the polyhedron centroid.
+                    f2d = -np.sum(f_ns * 1j * np.exp(-1j * k_dot_midpoints))
+                # Now that all face shifts were performed in the local coordinate
+                # system of the polyhedron, perform an additional global shift for
+                # the polyhedron's centroid. Note that we have to negate the
+                # distance in the line below due to our equation sign convention.
+                exp_kr = np.exp(-1j * k_dot_norm * (-self._equations[face_id, 3]))
+                form_factor[i] += (k_dot_norm * (1j * f2d * exp_kr)) / k_sq
+
+        form_factor *= density
+        # The code below could be used to effect a translational and orientational shift
+        # if one were necessary. However, at present the translational shift would be
+        # doubly applied, because the current implementation does not store a position
+        # for the polyhedron; rather, the position is simply determined by the centroid
+        # of the vertices, and setting the center results in a shift of the vertices and
+        # a recomputation of the plane equations. The simplest application of an
+        # orientation would likely be to just rotate the vertices as well, in which case
+        # the code below would also remain superfluous.
+        #  for i, k in enumerate(q):
+        #      form_factor[i] *= (np.exp(
+        #          -1j * np.dot(
+        #              k, rowan.rotate(rowan.inverse(self.orientation), self.center))
+        #      ))
         return form_factor
