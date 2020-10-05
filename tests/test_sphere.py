@@ -79,8 +79,6 @@ def test_form_factor():
     At the moment this is primarily a regression test, and should be expanded for more
     rigorous validation.
     """
-    from coxeter.shape_classes import Sphere
-
     q = np.array(
         [
             [0, 0, 0],
