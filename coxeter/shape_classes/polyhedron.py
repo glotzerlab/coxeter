@@ -526,6 +526,14 @@ class Polyhedron(Shape3D):
         self._vertices = np.dot(self._vertices, principal_axes)
 
     def compute_form_factor_amplitude(self, q, density=1.0):  # noqa: D102
+        # The form factor amplitude of a polyhedron is computed according to the
+        # derivation provided in this dissertation:
+        # https://deepblue.lib.umich.edu/handle/2027.42/120906
+        # In brief, two applications of Stokes theorem (or to use the names more
+        # familiar from elementary vector calculus, the application of the divergence
+        # theorem followed by the classic Kelvin-Stokes theorem) are used to reduce the
+        # volume integral over a polyhedron into a series of line integrals around the
+        # boundaries of each polygonal face.
         form_factor = np.zeros((len(q), ), dtype=np.complex128)
         for i, k in enumerate(q):
             k_sq = np.dot(k, k)
@@ -552,24 +560,23 @@ class Polyhedron(Shape3D):
                     if k_projected_sq == 0:
                         f2d = self.get_face_area(face_id)
                     else:
-                        n_verts = len(face)
-                        for edge_id in range(n_verts):
-                            r0 = self._vertices[face[edge_id]]
-                            r1 = self._vertices[face[(edge_id + 1) % n_verts]]
-                            edge_vec = r1 - r0
-                            edge_center = 0.5 * (r0 + r1)
-                            edge_cross_k = np.cross(edge_vec, k_projected)
-                            k_dot_center = np.dot(k_projected, edge_center)
-                            k_dot_edge = np.dot(k_projected, edge_vec)
+                        # Add the contribution over all edges of the face.
+                        verts = self._vertices[face]
+                        verts_shifted = np.roll(verts, axis=0, shift=-1)
+                        edges = verts_shifted - verts
+                        midpoints = (verts + verts_shifted) / 2
+                        edges_cross_k = np.cross(edges, k_projected)
+                        k_dot_midpoints = np.dot(k_projected, midpoints.T)
+                        k_dot_edges = np.dot(k_projected, edges.T)
+                        f_ns = (
+                            np.dot(norm, edges_cross_k.T)
                             # Note that np.sinc(x) gives sin(pi*x)/(pi*x)
-                            f_n = (
-                                np.dot(norm, edge_cross_k)
-                                * np.sinc(0.5 * k_dot_edge / np.pi)
-                                / k_projected_sq
-                            )
-                            # Apply translational shift relative to the center of the
-                            # polygonal face relative to the polyhedron centroid.
-                            f2d -= f_n * 1j * np.exp(-1j * k_dot_center)
+                            * np.sinc(0.5 * k_dot_edges / np.pi)
+                            / k_projected_sq
+                        )
+                        # Apply translational shift relative to the center of the
+                        # polygonal face relative to the polyhedron centroid.
+                        f2d = -np.sum(f_ns * 1j * np.exp(-1j * k_dot_midpoints))
                     # Now that all face shifts were performed in the local coordinate
                     # system of the polyhedron, perform an additional global shift for
                     # the polyhedron's centroid. Note that we have to negate the
