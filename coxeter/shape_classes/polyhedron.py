@@ -534,6 +534,11 @@ class Polyhedron(Shape3D):
         # theorem followed by the classic Kelvin-Stokes theorem) are used to reduce the
         # volume integral over a polyhedron into a series of line integrals around the
         # boundaries of each polygonal face.
+        # If we wish to use this formula more productively in the future, it may be
+        # worthwhile to compare against the method proposed here:
+        # https://journals.iucr.org/j/issues/2017/05/00/fs5152/
+        # That paper directly performs the Fourier integrals rather than attempting to
+        # reduce their dimensionality first.
         #
         # Since the polyhedron is represented as a collection of vertices that are
         # translated when a new center (and if we implement rotation, it will probably
