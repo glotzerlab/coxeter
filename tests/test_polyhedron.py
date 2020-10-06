@@ -500,7 +500,7 @@ def test_form_factor(cube):
     np.testing.assert_almost_equal(
         cube.compute_form_factor_amplitude(ks),
         [
-            8.0 + 0.j,
+            8.0 + 0.0j,
             3.63718971 - 5.66458735j,
             3.63718971 + 5.66458735j,
             -1.51360499 - 3.30728724j,
@@ -508,5 +508,5 @@ def test_form_factor(cube):
             3.63718971 - 5.66458735j,
             0.13823585 + 0.04022749j,
             -0.11671542 - 0.0068248j,
-        ]
+        ],
     )

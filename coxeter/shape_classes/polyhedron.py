@@ -551,7 +551,7 @@ class Polyhedron(Shape3D):
         #      for i, k in enumerate(q):
         #          form_factor[i] *= np.exp(-1j * np.dot(
         #              k, rowan.rotate(rowan.inverse(self.orientation), self.center)))
-        form_factor = np.zeros((len(q), ), dtype=np.complex128)
+        form_factor = np.zeros((len(q),), dtype=np.complex128)
 
         # Handle zeros q vector cases up front to allow looping over faces without
         # double checking internally.
@@ -573,6 +573,7 @@ class Polyhedron(Shape3D):
             qs_dot_norm = np.dot(q[~zero_q], face_normal)
             exp_qr = np.exp(-1j * qs_dot_norm * d)
             form_factor[~zero_q] += (
-                qs_dot_norm * (1j * face_form_factors * exp_qr)) / q_sqs[~zero_q]
+                qs_dot_norm * (1j * face_form_factors * exp_qr)
+            ) / q_sqs[~zero_q]
 
         return form_factor
