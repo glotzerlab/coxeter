@@ -22,6 +22,7 @@ def _is_convex(vertices, normal):
 
     Returns:
         bool: ``True`` if ``vertices`` define a convex polygon.
+
     """
     # TODO: Add a tolerance check in case a user provides collinear vertices on
     # the boundary of a convex hull.
@@ -56,6 +57,48 @@ class ConvexPolygon(Polygon):
             Providing this argument may be necessary if you have a large
             number of vertices and are rotated significantly out of the
             plane.
+    Example::
+        >>> square = coxeter.shape_classes.ConvexPolygon([[1,1],[-1,-1],
+                                                          [1,-1],[-1,1]])
+        >>> square.area
+        4.0
+        >>> circle = square.bounding_circle
+        >>> circle.radius
+        1.4142135623730954
+        >>> circle.area
+        6.283185307179589
+        >>> square.center
+        array([0., 0., 0.])
+        >>> circle = square.circumcircle
+        >>> circle.radius
+        1.414213562373095
+        >>> circle.area
+        6.2831853071795845
+        >>> square.gsd_shape_spec
+        {'type': 'Polygon', 'vertices': [[1.0, 1.0, 0.0],
+        [-1.0, 1.0, 0.0], [-1.0, -1.0, 0.0], [1.0, -1.0, 0.0]]}
+        >>> circle = square.incircle_from_center
+        >>> circle.radius
+        1.0
+        >>> circle.area
+        3.141592653589793
+        >>> square.inertia_tensor
+        array([[0.        , 0.        , 0.        ],
+               [0.        , 0.        , 0.        ],
+               [0.        , 0.        , 2.66666667]])
+        >>> square.normal
+        array([0., 0., 1.])
+        >>> square.planar_moments_inertia
+        (1.3333333333333333, 1.3333333333333333, 0.0)
+        >>> square.polar_moment_inertia
+        2.6666666666666665
+        >>> square.signed_area
+        4.0
+        >>> square.vertices
+        array([[ 1.,  1.,  0.],
+               [-1.,  1.,  0.],
+               [-1., -1.,  0.],
+               [ 1., -1.,  0.]])
     """
 
     def __init__(self, vertices, normal=None, planar_tolerance=1e-5):
