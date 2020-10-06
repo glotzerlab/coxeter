@@ -306,9 +306,9 @@ class Family523(TruncationPlaneShapeFamily):
 
     :math:`c \in [S^2, 3]`
 
-    where :math:`s = \frac{1}{2}\left(\sqrt{5} - 1\right)` and
-    :math:`S = \frac{1}{2}\left(\sqrt{5} + 1\right)`. The :math:`b` parameter
-    is always equal to 2 for this family.
+    where :math:`S = \frac{1}{2}\left(\sqrt{5} + 1\right)` is the golden ratio and
+    :math:`s = \frac{1}{2}\left(\sqrt{5} - 1\right)` is its inverse. The :math:`b`
+    parameter is always equal to 2 for this family.
 
     The extremal shapes in this shape family are an icosidodecahedron at
     (:math:`1`, :math:`S^2`), an icosahedron at (:math:`s\sqrt{5}`, :math:`S^2`), a
@@ -316,11 +316,11 @@ class Family523(TruncationPlaneShapeFamily):
     (:math:`s\sqrt{5}`, :math:`3`).
     """
 
-    """The constant s (the inverse of the golden ratio)."""
     s = 1 / golden_ratio
+    """The constant s (the inverse of the golden ratio)."""
 
-    """The constant S (the golden ratio)."""
     S = golden_ratio
+    """The constant S (the golden ratio)."""
 
     def __call__(self, a, c):
         r"""Generate a shape for the provided parameters.
