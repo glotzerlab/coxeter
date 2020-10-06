@@ -6,3 +6,4 @@ coxeter.shape\_families package
 .. automodule:: coxeter.shape_families
    :members:
    :show-inheritance:
+   :special-members: __call__
