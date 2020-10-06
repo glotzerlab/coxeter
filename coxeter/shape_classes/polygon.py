@@ -128,7 +128,7 @@ class Polygon(Shape2D):
 
             if not np.isclose(np.abs(np.dot(computed_normal, norm_normal)), 1):
                 raise ValueError(
-                    "The provided normal vector is not " "orthogonal to the polygon."
+                    "The provided normal vector is not orthogonal to the polygon."
                 )
             self._normal = norm_normal
 
@@ -480,3 +480,58 @@ class Polygon(Shape2D):
             raise RuntimeError("No circumcircle for this polygon.")
 
         return Circle(np.linalg.norm(x), x + self.vertices[0])
+
+    def compute_form_factor_amplitude(self, q, density=1.0):  # noqa: D102
+        # The form factor amplitude of a polygon is computed according to the
+        # derivation provided in this dissertation:
+        # https://deepblue.lib.umich.edu/handle/2027.42/120906
+        # The Kelvin-Stokes theorem allows reducing the surface integral to a line
+        # integral around the boundary.
+        form_factor = np.zeros((len(q),), dtype=np.complex128)
+
+        # All the q vectors must be projected onto the plane of the polygon before they
+        # can be calculated.
+
+        # The FT of an object with orientation q at a given k-space point is
+        # the same as the FT of the unrotated object at a k-space point rotated
+        # the opposite way. The below logic can be used if orientations are
+        # added to this class, although most likely those would be implemented
+        # by directly rotating the vertices (in which case the plane equations
+        # would implicitly contain the orientation and no such explicit rotation
+        # would be required here).
+        # k = rowan.rotate(rowan.conjugate(self.orientation), k)
+        # Project each k vector onto the current face.
+        q_dot_norm = np.dot(q, self.normal)
+        q = q - q_dot_norm[:, np.newaxis] * self.normal
+        q_sqs = np.sum(q * q, axis=-1)
+        zero_q = np.isclose(q_sqs, 0)
+        form_factor[zero_q] = self.area
+
+        # for i, k, k_sq in zip(np.argwhere(~zero_q), q[~zero_q], q_sqs[~zero_q]):
+
+        # Add the contribution over all edges of the face.
+        verts = self._vertices
+        verts_shifted = np.roll(verts, axis=0, shift=-1)
+        edges = verts_shifted - verts
+        midpoints = (verts + verts_shifted) / 2
+
+        # Cross product of every edge with every q vector.
+        q_nonzero_broadcast = q[np.newaxis, ~zero_q, :]
+        edges_cross_qs = np.cross(edges[:, np.newaxis, :], q_nonzero_broadcast)
+        # Due to oddities of numpy broadcasting, many singleton dimensions can persist.
+        midpoints_dot_qs = np.inner(
+            midpoints[:, np.newaxis, :], q_nonzero_broadcast
+        ).squeeze()
+        edges_dot_qs = np.inner(edges[:, np.newaxis, :], q_nonzero_broadcast).squeeze()
+        f_ns = (
+            np.dot(edges_cross_qs, self.normal)
+            # Note that np.sinc(x) gives sin(pi*x)/(pi*x)
+            * np.sinc(0.5 * edges_dot_qs / np.pi)
+            / q_sqs[~zero_q]
+        )
+        # Apply translational shift relative to the center of the
+        # polygonal face relative to the polyhedron centroid.
+        form_factor[~zero_q] = -np.sum(
+            f_ns * 1j * np.exp(-1j * midpoints_dot_qs), axis=0
+        )
+        return form_factor

@@ -313,3 +313,42 @@ def test_incircle_from_center(convex_square):
     circle = convex_square.incircle_from_center
     assert np.all(circle.center == convex_square.center)
     assert circle.radius == 0.5
+
+
+def test_form_factor(convex_square):
+    """Validate the form factor of a polygon.
+
+    At the moment this is primarily a regression test, and should be expanded for more
+    rigorous validation.
+    """
+    square = Polygon([[0.5, -0.5, 0], [0.5, 0.5, 0], [-0.5, 0.5, 0], [-0.5, -0.5, 0]])
+
+    ks = np.array(
+        [
+            [0, 0, 0],
+            [1, 0, 0],
+            [-1, 0, 0],
+            [2, 0, 0],
+            [0, 1, 0],
+            [0, 0, 1],
+            [1, 2, 3],
+            [-2, 4, -5.2],
+        ],
+        dtype=np.float,
+    )
+
+    ampl = [
+        1.0,
+        0.95885108,
+        0.95885108,
+        0.84147098,
+        0.95885108,
+        1.0,
+        0.80684536,
+        0.3825737,
+    ]
+    np.testing.assert_almost_equal(square.compute_form_factor_amplitude(ks), ampl)
+
+    # Form factor should be invariant to shifts along the normal.
+    square.center = [0, 0, -1]
+    np.testing.assert_almost_equal(square.compute_form_factor_amplitude(ks), ampl)
