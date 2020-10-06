@@ -13,7 +13,6 @@ Submodules
 
 .. toctree::
 
-   module-ft
    module-shape-getters
 
 .. automodule:: coxeter
