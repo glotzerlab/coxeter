@@ -490,24 +490,13 @@ class Polygon(Shape2D):
         form_factor = np.zeros((len(q),), dtype=np.complex128)
 
         # All the q vectors must be projected onto the plane of the polygon before they
-        # can be calculated.
-
-        # The FT of an object with orientation q at a given k-space point is
-        # the same as the FT of the unrotated object at a k-space point rotated
-        # the opposite way. The below logic can be used if orientations are
-        # added to this class, although most likely those would be implemented
-        # by directly rotating the vertices (in which case the plane equations
-        # would implicitly contain the orientation and no such explicit rotation
-        # would be required here).
-        # k = rowan.rotate(rowan.conjugate(self.orientation), k)
-        # Project each k vector onto the current face.
+        # can be calculated. Note that the orientation of the polygon is implicit in its
+        # vertices, otherwise we would need to rotate the q vectors appropriately.
         q_dot_norm = np.dot(q, self.normal)
         q = q - q_dot_norm[:, np.newaxis] * self.normal
         q_sqs = np.sum(q * q, axis=-1)
         zero_q = np.isclose(q_sqs, 0)
         form_factor[zero_q] = self.area
-
-        # for i, k, k_sq in zip(np.argwhere(~zero_q), q[~zero_q], q_sqs[~zero_q]):
 
         # Add the contribution over all edges of the face.
         verts = self._vertices
@@ -515,10 +504,10 @@ class Polygon(Shape2D):
         edges = verts_shifted - verts
         midpoints = (verts + verts_shifted) / 2
 
-        # Cross product of every edge with every q vector.
         q_nonzero_broadcast = q[np.newaxis, ~zero_q, :]
         edges_cross_qs = np.cross(edges[:, np.newaxis, :], q_nonzero_broadcast)
-        # Due to oddities of numpy broadcasting, many singleton dimensions can persist.
+        # Due to oddities of numpy broadcasting, many singleton dimensions can persist
+        # and must be squeezed out.
         midpoints_dot_qs = np.inner(
             midpoints[:, np.newaxis, :], q_nonzero_broadcast
         ).squeeze()
@@ -534,4 +523,5 @@ class Polygon(Shape2D):
         form_factor[~zero_q] = -np.sum(
             f_ns * 1j * np.exp(-1j * midpoints_dot_qs), axis=0
         )
+        form_factor *= density
         return form_factor
