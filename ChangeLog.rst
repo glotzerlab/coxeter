@@ -9,6 +9,7 @@ Added
 ~~~~~
 
 - Circumsphere and insphere from center calculations for ConvexSpheropolyhedron.
+- Form factors amplitudes for sphere, polygons, and polyhedra.
 
 Fixed
 ~~~~~
@@ -18,6 +19,7 @@ Removed
 ~~~~~~~
 
 -  The symmetry.py module.
+-  The ft.py module.
 
 v0.3.0 - 2020-06-18
 -------------------
@@ -46,6 +48,11 @@ Changed
    avoid degenerate simplices.
 -  All insphere, circumsphere, and bounding sphere calculations now
    return the appropriate classes instead of tuples.
+
+Removed
+~~~~~~~
+
+-  The common_shapes subpackage.
 
 v0.2.0 - 2020-04-09
 -------------------

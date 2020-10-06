@@ -28,6 +28,7 @@ Vyas Ramasubramani - **Creator and former lead developer**
 * Add ability to diagonalize the inertia tensors of shapes.
 * Defined base classes for all shapes.
 * Standardize usage of Sphere/Circle classes for circum, in, and bounding sphere/circle calculations.
+* Moved form factor amplitude calculations from legacy ft module to shape classes, cleaned and added more tests.
 
 Bryan VanSaders - **Original maintainer of euclid package**
 
