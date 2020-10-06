@@ -64,7 +64,7 @@ class Polyhedron(Shape3D):
         >>> cube  = coxeter.shape_classes.ConvexPolyhedron([[1,1,1],
         [1,-1,1],[1,1,-1],[1,-1,-1],[-1,1,1],
         [-1,-1,1],[-1,1,-1],[-1,-1,-1]])
-        >>> cube  = coxeter.shape_classes
+        >>> cube = coxeter.shape_classes
         .Polyhedron(vertices=cube.vertices,faces=cube.faces)
         >>> sphere = cube.bounding_sphere
         >>> sphere.radius
