@@ -480,7 +480,7 @@ def test_form_factor(cube):
         ],
         dtype=np.float,
     )
-    np.testing.assert_almost_equal(
+    np.testing.assert_allclose(
         cube.compute_form_factor_amplitude(ks),
         [
             8.0,
@@ -492,12 +492,13 @@ def test_form_factor(cube):
             0.14397014,
             0.1169148,
         ],
+        atol=1e-7
     )
 
     # Test a translational shift.
     center = [1, 1, 1]
     cube.center = center
-    np.testing.assert_almost_equal(
+    np.testing.assert_allclose(
         cube.compute_form_factor_amplitude(ks),
         [
             8.0 + 0.0j,
@@ -509,4 +510,5 @@ def test_form_factor(cube):
             0.13823585 + 0.04022749j,
             -0.11671542 - 0.0068248j,
         ],
+        atol=1e-7
     )

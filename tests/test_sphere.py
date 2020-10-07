@@ -94,7 +94,7 @@ def test_form_factor():
     )
 
     sphere = Sphere(0.5)
-    np.testing.assert_almost_equal(
+    np.testing.assert_allclose(
         sphere.compute_form_factor_amplitude(q),
         [
             0.52359878,
@@ -106,10 +106,11 @@ def test_form_factor():
             0.36181941,
             0.11702976,
         ],
+        atol=1e-7
     )
 
     sphere.center = [1, 1, 1]
-    np.testing.assert_almost_equal(
+    np.testing.assert_allclose(
         sphere.compute_form_factor_amplitude(q),
         [
             0.52359878 + 0.0j,
@@ -121,4 +122,5 @@ def test_form_factor():
             0.34740824 + 0.10109795j,
             -0.11683018 - 0.00683151j,
         ],
+        atol=1e-7
     )

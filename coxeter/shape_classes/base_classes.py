@@ -31,22 +31,26 @@ class Shape(ABC):
     def compute_form_factor_amplitude(self, q):
         r"""Calculate the form factor intensity.
 
-        In solid state physics, scattering theory is concerned with understanding the
-        ways in which light is scattered from a sample. For a single point particle at
-        position P, the the amplitude of a scattered wave observed at position Q is the
-        product of the incoming wave amplitude (which follows the standard equation for
-        a traveling wave) and the scattering density at P. For a crystal composed of
-        many point particles, the intensity of the resulting superposition of waves can
-        be identified as the Fourier transform of the total scattering density. When the
-        particles are not point particles, the scattering density of the particles in
-        their local coordinate systems are no longer identical. Conveniently, this
-        component is separable in the Fourier transform of the total density; as a
-        result, the scattering scattering intensity can be decomposed into two terms,
-        the Fourier transform of the distribution of scatterers and the Fourier
-        transform of each scatterer in its local coordinate system. The first term is
-        known as the static structure factor :math:`S(\vec{q})` and describes the
-        spatial distribution of scatterers, while the second term is called the form
-        factor :math:`F(\vec{q})` and describes the local scattering profile.
+        In solid state physics,
+        `scattering theory <https://en.wikipedia.org/wiki/Scattering_theory>`__ is
+        concerned with understanding the ways in which radiation is scattered from a
+        sample. For a single point particle at position P, the the amplitude of a
+        scattered wave observed at position Q is the product of the incoming wave
+        amplitude (which follows the standard equation for a traveling wave) and the
+        scattering density at P. For a crystal composed of many point particles, the
+        intensity of the resulting superposition of waves can be identified as the
+        Fourier transform of the total scattering density. When the particles are not
+        point particles, the scattering density of the particles in their local
+        coordinate systems are no longer identical. Conveniently, this component is
+        separable in the Fourier transform of the total density; as a result, the
+        scattering scattering intensity can be decomposed into two terms, the Fourier
+        transform of the distribution of scatterers and the Fourier transform of each
+        scatterer in its local coordinate system. The first term is known as the
+        `static structure factor <https://en.wikipedia.org/wiki/Structure_factor>`__
+        :math:`S(\vec{q})` and describes the spatial distribution of scatterers, while
+        the second term is called the
+        `form factor <https://en.wikipedia.org/wiki/Atomic_form_factor>`__
+        :math:`f(\vec{q})` and describes the local scattering profile.
 
         While the form factor (the scattering intensity) can be measured from
         diffraction experiments, the Fourier transform of a single particle cannot.

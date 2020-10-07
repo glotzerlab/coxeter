@@ -347,13 +347,13 @@ def test_form_factor(square):
         0.80684536,
         0.3825737,
     ]
-    np.testing.assert_almost_equal(square.compute_form_factor_amplitude(ks), ampl)
+    np.testing.assert_allclose(square.compute_form_factor_amplitude(ks), ampl)
 
     # Form factor should be invariant to shifts along the normal.
     square.center = [0, 0, -1]
-    np.testing.assert_almost_equal(square.compute_form_factor_amplitude(ks), ampl)
+    np.testing.assert_allclose(square.compute_form_factor_amplitude(ks), ampl)
 
     # Form factor should be invariant to polygon "direction" (the line integral
     # direction change should cause a sign flip that cancels the normal flip).
     new_square = Polygon(square.vertices[::-1, :])
-    np.testing.assert_almost_equal(new_square.compute_form_factor_amplitude(ks), ampl)
+    np.testing.assert_allclose(new_square.compute_form_factor_amplitude(ks), ampl)
