@@ -46,14 +46,6 @@ class TabulatedShapeFamily(_ShapeFamily):
         """dict[dict]: Get the JSON data underlying the file."""
         return self._data
 
-    def get_params(self, name):
-        """Get the full dictionary of data stored for a given file.
-
-        Returns:
-            dict: The dictionary of data for a given key in the :attr:`~.data`.
-        """  # noqa: D401, E501
-        return self._data[name]
-
 
 class TabulatedGSDShapeFamily(TabulatedShapeFamily):
     """A tabulated shape family defined by a GSD shape schema.
@@ -76,7 +68,7 @@ class TabulatedGSDShapeFamily(TabulatedShapeFamily):
             name (str):
                 The key of the desired shape in the data dict.
 
-        Returns:
+        Returns :
             :class:`~coxeter.shape_classes.Shape`: The requested shape.
         """
-        return from_gsd_type_shapes(self.get_params(name))
+        return from_gsd_type_shapes(self.data[name])

@@ -18,6 +18,7 @@ Removed
 ~~~~~~~
 
 -  The symmetry.py module.
+-  The get_params method of TabulatedShapeFamily.
 
 v0.3.0 - 2020-06-18
 -------------------
