@@ -519,7 +519,7 @@ class Polygon(Shape2D):
             / q_sqs[~zero_q]
         )
         # Apply translational shift relative to the center of the
-        # polygonal face relative to the polyhedron centroid.
+        # polygonal face relative to its centroid.
         form_factor[~zero_q] = -np.sum(
             f_ns * 1j * np.exp(-1j * midpoints_dot_qs), axis=0
         )
