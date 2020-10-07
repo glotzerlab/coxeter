@@ -492,7 +492,7 @@ def test_form_factor(cube):
             0.14397014,
             0.1169148,
         ],
-        atol=1e-7
+        atol=1e-7,
     )
 
     # Test a translational shift.
@@ -510,5 +510,5 @@ def test_form_factor(cube):
             0.13823585 + 0.04022749j,
             -0.11671542 - 0.0068248j,
         ],
-        atol=1e-7
+        atol=1e-7,
     )

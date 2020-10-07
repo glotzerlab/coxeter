@@ -106,7 +106,7 @@ def test_form_factor():
             0.36181941,
             0.11702976,
         ],
-        atol=1e-7
+        atol=1e-7,
     )
 
     sphere.center = [1, 1, 1]
@@ -122,5 +122,5 @@ def test_form_factor():
             0.34740824 + 0.10109795j,
             -0.11683018 - 0.00683151j,
         ],
-        atol=1e-7
+        atol=1e-7,
     )
