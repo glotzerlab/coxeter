@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest a new feature for euclid
+about: Suggest a new feature for coxeter
 title: ''
 labels: ''
 assignees: ''
