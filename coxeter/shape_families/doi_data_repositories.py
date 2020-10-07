@@ -49,7 +49,7 @@ def _doi_shape_collection_factory(doi):
         for fn in doi_to_file[doi]:
             with open(os.path.join(_DATA_FOLDER, fn)) as f:
                 families.append(TabulatedGSDShapeFamily(json.load(f)))
-    if doi in doi_to_family:
+    elif doi in doi_to_family:
         for family_type in doi_to_family[doi]:
             families.append(family_type())
     else:

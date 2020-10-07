@@ -64,7 +64,7 @@ All code should of course also follow the principles in `PEP 20 <https://www.pyt
 
     .. code-block:: bash
 
-        black --exclude "coxeter/[polytri|bentley_ottman]" coxeter/ tests/
+        black --exclude "coxeter/[polytri|bentley_ottmann]" coxeter/ tests/
         isort coxeter/ tests/
 
 .. _black: https://black.readthedocs.io/

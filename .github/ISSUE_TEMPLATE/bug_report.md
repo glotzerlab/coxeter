@@ -27,6 +27,6 @@ Please complete the following information:
 
  - Operating System [e.g. macOS]:
  - Version of Python [e.g. 3.7]:
- - Version of euclid [e.g. 1.0]:
+ - Version of coxeter [e.g. 1.0]:
 
-Or copy & paste the output of: `python -c 'import platform; print(platform.platform()); import sys; print(sys.version); import euclid; print(euclid.__version__)'`
+Or copy & paste the output of: `python -c 'import platform; print(platform.platform()); import sys; print(sys.version); import coxeter; print(coxeter.__version__)'`
