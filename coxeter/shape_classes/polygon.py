@@ -3,7 +3,7 @@
 import numpy as np
 import rowan
 
-from ..bentley_ottman import poly_point_isect
+from ..bentley_ottmann import poly_point_isect
 from ..polytri import polytri
 from .base_classes import Shape2D
 from .circle import Circle
@@ -49,7 +49,7 @@ def _is_simple(vertices):
 
     This code directly calls through to an external implementation
     (https://github.com/ideasman42/isect_segments-bentley_ottmann) of the
-    Bentley-Ottman algorithm to check for intersections between the line
+    Bentley-Ottmann algorithm to check for intersections between the line
     segments.
     """
     return len(poly_point_isect.isect_polygon(vertices)) == 0
