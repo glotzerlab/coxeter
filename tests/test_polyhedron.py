@@ -375,7 +375,7 @@ def test_insphere_from_center_convex_hulls(points, test_points):
 def test_rotate_inertia(points):
     # Use the input as noise rather than the base points to avoid precision and
     # degenerate cases provided by hypothesis.
-    tet = PlatonicFamily.get_shae("Tetrahedron")
+    tet = PlatonicFamily.get_shape("Tetrahedron")
     vertices = tet.vertices + points
 
     rotation = rowan.random.rand()
