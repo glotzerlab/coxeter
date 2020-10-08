@@ -9,6 +9,7 @@ Added
 ~~~~~
 
 -  Circumsphere and insphere from center calculations for ConvexSpheropolyhedron.
+-  Shape families associated with a DOI can be directly accessed via a dictionary.
 
 Changed
 ~~~~~~~
@@ -25,6 +26,7 @@ Removed
 
 -  The symmetry.py module.
 -  The get_params method of TabulatedShapeFamily.
+-  The family_from_doi method (the underlying data dictionary is now directly exposed).
 
 v0.3.0 - 2020-06-18
 -------------------
