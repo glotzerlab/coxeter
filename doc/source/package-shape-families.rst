@@ -5,5 +5,4 @@ coxeter.shape\_families package
 
 .. automodule:: coxeter.shape_families
    :members:
-   :exclude-members:
    :show-inheritance:
