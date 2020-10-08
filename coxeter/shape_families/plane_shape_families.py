@@ -49,10 +49,11 @@ class TruncationPlaneShapeFamily(ShapeFamily):
     def get_plane_types(cls):
         """Get the types of the planes.
 
-        The types are encoded via an integer mapping:
-            type 0 corresponds to the parameter a.
-            type 1 corresponds to the parameter b.
-            type 2 corresponds to the parameter c.
+        The types are encoded via the following integer mapping:
+
+        * type 0 corresponds to the parameter a.
+        * type 1 corresponds to the parameter b.
+        * type 2 corresponds to the parameter c.
 
         Returns:
             (:math:`N_{planes}`, ) :class:`numpy.ndarray` of int:

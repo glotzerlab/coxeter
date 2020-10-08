@@ -37,9 +37,10 @@ DOI_SHAPE_REPOSITORIES = _KeyedDefaultDict(_doi_shape_collection_factory)
 
 Each known DOI is associated with a list of shape families that can be used to generate
 the shapes from those papers. Currently supported DOIs are:
-    * 10.1126/science.1220869: :cite:`Damasceno2012`
-    * 10.1103/PhysRevX.4.011024: :cite:`Chen2014`
-    * 10.1021/nn204012y: :cite:`Damasceno2012`
+
+* 10.1126/science.1220869: :cite:`Damasceno2012`
+* 10.1103/PhysRevX.4.011024: :cite:`Chen2014`
+* 10.1021/nn204012y: :cite:`Damasceno2012`
 """
 
 
