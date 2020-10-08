@@ -27,7 +27,7 @@ def _doi_shape_collection_factory(doi):
     """Produce the default shape family for a given key.
 
     This function is the factory used in a defaultdict for generating
-    :class:`~coxeter.shape_families.ShapeFamily` instances based on a given
+    :class:`~coxeter.shape_families._ShapeFamily` instances based on a given
     key when that key has not yet been seen. The purpose of using this factory
     is to delay the loading of files until they are requested. Without it, all
     files would be loaded when coxeter is imported, which introduces noticeable
@@ -38,7 +38,7 @@ def _doi_shape_collection_factory(doi):
         "10.1126/science.1220869": ["science1220869.json"],
     }
 
-    # Set of DOIs that are associated with a specific ShapeFamily subclass.
+    # Set of DOIs that are associated with a specific _ShapeFamily subclass.
     doi_to_family = {
         "10.1103/PhysRevX.4.011024": [Family323Plus, Family423, Family523],
         "10.1021/nn204012y": [TruncatedTetrahedronFamily],
@@ -77,7 +77,7 @@ _DOI_SHAPE_REPOSITORIES = _KeyedDefaultDict(_doi_shape_collection_factory)
 def family_from_doi(doi):
     """Acquire a list of shape families.
 
-    This function produces :class:`~coxeter.shape_families.ShapeFamily`
+    This function produces :class:`~coxeter.shape_families._ShapeFamily`
     instances corresponding to sets of shapes that were used in the paper with
     the given DOI.
 
@@ -86,7 +86,7 @@ def family_from_doi(doi):
             The DOI of a paper whose shape data to find.
 
     Returns:
-        list[:class:`~coxeter.shape_families.ShapeFamily`]:
+        list[:class:`~coxeter.shape_families._ShapeFamily`]:
             A list of shape families used in the paper.
     """
     try:
