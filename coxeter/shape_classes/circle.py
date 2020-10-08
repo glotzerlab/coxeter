@@ -89,10 +89,18 @@ class Circle(Shape2D):
         """float: Get the perimeter of the circle."""
         return 2 * np.pi * self.radius
 
+    @perimeter.setter
+    def perimeter(self, value):
+        self._radius = value / (2 * np.pi)
+
     @property
     def circumference(self):
         """float: Get the circumference, alias for :meth:`~.Circle.perimeter`."""
         return self.perimeter
+
+    @circumference.setter
+    def circumference(self, value):
+        self._radius = value / (2 * np.pi)
 
     @property
     def planar_moments_inertia(self):
