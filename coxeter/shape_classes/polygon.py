@@ -389,9 +389,9 @@ class Polygon(Shape2D):
 
         The inertia tensor is computed for the polygon embedded in
         :math:`\mathbb{R}^3`. This computation proceeds by first computing the
-        polar moment of inertia for the polygon in the xy-plane relative to its
-        centroid. The tensor is then rotated back to the orientation of the
-        polygon and shifted to the original centroid.
+        polar moment of inertia for the polygon in the :math:`xy`-plane
+        relative to its centroid. The tensor is then rotated back to the
+        orientation of the polygon and shifted to the original centroid.
         """
         # Save the original configuration as we translate and rotate it to the
         # origin so that we can reset after (since we're modifying the internal

@@ -128,7 +128,7 @@ class Ellipse(Shape2D):
         .. math::
             \begin{align}
                 I_x &= {\int \int}_A y^2 dA = \frac{\pi}{4} a b^3 = \frac{Ab^2}{4} \\
-                I_y &= {\int \int}_A z^2 dA = \frac{\pi}{4} a^3 b = \frac{Aa^2}{4}\\
+                I_y &= {\int \int}_A x^2 dA = \frac{\pi}{4} a^3 b = \frac{Aa^2}{4} \\
                 I_{xy} &= {\int \int}_A xy dA = 0 \\
             \end{align}
 
