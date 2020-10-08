@@ -8,7 +8,6 @@ both, so this module provides utilities that generate shape families when
 given a particular DOI.
 """
 
-import json
 import os
 from collections import defaultdict
 
@@ -47,8 +46,9 @@ def _doi_shape_collection_factory(doi):
     families = []
     if doi in doi_to_file:
         for fn in doi_to_file[doi]:
-            with open(os.path.join(_DATA_FOLDER, fn)) as f:
-                families.append(TabulatedGSDShapeFamily(json.load(f)))
+            families.append(
+                TabulatedGSDShapeFamily.from_json_file(os.path.join(_DATA_FOLDER, fn))
+            )
     elif doi in doi_to_family:
         for family_type in doi_to_family[doi]:
             families.append(family_type())

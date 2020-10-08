@@ -8,7 +8,13 @@ v0.4.0 - xxxx-xx-xx
 Added
 ~~~~~
 
-- Circumsphere and insphere from center calculations for ConvexSpheropolyhedron.
+-  Circumsphere and insphere from center calculations for ConvexSpheropolyhedron.
+
+Changed
+~~~~~~~
+
+-  Shape family API is now entirely based on class methods rather than a call operator.
+-  The parent ShapeFamily class is now part of the public API.
 
 Fixed
 ~~~~~

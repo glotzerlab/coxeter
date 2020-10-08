@@ -18,16 +18,18 @@ from .plane_shape_families import (
     Family523,
     TruncatedTetrahedronFamily,
 )
+from .shape_family import ShapeFamily
 from .tabulated_shape_family import TabulatedGSDShapeFamily, TabulatedShapeFamily
 
 __all__ = [
-    "TabulatedShapeFamily",
-    "TabulatedGSDShapeFamily",
+    "family_from_doi",
     "Family323Plus",
     "Family423",
     "Family523",
-    "TruncatedTetrahedronFamily",
-    "family_from_doi",
-    "RegularNGonFamily",
     "PlatonicFamily",
+    "RegularNGonFamily",
+    "ShapeFamily",
+    "TabulatedShapeFamily",
+    "TabulatedGSDShapeFamily",
+    "TruncatedTetrahedronFamily",
 ]

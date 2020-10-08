@@ -6,11 +6,11 @@ import numpy as np
 
 from ..shape_classes import ConvexPolygon
 from .doi_data_repositories import _DATA_FOLDER
-from .shape_family import _ShapeFamily
+from .shape_family import ShapeFamily
 from .tabulated_shape_family import TabulatedGSDShapeFamily
 
 
-class RegularNGonFamily(_ShapeFamily):
+class RegularNGonFamily(ShapeFamily):
     """The family of convex regular polygons.
 
     This class generates the set of convex regular polygons with :math:`n`
@@ -24,19 +24,21 @@ class RegularNGonFamily(_ShapeFamily):
       - :math:`n`: The number of vertices of the polygon
     """
 
-    def __call__(self, n):
+    @classmethod
+    def get_shape(cls, n):
         """Generate an n-gon.
 
         Args:
             n (int):
-                An integer greater than or equal to 3.
+                The number of vertices (greater than or equal to 3).
 
         Returns:
              :class:`~.ConvexPolygon`: The corresponding regular polygon.
         """  # noqa: E501
-        return ConvexPolygon(self.make_vertices(n))
+        return ConvexPolygon(cls.make_vertices(n))
 
-    def make_vertices(self, n):
+    @classmethod
+    def make_vertices(cls, n):
         """Generate vertices of an n-gon.
 
         Args:
@@ -66,15 +68,14 @@ class RegularNGonFamily(_ShapeFamily):
         return pos.T
 
 
-class PlatonicFamily(TabulatedGSDShapeFamily):
-    """The family of Platonic solids.
+PlatonicFamily = TabulatedGSDShapeFamily.from_json_file(
+    os.path.join(_DATA_FOLDER, "platonic.json"),
+    classname="PlatonicFamily",
+    docstring="""The family of Platonic solids.
 
-    The following parameters are required by this class:
+The following parameters are required by this class:
 
-      - name: The name of the Platonic solid. Options are "Cube", "Dodecahedron", \
-              "Icosahedron", "Octahedron", and "Tetrahedron".
-    """
-
-    def __init__(self):
-        fn = os.path.join(_DATA_FOLDER, "platonic.json")
-        super().__init__(fn)
+    - name: The name of the Platonic solid. Options are "Cube", "Dodecahedron", \
+            "Icosahedron", "Octahedron", and "Tetrahedron".
+""",
+)
