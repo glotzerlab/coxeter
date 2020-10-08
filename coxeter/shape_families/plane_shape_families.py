@@ -9,10 +9,10 @@ import numpy as np
 from scipy.constants import golden_ratio
 
 from ..shape_classes import ConvexPolyhedron
-from .shape_family import _ShapeFamily
+from .shape_family import ShapeFamily
 
 
-class TruncationPlaneShapeFamily(_ShapeFamily):
+class TruncationPlaneShapeFamily(ShapeFamily):
     """A shape famly defined by plane half-space intersections.
 
     This family of shapes is defined in :cite:`Chen2014`. A set of planes are
