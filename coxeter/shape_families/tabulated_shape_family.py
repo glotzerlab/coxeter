@@ -48,9 +48,11 @@ class TabulatedShapeFamily(_ShapeFamily):
         Returns:
             A subclass of this one associated with the the provided data.
         """
+
         class NewTabulatedShapeFamily(cls):
             # Make a full copy to avoid modifying an input dictionary.
             data = copy.deepcopy(mapping)
+
         # TODO: Consider dynamically setting attributes like __name__.
 
         if classname is not None:
