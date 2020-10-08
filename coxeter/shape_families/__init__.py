@@ -10,7 +10,6 @@ tabulated set of data, while other families are defined by some set of
 analytically.
 """
 
-from .shape_family import ShapeFamily
 from .common_families import PlatonicFamily, RegularNGonFamily
 from .doi_data_repositories import family_from_doi
 from .plane_shape_families import (
@@ -19,6 +18,7 @@ from .plane_shape_families import (
     Family523,
     TruncatedTetrahedronFamily,
 )
+from .shape_family import ShapeFamily
 from .tabulated_shape_family import TabulatedGSDShapeFamily, TabulatedShapeFamily
 
 __all__ = [
