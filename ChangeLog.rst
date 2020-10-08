@@ -10,6 +10,11 @@ Added
 
 - Circumsphere and insphere from center calculations for ConvexSpheropolyhedron.
 
+Changed
+~~~~~~~
+
+-  Shape family API is now entirely based on class methods rather than a call operator.
+
 Fixed
 ~~~~~
 - Volume calculation for ConvexSpheropolyhedron includes area of extruded faces in addition to vertices and edges.
