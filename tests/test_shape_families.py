@@ -2,12 +2,12 @@ import numpy as np
 import pytest
 
 from coxeter.shape_families import (
+    DOI_SHAPE_REPOSITORIES,
     Family323Plus,
     Family423,
     Family523,
     RegularNGonFamily,
     TruncatedTetrahedronFamily,
-    family_from_doi,
 )
 
 
@@ -29,7 +29,7 @@ def test_regular_ngon(n):
 
 
 def test_shape_repos():
-    family = family_from_doi("10.1126/science.1220869")[0]
+    family = DOI_SHAPE_REPOSITORIES["10.1126/science.1220869"][0]
     for key in family.data:
         if family.data[key]["name"] == "Cube":
             break

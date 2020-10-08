@@ -15,7 +15,7 @@ from conftest import (
 )
 from coxeter.shape_classes.convex_polyhedron import ConvexPolyhedron
 from coxeter.shape_classes.utils import rotate_order2_tensor, translate_inertia_tensor
-from coxeter.shape_families import PlatonicFamily, family_from_doi
+from coxeter.shape_families import DOI_SHAPE_REPOSITORIES, PlatonicFamily
 from utils import compute_inertia_mc
 
 
@@ -24,7 +24,7 @@ def damasceno_shapes():
 
     We yield the raw shape dicts to allow excluding subsets for different tests.
     """
-    family = family_from_doi("10.1126/science.1220869")[0]
+    family = DOI_SHAPE_REPOSITORIES["10.1126/science.1220869"][0]
     for shape_data in family.data.values():
         yield shape_data
 
@@ -284,7 +284,7 @@ def test_circumsphere_from_center():
     # random points is tested against a different random polyhedron.
     import random
 
-    family = family_from_doi("10.1126/science.1220869")[0]
+    family = DOI_SHAPE_REPOSITORIES["10.1126/science.1220869"][0]
     shapes = [
         ConvexPolyhedron(s["vertices"])
         for s in random.sample(
