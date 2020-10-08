@@ -13,14 +13,15 @@ from abc import ABC, abstractmethod
 class _ShapeFamily(ABC):
     """A functor that generates instances of :class:`~coxeter.shape_classes.Shape`.
 
-    This class represents a simple promise of a __call__ method that accepts
+    This class represents a simple promise of a `get_shape` method that accepts
     some set of arguments and returns some shape class. The precise behavior is
     left up to specific subclasses, which document their callable parameters in
     the class docstring.
     """
 
+    @classmethod
     @abstractmethod
-    def __call__(self):
+    def get_shape(cls):
         """Generate a shape.
 
         Subclasses must define this function to accept whatever parameters are
