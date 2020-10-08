@@ -98,9 +98,9 @@ class Circle(Shape2D):
     def planar_moments_inertia(self):
         r"""Get the planar moments of inertia.
 
-        Moments are computed with respect to the x and y axis. In addition to
-        the two planar moments, this property also provides the product of
-        inertia.
+        Moments are computed with respect to the :math:`x` and :math:`y`
+        axes. In addition to the two planar moments, this property also
+        provides the product of inertia.
 
         The `planar moments <https://en.wikipedia.org/wiki/Polar_moment_of_inertia>`__
         and the
@@ -110,7 +110,7 @@ class Circle(Shape2D):
         .. math::
             \begin{align}
                 I_x &= {\int \int}_A y^2 dA = \frac{\pi}{4} r^4 = \frac{Ar^2}{4} \\
-                I_y &= {\int \int}_A x^2 dA = \frac{\pi}{4} r^4 = \frac{Ar^2}{4}\\
+                I_y &= {\int \int}_A x^2 dA = \frac{\pi}{4} r^4 = \frac{Ar^2}{4} \\
                 I_{xy} &= {\int \int}_A xy dA = 0 \\
             \end{align}
 

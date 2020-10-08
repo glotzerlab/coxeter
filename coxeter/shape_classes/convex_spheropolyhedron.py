@@ -15,7 +15,7 @@ class ConvexSpheropolyhedron(Shape3D):
 
     A convex spheropolyhedron is defined as a convex polyhedron plus a
     rounding radius. All properties of the underlying polyhedron (the
-    vertices, the faces and their neighbors, etc) can be accessed directly
+    vertices, the faces and their neighbors, etc.) can be accessed directly
     through :attr:`.polyhedron`.
 
     Args:
@@ -83,7 +83,7 @@ class ConvexSpheropolyhedron(Shape3D):
 
     @property
     def polyhedron(self):
-        """:class:`~coxeter.shape_classes.convex_polyhedron.ConvexPolyhedron`: The underlying polyhedron."""  # noqa: E501
+        """:class:`~.ConvexPolyhedron`: The underlying polyhedron."""  # noqa: E501
         return self._polyhedron
 
     @property

@@ -45,6 +45,7 @@ Bradley Dice
 * Migrated ft code into coxeter from freud and added tests.
 * Added CircleCI support.
 * Add ability to check if points are contained in convex spheropolyhedra.
+* Revised and edited all documentation.
 
 Brandon Butler
 

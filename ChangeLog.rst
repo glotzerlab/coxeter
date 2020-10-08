@@ -18,7 +18,8 @@ Changed
 
 Fixed
 ~~~~~
--  Volume calculation for ConvexSpheropolyhedron includes area of extruded faces in addition to vertices and edges.
+- Volume calculation for ConvexSpheropolyhedron includes area of extruded faces in addition to vertices and edges.
+- Documentation has been revised and edited.
 
 Removed
 ~~~~~~~

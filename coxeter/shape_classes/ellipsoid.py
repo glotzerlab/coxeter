@@ -12,13 +12,16 @@ class Ellipsoid(Shape3D):
 
     Args:
         a (float):
-            Principal axis a of the ellipsoid (radius in the x direction).
+            Principal axis a of the ellipsoid (radius in the :math:`x`
+            direction).
         b (float):
-            Principal axis b of the ellipsoid (radius in the y direction).
+            Principal axis b of the ellipsoid (radius in the :math:`y`
+            direction).
         c (float):
-            Principal axis c of the ellipsoid (radius in the z direction).
+            Principal axis c of the ellipsoid (radius in the :math:`z`
+            direction).
         center (Sequence[float]):
-            The coordinates of the center of the circle (Default
+            The coordinates of the center of the ellipsoid (Default
             value: (0, 0, 0)).
     Example::
         >>> ellipsoid = coxeter.shape_classes.Ellipsoid(1.0,3.0,2.0)
@@ -66,7 +69,7 @@ class Ellipsoid(Shape3D):
 
     @property
     def a(self):
-        """float: Get or set the length of principal axis a (the x radius)."""  # noqa: D402, E501
+        """float: Get or set the length of principal axis a (the :math:`x` radius)."""  # noqa: D402, E501
         return self._a
 
     @a.setter
@@ -75,7 +78,7 @@ class Ellipsoid(Shape3D):
 
     @property
     def b(self):
-        """float: Get or set the length of principal axis b (the y radius)."""  # noqa: D402, E501
+        """float: Get or set the length of principal axis b (the :math:`y` radius)."""  # noqa: D402, E501
         return self._b
 
     @b.setter
@@ -84,7 +87,7 @@ class Ellipsoid(Shape3D):
 
     @property
     def c(self):
-        """float: Get or set the length of principal axis c (the z radius)."""  # noqa: D402, E501
+        """float: Get or set the length of principal axis c (the :math:`z` radius)."""  # noqa: D402, E501
         return self._c
 
     @c.setter
