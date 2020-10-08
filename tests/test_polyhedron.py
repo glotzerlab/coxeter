@@ -375,7 +375,7 @@ def test_insphere_from_center_convex_hulls(points, test_points):
 def test_rotate_inertia(points):
     # Use the input as noise rather than the base points to avoid precision and
     # degenerate cases provided by hypothesis.
-    tet = PlatonicFamily()("Tetrahedron")
+    tet = PlatonicFamily.get_shae("Tetrahedron")
     vertices = tet.vertices + points
 
     rotation = rowan.random.rand()
@@ -392,7 +392,7 @@ def test_rotate_inertia(points):
 # used by the MC calculation will not break.
 @given(arrays(np.float64, (3,), elements=floats(-0.2, 0.2, width=64), unique=True))
 def test_translate_inertia(translation):
-    shape = PlatonicFamily()("Cube")
+    shape = PlatonicFamily.get_shape("Cube")
     # Choose a volume > 1 to test the volume scaling, but don't choose one
     # that's too large because the uncentered polyhedral calculation has
     # massive error without fixing that.
