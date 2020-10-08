@@ -1,4 +1,4 @@
-"""Tools for generating data from internally stored data sources.
+"""Generate shapes from published works.
 
 The goal of this module is to produce shapes that were used in scientific
 papers. Some of these papers use some tabulated set of shapes, while others
@@ -18,6 +18,7 @@ from .plane_shape_families import (
     TruncatedTetrahedronFamily,
 )
 from .tabulated_shape_family import TabulatedGSDShapeFamily
+
 
 _DATA_FOLDER = os.path.join(os.path.dirname(__file__), "data")
 # Set of DOIs for which data is stored within the _DATA_FOLDER.
@@ -68,16 +69,3 @@ class _KeyedDefaultDict(defaultdict):
     def __missing__(self, key):
         ret = self[key] = self.default_factory(key)
         return ret
-
-
-DOI_SHAPE_REPOSITORIES = _KeyedDefaultDict(_doi_shape_collection_factory)
-"""A mapping of DOIs to a list of corresponding shape families.
-
-Each known DOI is associated with a list of shape families that can be used to generate
-the shapes from those papers.
-
-Currently supported DOIs:
-    * 10.1126/science.1220869: :cite:`Damasceno2012`
-    * 10.1103/PhysRevX.4.011024: :cite:`Chen2014`
-    * 10.1021/nn204012y: :cite:`Damasceno2012`
-"""
