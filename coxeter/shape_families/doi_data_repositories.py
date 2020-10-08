@@ -4,8 +4,8 @@ The goal of this module is to produce shapes that were used in scientific
 papers. Some of these papers use some tabulated set of shapes, while others
 use some analytically defined class of shapes. The
 :class:`~coxeter.shape_families.ShapeFamily` is sufficiently flexible to handle
-both, so this module provides utilities that generate shape families when
-given a particular DOI.
+both. The primary API offered by this module is the DOI_SHAPE_REPOSITORIES dictionary,
+which maps DOIs to a list of associated shape families.
 """
 
 import os
@@ -25,7 +25,7 @@ _DATA_FOLDER = os.path.join(os.path.dirname(__file__), "data")
 def _doi_shape_collection_factory(doi):
     """Produce the default shape family for a given key.
 
-    This function is the factory used in a defaultdict for generating
+    This function is the factory used in a custom defaultdict for generating
     :class:`~coxeter.shape_families.ShapeFamily` instances based on a given
     key when that key has not yet been seen. The purpose of using this factory
     is to delay the loading of files until they are requested. Without it, all
@@ -71,27 +71,14 @@ class _KeyedDefaultDict(defaultdict):
         return ret
 
 
-_DOI_SHAPE_REPOSITORIES = _KeyedDefaultDict(_doi_shape_collection_factory)
+DOI_SHAPE_REPOSITORIES = _KeyedDefaultDict(_doi_shape_collection_factory)
+"""A mapping of DOIs to a list of corresponding shape families.
 
+Each known DOI is associated with a list of shape families that can be used to generate
+the shapes from those papers.
 
-def family_from_doi(doi):
-    """Acquire a list of shape families.
-
-    This function produces :class:`~coxeter.shape_families.ShapeFamily`
-    instances corresponding to sets of shapes that were used in the paper with
-    the given DOI.
-
-    Args:
-        doi (str):
-            The DOI of a paper whose shape data to find.
-
-    Returns:
-        list[:class:`~coxeter.shape_families.ShapeFamily`]:
-            A list of shape families used in the paper.
-    """
-    try:
-        return _DOI_SHAPE_REPOSITORIES[doi]
-    except KeyError:
-        raise ValueError(
-            "coxeter does not contain any data corresponding to the requested DOI."
-        )
+Currently supported DOIs:
+    * 10.1126/science.1220869: :cite:`Damasceno2012`
+    * 10.1103/PhysRevX.4.011024: :cite:`Chen2014`
+    * 10.1021/nn204012y: :cite:`Damasceno2012`
+"""

@@ -11,7 +11,7 @@ analytically.
 """
 
 from .common_families import PlatonicFamily, RegularNGonFamily
-from .doi_data_repositories import family_from_doi
+from .doi_data_repositories import DOI_SHAPE_REPOSITORIES
 from .plane_shape_families import (
     Family323Plus,
     Family423,
@@ -22,7 +22,7 @@ from .shape_family import ShapeFamily
 from .tabulated_shape_family import TabulatedGSDShapeFamily, TabulatedShapeFamily
 
 __all__ = [
-    "family_from_doi",
+    "DOI_SHAPE_REPOSITORIES",
     "Family323Plus",
     "Family423",
     "Family523",
