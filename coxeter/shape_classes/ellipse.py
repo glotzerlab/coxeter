@@ -117,7 +117,7 @@ class Ellipse(Shape2D):
         r"""Get the planar moments of inertia.
 
         Moments are computed with respect to the :math:`x` and :math:`y`
-        axis. In addition to the two planar moments, this property also
+        axes. In addition to the two planar moments, this property also
         provides the product of inertia.
 
         The `planar moments <https://en.wikipedia.org/wiki/Polar_moment_of_inertia>`__
