@@ -93,5 +93,5 @@ def family_from_doi(doi):
         return _DOI_SHAPE_REPOSITORIES[doi]
     except KeyError:
         raise ValueError(
-            "coxeter does not contain any data corresponding to " "the requested DOI."
+            "coxeter does not contain any data corresponding to the requested DOI."
         )
