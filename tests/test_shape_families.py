@@ -2,12 +2,12 @@ import numpy as np
 import pytest
 
 from coxeter.shape_families import (
+    DOI_SHAPE_REPOSITORIES,
     Family323Plus,
     Family423,
     Family523,
     RegularNGonFamily,
     TruncatedTetrahedronFamily,
-    DOI_SHAPE_REPOSITORIES,
 )
 
 

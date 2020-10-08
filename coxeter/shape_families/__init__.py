@@ -15,7 +15,7 @@ reproducing the exact set of shapes from publications.
 """
 
 from .common_families import PlatonicFamily, RegularNGonFamily
-from .doi_data_repositories import _KeyedDefaultDict, _doi_shape_collection_factory
+from .doi_data_repositories import _doi_shape_collection_factory, _KeyedDefaultDict
 from .plane_shape_families import (
     Family323Plus,
     Family423,
@@ -24,7 +24,6 @@ from .plane_shape_families import (
 )
 from .shape_family import ShapeFamily
 from .tabulated_shape_family import TabulatedGSDShapeFamily, TabulatedShapeFamily
-
 
 # Note for devs: we want this object to be documented in the public API. The Sphinx
 # method for documenting a module-level constant is placing the docstring directly below

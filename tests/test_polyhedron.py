@@ -15,7 +15,7 @@ from conftest import (
 )
 from coxeter.shape_classes.convex_polyhedron import ConvexPolyhedron
 from coxeter.shape_classes.utils import rotate_order2_tensor, translate_inertia_tensor
-from coxeter.shape_families import PlatonicFamily, DOI_SHAPE_REPOSITORIES
+from coxeter.shape_families import DOI_SHAPE_REPOSITORIES, PlatonicFamily
 from utils import compute_inertia_mc
 
 

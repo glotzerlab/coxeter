@@ -19,7 +19,6 @@ from .plane_shape_families import (
 )
 from .tabulated_shape_family import TabulatedGSDShapeFamily
 
-
 _DATA_FOLDER = os.path.join(os.path.dirname(__file__), "data")
 # Set of DOIs for which data is stored within the _DATA_FOLDER.
 _DOI_TO_FILE = {
