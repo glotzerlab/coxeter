@@ -23,7 +23,7 @@ def _align_points_by_normal(normal, points):
     Given a normal vector and a set of points, this method finds the rotation
     that aligns the normal with the z-axis and rotate all points by that
     rotation. The primary utility of this function is to bring a set of
-    vertices into the xy plane. Note that this function will work for any
+    vertices into the :math:`xy` plane. Note that this function will work for any
     arbitrary set of points; it does no checks to ensure that they are in fact
     planar, or that the provided normal vector is in fact normal to the plane
     defined by the points.
@@ -304,7 +304,7 @@ class Polygon(Shape2D):
     def planar_moments_inertia(self):
         r"""Get the planar moments of inertia.
 
-        Moments are computed with respect to the x and y axis. In addition to
+        Moments are computed with respect to the :math:`x` and :math:`y` axis. In addition to
         the two planar moments, this property also provides the product of
         inertia.
 
@@ -326,7 +326,7 @@ class Polygon(Shape2D):
             \begin{align}
                 I_x &= \frac{1}{12} \sum_{i=1}^N (x_i y_{i+1} - x_{i+1} y_i) (y_i^2 + y_i*y_{i+1} + y_{i+1}^2) \\
                 I_y &= \frac{1}{12} \sum_{i=1}^N (x_i y_{i+1} - x_{i+1} y_i) (x_i^2 + x_i*x_{i+1} + x_{i+1}^2) \\
-                I_xy &= \frac{1}{12} \sum_{i=1}^N (x_i y_{i+1} - x_{i+1} y_i) (x_i y_{i+1} + 2 x_i y_i + 2 x_{i+1} y_{i+1} + x_{i+1} y_i) \\
+                I_{xy} &= \frac{1}{12} \sum_{i=1}^N (x_i y_{i+1} - x_{i+1} y_i) (x_i y_{i+1} + 2 x_i y_i + 2 x_{i+1} y_{i+1} + x_{i+1} y_i) \\
             \end{align}
 
         These formulas can be derived as described
@@ -338,8 +338,8 @@ class Polygon(Shape2D):
         considered when computing the moments for polygons embedded in
         three-dimensional space that are rotated out of the :math:`xy` plane,
         since the planar moments are invariant to this orientation. The exact
-        rotation used for this computation (i.e. changes in the x and y
-        position) should not be relied upon.
+        rotation used for this computation (i.e. changes in the :math:`x` and
+        :math:`y` position) should not be relied upon.
         """  # noqa: E501
         # Rotate shape so that normal vector coincides with z-axis.
         verts = _align_points_by_normal(self._normal, self._vertices)
@@ -388,7 +388,7 @@ class Polygon(Shape2D):
         r""":math:`(3, 3)` :class:`numpy.ndarray`: Get the inertia tensor.
 
         The inertia tensor is computed for the polygon embedded in
-        :math:`\mathcal{R}^3`. This computation proceeds by first computing the
+        :math:`\mathbb{R}^3`. This computation proceeds by first computing the
         polar moment of inertia for the polygon in the xy-plane relative to its
         centroid. The tensor is then rotated back to the orientation of the
         polygon and shifted to the original centroid.
