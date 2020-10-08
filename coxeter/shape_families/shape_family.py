@@ -1,6 +1,6 @@
 """Define the abstract base class for all shape families.
 
-This module defines the :class:`~._ShapeFamily` class, which defines the core
+This module defines the :class:`~.ShapeFamily` class, which defines the core
 API for shape families. A shape family is simply defined as a functor that
 produces instances of :class:`~coxeter.shape_classes.Shape` when called. This
 flexible API can be used in a variety of ways, including both tabulated and

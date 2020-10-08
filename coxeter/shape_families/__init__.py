@@ -2,7 +2,7 @@
 
 Shape families are coxeter's way of providing well-defined methods for
 generating classes of shapes according to some set of rules. The basic
-interface is defined by the :class:`~._ShapeFamily`, which is a functor that is
+interface is defined by the :class:`~.ShapeFamily`, which is a functor that is
 called to generate a shape. The :class:`~.TabulatedShapeFamily` group of
 subclasses enable the generation of shape families according to some
 tabulated set of data, while other families are defined by some set of
