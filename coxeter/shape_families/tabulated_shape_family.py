@@ -12,10 +12,10 @@ import copy
 import json
 
 from ..shape_getters import from_gsd_type_shapes
-from .shape_family import _ShapeFamily
+from .shape_family import ShapeFamily
 
 
-class TabulatedShapeFamily(_ShapeFamily):
+class TabulatedShapeFamily(ShapeFamily):
     """A shape family corresponding to a tabulated set of shapes.
 
     Data can either be read from a file or provided in the form of a
@@ -34,7 +34,7 @@ class TabulatedShapeFamily(_ShapeFamily):
 
         Notably, this method is a _class_ factory: rather than generating a new
         instance, this method actually generates a new subclass. This design is
-        consistent with the usage :class:`~_ShapeFamily` subclasses by direct
+        consistent with the usage :class:`~.ShapeFamily` subclasses by direct
         interaction with the class (without instantiation).
 
         Args:
