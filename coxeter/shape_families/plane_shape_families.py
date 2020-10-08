@@ -19,9 +19,6 @@ class TruncationPlaneShapeFamily(_ShapeFamily):
     symmetrically placed about a central point, and shapes are defined by the
     intersection of the half spaces defined by these planes. Depending on the
     symmetry group chosen to define the planes, different shapes can result.
-    Subclasses of this class must define the :attr:`~.planes` and
-    :attr:`~.plane_types` class attributes to define the planes and which distance
-    parameter is used to define those truncations.
 
     The following parameters are required by this class:
 
@@ -32,6 +29,36 @@ class TruncationPlaneShapeFamily(_ShapeFamily):
     See :cite:`Chen2014` for descriptions of these parameters. The bounds of
     each parameter are set by the subclasses.
     """
+
+    # Documentation for developers:
+    # Subclasses of this class must define the :attr:`~._planes` and
+    # :attr:`~._plane_types` class attributes to define the planes and which distance
+    # parameter is used to define those truncations.
+
+    @classmethod
+    def get_planes(cls):
+        """Get the set of planes used to truncate the shape.
+
+        Returns:
+            (:math:`N_{planes}`, 3) :class:`numpy.ndarray` of float:
+                The planes defining this family
+        """
+        return cls._planes
+
+    @classmethod
+    def get_plane_types(cls):
+        """Get the types of the planes.
+
+        The types are encoded via an integer mapping:
+            type 0 corresponds to the parameter a.
+            type 1 corresponds to the parameter b.
+            type 2 corresponds to the parameter c.
+
+        Returns:
+            (:math:`N_{planes}`, ) :class:`numpy.ndarray` of int:
+                The plane types.
+        """
+        return cls._plane_types
 
     @classmethod
     def make_vertices(cls, a, b, c):
@@ -51,8 +78,8 @@ class TruncationPlaneShapeFamily(_ShapeFamily):
 
         thresh = 1e-6
 
-        planetypes = cls.plane_types
-        planelist = cls.planes
+        planetypes = cls._plane_types
+        planelist = cls._planes
 
         # Generate all unique combinations of planes.
         num_planes = len(planetypes)
@@ -112,7 +139,7 @@ class Family323Plus(TruncationPlaneShapeFamily):
     tetrahedron at (3, 1) and (1, 3), and a cube at (3, 3).
     """
 
-    planes = np.array(
+    _planes = np.array(
         [
             [1.0, 1.0, 1.0],
             [-1.0, -1.0, 1.0],
@@ -130,17 +157,8 @@ class Family323Plus(TruncationPlaneShapeFamily):
             [0.0, 0.0, -1.0],
         ]
     )
-    """(:math:`N_{planes}`, 3) :class:`numpy.ndarray` of float: Planes.
 
-    The set of planes used to truncate the shape.
-    """
-
-    plane_types = np.array([2, 2, 2, 2, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1])
-    """(:math:`N_{planes}`, ) :class:`numpy.ndarray` of int: Plane types.
-
-    The types of the planes (type 0 corresponds to the parameter a, type 1
-    corresponds to b, and type 2 corresponds to c).
-    """
+    _plane_types = np.array([2, 2, 2, 2, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1])
 
     @classmethod
     def get_shape(cls, a, c):
@@ -179,7 +197,7 @@ class Family423(TruncationPlaneShapeFamily):
     (2, 3).
     """
 
-    planes = np.array(
+    _planes = np.array(
         [
             [1.0, 1.0, 1.0],
             [-1.0, -1.0, 1.0],
@@ -209,19 +227,10 @@ class Family423(TruncationPlaneShapeFamily):
             [0.0, 0.0, -1.0],
         ]
     )
-    """(:math:`N_{planes}`, 3) :class:`numpy.ndarray` of float: Planes.
 
-    The set of planes used to truncate the shape.
-    """
-
-    plane_types = np.array(
+    _plane_types = np.array(
         [2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0]
     )
-    """(:math:`N_{planes}`, ) :class:`numpy.ndarray` of int: Plane types.
-
-    The types of the planes (type 0 corresponds to the parameter a, type 1
-    corresponds to b, and type 2 corresponds to c).
-    """
 
     @classmethod
     def get_shape(cls, a, c):
@@ -269,7 +278,7 @@ class Family523(TruncationPlaneShapeFamily):
     S = golden_ratio
     """The constant S (the golden ratio)."""
 
-    planes = np.array(
+    _planes = np.array(
         [
             [1.0, 0.0, s],
             [-1.0, 0.0, -s],
@@ -335,12 +344,8 @@ class Family523(TruncationPlaneShapeFamily):
             [-1.0, -s, -S],
         ]
     )
-    """(:math:`N_{planes}`, 3) :class:`numpy.ndarray` of float: Planes.
 
-    The set of planes used to truncate the shape.
-    """
-
-    plane_types = np.array(
+    _plane_types = np.array(
         [
             0,
             0,
@@ -406,11 +411,6 @@ class Family523(TruncationPlaneShapeFamily):
             1,
         ]
     )
-    """(:math:`N_{planes}`, ) :class:`numpy.ndarray` of int: Plane types.
-
-    The types of the planes (type 0 corresponds to the parameter a, type 1
-    corresponds to b, and type 2 corresponds to c).
-    """
 
     @classmethod
     def get_shape(cls, a, c):
