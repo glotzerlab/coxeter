@@ -13,7 +13,7 @@ class Sphere(Shape3D):
         radius (float):
             Radius of the sphere.
         center (Sequence[float]):
-            The coordinates of the center of the circle (Default
+            The coordinates of the center of the sphere (Default
             value: (0, 0, 0)).
     Example::
         >>> sphere = coxeter.shape_classes.Sphere(1.0)

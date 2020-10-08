@@ -564,10 +564,10 @@ class Polyhedron(Shape3D):
         """Plot the polyhedron.
 
         Note that the ``ax`` argument should be a 3D axes object; passing in
-        a 2D axes will result in wrong behavior.
+        a 2D axes object will result in wrong behavior.
 
         Args:
-            ax (:class:`matplotlib.axes.Axes`):
+            ax (:class:`mpl_toolkits.mplot3d.axes3d.Axes3D`):
                 The axes on which to draw the polyhedron.
             plot_verts (bool):
                 If True, scatter points will be added at the vertices

@@ -316,8 +316,8 @@ class Polygon(Shape2D):
         .. math::
             \begin{align}
                 I_x &= {\int \int}_A y^2 dA \\
-                I_y &= {\int \int}_A z^2 dA
-                I_{xy} &= {\int \int}_A xy dA
+                I_y &= {\int \int}_A x^2 dA \\
+                I_{xy} &= {\int \int}_A xy dA \\
             \end{align}
 
         To compute this for a polygon, we discretize the sum:

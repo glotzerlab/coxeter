@@ -105,7 +105,7 @@ class ConvexSpheropolygon(Shape2D):
 
     @property
     def vertices(self):
-        """:math:`(N_{verts}, 3) :class:`numpy.ndarray` of float: Get the vertices of the spheropolygon."""  # noqa: E501
+        """:math:`(N_{verts}, 3)` :class:`numpy.ndarray` of float: Get the vertices of the spheropolygon."""  # noqa: E501
         return self._polygon.vertices
 
     @property
