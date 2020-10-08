@@ -118,7 +118,7 @@ class ConvexPolyhedron(Polyhedron):
 
     @property
     def tau(self):
-        r"""float: Get the parameter :math:`tau = \frac{4\pi R^2}{S}`.
+        r"""float: Get the parameter :math:`\tau = \frac{4\pi R^2}{S}`.
 
         This parameter is defined in :cite:`Naumann19841` and is closely
         related to the Pitzer acentric factor. This quantity appears relevant
