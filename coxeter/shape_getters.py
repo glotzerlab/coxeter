@@ -40,7 +40,7 @@ def from_gsd_type_shapes(params, dimensions=3):  # noqa: C901
             :class:`~.shape_classes.Ellipsoid` (Default value: 3).
 
     Returns:
-        list[:class:`~coxeter.shape_classes.Shape`]:
+        :class:`~coxeter.shape_classes.Shape`:
             The desired shape.
     """
     if "type" not in params:
