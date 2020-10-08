@@ -74,7 +74,7 @@ class ConvexSpheropolygon(Shape2D):
                 center, when this flag is True the point closer to the center
                 comes first, otherwise the point further away comes first
                 (Default value: True).
-        Exmaple::
+        Example::
             >>> rounded_tri = coxeter.shape_classes.ConvexSpheropolygon(
             [[-1,0],[0,1],[1,0]],radius=.1)
             >>> rounded_tri.vertices
