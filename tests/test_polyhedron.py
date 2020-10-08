@@ -22,8 +22,7 @@ from coxeter.shape_families import PlatonicFamily, family_from_doi
 def damasceno_shapes():
     """Generate the shapes from :cite:`Damasceno2012a`.
 
-    For efficiency, we don't construct all the shape classes, but rather just
-    yield the raw shape dicts.
+    We yield the raw shape dicts to allow excluding subsets for different tests.
     """
     family = family_from_doi("10.1126/science.1220869")[0]
     for shape_data in family.data.values():
@@ -31,9 +30,8 @@ def damasceno_shapes():
 
 
 def platonic_solids():
-    family = PlatonicFamily()
-    for shape_name in family.data:
-        yield family(shape_name)
+    for shape_name in PlatonicFamily.data:
+        yield PlatonicFamily.get_shape(shape_name)
 
 
 def test_normal_detection(convex_cube):
@@ -206,9 +204,8 @@ def test_dihedrals():
         "Dodecahedron": np.pi - np.arctan(2),
         "Icosahedron": np.pi - np.arccos(np.sqrt(5) / 3),
     }
-    family = PlatonicFamily()
     for name, dihedral in known_shapes.items():
-        poly = family(name)
+        poly = PlatonicFamily.get_shape(name)
         # The dodecahedron needs a more expansive merge to get all the
         # faces joined.
         if name == "Dodecahedron":
@@ -229,9 +226,8 @@ def test_curvature():
         "Tetrahedron": 0.9303430847680867,
     }
 
-    family = PlatonicFamily()
     for name, curvature in known_shapes.items():
-        poly = family(name)
+        poly = PlatonicFamily.get_shape(name)
         if name == "Dodecahedron":
             poly.merge_faces(rtol=1)
         assert np.isclose(poly.mean_curvature, curvature)

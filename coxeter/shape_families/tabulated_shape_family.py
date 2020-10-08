@@ -50,7 +50,7 @@ class TabulatedShapeFamily(_ShapeFamily):
         """
         class NewTabulatedShapeFamily(cls):
             # Make a full copy to avoid modifying an input dictionary.
-            _data = copy.deepcopy(mapping)
+            data = copy.deepcopy(mapping)
         # TODO: Consider dynamically setting attributes like __name__.
 
         if classname is not None:
@@ -106,4 +106,4 @@ class TabulatedGSDShapeFamily(TabulatedShapeFamily):
         Returns:
             :class:`~coxeter.shape_classes.Shape`: The requested shape.
         """
-        return from_gsd_type_shapes(cls._data[name])
+        return from_gsd_type_shapes(cls.data[name])
