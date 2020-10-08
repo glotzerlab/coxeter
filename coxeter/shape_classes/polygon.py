@@ -447,13 +447,18 @@ class Polygon(Shape2D):
     def plot(self, ax, center=False, plot_verts=False, label_verts=False):
         """Plot the polygon.
 
-        Note that the polygon is always rotated into the xy plane and plotted
-        in two dimensions.
+        Note that the polygon is always rotated into the :math:`xy` plane and
+        plotted in two dimensions.
 
         Args:
+            ax (:class:`matplotlib.axes.Axes`):
+                The axes on which to draw the polygon.
+            center (bool):
+                If True, the polygon vertices are plotted relative to its
+                center (Default value: False).
             plot_verts (bool):
-                If True, scatter points will be added at the vertices (Default
-                value: False).
+                If True, scatter points will be added at the vertices
+                (Default value: False).
             label_verts (bool):
                 If True, vertex indices will be added next to the vertices
                 (Default value: False).
@@ -476,7 +481,7 @@ class Polygon(Shape2D):
 
     @property
     def bounding_circle(self):
-        """tuple[float, float]: Get the center and radius of the bounding circle."""  # noqa: E501
+        """:class:`~.Circle`: Get the minimal bounding circle."""  # noqa: E501
         if not MINIBALL:
             raise ImportError(
                 "The miniball module must be installed. It can "
@@ -502,7 +507,7 @@ class Polygon(Shape2D):
                 vertices = rowan.rotate(current_rotation, vertices)
 
         if attempt == max_attempts:
-            raise RuntimeError("Unable to solve for a bounding sphere.")
+            raise RuntimeError("Unable to solve for a bounding circle.")
 
         # The center must be rotated back to undo any rotation.
         center = rowan.rotate(rowan.conjugate(current_rotation), center)
@@ -511,7 +516,17 @@ class Polygon(Shape2D):
 
     @property
     def circumcircle(self):
-        """:class:`~.Circle`: Get the polygon's circumcircle."""
+        """:class:`~.Circle`: Get the polygon's circumcircle.
+
+        A `circumcircle
+        <https://en.wikipedia.org/wiki/Circumscribed_circle>`__ must touch
+        all the points of the polygon. A circumcircle exists if and only if
+        there is a point equidistant from all the vertices.
+
+        Raises:
+            RuntimeError: If no circumcircle exists for this polygon.
+
+        """
         # Solves a linear system of equations to find a point equidistant from
         # all the vertices if it exists. Since the polygon is embedded in 3D,
         # we must constrain our solutions to the plane of the polygon.
