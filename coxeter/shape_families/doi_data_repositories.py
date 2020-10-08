@@ -20,6 +20,16 @@ from .plane_shape_families import (
 from .tabulated_shape_family import TabulatedGSDShapeFamily
 
 _DATA_FOLDER = os.path.join(os.path.dirname(__file__), "data")
+# Set of DOIs for which data is stored within the _DATA_FOLDER.
+_DOI_TO_FILE = {
+    "10.1126/science.1220869": ["science1220869.json"],
+}
+
+# Set of DOIs that are associated with a specific ShapeFamily subclass.
+_DOI_TO_FAMILY = {
+    "10.1103/PhysRevX.4.011024": [Family323Plus, Family423, Family523],
+    "10.1021/nn204012y": [TruncatedTetrahedronFamily],
+}
 
 
 def _doi_shape_collection_factory(doi):
@@ -32,27 +42,16 @@ def _doi_shape_collection_factory(doi):
     files would be loaded when coxeter is imported, which introduces noticeable
     and unnecessary lag.
     """
-    # Set of DOIs for which data is stored within the data/ directory.
-    doi_to_file = {
-        "10.1126/science.1220869": ["science1220869.json"],
-    }
-
-    # Set of DOIs that are associated with a specific ShapeFamily subclass.
-    doi_to_family = {
-        "10.1103/PhysRevX.4.011024": [Family323Plus, Family423, Family523],
-        "10.1021/nn204012y": [TruncatedTetrahedronFamily],
-    }
-
     families = []
-    if doi in doi_to_file:
-        for fn in doi_to_file[doi]:
+    if doi in _DOI_TO_FILE:
+        for fn in _DOI_TO_FILE[doi]:
             families.append(
                 TabulatedGSDShapeFamily.from_json_file(os.path.join(_DATA_FOLDER, fn))
             )
-    elif doi in doi_to_family:
-        for family_type in doi_to_family[doi]:
+    if doi in _DOI_TO_FAMILY:
+        for family_type in _DOI_TO_FAMILY[doi]:
             families.append(family_type())
-    else:
+    if not families:
         raise KeyError(
             "Provided DOI is not associated with any known data or shape families."
         )
