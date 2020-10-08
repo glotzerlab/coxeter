@@ -75,6 +75,8 @@ def test_center():
 
 @given(floats(0.1, 1000))
 def test_get_radius(r):
-    """Test getting the radius."""
+    """Test getting and setting the radius."""
     circle = Circle(r)
     assert circle.radius == r
+    circle.radius = r + 1
+    assert circle.radius == r + 1
