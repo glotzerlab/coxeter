@@ -248,7 +248,7 @@ class Polygon(Shape2D):
 
     @property
     def normal(self):
-        """:math:`(3, )` :class:`numpy.ndarray` of float: Get the the normal vector."""  # noqa: E501
+        """:math:`(3, )` :class:`numpy.ndarray` of float: Get the normal vector."""  # noqa: E501
         return self._normal
 
     @property
