@@ -313,3 +313,22 @@ def test_incircle_from_center(convex_square):
     circle = convex_square.incircle_from_center
     assert np.all(circle.center == convex_square.center)
     assert circle.radius == 0.5
+
+
+@pytest.mark.parametrize("num_sides", range(3, 6))
+def test_perimeter(num_sides):
+    """Test the polygon perimeter calculation."""
+
+    def unit_area_regular_n_gon_side_length(n):
+        r"""Compute the side length of a unit-area regular polygon analytically.
+
+        The area of regular n-gon is given by
+        :math:`\frac{s^2 n}{4 \tan\left(\frac{180}{n}\right)}`. This function sets
+        the area to 1 and inverts that formula.
+        """
+        return np.sqrt((4 * np.tan(np.pi / n)) / n)
+
+    poly = RegularNGonFamily.get_shape(num_sides)
+    assert np.isclose(
+        num_sides * unit_area_regular_n_gon_side_length(num_sides), poly.perimeter
+    )
