@@ -8,6 +8,7 @@ import numpy as np
 
 from .base_classes import Shape2D
 from .convex_polygon import ConvexPolygon, _is_convex
+from .circle import Circle
 
 
 class ConvexSpheropolygon(Shape2D):
@@ -154,3 +155,8 @@ class ConvexSpheropolygon(Shape2D):
     @center.setter
     def center(self, new_center):
         self._polygon.center = new_center
+
+    @property
+    def perimeter(self):
+        """float: Get the perimeter of the spheropolygon."""
+        return self._polygon.perimeter + Circle(self._radius).perimeter
