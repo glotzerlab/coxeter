@@ -24,19 +24,13 @@ class ConvexPolyhedron(Polyhedron):
         >>> cube = coxeter.shape_classes.ConvexPolyhedron(
         ...   [[1, 1, 1], [1, -1, 1], [1, 1, -1], [1, -1, -1],
         ...    [-1, 1, 1], [-1, -1, 1], [-1, 1, -1], [-1, -1, -1]])
-        >>> cube.asphericity
-        1.5
+        >>> assert np.isclose(cube.asphericity, 1.5)
         >>> bounding_sphere = cube.bounding_sphere
-        >>> bounding_sphere.radius
-        1.7320508...
+        >>> assert np.isclose(bounding_sphere.radius, np.sqrt(3))
         >>> cube.center
         array([0., 0., 0.])
-        >>> sphere = cube.circumsphere
-        >>> sphere.radius
-        1.7320508075688772
-        >>> sphere = cube.circumsphere_from_center
-        >>> sphere.radius
-        1.7320508075688772
+        >>> circumsphere = cube.circumsphere
+        >>> assert np.isclose(circumsphere.radius, np.sqrt(3))
         >>> cube.faces
         [array([4, 5, 1, 0], dtype=int32), array([0, 2, 6, 4], dtype=int32),
         array([6, 7, 5, 4], dtype=int32), array([0, 1, 3, 2], dtype=int32),
@@ -45,17 +39,14 @@ class ConvexPolyhedron(Polyhedron):
         {'type': 'ConvexPolyhedron', 'vertices': [[1.0, 1.0, 1.0], [1.0, -1.0, 1.0],
         [1.0, 1.0, -1.0], [1.0, -1.0, -1.0], [-1.0, 1.0, 1.0], [-1.0, -1.0, 1.0],
         [-1.0, 1.0, -1.0], [-1.0, -1.0, -1.0]]}
-        >>> cube.inertia_tensor
-        array([[5.33333333, 0.        , 0.        ],
-               [0.        , 5.33333333, 0.        ],
-               [0.        , 0.        , 5.33333333]])
+        >>> assert np.allclose(
+        ...   cube.inertia_tensor,
+        ...   np.diag([16. / 3., 16. / 3., 16. / 3.]))
         >>> sphere = cube.insphere_from_center
         >>> sphere.radius
         1.0
-        >>> cube.iq
-        0.5235987755982988
-        >>> cube.mean_curvature
-        1.5
+        >>> assert np.isclose(cube.iq, np.pi / 6.)
+        >>> assert np.isclose(cube.mean_curvature, 1.5)
         >>> cube.neighbors
         [array([1, 2, 3, 4]), array([0, 2, 3, 5]), array([0, 1, 4, 5]),
         array([0, 1, 4, 5]), array([0, 2, 3, 5]), array([1, 2, 3, 4])]
@@ -72,8 +63,7 @@ class ConvexPolyhedron(Polyhedron):
         8
         >>> cube.surface_area
         24.0
-        >>> cube.tau
-        1.1780972450961724
+        >>> assert np.isclose(cube.tau, 3. / 8. * np.pi)
         >>> cube.vertices
         array([[ 1.,  1.,  1.],
                [ 1., -1.,  1.],
@@ -83,8 +73,7 @@ class ConvexPolyhedron(Polyhedron):
                [-1., -1.,  1.],
                [-1.,  1., -1.],
                [-1., -1., -1.]])
-        >>> cube.volume
-        8.0
+        >>> assert np.isclose(cube.volume, 8.)
 
     """
 
