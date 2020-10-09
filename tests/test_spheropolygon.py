@@ -149,3 +149,8 @@ def test_convex_signed_area(square_points):
         assert np.isclose(poly.signed_area, -hull.volume - sphero_area)
 
     testfun()
+
+
+def test_sphero_square_perimeter(unit_rounded_square):
+    """Test calculating the perimeter of a spheropolygon."""
+    assert unit_rounded_square.perimeter == 4 + 2 * np.pi

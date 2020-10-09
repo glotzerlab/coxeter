@@ -133,11 +133,6 @@ class Ellipsoid(Shape3D):
         inertia_tensor = np.diag([i_xx, i_yy, i_zz])
         return translate_inertia_tensor(self.center, inertia_tensor, vol)
 
-    @property
-    def iq(self):
-        """float: Get the isoperimetric quotient."""
-        return np.pi * 36 * self.volume ** 2 / (self.surface_area ** 3)
-
     def is_inside(self, points):
         """Determine whether a set of points are contained in this ellipsoid.
 

@@ -528,12 +528,6 @@ class Polyhedron(Shape3D):
 
         return Sphere(np.linalg.norm(x), x + self.vertices[0])
 
-    @property
-    def iq(self):
-        """float: The isoperimetric quotient."""
-        # TODO: allow for non-spherical reference ratio (changes the prefactor)
-        return np.pi * 36 * self.volume ** 2 / (self.surface_area ** 3)
-
     def get_dihedral(self, a, b):
         """Get the dihedral angle between a pair of faces.
 

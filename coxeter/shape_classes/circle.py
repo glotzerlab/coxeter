@@ -129,19 +129,6 @@ class Circle(Shape2D):
         return i_x, i_y, i_xy
 
     @property
-    def polar_moment_inertia(self):
-        """Get the polar moment of inertia.
-
-        The `polar moment of inertia <https://en.wikipedia.org/wiki/Polar_moment_of_inertia>`__
-        is always calculated about an axis perpendicular to the circle (i.e. the
-        normal vector) placed at the centroid of the circle.
-
-        The polar moment is computed as the sum of the two planar moments of
-        inertia.
-        """  # noqa: E501
-        return np.sum(self.planar_moments_inertia[:2])
-
-    @property
     def iq(self):
         """float: The isoperimetric quotient.
 
