@@ -36,7 +36,7 @@ class Ellipsoid(Shape3D):
         array([0, 0, 0])
         >>> ellipsoid.gsd_shape_spec
         {'type': 'Ellipsoid', 'a': 1.0, 'b': 3.0, 'c': 2.0}
-        ellipsoid.inertia_tensor
+        >>> ellipsoid.inertia_tensor
         array([[65.34512719,  0.        ,  0.        ],
                [ 0.        , 25.13274123,  0.        ],
                [ 0.        ,  0.        , 50.26548246]])
