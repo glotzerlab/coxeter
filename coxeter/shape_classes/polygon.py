@@ -372,18 +372,6 @@ class Polygon(Shape2D):
         return i_x, i_y, i_xy
 
     @property
-    def polar_moment_inertia(self):
-        """Get the polar moment of inertia.
-
-        The `polar moment of inertia <https://en.wikipedia.org/wiki/Polar_moment_of_inertia>`__
-        is always calculated about an axis perpendicular to the polygon (i.e. the
-        normal vector).
-
-        The polar moment is computed as the sum of the two planar moments of inertia.
-        """  # noqa: E501
-        return np.sum(self.planar_moments_inertia[:2])
-
-    @property
     def inertia_tensor(self):
         r""":math:`(3, 3)` :class:`numpy.ndarray`: Get the inertia tensor.
 
@@ -438,11 +426,6 @@ class Polygon(Shape2D):
         into the plane to get a triangulation.
         """
         yield from polytri.triangulate(self.vertices)
-
-    @property
-    def iq(self):
-        """float: Get the isoperimetric quotient."""
-        raise NotImplementedError
 
     def plot(self, ax, center=False, plot_verts=False, label_verts=False):
         """Plot the polygon.
