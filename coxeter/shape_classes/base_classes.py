@@ -150,5 +150,4 @@ class Shape3D(Shape):
                    &= \frac{36\pi V^2}{S^3}
             \end{align}
         """  # noqa: E501
-        # TODO: allow for non-spherical reference ratio (changes the prefactor)
         return np.pi * 36 * self.volume ** 2 / (self.surface_area ** 3)
