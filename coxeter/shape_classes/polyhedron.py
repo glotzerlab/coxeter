@@ -68,8 +68,7 @@ class Polyhedron(Shape3D):
         >>> cube = coxeter.shape_classes.Polyhedron(
         ...   vertices=cube.vertices, faces=cube.faces)
         >>> bounding_sphere = cube.bounding_sphere
-        >>> bounding_sphere.radius
-        1.7320508...
+        >>> assert np.isclose(bounding_sphere.radius, np.sqrt(3))
         >>> cube.center
         array([0., 0., 0.])
         >>> cube.circumsphere
@@ -85,12 +84,10 @@ class Polyhedron(Shape3D):
         [array([4, 5, 1, 0], dtype=int32), array([0, 2, 6, 4], dtype=int32),
         array([6, 7, 5, 4], dtype=int32), array([0, 1, 3, 2], dtype=int32),
         array([5, 7, 3, 1], dtype=int32), array([2, 3, 7, 6], dtype=int32)]}
-        >>> cube.inertia_tensor
-        array([[5.33333333, 0.        , 0.        ],
-               [0.        , 5.33333333, 0.        ],
-               [0.        , 0.        , 5.33333333]])
-        >>> cube.iq
-        0.5235987755982988
+        >>> assert np.allclose(
+        ...   cube.inertia_tensor,
+        ...   np.diag([16. / 3., 16. / 3., 16. / 3.]))
+        >>> assert np.isclose(cube.iq, np.pi / 6.)
         >>> cube.neighbors
         [array([1, 2, 3, 4]), array([0, 2, 3, 5]), array([0, 1, 4, 5]),
         array([0, 1, 4, 5]), array([0, 2, 3, 5]), array([1, 2, 3, 4])]
@@ -105,8 +102,7 @@ class Polyhedron(Shape3D):
         6
         >>> cube.num_vertices
         8
-        >>> cube.surface_area
-        24.0
+        >>> assert np.isclose(cube.surface_area, 24.0)
         >>> cube.vertices
         array([[ 1.,  1.,  1.],
                [ 1., -1.,  1.],
@@ -116,8 +112,7 @@ class Polyhedron(Shape3D):
                [-1., -1.,  1.],
                [-1.,  1., -1.],
                [-1., -1., -1.]])
-        >>> cube.volume
-        8.0
+        >>> assert np.isclose(cube.volume, 8.0)
 
     """
 
@@ -378,8 +373,9 @@ class Polyhedron(Shape3D):
             ...    [-1, 1, 1], [-1, -1, 1], [-1, 1, -1], [-1, -1, -1]])
             >>> cube = coxeter.shape_classes.Polyhedron(
             ...   vertices=cube.vertices,faces=cube.faces)
-            >>> cube.get_face_area([1, 2, 3])
-            array([4., 4., 4.])
+            >>> assert np.allclose(
+            ...   cube.get_face_area([1, 2, 3]),
+            ...   [4., 4., 4.])
 
         """
         if faces is None:
@@ -548,8 +544,7 @@ class Polyhedron(Shape3D):
             ...    [-1, 1, 1], [-1, -1, 1], [-1, 1, -1], [-1, -1, -1]])
             >>> cube = coxeter.shape_classes.Polyhedron(
             ...   vertices=cube.vertices, faces=cube.faces)
-            >>> cube.get_dihedral(1, 2)
-            1.5707963267948966
+            >>> assert np.isclose(cube.get_dihedral(1, 2), np.pi / 2.)
 
         """
         if b not in self.neighbors[a]:

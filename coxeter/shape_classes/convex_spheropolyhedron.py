@@ -25,23 +25,23 @@ class ConvexSpheropolyhedron(Shape3D):
             The rounding radius of the spheropolyhedron.
 
     Example:
-        >>> sphero = coxeter.shape_classes.ConvexSpheropolyhedron(
+        >>> spherocube = coxeter.shape_classes.ConvexSpheropolyhedron(
         ...   [[1, 1, 1], [1, -1, 1], [1, 1, -1], [1, -1, -1],
         ...    [-1, 1, 1], [-1, -1, 1], [-1, 1, -1], [-1, -1, -1]],
         ...   radius=0.5)
-        >>> sphero.center
+        >>> spherocube.center
         array([0., 0., 0.])
-        >>> sphere = sphero.circumsphere_from_center
+        >>> sphere = spherocube.circumsphere_from_center
         >>> sphere.radius
-        2.232050807568877
-        >>> sphero.gsd_shape_spec
+        2.2320...
+        >>> spherocube.gsd_shape_spec
         {'type': 'ConvexPolyhedron', 'vertices': [[1.0, 1.0, 1.0], [1.0, -1.0, 1.0],
         [1.0, 1.0, -1.0], [1.0, -1.0, -1.0], [-1.0, 1.0, 1.0], [-1.0, -1.0, 1.0],
         [-1.0, 1.0, -1.0], [-1.0, -1.0, -1.0]], 'rounding_radius': 0.5}
-        >>> sphere = sphero.insphere_from_center
+        >>> sphere = spherocube.insphere_from_center
         >>> sphere.radius
         1.5
-        >>> cube = sphero.polyhedron
+        >>> cube = spherocube.polyhedron
         >>> cube.vertices
         array([[ 1.,  1.,  1.],
                [ 1., -1.,  1.],
@@ -51,11 +51,11 @@ class ConvexSpheropolyhedron(Shape3D):
                [-1., -1.,  1.],
                [-1.,  1., -1.],
                [-1., -1., -1.]])
-        >>> sphero.radius
+        >>> spherocube.radius
         0.5
-        >>> sphero.surface_area
-        45.99114857512855
-        >>> sphero.vertices
+        >>> spherocube.surface_area
+        45.991...
+        >>> spherocube.vertices
         array([[ 1.,  1.,  1.],
                [ 1., -1.,  1.],
                [ 1.,  1., -1.],
@@ -64,8 +64,8 @@ class ConvexSpheropolyhedron(Shape3D):
                [-1., -1.,  1.],
                [-1.,  1., -1.],
                [-1., -1., -1.]])
-        >>> sphero.volume
-        25.23598775598299
+        >>> spherocube.volume
+        25.235...
 
     """
 
@@ -307,8 +307,7 @@ class ConvexSpheropolyhedron(Shape3D):
             ...    [-1, 1, 1], [-1, -1, 1], [-1, 1, -1], [-1, -1, -1]],
             ...   radius=0.5)
             >>> sphere = sphero.insphere_from_center
-            >>> sphere.radius
-            1.5
+            >>> assert np.isclose(sphere.radius, 1.5)
 
         """
         insphere = self._polyhedron.insphere_from_center

@@ -27,21 +27,21 @@ class Ellipse(Shape2D):
         >>> ellipse.b
         2.0
         >>> ellipse.area
-        6.283185307179586
+        6.28318...
         >>> ellipse.center
         array([0, 0, 0])
         >>> ellipse.circumference
-        9.688448220547675
+        9.68844...
         >>> ellipse.eccentricity
-        0.8660254037844386
+        0.86602...
         >>> ellipse.gsd_shape_spec
         {'type': 'Ellipsoid', 'a': 1.0, 'b': 2.0}
         >>> ellipse.iq
-        0.8411651810063192
+        0.84116...
         >>> ellipse.perimeter
-        9.688448220547675
+        9.68844...
         >>> ellipse.polar_moment_inertia
-        7.853981633974483
+        7.85398...
 
     """
 

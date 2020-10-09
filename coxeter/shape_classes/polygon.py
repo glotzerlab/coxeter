@@ -94,35 +94,25 @@ class Polygon(Shape2D):
 
     Example:
         >>> triangle = coxeter.shape_classes.Polygon([[-1, 0], [0, 1], [1, 0]])
-        >>> triangle.area
-        1.0
-        >>> circle = triangle.bounding_circle
-        >>> circle.radius
-        1.0
-        >>> triangle.center
-        array([0.        , 0.33333333, 0.        ])
-        >>> circle = triangle.circumcircle
-        >>> circle.radius
-        1.0
+        >>> assert np.isclose(triangle.area, 1.0)
+        >>> bounding_circle = triangle.bounding_circle
+        >>> assert np.isclose(bounding_circle.radius, 1.0)
+        >>> assert np.allclose(triangle.center, [0., 1. / 3., 0.])
+        >>> circumcircle = triangle.circumcircle
+        >>> assert np.isclose(circumcircle.radius, 1.0)
         >>> triangle.gsd_shape_spec
         {'type': 'Polygon', 'vertices': [[-1.0, 0.0, 0.0], [0.0, 1.0, 0.0],
         [1.0, 0.0, 0.0]]}
-        >>> triangle.inertia_tensor
-        array([[0.11111111, 0.        , 0.        ],
-               [0.        , 0.        , 0.        ],
-               [0.        , 0.        , 0.33333333]])
+        >>> assert np.allclose(
+        ...   triangle.inertia_tensor,
+        ...   np.diag([1. / 9., 0., 1. / 3.]))
         >>> triangle.normal
         array([ 0., -0., -1.])
-        >>> triangle.planar_moments_inertia
-        (0.16666666666666666, 0.16666666666666666, 0.0)
-        >>> triangle.polar_moment_inertia
-        0.3333333333333333
-        >>> triangle.signed_area
-        1.0
-        >>> triangle.vertices
-        array([[-1.00000000e+00, -5.55111512e-17,  0.00000000e+00],
-               [ 0.00000000e+00,  1.00000000e+00,  0.00000000e+00],
-               [ 1.00000000e+00, -5.55111512e-17,  0.00000000e+00]])
+        >>> assert np.allclose(
+        ...   triangle.planar_moments_inertia,
+        ...   (1. / 6., 1. / 6., 0.))
+        >>> assert np.isclose(triangle.polar_moment_inertia, 1. / 3.)
+        >>> assert np.isclose(triangle.signed_area, 1.0)
 
     """
 

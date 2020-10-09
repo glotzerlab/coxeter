@@ -18,25 +18,19 @@ class Sphere(Shape3D):
 
     Example:
         >>> sphere = coxeter.shape_classes.Sphere(1.0)
-        >>> sphere.radius
-        1.0
-        >>> sphere = coxeter.shape_classes.Sphere(1.0)
-        >>> sphere.center
-        array([0, 0, 0])
+        >>> assert np.isclose(sphere.radius, 1.0)
+        >>> assert np.allclose(sphere.center, [0., 0., 0.])
         >>> sphere.gsd_shape_spec
         {'type': 'Sphere', 'diameter': 2.0}
-        >>> sphere.inertia_tensor
-        array([[1.67551608, 0.        , 0.        ],
-               [0.        , 1.67551608, 0.        ],
-               [0.        , 0.        , 1.67551608]])
+        >>> assert np.allclose(
+        ...   np.diag(sphere.inertia_tensor),
+        ...   8. / 15. * np.pi)
         >>> sphere.iq
         1
-        >>> sphere.radius
-        1.0
         >>> sphere.surface_area
-        12.566370614359172
+        12.56637...
         >>> sphere.volume
-        4.1887902047863905
+        4.18879...
 
     """
 
@@ -116,7 +110,7 @@ class Sphere(Shape3D):
 
         Example:
             >>> sphere = coxeter.shape_classes.Sphere(1.0)
-            >>> sphere.is_inside([[0,0,0],[20,20,20]])
+            >>> sphere.is_inside([[0, 0, 0], [20, 20, 20]])
             array([ True, False])
 
         """

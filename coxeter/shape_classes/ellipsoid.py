@@ -37,15 +37,15 @@ class Ellipsoid(Shape3D):
         >>> ellipsoid.gsd_shape_spec
         {'type': 'Ellipsoid', 'a': 1.0, 'b': 3.0, 'c': 2.0}
         >>> ellipsoid.inertia_tensor
-        array([[65.34512719,  0.        ,  0.        ],
-               [ 0.        , 25.13274123,  0.        ],
-               [ 0.        ,  0.        , 50.26548246]])
+        array([[65.34512...,  0.        ,  0.        ],
+               [ 0.        , 25.13274...,  0.        ],
+               [ 0.        ,  0.        , 50.26548...]])
         >>> ellipsoid.iq
-        0.6116194575753466
+        0.61161...
         >>> ellipsoid.surface_area
-        48.88214630258205
+        48.88214...
         >>> ellipsoid.volume
-        25.132741228718345
+        25.13274...
 
     """
 
