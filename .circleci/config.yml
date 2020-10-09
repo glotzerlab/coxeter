@@ -66,7 +66,7 @@ jobs:
             python -m flake8 --show-source coxeter/
             # Ignore isort errors in tests that are due to ambiguity over whether or not coxeter is third party.
             python -m flake8 --extend-ignore=I001,I004 --show-source tests/
-            python -m pytest --doctest-modules
+            python -m pytest
             python --version
             python -m pip --version
             python -m pip install --progress-bar off --user -U twine wheel setuptools
