@@ -66,10 +66,10 @@ class Shape2D(Shape):
         axes. In addition to the two planar moments, this property also
         provides the product of inertia.
 
-        The `planar moments <https://en.wikipedia.org/wiki/Polar_moment_of_inertia>`__
+        The `planar moments of inertia <https://en.wikipedia.org/wiki/Polar_moment_of_inertia>`__
         and the
-        `product <https://en.wikipedia.org/wiki/Second_moment_of_area#Product_moment_of_area>`__
-        of inertia define the in-plane area distribution.
+        `product of inertia <https://en.wikipedia.org/wiki/Second_moment_of_area#Product_moment_of_area>`__
+        define the in-plane area distribution.
         """  # noqa: E501
         raise NotImplementedError
 
@@ -87,8 +87,21 @@ class Shape2D(Shape):
 
     @property
     def iq(self):
-        """float: The isoperimetric quotient."""
-        # TODO: Add reference to math and some resource in the docstring.
+        r"""float: The isoperimetric quotient.
+
+        The `isoperimetric quotient
+        <https://mathworld.wolfram.com/IsoperimetricQuotient.html>`__ is the ratio of
+        the area of a shape to the area of a circle with the same perimeter. Given a
+        shape of area :math:`A` and perimeter :math:`p`, the circle with the same
+        perimeter has radius :math:`r_p = \frac{p}{2\pi}` and therefore has an area
+        :math:`A_{circle} = \pi r_p^2 = \frac{p^2}{4\pi}`. Therefore, we have that:
+
+        .. math::
+            \begin{align}
+                IQ &= \frac{A}{A_{circle}} \\
+                   &= \frac{4\pi A}{p^2}
+            \end{align}
+        """  # noqa: E501
         return 4 * np.pi * self.area / (self.perimeter ** 2)
 
 
@@ -113,6 +126,29 @@ class Shape3D(Shape):
 
     @property
     def iq(self):
-        """float: The isoperimetric quotient."""
+        r"""float: The isoperimetric quotient.
+
+        The `isoperimetric quotient
+        <https://mathworld.wolfram.com/IsoperimetricQuotient.html>`__ is the ratio of
+        the volume of a shape to the volume of a sphere with the same perimeter. Given a
+        shape of volume :math:`A` and surface :math:`S`, the sphere with the same
+        surface has radius :math:`r_S = \sqrt{\frac{S}{4\pi}}` and therefore has volume
+        :math:`V_{sphere} = \frac{4}{3} \pi r_S^3 = \frac{S^{3/2}}{\sqrt{4\pi}}`.
+        Taking the ratio of volumes gives:
+
+        .. math::
+            \begin{equation}
+                \frac{V}{V_{sphere}} = \frac{6\sqrt{\pi} V}{S^{3/2}}
+            \end{equation}
+
+        To avoid inconvenient fractional exponents, the isoperimetric quotient is
+        conventionally defined as the square of this quantity:
+
+        .. math::
+            \begin{align}
+                IQ &= \left(\frac{V}{V_{sphere}}\right)^2 \\
+                   &= \frac{36\pi V^2}{S^3}
+            \end{align}
+        """  # noqa: E501
         # TODO: allow for non-spherical reference ratio (changes the prefactor)
         return np.pi * 36 * self.volume ** 2 / (self.surface_area ** 3)
