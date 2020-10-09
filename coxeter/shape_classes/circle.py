@@ -17,24 +17,21 @@ class Circle(Shape2D):
 
     Example:
         >>> circle = coxeter.shape_classes.circle.Circle(radius=1.0, center=(1, 1, 1))
-        >>> circle.area
-        3.141592653589793
+        >>> assert np.isclose(circle.area, np.pi)
         >>> circle.center
         array([1, 1, 1])
-        >>> circle.circumference
-        6.283185307179586
+        >>> assert np.isclose(circle.circumference, 2 * np.pi)
         >>> circle.eccentricity
         0
         >>> circle.gsd_shape_spec
         {'type': 'Sphere', 'diameter': 2.0}
         >>> circle.iq
         1
-        >>> circle.perimeter
-        6.283185307179586
-        >>> circle.planar_moments_inertia
-        (3.9269908169872414, 3.9269908169872414, 3.141592653589793)
-        >>> circle.polar_moment_inertia
-        7.853981633974483
+        >>> assert np.isclose(circle.perimeter, 2 * np.pi)
+        >>> assert np.allclose(
+        ...   circle.planar_moments_inertia,
+        ...   (5. / 4. * np.pi, 5. / 4. * np.pi, np.pi))
+        >>> assert np.isclose(circle.polar_moment_inertia, 5. / 2. * np.pi)
         >>> circle.radius
         1.0
 

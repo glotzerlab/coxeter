@@ -61,40 +61,31 @@ class ConvexPolygon(Polygon):
     Example:
         >>> square = coxeter.shape_classes.ConvexPolygon(
         ...   [[1, 1], [-1, -1], [1, -1], [-1, 1]])
-        >>> square.area
-        4.0
-        >>> circle = square.bounding_circle
-        >>> circle.radius
-        1.4142135623730954
-        >>> circle.area
-        6.283185307179589
+        >>> assert np.isclose(square.area, 4.0)
+        >>> assert np.isclose(
+        ...   square.bounding_circle.radius,
+        ...   np.sqrt(2.))
         >>> square.center
         array([0., 0., 0.])
-        >>> circle = square.circumcircle
-        >>> circle.radius
-        1.414213562373095
-        >>> circle.area
-        6.2831853071795845
+        >>> assert np.isclose(
+        ...   square.circumcircle.radius,
+        ...   np.sqrt(2.))
         >>> square.gsd_shape_spec
         {'type': 'Polygon', 'vertices': [[1.0, 1.0, 0.0], [-1.0, 1.0, 0.0],
         [-1.0, -1.0, 0.0], [1.0, -1.0, 0.0]]}
-        >>> circle = square.incircle_from_center
-        >>> circle.radius
-        1.0
-        >>> circle.area
-        3.141592653589793
-        >>> square.inertia_tensor
-        array([[0.        , 0.        , 0.        ],
-               [0.        , 0.        , 0.        ],
-               [0.        , 0.        , 2.66666667]])
+        >>> assert np.isclose(square.incircle_from_center.radius, 1.0)
+        >>> assert np.allclose(
+        ...   square.inertia_tensor,
+        ...   [[0., 0., 0.],
+        ...    [0., 0., 0.],
+        ...    [0., 0., 8. / 3.]])
         >>> square.normal
         array([0., 0., 1.])
-        >>> square.planar_moments_inertia
-        (1.3333333333333333, 1.3333333333333333, 0.0)
-        >>> square.polar_moment_inertia
-        2.6666666666666665
-        >>> square.signed_area
-        4.0
+        >>> assert np.allclose(
+        ...   square.planar_moments_inertia,
+        ...   (4. / 3., 4. / 3., 0.))
+        >>> assert np.isclose(square.polar_moment_inertia, 8. / 3.)
+        >>> assert np.isclose(square.signed_area, 4.0)
         >>> square.vertices
         array([[ 1.,  1.,  0.],
                [-1.,  1.,  0.],
