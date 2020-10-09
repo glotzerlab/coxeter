@@ -318,6 +318,7 @@ def test_incircle_from_center(convex_square):
 @pytest.mark.parametrize("num_sides", range(3, 6))
 def test_perimeter(num_sides):
     """Test the polygon perimeter calculation."""
+
     def unit_area_regular_ngon_sidelength(n):
         r"""Compute the side length of a unit-area regular polygon analytically.
 
@@ -329,4 +330,5 @@ def test_perimeter(num_sides):
 
     poly = RegularNGonFamily.get_shape(num_sides)
     assert np.isclose(
-        num_sides * unit_area_regular_ngon_sidelength(num_sides), poly.perimeter)
+        num_sides * unit_area_regular_ngon_sidelength(num_sides), poly.perimeter
+    )

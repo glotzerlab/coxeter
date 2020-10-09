@@ -7,6 +7,7 @@ parts of the code base that either require or return shapes.
 """
 
 from abc import ABC, abstractmethod
+
 import numpy as np
 
 
