@@ -330,5 +330,5 @@ def test_perimeter(num_sides):
 
     poly = RegularNGonFamily.get_shape(num_sides)
     assert np.isclose(
-        num_sides * unit_area_regular_ngon_sidelength(num_sides), poly.perimeter
+        num_sides * unit_area_regular_n_gon_side_length(num_sides), poly.perimeter
     )
