@@ -64,8 +64,11 @@ class Circle(Shape2D):
         return self._radius
 
     @radius.setter
-    def radius(self, radius):
-        self._radius = radius
+    def radius(self, r):
+        if r > 0:
+            self._radius = r
+        else:
+            raise ValueError("Radius must be greater than zero.")
 
     @property
     def area(self):
@@ -75,9 +78,9 @@ class Circle(Shape2D):
     @area.setter
     def area(self, value):
         if value > 0:
-            self._radius = np.sqrt(value / np.pi)
+            self.radius = np.sqrt(value / np.pi)
         else:
-            print("Area must be greater than zero.")
+            raise ValueError("Area must be greater than zero.")
 
     @property
     def eccentricity(self):
@@ -95,9 +98,9 @@ class Circle(Shape2D):
     @perimeter.setter
     def perimeter(self, value):
         if value > 0:
-            self._radius = value / (2 * np.pi)
+            self.radius = value / (2 * np.pi)
         else:
-            print("Perimeter must be greater than zero.")
+            raise ValueError("Perimeter must be greater than zero.")
 
     @property
     def circumference(self):
