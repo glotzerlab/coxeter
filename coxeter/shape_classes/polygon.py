@@ -91,8 +91,9 @@ class Polygon(Shape2D):
             omitted, the class may produce invalid results if the user
             inputs incorrect coordinates, so this flag should be set to
             ``False`` with care.
-    Example::
-        >>> triangle = coxeter.shape_classes.Polygon([[-1,0],[0,1],[1,0]])
+
+    Example:
+        >>> triangle = coxeter.shape_classes.Polygon([[-1, 0], [0, 1], [1, 0]])
         >>> triangle.area
         1.0
         >>> circle = triangle.bounding_circle

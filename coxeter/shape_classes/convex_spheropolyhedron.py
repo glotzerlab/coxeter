@@ -23,10 +23,12 @@ class ConvexSpheropolyhedron(Shape3D):
             The vertices of the underlying polyhedron.
         radius (float):
             The rounding radius of the spheropolyhedron.
-    Example::
+
+    Example:
         >>> sphero = coxeter.shape_classes.ConvexSpheropolyhedron(
-        [[1,1,1],[1,-1,1],[1,1,-1],[1,-1,-1],[-1,1,1],[-1,-1,1],[-1,1,-1],
-        [-1,-1,-1]],radius=0.5)
+        ...   [[1, 1, 1], [1, -1, 1], [1, 1, -1], [1, -1, -1],
+        ...    [-1, 1, 1], [-1, -1, 1], [-1, 1, -1], [-1, -1, -1]],
+        ...   radius=0.5)
         >>> sphero.center
         array([0., 0., 0.])
         >>> sphere = sphero.circumsphere_from_center
@@ -177,12 +179,15 @@ class ConvexSpheropolyhedron(Shape3D):
             :math:`(N, )` :class:`numpy.ndarray`:
                 Boolean array indicating which points are contained in the
                 spheropolyhedron.
-        Example::
-            >>> sphero = coxeter.shape_classes.ConvexSpheropolyhedron([
-            [1,1,1],[1,-1,1],[1,1,-1],[1,-1,-1],[-1,1,1],[-1,-1,1],
-            [-1,1,-1],[-1,-1,-1]],radius=0.5)
-            >>> sphero.is_inside([[0,0,0],[10,10,10]])
+
+        Example:
+            >>> sphero = coxeter.shape_classes.ConvexSpheropolyhedron(
+            ...   [[1, 1, 1], [1, -1, 1], [1, 1, -1], [1, -1, -1],
+            ...    [-1, 1, 1], [-1, -1, 1], [-1, 1, -1], [-1, -1, -1]],
+            ...   radius=0.5)
+            >>> sphero.is_inside([[0, 0, 0], [10, 10, 10]])
             array([ True, False])
+
         """  # noqa: E501
         # Determine which points are in the polyhedron and which are in the
         # bounded volume of faces extruded by the rounding radius

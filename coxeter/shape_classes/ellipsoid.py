@@ -23,8 +23,9 @@ class Ellipsoid(Shape3D):
         center (Sequence[float]):
             The coordinates of the center of the ellipsoid (Default
             value: (0, 0, 0)).
-    Example::
-        >>> ellipsoid = coxeter.shape_classes.Ellipsoid(1.0,3.0,2.0)
+
+    Example:
+        >>> ellipsoid = coxeter.shape_classes.Ellipsoid(1.0, 3.0, 2.0)
         >>> ellipsoid.a
         1.0
         >>> ellipsoid.b
@@ -45,6 +46,7 @@ class Ellipsoid(Shape3D):
         48.88214630258205
         >>> ellipsoid.volume
         25.132741228718345
+
     """
 
     def __init__(self, a, b, c, center=(0, 0, 0)):
@@ -151,10 +153,12 @@ class Ellipsoid(Shape3D):
             :math:`(N, )` :class:`numpy.ndarray`:
                 Boolean array indicating which points are contained in the
                 ellipsoid.
-        Example::
-            >>> ellipsoid = coxeter.shape_classes.Ellipsoid(1.0,2.0,3.0)
-            >>> ellipsoid.is_inside([[0,0,0],[100,1,1]])
+
+        Example:
+            >>> ellipsoid = coxeter.shape_classes.Ellipsoid(1.0, 2.0, 3.0)
+            >>> ellipsoid.is_inside([[0, 0, 0], [100, 1, 1]])
             array([ True, False])
+
         """
         points = np.atleast_2d(points) - self.center
         scale = np.array([self.a, self.b, self.c])

@@ -19,10 +19,11 @@ class ConvexPolyhedron(Polyhedron):
     Args:
         vertices (:math:`(N, 3)` :class:`numpy.ndarray`):
             The vertices of the polyhedron.
-    Example::
-        >>> cube = coxeter.shape_classes.ConvexPolyhedron([[1,1,1],
-        [1,-1,1],[1,1,-1],[1,-1,-1],[-1,1,1],[-1,-1,1],
-        [-1,1,-1],[-1,-1,-1]])
+
+    Example:
+        >>> cube = coxeter.shape_classes.ConvexPolyhedron(
+        ...   [[1, 1, 1], [1, -1, 1], [1, 1, -1], [1, -1, -1],
+        ...    [-1, 1, 1], [-1, -1, 1], [-1, 1, -1], [-1, -1, -1]])
         >>> cube.asphericity
         1.5
         >>> sphere = cube.bounding_sphere

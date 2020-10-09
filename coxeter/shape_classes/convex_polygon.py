@@ -57,9 +57,10 @@ class ConvexPolygon(Polygon):
             Providing this argument may be necessary if you have a large
             number of vertices and are rotated significantly out of the
             plane.
-    Example::
-        >>> square = coxeter.shape_classes.ConvexPolygon([[1,1],[-1,-1],
-                                                          [1,-1],[-1,1]])
+
+    Example:
+        >>> square = coxeter.shape_classes.ConvexPolygon(
+        ...   [[1, 1], [-1, -1], [1, -1], [-1, 1]])
         >>> square.area
         4.0
         >>> circle = square.bounding_circle
