@@ -251,7 +251,7 @@ class Polygon(Shape2D):
 
     @property
     def normal(self):
-        """:math:`(3, )` :class:`numpy.ndarray` of float: Get the normal vector."""  # noqa: E501
+        """:math:`(3, )` :class:`numpy.ndarray` of float: Get the normal vector."""
         return self._normal
 
     @property
@@ -484,7 +484,7 @@ class Polygon(Shape2D):
 
     @property
     def bounding_circle(self):
-        """:class:`~.Circle`: Get the minimal bounding circle."""  # noqa: E501
+        """:class:`~.Circle`: Get the minimal bounding circle."""
         if not MINIBALL:
             raise ImportError(
                 "The miniball module must be installed. It can "

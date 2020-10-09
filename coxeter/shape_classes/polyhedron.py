@@ -340,7 +340,7 @@ class Polyhedron(Shape3D):
 
     @property
     def vertices(self):
-        """:math:`(N, 3)` :class:`numpy.ndarray`: Get the vertices of the polyhedron."""  # noqa: E501
+        """:math:`(N, 3)` :class:`numpy.ndarray`: Get the vertices of the polyhedron."""
         return self._vertices
 
     @property

@@ -84,7 +84,7 @@ class ConvexSpheropolyhedron(Shape3D):
 
     @property
     def polyhedron(self):
-        """:class:`~.ConvexPolyhedron`: The underlying polyhedron."""  # noqa: E501
+        """:class:`~.ConvexPolyhedron`: The underlying polyhedron."""
         return self._polyhedron
 
     @property

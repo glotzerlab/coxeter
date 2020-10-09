@@ -94,7 +94,7 @@ class ConvexSpheropolygon(Shape2D):
 
     @property
     def polygon(self):
-        """:class:`~coxeter.shape_classes.ConvexPolygon`: The underlying polygon."""  # noqa: E501
+        """:class:`~coxeter.shape_classes.ConvexPolygon`: The underlying polygon."""
         return self._polygon
 
     @property
