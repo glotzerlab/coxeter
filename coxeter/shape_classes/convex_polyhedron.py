@@ -85,6 +85,7 @@ class ConvexPolyhedron(Polyhedron):
                [-1., -1., -1.]])
         >>> cube.volume
         8.0
+
     """
 
     def __init__(self, vertices):

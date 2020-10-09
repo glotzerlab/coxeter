@@ -37,6 +37,7 @@ class Circle(Shape2D):
         7.853981633974483
         >>> circle.radius
         1.0
+
     """
 
     def __init__(self, radius, center=(0, 0, 0)):

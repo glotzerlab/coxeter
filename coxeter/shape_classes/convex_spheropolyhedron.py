@@ -187,7 +187,7 @@ class ConvexSpheropolyhedron(Shape3D):
             >>> sphero.is_inside([[0, 0, 0], [10, 10, 10]])
             array([ True, False])
 
-        """  # noqa: E501
+        """
         # Determine which points are in the polyhedron and which are in the
         # bounded volume of faces extruded by the rounding radius
         points = np.atleast_2d(points)
@@ -309,6 +309,7 @@ class ConvexSpheropolyhedron(Shape3D):
             >>> sphere = sphero.insphere_from_center
             >>> sphere.radius
             1.5
+
         """
         insphere = self._polyhedron.insphere_from_center
         insphere.radius += self._radius

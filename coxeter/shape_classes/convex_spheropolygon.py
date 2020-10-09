@@ -47,6 +47,7 @@ class ConvexSpheropolygon(Shape2D):
         array([[-1.,  0.,  0.],
                [ 0.,  1.,  0.],
                [ 1.,  0.,  0.]])
+
     """
 
     def __init__(self, vertices, radius, normal=None):
@@ -87,6 +88,7 @@ class ConvexSpheropolygon(Shape2D):
             array([[-1.,  0.,  0.],
                    [ 1.,  0.,  0.],
                    [ 0.,  1.,  0.]])
+
         """
         self._polygon.reorder_verts(clockwise, ref_index, increasing_length)
 

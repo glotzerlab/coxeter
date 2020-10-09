@@ -118,6 +118,7 @@ class Sphere(Shape3D):
             >>> sphere = coxeter.shape_classes.Sphere(1.0)
             >>> sphere.is_inside([[0,0,0],[20,20,20]])
             array([ True, False])
+
         """
         points = np.atleast_2d(points) - self.center
         return np.linalg.norm(points, axis=-1) <= self.radius

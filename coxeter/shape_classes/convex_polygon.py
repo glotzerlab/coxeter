@@ -100,6 +100,7 @@ class ConvexPolygon(Polygon):
                [-1.,  1.,  0.],
                [-1., -1.,  0.],
                [ 1., -1.,  0.]])
+
     """
 
     def __init__(self, vertices, normal=None, planar_tolerance=1e-5):
