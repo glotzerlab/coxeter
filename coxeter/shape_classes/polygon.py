@@ -105,7 +105,8 @@ class Polygon(Shape2D):
         >>> circle.radius
         1.0
         >>> triangle.gsd_shape_spec
-        {'type': 'Polygon', 'vertices': [[-1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [1.0, 0.0, 0.0]]}
+        {'type': 'Polygon', 'vertices': [[-1.0, 0.0, 0.0], [0.0, 1.0, 0.0],
+        [1.0, 0.0, 0.0]]}
         >>> triangle.inertia_tensor
         array([[0.11111111, 0.        , 0.        ],
                [0.        , 0.        , 0.        ],

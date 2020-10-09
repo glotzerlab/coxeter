@@ -26,9 +26,9 @@ class ConvexPolyhedron(Polyhedron):
         ...    [-1, 1, 1], [-1, -1, 1], [-1, 1, -1], [-1, -1, -1]])
         >>> cube.asphericity
         1.5
-        >>> sphere = cube.bounding_sphere
-        >>> sphere.radius
-        1.7320508075688776
+        >>> bounding_sphere = cube.bounding_sphere
+        >>> bounding_sphere.radius
+        1.7320508...
         >>> cube.center
         array([0., 0., 0.])
         >>> sphere = cube.circumsphere
@@ -38,9 +38,13 @@ class ConvexPolyhedron(Polyhedron):
         >>> sphere.radius
         1.7320508075688772
         >>> cube.faces
-        [array([4, 5, 1, 0], dtype=int32), array([0, 2, 6, 4], dtype=int32), array([6, 7, 5, 4], dtype=int32), array([0, 1, 3, 2], dtype=int32), array([5, 7, 3, 1], dtype=int32), array([2, 3, 7, 6], dtype=int32)]
+        [array([4, 5, 1, 0], dtype=int32), array([0, 2, 6, 4], dtype=int32),
+        array([6, 7, 5, 4], dtype=int32), array([0, 1, 3, 2], dtype=int32),
+        array([5, 7, 3, 1], dtype=int32), array([2, 3, 7, 6], dtype=int32)]
         >>> cube.gsd_shape_spec
-        {'type': 'ConvexPolyhedron', 'vertices': [[1.0, 1.0, 1.0], [1.0, -1.0, 1.0], [1.0, 1.0, -1.0], [1.0, -1.0, -1.0], [-1.0, 1.0, 1.0], [-1.0, -1.0, 1.0], [-1.0, 1.0, -1.0], [-1.0, -1.0, -1.0]]}
+        {'type': 'ConvexPolyhedron', 'vertices': [[1.0, 1.0, 1.0], [1.0, -1.0, 1.0],
+        [1.0, 1.0, -1.0], [1.0, -1.0, -1.0], [-1.0, 1.0, 1.0], [-1.0, -1.0, 1.0],
+        [-1.0, 1.0, -1.0], [-1.0, -1.0, -1.0]]}
         >>> cube.inertia_tensor
         array([[5.33333333, 0.        , 0.        ],
                [0.        , 5.33333333, 0.        ],
@@ -53,7 +57,8 @@ class ConvexPolyhedron(Polyhedron):
         >>> cube.mean_curvature
         1.5
         >>> cube.neighbors
-        [array([1, 2, 3, 4]), array([0, 2, 3, 5]), array([0, 1, 4, 5]), array([0, 1, 4, 5]), array([0, 2, 3, 5]), array([1, 2, 3, 4])]
+        [array([1, 2, 3, 4]), array([0, 2, 3, 5]), array([0, 1, 4, 5]),
+        array([0, 1, 4, 5]), array([0, 2, 3, 5]), array([1, 2, 3, 4])]
         >>> cube.normals
         array([[-0., -0.,  1.],
                [-0.,  1., -0.],

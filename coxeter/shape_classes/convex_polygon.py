@@ -76,7 +76,8 @@ class ConvexPolygon(Polygon):
         >>> circle.area
         6.2831853071795845
         >>> square.gsd_shape_spec
-        {'type': 'Polygon', 'vertices': [[1.0, 1.0, 0.0], [-1.0, 1.0, 0.0], [-1.0, -1.0, 0.0], [1.0, -1.0, 0.0]]}
+        {'type': 'Polygon', 'vertices': [[1.0, 1.0, 0.0], [-1.0, 1.0, 0.0],
+        [-1.0, -1.0, 0.0], [1.0, -1.0, 0.0]]}
         >>> circle = square.incircle_from_center
         >>> circle.radius
         1.0

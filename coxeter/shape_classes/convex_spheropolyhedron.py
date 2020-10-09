@@ -35,7 +35,9 @@ class ConvexSpheropolyhedron(Shape3D):
         >>> sphere.radius
         2.232050807568877
         >>> sphero.gsd_shape_spec
-        {'type': 'ConvexPolyhedron', 'vertices': [[1.0, 1.0, 1.0], [1.0, -1.0, 1.0], [1.0, 1.0, -1.0], [1.0, -1.0, -1.0], [-1.0, 1.0, 1.0], [-1.0, -1.0, 1.0], [-1.0, 1.0, -1.0], [-1.0, -1.0, -1.0]], 'rounding_radius': 0.5}
+        {'type': 'ConvexPolyhedron', 'vertices': [[1.0, 1.0, 1.0], [1.0, -1.0, 1.0],
+        [1.0, 1.0, -1.0], [1.0, -1.0, -1.0], [-1.0, 1.0, 1.0], [-1.0, -1.0, 1.0],
+        [-1.0, 1.0, -1.0], [-1.0, -1.0, -1.0]], 'rounding_radius': 0.5}
         >>> sphere = sphero.insphere_from_center
         >>> sphere.radius
         1.5

@@ -35,7 +35,8 @@ class ConvexSpheropolygon(Shape2D):
         >>> rounded_tri.center
         array([0.        , 0.33333333, 0.        ])
         >>> rounded_tri.gsd_shape_spec
-        {'type': 'Polygon', 'vertices': [[-1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [1.0, 0.0, 0.0]], 'rounding_radius': 0.1}
+        {'type': 'Polygon', 'vertices': [[-1.0, 0.0, 0.0],
+        [0.0, 1.0, 0.0], [1.0, 0.0, 0.0]], 'rounding_radius': 0.1}
         >>> rounded_tri.polygon
         <coxeter.shape_classes.convex_polygon.ConvexPolygon object at 0x...>
         >>> rounded_tri.radius
