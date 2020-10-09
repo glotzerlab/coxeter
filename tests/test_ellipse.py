@@ -8,6 +8,18 @@ from coxeter.shape_classes.ellipse import Ellipse
 
 
 @given(floats(0.1, 1000), floats(0.1, 1000))
+def a_b_getter_setter_tests(a, b):
+    """Check getter and setter tests for a and b."""
+    ellipse = Ellipse(a, b)
+    assert ellipse.a == a
+    assert ellipse.b == b
+    ellipse.a = a + 1
+    ellipse.b = b + 1
+    assert ellipse.a == a + 1
+    assert ellipse.b == b + 1
+
+
+@given(floats(0.1, 1000), floats(0.1, 1000))
 def test_perimeter(a, b):
     """Check surface area against an approximate formula."""
     # Uses Ramanujan's approximation for the circumference of an ellipse:
