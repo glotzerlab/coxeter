@@ -319,11 +319,11 @@ def test_incircle_from_center(convex_square):
 def test_perimeter(num_sides):
     """Test the polygon perimeter calculation."""
 
-    def unit_area_regular_ngon_sidelength(n):
+    def unit_area_regular_n_gon_side_length(n):
         r"""Compute the side length of a unit-area regular polygon analytically.
 
         The area of regular n-gon is given by
-        :math:`\\frac{s^2 n}{4 \\tan\\left(\\frac{180}{n}\\right)}`. This function sets
+        :math:`\frac{s^2 n}{4 \tan\left(\frac{180}{n}\right)}`. This function sets
         the area to 1 and inverts that formula.
         """
         return np.sqrt((4 * np.tan(np.pi / n)) / n)
