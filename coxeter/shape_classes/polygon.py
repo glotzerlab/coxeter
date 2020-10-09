@@ -211,9 +211,10 @@ class Polygon(Shape2D):
                 center, when this flag is True the point closer to the center
                 comes first, otherwise the point further away comes first
                 (Default value: True).
-        Example::
+
+        Example:
             >>> square = coxeter.shape_classes.ConvexPolygon(
-            [[-1,-1],[1,-1],[-1,1],[1,1]])
+            ...   [[-1, -1], [1, -1], [-1, 1], [1, 1]])
             >>> print(square.vertices)
             [[-1. -1.  0.]
              [ 1. -1.  0.]
@@ -225,6 +226,7 @@ class Polygon(Shape2D):
              [-1.  1.  0.]
              [ 1.  1.  0.]
              [ 1. -1.  0.]]
+
         """
         verts = _align_points_by_normal(self._normal, self._vertices - self.center)
 

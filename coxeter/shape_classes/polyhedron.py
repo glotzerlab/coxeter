@@ -60,14 +60,14 @@ class Polyhedron(Shape3D):
             Whether or not the faces of the polyhedron are all convex.
             This is used to determine whether certain operations like
             coplanar face merging are allowed (Default value: False).
-    Example::
-        >>> cube  = coxeter.shape_classes.ConvexPolyhedron([[1,1,1],
-        [1,-1,1],[1,1,-1],[1,-1,-1],[-1,1,1],
-        [-1,-1,1],[-1,1,-1],[-1,-1,-1]])
-        >>> cube = coxeter.shape_classes
-        .Polyhedron(vertices=cube.vertices,faces=cube.faces)
-        >>> sphere = cube.bounding_sphere
-        >>> sphere.radius
+
+    Example:
+        >>> cube = coxeter.shape_classes.ConvexPolyhedron(
+        ...   [[1, 1, 1], [1, -1, 1], [1, 1, -1], [1, -1, -1],
+        ...    [-1, 1, 1], [-1, -1, 1], [-1, 1, -1], [-1, -1, -1]])
+        >>> cube = coxeter.shape_classes.Polyhedron(vertices=cube.vertices,faces=cube.faces)
+        >>> bounding_sphere = cube.bounding_sphere
+        >>> bounding_sphere.radius
         1.7320508075688776
         >>> cube.center
         array([0., 0., 0.])
@@ -371,13 +371,14 @@ class Polyhedron(Shape3D):
 
         Returns:
             :class:`numpy.ndarray`: The area of each face.
-        Example::
-            >>> cube  = coxeter.shape_classes.ConvexPolyhedron([[1,1,1],
-            [1,-1,1],[1,1,-1],[1,-1,-1],[-1,1,1],[-1,-1,1],
-            [-1,1,-1],[-1,-1,-1]])
-            >>> cube  = coxeter.shape_classes.Polyhedron(
-            vertices=cube.vertices,faces=cube.faces)
-            >>> cube.get_face_area([1,2,3])
+
+        Example:
+            >>> cube = coxeter.shape_classes.ConvexPolyhedron(
+            ...   [[1, 1, 1], [1, -1, 1], [1, 1, -1], [1, -1, -1],
+            ...    [-1, 1, 1], [-1, -1, 1], [-1, 1, -1], [-1, -1, -1]])
+            >>> cube = coxeter.shape_classes.Polyhedron(
+            ...   vertices=cube.vertices,faces=cube.faces)
+            >>> cube.get_face_area([1, 2, 3])
             array([4., 4., 4.])
 
         """
@@ -546,14 +547,16 @@ class Polyhedron(Shape3D):
 
         Returns:
             float: The dihedral angle in radians.
-        Example::
-            >>> cube  = coxeter.shape_classes.ConvexPolyhedron([[1,1,1],
-            [1,-1,1],[1,1,-1],[1,-1,-1],[-1,1,1],[-1,-1,1],
-            [-1,1,-1],[-1,-1,-1]])
-            >>> cube  = coxeter.shape_classes.Polyhedron(
-            vertices=cube.vertices,faces=cube.faces)
-            >>> cube.get_dihedral(1,2)
+
+        Example:
+            >>> cube = coxeter.shape_classes.ConvexPolyhedron(
+            ...   [[1, 1, 1], [1, -1, 1], [1, 1, -1], [1, -1, -1],
+            ...    [-1, 1, 1], [-1, -1, 1], [-1, 1, -1], [-1, -1, -1]])
+            >>> cube = coxeter.shape_classes.Polyhedron(
+            ...   vertices=cube.vertices, faces=cube.faces)
+            >>> cube.get_dihedral(1, 2)
             1.5707963267948966
+
         """
         if b not in self.neighbors[a]:
             raise ValueError("The two faces are not neighbors.")
@@ -598,11 +601,12 @@ class Polyhedron(Shape3D):
         tensor. This method computes the inertia tensor of the shape, diagonalizes it,
         and then rotates the shape by the corresponding orthogonal transformation.
 
-        Example::
-            >>> cube  = coxeter.shape_classes.ConvexPolyhedron([[1,1,1],
-            [1,-1,1],[1,1,-1],[1,-1,-1],[-1,1,1],[-1,-1,1],[-1,1,-1],[-1,-1,-1]])
-            >>> cube  = coxeter.shape_classes.Polyhedron(vertices=cube.vertices
-            ,faces=cube.faces)
+        Example:
+            >>> cube = coxeter.shape_classes.ConvexPolyhedron(
+            ...   [[1, 1, 1], [1, -1, 1], [1, 1, -1], [1, -1, -1],
+            ...    [-1, 1, 1], [-1, -1, 1], [-1, 1, -1], [-1, -1, -1]])
+            >>> cube = coxeter.shape_classes.Polyhedron(
+            ...   vertices=cube.vertices, faces=cube.faces)
             >>> cube.diagonalize_inertia()
             >>> cube.vertices
             array([[ 1.,  1.,  1.],
@@ -613,6 +617,7 @@ class Polyhedron(Shape3D):
                    [-1., -1.,  1.],
                    [-1.,  1., -1.],
                    [-1., -1., -1.]])
+
         """
         principal_moments, principal_axes = np.linalg.eigh(self.inertia_tensor)
         self._vertices = np.dot(self._vertices, principal_axes)

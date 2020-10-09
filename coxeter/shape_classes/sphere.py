@@ -15,7 +15,8 @@ class Sphere(Shape3D):
         center (Sequence[float]):
             The coordinates of the center of the sphere (Default
             value: (0, 0, 0)).
-    Example::
+
+    Example:
         >>> sphere = coxeter.shape_classes.Sphere(1.0)
         >>> sphere.radius
         1.0
@@ -112,7 +113,8 @@ class Sphere(Shape3D):
             :math:`(N, )` :class:`numpy.ndarray`:
                 Boolean array indicating which points are contained in the
                 sphere.
-        Example::
+
+        Example:
             >>> sphere = coxeter.shape_classes.Sphere(1.0)
             >>> sphere.is_inside([[0,0,0],[20,20,20]])
             array([ True, False])
