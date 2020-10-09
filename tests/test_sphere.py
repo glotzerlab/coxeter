@@ -9,6 +9,14 @@ from coxeter.shape_classes.utils import translate_inertia_tensor
 
 
 @given(floats(0.1, 1000))
+def test_get_set_radius(r):
+    sphere = Sphere(r)
+    assert sphere.radius == r
+    sphere.radius = r + 1
+    assert sphere.radius == r + 1
+
+
+@given(floats(0.1, 1000))
 def test_surface_area(r):
     sphere = Sphere(1)
     sphere.radius = r
@@ -29,6 +37,15 @@ def test_set_volume(volume):
     sphere.volume = volume
     assert sphere.volume == approx(volume)
     assert sphere.radius == approx((3 * volume / (4 * np.pi)) ** (1 / 3))
+
+
+@given(floats(0.1, 1000))
+def test_set_area(area):
+    """Test setting the volume."""
+    sphere = Sphere(1)
+    sphere.surface_area = area
+    assert sphere.surface_area == approx(area)
+    assert sphere.radius == approx(np.sqrt(area / (4 * np.pi)))
 
 
 @given(floats(0.1, 1000))
