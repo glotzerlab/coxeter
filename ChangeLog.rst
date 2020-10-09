@@ -10,6 +10,7 @@ Added
 
 -  Circumsphere and insphere from center calculations for ConvexSpheropolyhedron.
 -  Shape families associated with a DOI can be directly accessed via a dictionary.
+-  Expected abstract interface for shapes (both 2D and 3D) has expanded.
 
 Changed
 ~~~~~~~
