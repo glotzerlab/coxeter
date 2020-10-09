@@ -257,6 +257,13 @@ class Polygon(Shape2D):
         return self._vertices
 
     @property
+    def perimeter(self):
+        """float: Get the perimeter of the polygon."""
+        return np.sum(np.linalg.norm(
+            np.roll(self.vertices, axis=0, shift=-1) - self.vertices,
+            axis=-1))
+
+    @property
     def signed_area(self):
         """float: Get the polygon's area.
 
