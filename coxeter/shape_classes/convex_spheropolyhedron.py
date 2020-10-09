@@ -135,6 +135,13 @@ class ConvexSpheropolyhedron(Shape3D):
         """float: The rounding radius."""
         return self._radius
 
+    @radius.setter
+    def radius(self, radius):
+        if radius > 0:
+            self._radius = radius
+        else:
+            print("Radius must be greater than zero.")
+
     @property
     def surface_area(self):
         """float: Get the surface area."""

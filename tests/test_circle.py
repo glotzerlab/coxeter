@@ -24,6 +24,10 @@ def test_perimeter_setter(perimeter):
     assert circle.radius == perimeter / (2 * np.pi)
     circle.perimeter = perimeter + 1
     assert circle.radius == (perimeter + 1) / (2 * np.pi)
+    circle.circumference = perimeter
+    assert circle.radius == perimeter / (2 * np.pi)
+    circle.circumference = perimeter + 1
+    assert circle.radius == (perimeter + 1) / (2 * np.pi)
 
 
 @given(floats(0.1, 1000))

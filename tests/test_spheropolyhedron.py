@@ -36,6 +36,23 @@ def test_surface_area_polyhedron(convex_cube):
     assert sphero_cube.surface_area == convex_cube.surface_area
 
 
+@given(r=floats(0.1, 1))
+def test_radius_getter_setter(r):
+    sphero_cube = make_sphero_cube(radius=r)
+    assert sphero_cube.radius == r
+    sphero_cube.radius = r + 1
+    assert sphero_cube.radius == r + 1
+
+
+def test_center_getter_setter():
+    """Test center getter and setter."""
+    r = 1.0
+    sphero_cube = make_sphero_cube(radius=r)
+    assert all(sphero_cube.center == (0.5, 0.5, 0.5))
+    sphero_cube.center = (1, 1, 1)
+    assert all(sphero_cube.center == (1, 1, 1))
+
+
 def test_inside_boundaries():
     sphero_cube = make_sphero_cube(radius=1)
 

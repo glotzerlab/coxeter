@@ -74,7 +74,10 @@ class Circle(Shape2D):
 
     @area.setter
     def area(self, value):
-        self._radius = np.sqrt(value / np.pi)
+        if value > 0:
+            self._radius = np.sqrt(value / np.pi)
+        else:
+            print("Area must be greater than zero.")
 
     @property
     def eccentricity(self):
@@ -91,7 +94,10 @@ class Circle(Shape2D):
 
     @perimeter.setter
     def perimeter(self, value):
-        self._radius = value / (2 * np.pi)
+        if value > 0:
+            self._radius = value / (2 * np.pi)
+        else:
+            print("Perimeter must be greater than zero.")
 
     @property
     def circumference(self):
@@ -100,7 +106,7 @@ class Circle(Shape2D):
 
     @circumference.setter
     def circumference(self, value):
-        self._radius = value / (2 * np.pi)
+        self.perimeter = value
 
     @property
     def planar_moments_inertia(self):
