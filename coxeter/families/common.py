@@ -26,7 +26,7 @@ class RegularNGonFamily(ShapeFamily):
 
     @classmethod
     def get_shape(cls, n):
-        """Generate an n-gon with area 1.
+        """Generate a unit area n-gon.
 
         Args:
             n (int):
@@ -39,7 +39,7 @@ class RegularNGonFamily(ShapeFamily):
 
     @classmethod
     def make_vertices(cls, n):
-        """Generate vertices of an n-gon with area 1.
+        """Generate vertices of a unit area n-gon.
 
         Args:
             n (int):
@@ -60,10 +60,10 @@ class RegularNGonFamily(ShapeFamily):
 
         # The area of an n-gon inscribed in a circle is given by:
         # \frac{n r^2}{2} \sin(2\pi / n)
-        # The ratio of that n-gon area to its inscribed circle area is:
+        # The ratio of that n-gon area to its circumscribed circle area is:
         a_circ_a_poly = np.pi / ((n / 2) * np.sin(2 * np.pi / n))
 
-        # Rescale the positions so that the final shape has area 1
+        # Rescale the positions so that the final shape has area 1.
         pos *= np.sqrt(a_circ_a_poly)
 
         return pos
