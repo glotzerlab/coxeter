@@ -25,7 +25,7 @@ class ConvexSpheropolyhedron(Shape3D):
             The rounding radius of the spheropolyhedron.
 
     Example:
-        >>> spherocube = coxeter.shape_classes.ConvexSpheropolyhedron(
+        >>> spherocube = coxeter.shapes.ConvexSpheropolyhedron(
         ...   [[1, 1, 1], [1, -1, 1], [1, 1, -1], [1, -1, -1],
         ...    [-1, 1, 1], [-1, -1, 1], [-1, 1, -1], [-1, -1, -1]],
         ...   radius=0.5)
@@ -187,7 +187,7 @@ class ConvexSpheropolyhedron(Shape3D):
                 spheropolyhedron.
 
         Example:
-            >>> sphero = coxeter.shape_classes.ConvexSpheropolyhedron(
+            >>> sphero = coxeter.shapes.ConvexSpheropolyhedron(
             ...   [[1, 1, 1], [1, -1, 1], [1, 1, -1], [1, -1, -1],
             ...    [-1, 1, 1], [-1, -1, 1], [-1, 1, -1], [-1, -1, -1]],
             ...   radius=0.5)
@@ -295,7 +295,7 @@ class ConvexSpheropolyhedron(Shape3D):
         The requirement that the sphere be centered at the centroid of the
         shape distinguishes this sphere from most typical circumsphere
         calculations.
-        """
+        """  # noqa: E501
         circumsphere = self._polyhedron.circumsphere_from_center
         circumsphere.radius += self._radius
         return circumsphere
@@ -309,7 +309,7 @@ class ConvexSpheropolyhedron(Shape3D):
         calculations.
 
         Example:
-            >>> sphero = coxeter.shape_classes.ConvexSpheropolyhedron(
+            >>> sphero = coxeter.shapes.ConvexSpheropolyhedron(
             ...   [[1, 1, 1], [1, -1, 1], [1, 1, -1], [1, -1, -1],
             ...    [-1, 1, 1], [-1, -1, 1], [-1, 1, -1], [-1, -1, -1]],
             ...   radius=0.5)

@@ -29,7 +29,7 @@ class ConvexSpheropolygon(Shape2D):
             (Default value: None).
 
     Example:
-        >>> rounded_tri = coxeter.shape_classes.ConvexSpheropolygon(
+        >>> rounded_tri = coxeter.shapes.ConvexSpheropolygon(
         ...   [[-1, 0], [0, 1], [1, 0]], radius=.1)
         >>> rounded_tri.area
         1.5142...
@@ -39,7 +39,7 @@ class ConvexSpheropolygon(Shape2D):
         {'type': 'Polygon', 'vertices': [[-1.0, 0.0, 0.0],
         [0.0, 1.0, 0.0], [1.0, 0.0, 0.0]], 'rounding_radius': 0.1}
         >>> rounded_tri.polygon
-        <coxeter.shape_classes.convex_polygon.ConvexPolygon object at 0x...>
+        <coxeter.shapes.convex_polygon.ConvexPolygon object at 0x...>
         >>> rounded_tri.radius
         0.1
         >>> rounded_tri.signed_area
@@ -61,7 +61,7 @@ class ConvexSpheropolygon(Shape2D):
         """Sort the vertices.
 
         For more information see
-        :meth:`~coxeter.shape_classes._polygon.Polygon.reorder_verts`.
+        :meth:`~coxeter.shapes._polygon.Polygon.reorder_verts`.
 
         Args:
             clockwise (bool):
@@ -76,7 +76,7 @@ class ConvexSpheropolygon(Shape2D):
                 (Default value: True).
 
         Example:
-            >>> rounded_tri = coxeter.shape_classes.ConvexSpheropolygon(
+            >>> rounded_tri = coxeter.shapes.ConvexSpheropolygon(
             ...   [[-1, 0], [0, 1], [1, 0]], radius=0.1)
             >>> rounded_tri.vertices
             array([[-1.,  0.,  0.],
@@ -93,7 +93,7 @@ class ConvexSpheropolygon(Shape2D):
 
     @property
     def polygon(self):
-        """:class:`~coxeter.shape_classes.ConvexPolygon`: The underlying polygon."""
+        """:class:`~coxeter.shapes.ConvexPolygon`: The underlying polygon."""
         return self._polygon
 
     @property

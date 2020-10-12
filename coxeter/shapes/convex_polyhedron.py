@@ -21,7 +21,7 @@ class ConvexPolyhedron(Polyhedron):
             The vertices of the polyhedron.
 
     Example:
-        >>> cube = coxeter.shape_classes.ConvexPolyhedron(
+        >>> cube = coxeter.shapes.ConvexPolyhedron(
         ...   [[1, 1, 1], [1, -1, 1], [1, 1, -1], [1, -1, -1],
         ...    [-1, 1, 1], [-1, -1, 1], [-1, 1, -1], [-1, -1, -1]])
         >>> import numpy as np
@@ -164,7 +164,7 @@ class ConvexPolyhedron(Polyhedron):
         The requirement that the sphere be centered at the centroid of the
         shape distinguishes this sphere from most typical circumsphere
         calculations.
-        """
+        """  # noqa: E501
         center = self.center
         if not self.is_inside(center):
             raise ValueError(

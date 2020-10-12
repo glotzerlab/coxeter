@@ -21,7 +21,7 @@ class Ellipse(Shape2D):
             value: (0, 0, 0)).
 
     Example:
-        >>> ellipse = coxeter.shape_classes.Ellipse(1.0, 2.0)
+        >>> ellipse = coxeter.shapes.Ellipse(1.0, 2.0)
         >>> ellipse.a
         1.0
         >>> ellipse.b
