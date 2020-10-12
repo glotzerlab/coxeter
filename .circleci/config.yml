@@ -30,11 +30,15 @@ jobs:
 
       - checkout
 
-      - run: &install-and-run-tests
-          name: Install and run tests
+      - run: &install
+          name: Install package
+          command: |
+            python -m pip install .[test] --progress-bar off --user
+
+      - run: &run-tests
+          name: Run tests
           command: |
             python --version
-            python -m pip install .[test] --progress-bar off --user
             python -c "import numpy; print('numpy', numpy.__version__)"
             python -c "import scipy; print('scipy', scipy.__version__)"
             python -m pytest
@@ -62,10 +66,7 @@ jobs:
           <<: *style-check
 
       - run:
-          <<: *install-and-run-tests
-
-      - run:
-          name: Deploy source distribution and wheels
+          name: Create source distribution and wheels
           command: |
             python --version
             python -m pip --version
@@ -74,6 +75,17 @@ jobs:
             python -m wheel version
             python setup.py sdist
             python setup.py bdist_wheel
+
+      - run:
+          name: Install wheel
+            python -m pip install coxeter --progress-bar off --user -U --force-reinstall -f dist/
+
+      - run:
+          <<: *run-tests
+
+      - run:
+          name: Upload source distribution and wheels
+          command: |
             python -m twine upload --username ${PYPI_USERNAME} --password ${PYPI_PASSWORD} dist/*
 
 workflows:
