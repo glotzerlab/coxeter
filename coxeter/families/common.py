@@ -26,7 +26,7 @@ class RegularNGonFamily(ShapeFamily):
 
     @classmethod
     def get_shape(cls, n):
-        """Generate an n-gon.
+        """Generate an n-gon with area 1.
 
         Args:
             n (int):
@@ -39,7 +39,7 @@ class RegularNGonFamily(ShapeFamily):
 
     @classmethod
     def make_vertices(cls, n):
-        """Generate vertices of an n-gon.
+        """Generate vertices of an n-gon with area 1.
 
         Args:
             n (int):
