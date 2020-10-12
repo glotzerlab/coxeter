@@ -61,10 +61,10 @@ class RegularNGonFamily(ShapeFamily):
         # The area of an n-gon inscribed in a circle is given by:
         # \frac{n r^2}{2} \sin(2\pi / n)
         # The ratio of that n-gon area to its inscribed circle area is:
-        A_circ_A_poly = np.pi / ((n / 2) * np.sin(2 * np.pi / n))
+        a_circ_a_poly = np.pi / ((n / 2) * np.sin(2 * np.pi / n))
 
         # Rescale the positions so that the final shape has area 1
-        pos *= np.sqrt(A_circ_A_poly)
+        pos *= np.sqrt(a_circ_a_poly)
 
         return pos
 
