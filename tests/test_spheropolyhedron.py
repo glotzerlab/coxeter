@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 from hypothesis import given
 from hypothesis.strategies import floats
 
@@ -36,12 +37,25 @@ def test_surface_area_polyhedron(convex_cube):
     assert sphero_cube.surface_area == convex_cube.surface_area
 
 
-@given(r=floats(0.1, 1))
+@given(r=floats(0, 1.0))
 def test_radius_getter_setter(r):
     sphero_cube = make_sphero_cube(radius=r)
     assert sphero_cube.radius == r
     sphero_cube.radius = r + 1
     assert sphero_cube.radius == r + 1
+
+
+@given(r=floats(-1000, -1))
+def test_invalid_radius(r):
+    with pytest.raises(ValueError):
+        make_sphero_cube(radius=r)
+
+
+@given(r=floats(-1000, -1))
+def test_invalid_radius_setter(r):
+    sphero_cube = make_sphero_cube(1)
+    with pytest.raises(ValueError):
+        sphero_cube.radius = r
 
 
 def test_center_getter_setter():

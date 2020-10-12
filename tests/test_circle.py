@@ -88,9 +88,20 @@ def test_center():
 
 
 @given(floats(0.1, 1000))
-def test_get_radius(r):
+def test_radius_getter_setter(r):
     """Test getting and setting the radius."""
     circle = Circle(r)
     assert circle.radius == r
     circle.radius = r + 1
     assert circle.radius == r + 1
+
+
+def test_invalid_radius():
+    with pytest.raises(ValueError):
+        Circle(-1)
+
+
+def test_invalid_radius_setter():
+    circle = Circle(1)
+    with pytest.raises(ValueError):
+        circle.radius = -1
