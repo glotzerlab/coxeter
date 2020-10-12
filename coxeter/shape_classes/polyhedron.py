@@ -615,14 +615,20 @@ class Polyhedron(Shape3D):
         self._vertices = np.dot(self._vertices, principal_axes)
 
     def compute_form_factor_amplitude(self, q, density=1.0):  # noqa: D102
-        # The form factor amplitude of a polyhedron is computed according to the
-        # derivation provided in this dissertation:
-        # https://deepblue.lib.umich.edu/handle/2027.42/120906
-        # In brief, two applications of Stokes theorem (or to use the names more
-        # familiar from elementary vector calculus, the application of the divergence
-        # theorem followed by the classic Kelvin-Stokes theorem) are used to reduce the
-        # volume integral over a polyhedron into a series of line integrals around the
-        # boundaries of each polygonal face.
+        """Calculate the form factor intensity.
+
+        The form factor amplitude of a polyhedron is computed according to the
+        derivation provided in this dissertation:
+        https://deepblue.lib.umich.edu/handle/2027.42/120906.
+        In brief, two applications of Stokes theorem (or to use the names more
+        familiar from elementary vector calculus, the application of the divergence
+        theorem followed by the classic Kelvin-Stokes theorem) are used to reduce the
+        volume integral over a polyhedron into a series of line integrals around the
+        boundaries of each polygonal face.
+
+        For more generic information about form factors, see
+        `Shape.compute_form_factor_amplitude`.
+        """
         # If we wish to use this formula more productively in the future, it may be
         # worthwhile to compare against the method proposed here:
         # https://journals.iucr.org/j/issues/2017/05/00/fs5152/

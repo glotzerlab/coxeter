@@ -529,11 +529,17 @@ class Polygon(Shape2D):
         return Circle(np.linalg.norm(x), x + self.vertices[0])
 
     def compute_form_factor_amplitude(self, q, density=1.0):  # noqa: D102
-        # The form factor amplitude of a polygon is computed according to the
-        # derivation provided in this dissertation:
-        # https://deepblue.lib.umich.edu/handle/2027.42/120906
-        # The Kelvin-Stokes theorem allows reducing the surface integral to a line
-        # integral around the boundary.
+        """Calculate the form factor intensity.
+
+        The form factor amplitude of a polygon is computed according to the
+        derivation provided in this dissertation:
+        https://deepblue.lib.umich.edu/handle/2027.42/120906.
+        The Kelvin-Stokes theorem allows reducing the surface integral to a line
+        integral around the boundary.
+
+        For more generic information about form factors, see
+        `Shape.compute_form_factor_amplitude`.
+        """
         form_factor = np.zeros((len(q),), dtype=np.complex128)
 
         # All the q vectors must be projected onto the plane of the polygon before they
