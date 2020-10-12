@@ -3,7 +3,7 @@
 The goal of this module is to produce shapes that were used in scientific
 papers. Some of these papers use some tabulated set of shapes, while others
 use some analytically defined class of shapes. The
-:class:`~coxeter.shape_families.ShapeFamily` is sufficiently flexible to handle
+:class:`~coxeter.families.ShapeFamily` is sufficiently flexible to handle
 both. The primary API offered by this module is the DOI_SHAPE_REPOSITORIES dictionary,
 which maps DOIs to a list of associated shape families.
 """
@@ -36,7 +36,7 @@ def _doi_shape_collection_factory(doi):
     """Produce the default shape family for a given key.
 
     This function is the factory used in a custom defaultdict for generating
-    :class:`~coxeter.shape_families.ShapeFamily` instances based on a given
+    :class:`~coxeter.families.ShapeFamily` instances based on a given
     key when that key has not yet been seen. The purpose of using this factory
     is to delay the loading of files until they are requested. Without it, all
     files would be loaded when coxeter is imported, which introduces noticeable
