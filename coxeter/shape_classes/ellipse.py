@@ -46,6 +46,10 @@ class Ellipse(Shape2D):
     """
 
     def __init__(self, a, b, center=(0, 0, 0)):
+        if a <= 0:
+            raise ValueError("a must be greater than zero.")
+        if b <= 0:
+            raise ValueError("b must be greater than zero.")
         self._a = a
         self._b = b
         self._center = np.asarray(center)
@@ -72,6 +76,8 @@ class Ellipse(Shape2D):
 
     @a.setter
     def a(self, a):
+        if a <= 0:
+            raise ValueError("a must be greater than zero.")
         self._a = a
 
     @property
@@ -81,6 +87,8 @@ class Ellipse(Shape2D):
 
     @b.setter
     def b(self, b):
+        if b <= 0:
+            raise ValueError("a must be greater than zero.")
         self._b = b
 
     @property
