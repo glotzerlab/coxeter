@@ -113,7 +113,7 @@ def test_area(unit_rounded_square):
 
 @given(floats(0.1, 1000))
 def test_area_getter_setter(unit_rounded_square, area):
-    """Test setting the volume."""
+    """Test setting the area."""
     shape = unit_rounded_square
     shape.area = area
     assert shape.signed_area == approx(area)
@@ -199,3 +199,17 @@ def test_convex_signed_area(square_points):
 def test_sphero_square_perimeter(unit_rounded_square):
     """Test calculating the perimeter of a spheropolygon."""
     assert unit_rounded_square.perimeter == 4 + 2 * np.pi
+
+
+@given(floats(0.1, 1000))
+def test_perimeter_setter(unit_rounded_square, perimeter):
+    """Test setting the perimeter."""
+    shape = unit_rounded_square
+    shape.perimeter = perimeter
+    assert shape.perimeter == approx(perimeter)
+
+    # Reset to original perimeter
+    original_perimeter = 4 + 2 * np.pi
+    shape.perimeter = original_perimeter
+    assert shape.perimeter == approx(original_perimeter)
+    assert shape.radius == approx(1.0)
