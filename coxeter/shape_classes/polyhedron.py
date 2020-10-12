@@ -613,3 +613,62 @@ class Polyhedron(Shape3D):
         """
         principal_moments, principal_axes = np.linalg.eigh(self.inertia_tensor)
         self._vertices = np.dot(self._vertices, principal_axes)
+
+    def compute_form_factor_amplitude(self, q, density=1.0):  # noqa: D102
+        """Calculate the form factor intensity.
+
+        The form factor amplitude of a polyhedron is computed according to the
+        derivation provided in this dissertation:
+        https://deepblue.lib.umich.edu/handle/2027.42/120906.
+        In brief, two applications of Stokes theorem (or to use the names more
+        familiar from elementary vector calculus, the application of the divergence
+        theorem followed by the classic Kelvin-Stokes theorem) are used to reduce the
+        volume integral over a polyhedron into a series of line integrals around the
+        boundaries of each polygonal face.
+
+        For more generic information about form factors, see
+        `Shape.compute_form_factor_amplitude`.
+        """
+        # If we wish to use this formula more productively in the future, it may be
+        # worthwhile to compare against the method proposed here:
+        # https://journals.iucr.org/j/issues/2017/05/00/fs5152/
+        # That paper directly performs the Fourier integrals rather than attempting to
+        # reduce their dimensionality first.
+        #
+        # Since the polyhedron is represented as a collection of vertices that are
+        # translated when a new center (and if we implement rotation, it will probably
+        # be implemented as a direct change to the vertices as well), there is no need
+        # to treat translations and rotations in any special manner. However, if this
+        # ever changes, the relevant changes would be to:
+        #   1) Rotate all the k vectors by the _inverse_ of the orientation, i.e.
+        #      k = rowan.rotate(rowan.conjugate(self.orientation), k)
+        #   2) Rotate and translate the final form factors, i.e.
+        #      for i, k in enumerate(q):
+        #          form_factor[i] *= np.exp(-1j * np.dot(
+        #              k, rowan.rotate(rowan.inverse(self.orientation), self.center)))
+        form_factor = np.zeros((len(q),), dtype=np.complex128)
+
+        # Handle zeros q vector cases up front to allow looping over faces without
+        # double checking internally.
+        q_sqs = np.sum(q * q, axis=-1)
+        zero_q = np.isclose(q_sqs, 0)
+        form_factor[zero_q] = self.volume
+
+        for face, eqn in zip(self.faces, self._equations):
+            # Calculate each face's form factor as a polygon. This implementation aims
+            # at clarity over efficiency (a true form factor calculation would need to
+            # efficiently loop over many shapes anyway). Note that we have to negate the
+            # distance in the line below due to our equation sign convention (see
+            # _find_equations).
+            face_normal, d = eqn[:3], -eqn[3]
+            face_polygon = Polygon(self.vertices[face], face_normal)
+            face_form_factors = face_polygon.compute_form_factor_amplitude(q[~zero_q])
+
+            # Translate the calculation into the reference frame of the polyhedron.
+            qs_dot_norm = np.dot(q[~zero_q], face_normal)
+            exp_qr = np.exp(-1j * qs_dot_norm * d)
+            form_factor[~zero_q] += (
+                qs_dot_norm * (1j * face_form_factors * exp_qr)
+            ) / q_sqs[~zero_q]
+
+        return form_factor

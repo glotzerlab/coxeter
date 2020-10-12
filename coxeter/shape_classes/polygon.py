@@ -152,7 +152,7 @@ class Polygon(Shape2D):
 
             if not np.isclose(np.abs(np.dot(computed_normal, norm_normal)), 1):
                 raise ValueError(
-                    "The provided normal vector is not " "orthogonal to the polygon."
+                    "The provided normal vector is not orthogonal to the polygon."
                 )
             self._normal = norm_normal
 
@@ -527,3 +527,54 @@ class Polygon(Shape2D):
             raise RuntimeError("No circumcircle for this polygon.")
 
         return Circle(np.linalg.norm(x), x + self.vertices[0])
+
+    def compute_form_factor_amplitude(self, q, density=1.0):  # noqa: D102
+        """Calculate the form factor intensity.
+
+        The form factor amplitude of a polygon is computed according to the
+        derivation provided in this dissertation:
+        https://deepblue.lib.umich.edu/handle/2027.42/120906.
+        The Kelvin-Stokes theorem allows reducing the surface integral to a line
+        integral around the boundary.
+
+        For more generic information about form factors, see
+        `Shape.compute_form_factor_amplitude`.
+        """
+        form_factor = np.zeros((len(q),), dtype=np.complex128)
+
+        # All the q vectors must be projected onto the plane of the polygon before they
+        # can be calculated. Note that the orientation of the polygon is implicit in its
+        # vertices, otherwise we would need to rotate the q vectors appropriately.
+        q_dot_norm = np.dot(q, self.normal)
+        q = q - q_dot_norm[:, np.newaxis] * self.normal
+        q_sqs = np.sum(q * q, axis=-1)
+        zero_q = np.isclose(q_sqs, 0)
+        form_factor[zero_q] = self.area
+
+        # Add the contribution over all edges of the face.
+        verts = self._vertices
+        verts_shifted = np.roll(verts, axis=0, shift=-1)
+        edges = verts_shifted - verts
+        midpoints = (verts + verts_shifted) / 2
+
+        q_nonzero_broadcast = q[np.newaxis, ~zero_q, :]
+        edges_cross_qs = np.cross(edges[:, np.newaxis, :], q_nonzero_broadcast)
+        # Due to oddities of numpy broadcasting, many singleton dimensions can persist
+        # and must be squeezed out.
+        midpoints_dot_qs = np.inner(
+            midpoints[:, np.newaxis, :], q_nonzero_broadcast
+        ).squeeze()
+        edges_dot_qs = np.inner(edges[:, np.newaxis, :], q_nonzero_broadcast).squeeze()
+        f_ns = (
+            np.dot(edges_cross_qs, self.normal)
+            # Note that np.sinc(x) gives sin(pi*x)/(pi*x)
+            * np.sinc(0.5 * edges_dot_qs / np.pi)
+            / q_sqs[~zero_q]
+        )
+        # Apply translational shift relative to the center of the
+        # polygonal face relative to its centroid.
+        form_factor[~zero_q] = -np.sum(
+            f_ns * 1j * np.exp(-1j * midpoints_dot_qs), axis=0
+        )
+        form_factor *= density
+        return form_factor

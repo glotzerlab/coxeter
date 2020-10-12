@@ -450,3 +450,62 @@ def test_diagonalize_inertia(points):
         poly.diagonalize_inertia()
         it = poly.inertia_tensor
         assert np.allclose(np.diag(np.diag(it)), it)
+
+
+@pytest.mark.parametrize(
+    "cube", ["convex_cube", "oriented_cube", "unoriented_cube"], indirect=True
+)
+def test_form_factor(cube):
+    """Validate the form factor of a polyhedron.
+
+    At the moment this is primarily a regression test, and should be expanded for more
+    rigorous validation.
+    """
+    cube.center = (0, 0, 0)
+    cube.volume = 8
+
+    ks = np.array(
+        [
+            [0, 0, 0],
+            [1, 0, 0],
+            [-1, 0, 0],
+            [2, 0, 0],
+            [0, 1, 0],
+            [0, 0, 1],
+            [1, 2, 3],
+            [-2, 4, -5.2],
+        ],
+        dtype=np.float,
+    )
+    np.testing.assert_allclose(
+        cube.compute_form_factor_amplitude(ks),
+        [
+            8.0,
+            6.73176788,
+            6.73176788,
+            3.63718971,
+            6.73176788,
+            6.73176788,
+            0.14397014,
+            0.1169148,
+        ],
+        atol=1e-7,
+    )
+
+    # Test a translational shift.
+    center = [1, 1, 1]
+    cube.center = center
+    np.testing.assert_allclose(
+        cube.compute_form_factor_amplitude(ks),
+        [
+            8.0 + 0.0j,
+            3.63718971 - 5.66458735j,
+            3.63718971 + 5.66458735j,
+            -1.51360499 - 3.30728724j,
+            3.63718971 - 5.66458735j,
+            3.63718971 - 5.66458735j,
+            0.13823585 + 0.04022749j,
+            -0.11671542 - 0.0068248j,
+        ],
+        atol=1e-7,
+    )

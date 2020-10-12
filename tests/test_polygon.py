@@ -315,6 +315,50 @@ def test_incircle_from_center(convex_square):
     assert circle.radius == 0.5
 
 
+def test_form_factor(square):
+    """Validate the form factor of a polygon.
+
+    At the moment this is primarily a regression test, and should be expanded for more
+    rigorous validation.
+    """
+    square.center = (0, 0, 0)
+
+    ks = np.array(
+        [
+            [0, 0, 0],
+            [1, 0, 0],
+            [-1, 0, 0],
+            [2, 0, 0],
+            [0, 1, 0],
+            [0, 0, 1],
+            [1, 2, 3],
+            [-2, 4, -5.2],
+        ],
+        dtype=np.float,
+    )
+
+    ampl = [
+        1.0,
+        0.95885108,
+        0.95885108,
+        0.84147098,
+        0.95885108,
+        1.0,
+        0.80684536,
+        0.3825737,
+    ]
+    np.testing.assert_allclose(square.compute_form_factor_amplitude(ks), ampl)
+
+    # Form factor should be invariant to shifts along the normal.
+    square.center = [0, 0, -1]
+    np.testing.assert_allclose(square.compute_form_factor_amplitude(ks), ampl)
+
+    # Form factor should be invariant to polygon "direction" (the line integral
+    # direction change should cause a sign flip that cancels the normal flip).
+    new_square = Polygon(square.vertices[::-1, :])
+    np.testing.assert_allclose(new_square.compute_form_factor_amplitude(ks), ampl)
+
+
 @pytest.mark.parametrize("num_sides", range(3, 6))
 def test_perimeter(num_sides):
     """Test the polygon perimeter calculation."""

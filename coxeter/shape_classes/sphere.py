@@ -129,3 +129,27 @@ class Sphere(Shape3D):
         """
         points = np.atleast_2d(points) - self.center
         return np.linalg.norm(points, axis=-1) <= self.radius
+
+    def compute_form_factor_amplitude(self, q, density=1.0):  # noqa: D102
+        # Use the parent docstring.
+
+        # The formula for a the form factor of a sphere may be found here:
+        # http://gisaxs.com/index.php/Form_Factor:Sphere
+        # (among other sources).
+        q = np.atleast_2d(q)
+        form_factor = np.empty(q.shape[0], dtype=np.complex128)
+        q_sqs = np.sum(q * q, axis=-1)
+        zero_q = np.isclose(q_sqs, 0)
+        form_factor[zero_q] = self.volume
+        # Two notes are in order for the formula below:
+        #   - np.sinc(x) gives sin(pi*x)/(pi*x)
+        #   - The expression below is the familiar expression for the form factor of a
+        #     sphere, but it must be shifted to the sphere's position.
+        qr = np.sqrt(q_sqs[~zero_q]) * self.radius
+        form_factor[~zero_q] = (
+            4 * np.pi * self.radius * (np.sinc(qr / np.pi) - np.cos(qr))
+        ) / q_sqs[~zero_q]
+
+        # Shift the form factor to the particle's position and scale by density.
+        form_factor *= density * np.exp(-1j * np.dot(q, self.center))
+        return form_factor

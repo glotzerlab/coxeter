@@ -9,6 +9,7 @@ Added
 ~~~~~
 
 - Circumsphere and insphere from center calculations for ConvexSpheropolyhedron.
+- Form factors amplitudes for sphere, polygons, and polyhedra.
 - Shape families associated with a DOI can be directly accessed via a dictionary.
 - Expected abstract interface for shapes (both 2D and 3D) has expanded.
 
@@ -28,6 +29,8 @@ Fixed
 Removed
 ~~~~~~~
 
+-  The symmetry.py module.
+-  The ft.py module.
 - The symmetry.py module.
 - The get_params method of TabulatedShapeFamily.
 - The family_from_doi method (the underlying data dictionary is now directly exposed).
@@ -55,6 +58,11 @@ Changed
 - Inertia tensors for polyhedra and moments of inertia for polygons are calculated in global coordinates rather than the body frame.
 - Modified testing of convex hulls to generate points on ellipsoids to avoid degenerate simplices.
 - All insphere, circumsphere, and bounding sphere calculations now return the appropriate classes instead of tuples.
+
+Removed
+~~~~~~~
+
+-  The common_shapes subpackage.
 
 v0.2.0 - 2020-04-09
 -------------------
