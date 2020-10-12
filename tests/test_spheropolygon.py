@@ -36,6 +36,35 @@ def test_2d_verts(square_points):
     ConvexSpheropolygon(square_points, 1)
 
 
+@given(floats(0.1, 1000))
+def radius_getter_setter_tests(r, square_points):
+    """Test getting and setting the radius."""
+    square_points = square_points[:, :2]
+    convexspheropolygon = ConvexSpheropolygon(square_points, r)
+    assert convexspheropolygon.radius == r
+    convexspheropolygon.radius = r + 1
+    assert convexspheropolygon.radius == r + 1
+    with pytest.raises(ValueError):
+        convexspheropolygon.radius = "invalid value"
+
+
+@given(floats(-1000, -1))
+def invalid_radius_tests(r, square_points):
+    """Test getting and setting the radius."""
+    square_points = square_points[:, :2]
+    with pytest.raises(ValueError):
+        ConvexSpheropolygon(square_points, r)
+
+
+@given(floats(-1000, -1))
+def invalid_radius_setter_tests(r, square_points):
+    """Test getting and setting the radius."""
+    square_points = square_points[:, :2]
+    spheropolygon = ConvexSpheropolygon(square_points, 1)
+    with pytest.raises(ValueError):
+        spheropolygon.radius = r
+
+
 def test_duplicate_points(square_points):
     """Ensure that running with any duplicate points produces a warning."""
     square_points = np.vstack((square_points, square_points[[0]]))

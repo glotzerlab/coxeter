@@ -52,12 +52,10 @@ class ConvexSpheropolygon(Shape2D):
     """
 
     def __init__(self, vertices, radius, normal=None):
-        if radius < 0:
-            raise ValueError("The radius must be positive.")
+        self.radius = radius
         self._polygon = ConvexPolygon(vertices, normal)
         if not _is_convex(self.vertices, self._polygon.normal):
             raise ValueError("The vertices do not define a convex polygon.")
-        self._radius = radius
 
     def reorder_verts(self, clockwise=False, ref_index=0, increasing_length=True):
         """Sort the vertices.
@@ -119,7 +117,10 @@ class ConvexSpheropolygon(Shape2D):
 
     @radius.setter
     def radius(self, value):
-        self._radius = value
+        if value >= 0:
+            self._radius = value
+        else:
+            raise ValueError("Radius must be greater or equal to zero.")
 
     @property
     def signed_area(self):
