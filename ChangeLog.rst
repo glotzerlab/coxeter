@@ -19,6 +19,7 @@ Changed
 - Shape family API is now entirely based on class methods rather than a call operator.
 - The parent ShapeFamily class is now part of the public API.
 - Doctests are now run as part of pytest.
+- Subpackages have been renamed: shape_classes is now shapes, and shape_families is now families.
 
 Fixed
 ~~~~~
