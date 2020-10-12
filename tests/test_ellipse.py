@@ -19,6 +19,27 @@ def a_b_getter_setter_tests(a, b):
     assert ellipse.b == b + 1
 
 
+@given(floats(-1000, -1))
+def invalid_a_b_setter_tests(a):
+    """Check invalid a and b checks."""
+    ellipse = Ellipse(1, 1)
+    with pytest.raises(ValueError):
+        ellipse.a = a
+    with pytest.raises(ValueError):
+        ellipse.b = a
+
+
+@given(floats(-1000, -1), floats(0.1, 1000))
+def invalid_a_b_check(a, b):
+    """Check invalid a and b."""
+    with pytest.raises(ValueError):
+        Ellipse(a, b)
+    with pytest.raises(ValueError):
+        Ellipse(b, a)
+    with pytest.raises(ValueError):
+        Ellipse(a, a)
+
+
 @given(floats(0.1, 1000), floats(0.1, 1000))
 def test_perimeter(a, b):
     """Check surface area against an approximate formula."""
