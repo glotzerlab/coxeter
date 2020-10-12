@@ -26,7 +26,7 @@ class RegularNGonFamily(ShapeFamily):
 
     @classmethod
     def get_shape(cls, n):
-        """Generate an n-gon.
+        """Generate a unit area n-gon.
 
         Args:
             n (int):
@@ -39,7 +39,7 @@ class RegularNGonFamily(ShapeFamily):
 
     @classmethod
     def make_vertices(cls, n):
-        """Generate vertices of an n-gon.
+        """Generate vertices of a unit area n-gon.
 
         Args:
             n (int):
@@ -52,20 +52,21 @@ class RegularNGonFamily(ShapeFamily):
             raise ValueError("Cannot generate an n-gon with fewer than 3 vertices.")
         r = 1  # The radius of the circle
         theta = np.linspace(0, 2 * np.pi, num=n, endpoint=False)
-        pos = np.array([np.cos(theta), np.sin(theta)])
+        pos = np.array([np.cos(theta), np.sin(theta)]).T
 
         # First normalize to guarantee that the limiting case of an infinite
         # number of vertices produces a circle of area r^2.
         pos /= np.sqrt(np.pi) / r
 
-        # Area of an n-gon inscribed in a circle
-        # A_poly = ((n*r**2)/2)*np.sin(2*np.pi/n)
-        # A_circ = np.pi*r**2
-        # pos *= np.sqrt(A_circ/A_poly)
-        a_circ_a_poly_sq = np.pi / ((n / 2) * np.sin(2 * np.pi / n))
-        pos *= np.sqrt(a_circ_a_poly_sq)
+        # The area of an n-gon inscribed in a circle is given by:
+        # \frac{n r^2}{2} \sin(2\pi / n)
+        # The ratio of that n-gon area to its circumscribed circle area is:
+        a_circ_a_poly = np.pi / ((n / 2) * np.sin(2 * np.pi / n))
 
-        return pos.T
+        # Rescale the positions so that the final shape has area 1.
+        pos *= np.sqrt(a_circ_a_poly)
+
+        return pos
 
 
 PlatonicFamily = TabulatedGSDShapeFamily.from_json_file(
