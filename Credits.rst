@@ -48,6 +48,7 @@ Bradley Dice
 * Add ability to check if points are contained in convex spheropolyhedra.
 * Revised and edited all documentation.
 * Updated doctests to be part of pytest suite.
+* Added automatic axis creation for plotting.
 
 Brandon Butler
 
