@@ -37,7 +37,7 @@ def test_2d_verts(square_points):
 
 
 @given(floats(0.1, 1000))
-def test_radius_getter_setter(r, square_points):
+def test_radius_getter_setter(square_points, r):
     """Test getting and setting the radius."""
     square_points = square_points[:, :2]
     convexspheropolygon = ConvexSpheropolygon(square_points, r)
