@@ -20,6 +20,7 @@ Changed
 - The parent ShapeFamily class is now part of the public API.
 - Doctests are now run as part of pytest.
 - Subpackages have been renamed: shape_classes is now shapes, and shape_families is now families.
+- The common_families submodule of shape_families is now just common.
 
 Fixed
 ~~~~~
