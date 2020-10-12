@@ -8,9 +8,9 @@ from hypothesis.strategies import floats
 from scipy.spatial import ConvexHull
 
 from conftest import EllipseSurfaceStrategy
+from coxeter.families import RegularNGonFamily
 from coxeter.shapes.convex_polygon import ConvexPolygon
 from coxeter.shapes.polygon import Polygon
-from coxeter.families import RegularNGonFamily
 
 
 def polygon_from_hull(verts):
