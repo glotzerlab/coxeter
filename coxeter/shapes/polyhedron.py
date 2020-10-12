@@ -8,7 +8,7 @@ from .base_classes import Shape3D
 from .convex_polygon import ConvexPolygon, _is_convex
 from .polygon import Polygon, _is_simple
 from .sphere import Sphere
-from .utils import translate_inertia_tensor, _generate_ax, _set_3d_axes_equal
+from .utils import _generate_ax, _set_3d_axes_equal, translate_inertia_tensor
 
 try:
     import miniball

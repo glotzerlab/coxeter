@@ -43,7 +43,6 @@ def _generate_ax(ax=None, axes3d=False):
     if ax is None:
         try:
             import matplotlib.pyplot as plt
-            from matplotlib.backends.backend_agg import FigureCanvasAgg
         except ImportError:
             raise ImportError("matplotlib must be installed for plotting.")
         fig = plt.figure()
@@ -59,17 +58,19 @@ def _generate_ax(ax=None, axes3d=False):
 
 
 def _set_3d_axes_equal(ax, limits=None):
-    """Make axes of 3D plot have equal scale so that spheres appear as spheres,
-    cubes as cubes, etc. This is one possible solution to Matplotlib's
+    """Make axes of 3D plot have equal scale.
+
+    Ensuring equal scale means that spheres appear as spheres, cubes as
+    cubes, etc. This is one possible solution to Matplotlib's
     ax.set_aspect('equal') and ax.axis('equal') not working for 3D.
 
     Args:
-        ax (:class:`matplotlib.axes.Axes`): Axes object.
+        ax (:class:`matplotlib.axes.Axes`):
+            Axes object.
         limits (:math:`(3, 2)` :class:`np.ndarray`):
-            Axis limits in the form
-            :code:`[[xmin, xmax], [ymin, ymax], [zmin, zmax]]`. If
-            :code:`None`, the limits are auto-detected (Default value =
-            :code:`None`).
+            Axis limits in the form :code:`[[xmin, xmax], [ymin, ymax],
+            [zmin, zmax]]`. If :code:`None`, the limits are auto-detected
+            (Default value = :code:`None`).
     """
     # Adapted from https://stackoverflow.com/a/50664367
 

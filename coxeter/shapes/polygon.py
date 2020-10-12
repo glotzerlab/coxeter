@@ -7,7 +7,7 @@ from ..bentley_ottmann import poly_point_isect
 from ..polytri import polytri
 from .base_classes import Shape2D
 from .circle import Circle
-from .utils import rotate_order2_tensor, translate_inertia_tensor, _generate_ax
+from .utils import _generate_ax, rotate_order2_tensor, translate_inertia_tensor
 
 try:
     import miniball
