@@ -157,7 +157,7 @@ class ConvexSpheropolygon(Shape2D):
             self.polygon._vertices *= scale_factor
             self.radius *= scale_factor
         else:
-            raise ValueError("Perimeter must be greater than zero.")
+            raise ValueError("Area must be greater than zero.")
 
     @property
     def center(self):
