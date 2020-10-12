@@ -41,7 +41,7 @@ class Circle(Shape2D):
     """
 
     def __init__(self, radius, center=(0, 0, 0)):
-        self._radius = radius
+        self.radius = radius
         self._center = np.asarray(center)
 
     @property
@@ -64,8 +64,11 @@ class Circle(Shape2D):
         return self._radius
 
     @radius.setter
-    def radius(self, radius):
-        self._radius = radius
+    def radius(self, r):
+        if r > 0:
+            self._radius = r
+        else:
+            raise ValueError("Radius must be greater than zero.")
 
     @property
     def area(self):
@@ -74,7 +77,10 @@ class Circle(Shape2D):
 
     @area.setter
     def area(self, value):
-        self._radius = np.sqrt(value / np.pi)
+        if value > 0:
+            self.radius = np.sqrt(value / np.pi)
+        else:
+            raise ValueError("Area must be greater than zero.")
 
     @property
     def eccentricity(self):
@@ -89,10 +95,21 @@ class Circle(Shape2D):
         """float: Get the perimeter of the circle."""
         return 2 * np.pi * self.radius
 
+    @perimeter.setter
+    def perimeter(self, value):
+        if value > 0:
+            self.radius = value / (2 * np.pi)
+        else:
+            raise ValueError("Perimeter must be greater than zero.")
+
     @property
     def circumference(self):
         """float: Get the circumference, alias for :meth:`~.Circle.perimeter`."""
         return self.perimeter
+
+    @circumference.setter
+    def circumference(self, value):
+        self.perimeter = value
 
     @property
     def planar_moments_inertia(self):
