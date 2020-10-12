@@ -93,7 +93,7 @@ class Polygon(Shape2D):
             ``False`` with care.
 
     Example:
-        >>> triangle = coxeter.shape_classes.Polygon([[-1, 0], [0, 1], [1, 0]])
+        >>> triangle = coxeter.shapes.Polygon([[-1, 0], [0, 1], [1, 0]])
         >>> import numpy as np
         >>> assert np.isclose(triangle.area, 1.0)
         >>> bounding_circle = triangle.bounding_circle
@@ -204,7 +204,7 @@ class Polygon(Shape2D):
                 (Default value: True).
 
         Example:
-            >>> square = coxeter.shape_classes.ConvexPolygon(
+            >>> square = coxeter.shapes.ConvexPolygon(
             ...   [[-1, -1], [1, -1], [-1, 1], [1, 1]])
             >>> print(square.vertices)
             [[-1. -1.  0.]

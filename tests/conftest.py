@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 from hypothesis.strategies import builds, floats, integers
 
-from coxeter.shape_classes import ConvexPolyhedron, ConvexSpheropolyhedron, Polyhedron
+from coxeter.shapes import ConvexPolyhedron, ConvexSpheropolyhedron, Polyhedron
 
 
 # Need to declare this outside the fixture so that it can be used in multiple

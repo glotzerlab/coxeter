@@ -2,7 +2,7 @@
 
 This module defines the :class:`~.ShapeFamily` class, which defines the core
 API for shape families. A shape family is simply defined as a functor that
-produces instances of :class:`~coxeter.shape_classes.Shape` when called. This
+produces instances of :class:`~coxeter.shapes.Shape` when called. This
 flexible API can be used in a variety of ways, including both tabulated and
 continuously parametrizable shape families.
 """
@@ -11,7 +11,7 @@ from abc import ABC, abstractmethod
 
 
 class ShapeFamily(ABC):
-    """A factory for instances of :class:`~coxeter.shape_classes.Shape`.
+    """A factory for instances of :class:`~coxeter.shapes.Shape`.
 
     This abstract class represents a simple promise of a `get_shape` method that accepts
     some set of arguments and returns some shape class. The precise behavior is left up
@@ -34,6 +34,6 @@ class ShapeFamily(ABC):
 
         Subclasses must define this function to accept whatever parameters are
         necessary to define a shape. The method should return an instance of
-        some concrete subclass of :class:`~coxeter.shape_classes.Shape`.
+        some concrete subclass of :class:`~coxeter.shapes.Shape`.
         """
         pass

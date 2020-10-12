@@ -35,9 +35,7 @@ extras = {
 }
 
 # Acquire package data files.
-DATA = [
-    fn.replace("coxeter/", "") for fn in glob.glob("coxeter/shape_families/data/*.json")
-]
+DATA = [fn.replace("coxeter/", "") for fn in glob.glob("coxeter/families/data/*.json")]
 
 setup(
     name="coxeter",

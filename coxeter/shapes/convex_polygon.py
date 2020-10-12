@@ -59,7 +59,7 @@ class ConvexPolygon(Polygon):
             plane.
 
     Example:
-        >>> square = coxeter.shape_classes.ConvexPolygon(
+        >>> square = coxeter.shapes.ConvexPolygon(
         ...   [[1, 1], [-1, -1], [1, -1], [-1, 1]])
         >>> import numpy as np
         >>> assert np.isclose(square.area, 4.0)

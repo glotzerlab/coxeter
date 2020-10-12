@@ -1,10 +1,10 @@
 """This module defines various convenience functions for generating shapes.
 
 The methods here provide routes for generating instances of
-:class:`~coxeter.shape_classes.Shape` based on certain pre-specified mappings.
+:class:`~coxeter.shapes.Shape` based on certain pre-specified mappings.
 """
 
-from .shape_classes import (
+from .shapes import (
     Circle,
     ConvexPolygon,
     ConvexPolyhedron,
@@ -35,12 +35,12 @@ def from_gsd_type_shapes(params, dimensions=3):  # noqa: C901
             The dimensionality of the shape (either 2 or 3). Ignored except
             when the shape is a sphere or an ellipsoid, in which case a value
             of 2 is used to indicate generating a
-            :class:`~.shape_classes.Circle` or :class:`~.shape_classes.Ellipse`
-            instead of a :class:`~.shape_classes.Sphere` or
-            :class:`~.shape_classes.Ellipsoid` (Default value: 3).
+            :class:`~.shapes.Circle` or :class:`~.shapes.Ellipse`
+            instead of a :class:`~.shapes.Sphere` or
+            :class:`~.shapes.Ellipsoid` (Default value: 3).
 
     Returns:
-        :class:`~coxeter.shape_classes.Shape`:
+        :class:`~coxeter.shapes.Shape`:
             The desired shape.
     """
     if "type" not in params:

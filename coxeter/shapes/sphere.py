@@ -17,7 +17,7 @@ class Sphere(Shape3D):
             value: (0, 0, 0)).
 
     Example:
-        >>> sphere = coxeter.shape_classes.Sphere(1.0)
+        >>> sphere = coxeter.shapes.Sphere(1.0)
         >>> assert np.isclose(sphere.radius, 1.0)
         >>> assert np.allclose(sphere.center, [0., 0., 0.])
         >>> sphere.gsd_shape_spec
@@ -122,7 +122,7 @@ class Sphere(Shape3D):
                 sphere.
 
         Example:
-            >>> sphere = coxeter.shape_classes.Sphere(1.0)
+            >>> sphere = coxeter.shapes.Sphere(1.0)
             >>> sphere.is_inside([[0, 0, 0], [20, 20, 20]])
             array([ True, False])
 

@@ -62,10 +62,10 @@ class Polyhedron(Shape3D):
             coplanar face merging are allowed (Default value: False).
 
     Example:
-        >>> cube = coxeter.shape_classes.ConvexPolyhedron(
+        >>> cube = coxeter.shapes.ConvexPolyhedron(
         ...   [[1, 1, 1], [1, -1, 1], [1, 1, -1], [1, -1, -1],
         ...    [-1, 1, 1], [-1, -1, 1], [-1, 1, -1], [-1, -1, -1]])
-        >>> cube = coxeter.shape_classes.Polyhedron(
+        >>> cube = coxeter.shapes.Polyhedron(
         ...   vertices=cube.vertices, faces=cube.faces)
         >>> bounding_sphere = cube.bounding_sphere
         >>> import numpy as np
@@ -73,7 +73,7 @@ class Polyhedron(Shape3D):
         >>> cube.center
         array([0., 0., 0.])
         >>> cube.circumsphere
-        <coxeter.shape_classes.sphere.Sphere object at 0x...>
+        <coxeter.shapes.sphere.Sphere object at 0x...>
         >>> cube.faces
         [array([4, 5, 1, 0], dtype=int32), array([0, 2, 6, 4], dtype=int32),
         array([6, 7, 5, 4], dtype=int32), array([0, 1, 3, 2], dtype=int32),
@@ -369,10 +369,10 @@ class Polyhedron(Shape3D):
             :class:`numpy.ndarray`: The area of each face.
 
         Example:
-            >>> cube = coxeter.shape_classes.ConvexPolyhedron(
+            >>> cube = coxeter.shapes.ConvexPolyhedron(
             ...   [[1, 1, 1], [1, -1, 1], [1, 1, -1], [1, -1, -1],
             ...    [-1, 1, 1], [-1, -1, 1], [-1, 1, -1], [-1, -1, -1]])
-            >>> cube = coxeter.shape_classes.Polyhedron(
+            >>> cube = coxeter.shapes.Polyhedron(
             ...   vertices=cube.vertices,faces=cube.faces)
             >>> import numpy as np
             >>> assert np.allclose(
@@ -541,10 +541,10 @@ class Polyhedron(Shape3D):
             float: The dihedral angle in radians.
 
         Example:
-            >>> cube = coxeter.shape_classes.ConvexPolyhedron(
+            >>> cube = coxeter.shapes.ConvexPolyhedron(
             ...   [[1, 1, 1], [1, -1, 1], [1, 1, -1], [1, -1, -1],
             ...    [-1, 1, 1], [-1, -1, 1], [-1, 1, -1], [-1, -1, -1]])
-            >>> cube = coxeter.shape_classes.Polyhedron(
+            >>> cube = coxeter.shapes.Polyhedron(
             ...   vertices=cube.vertices, faces=cube.faces)
             >>> import numpy as np
             >>> assert np.isclose(cube.get_dihedral(1, 2), np.pi / 2.)
@@ -594,10 +594,10 @@ class Polyhedron(Shape3D):
         and then rotates the shape by the corresponding orthogonal transformation.
 
         Example:
-            >>> cube = coxeter.shape_classes.ConvexPolyhedron(
+            >>> cube = coxeter.shapes.ConvexPolyhedron(
             ...   [[1, 1, 1], [1, -1, 1], [1, 1, -1], [1, -1, -1],
             ...    [-1, 1, 1], [-1, -1, 1], [-1, 1, -1], [-1, -1, -1]])
-            >>> cube = coxeter.shape_classes.Polyhedron(
+            >>> cube = coxeter.shapes.Polyhedron(
             ...   vertices=cube.vertices, faces=cube.faces)
             >>> cube.diagonalize_inertia()
             >>> cube.vertices

@@ -14,7 +14,7 @@ associated with different scientific publications. This dataset is useful for
 reproducing the exact set of shapes from publications.
 """
 
-from .common_families import PlatonicFamily, RegularNGonFamily
+from .common import PlatonicFamily, RegularNGonFamily
 from .doi_data_repositories import _doi_shape_collection_factory, _KeyedDefaultDict
 from .plane_shape_families import (
     Family323Plus,

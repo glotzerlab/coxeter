@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.spatial import Delaunay
 
-from coxeter.shape_classes import ConvexPolyhedron
+from coxeter.shapes import ConvexPolyhedron
 
 
 def compute_inertia_mc(vertices, num_samples=1e6):

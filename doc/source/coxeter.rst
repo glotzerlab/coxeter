@@ -5,8 +5,8 @@ Subpackages
 -----------
 
 .. toctree::
-   package-shape-classes
-   package-shape-families
+   package-shapes
+   package-families
 
 Submodules
 ----------
