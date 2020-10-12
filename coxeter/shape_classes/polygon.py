@@ -91,37 +91,29 @@ class Polygon(Shape2D):
             omitted, the class may produce invalid results if the user
             inputs incorrect coordinates, so this flag should be set to
             ``False`` with care.
-    Example::
-        >>> triangle = coxeter.shape_classes.Polygon([[-1,0],[0,1],[1,0]])
-        >>> triangle.area
-        1.0
-        >>> circle = triangle.bounding_circle
-        >>> circle.radius
-        1.0
-        >>> triangle.center
-        array([0.        , 0.33333333, 0.        ])
-        >>> circle = triangle.circumcircle
-        >>> circle.radius
-        1.0
+
+    Example:
+        >>> triangle = coxeter.shape_classes.Polygon([[-1, 0], [0, 1], [1, 0]])
+        >>> import numpy as np
+        >>> assert np.isclose(triangle.area, 1.0)
+        >>> bounding_circle = triangle.bounding_circle
+        >>> assert np.isclose(bounding_circle.radius, 1.0)
+        >>> assert np.allclose(triangle.center, [0., 1. / 3., 0.])
+        >>> circumcircle = triangle.circumcircle
+        >>> assert np.isclose(circumcircle.radius, 1.0)
         >>> triangle.gsd_shape_spec
-        {'type': 'Polygon', 'vertices': [[-1.0, 0.0, 0.0],
-        [0.0, 1.0, 0.0], [1.0, 0.0, 0.0]]}
-        >>> triangle.inertia_tensor
-        array([[0.11111111, 0.        , 0.        ],
-               [0.        , 0.        , 0.        ],
-               [0.        , 0.        , 0.33333333]])
+        {'type': 'Polygon', 'vertices': [[-1.0, 0.0, 0.0], [0.0, 1.0, 0.0],
+        [1.0, 0.0, 0.0]]}
+        >>> assert np.allclose(
+        ...   triangle.inertia_tensor,
+        ...   np.diag([1. / 9., 0., 1. / 3.]))
         >>> triangle.normal
         array([ 0., -0., -1.])
-        >>> triangle.planar_moments_inertia
-        (0.16666666666666666, 0.16666666666666666, 0.0)
-        >>> triangle.polar_moment_inertia
-        0.3333333333333333
-        >>> triangle.signed_area
-        1.0
-        >>> triangle.vertices
-        array([[-1.00000000e+00, -5.55111512e-17,  0.00000000e+00],
-               [ 0.00000000e+00,  1.00000000e+00,  0.00000000e+00],
-               [ 1.00000000e+00, -5.55111512e-17,  0.00000000e+00]])
+        >>> assert np.allclose(
+        ...   triangle.planar_moments_inertia,
+        ...   (1. / 6., 1. / 6., 0.))
+        >>> assert np.isclose(triangle.polar_moment_inertia, 1. / 3.)
+        >>> assert np.isclose(triangle.signed_area, 1.0)
 
     """
 
@@ -210,9 +202,10 @@ class Polygon(Shape2D):
                 center, when this flag is True the point closer to the center
                 comes first, otherwise the point further away comes first
                 (Default value: True).
-        Example::
+
+        Example:
             >>> square = coxeter.shape_classes.ConvexPolygon(
-            [[-1,-1],[1,-1],[-1,1],[1,1]])
+            ...   [[-1, -1], [1, -1], [-1, 1], [1, 1]])
             >>> print(square.vertices)
             [[-1. -1.  0.]
              [ 1. -1.  0.]
@@ -224,6 +217,7 @@ class Polygon(Shape2D):
              [-1.  1.  0.]
              [ 1.  1.  0.]
              [ 1. -1.  0.]]
+
         """
         verts = _align_points_by_normal(self._normal, self._vertices - self.center)
 
@@ -248,7 +242,7 @@ class Polygon(Shape2D):
 
     @property
     def normal(self):
-        """:math:`(3, )` :class:`numpy.ndarray` of float: Get the normal vector."""  # noqa: E501
+        """:math:`(3, )` :class:`numpy.ndarray` of float: Get the normal vector."""
         return self._normal
 
     @property
@@ -473,7 +467,7 @@ class Polygon(Shape2D):
 
     @property
     def bounding_circle(self):
-        """:class:`~.Circle`: Get the minimal bounding circle."""  # noqa: E501
+        """:class:`~.Circle`: Get the minimal bounding circle."""
         if not MINIBALL:
             raise ImportError(
                 "The miniball module must be installed. It can "

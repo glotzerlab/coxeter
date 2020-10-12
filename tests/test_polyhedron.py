@@ -390,6 +390,7 @@ def test_rotate_inertia(points):
 
 # Use a small range of translations to ensure that the Delaunay triangulation
 # used by the MC calculation will not break.
+@settings(deadline=400)
 @given(arrays(np.float64, (3,), elements=floats(-0.2, 0.2, width=64), unique=True))
 def test_translate_inertia(translation):
     shape = PlatonicFamily.get_shape("Cube")

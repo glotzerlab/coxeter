@@ -34,7 +34,7 @@ class RegularNGonFamily(ShapeFamily):
 
         Returns:
              :class:`~.ConvexPolygon`: The corresponding regular polygon.
-        """  # noqa: E501
+        """
         return ConvexPolygon(cls.make_vertices(n))
 
     @classmethod
@@ -47,7 +47,7 @@ class RegularNGonFamily(ShapeFamily):
 
         Returns:
             :math:`(n, 3)` :class:`numpy.ndarray` of float: The vertices of the polygon.
-        """  # noqa: E501
+        """
         if n < 3:
             raise ValueError("Cannot generate an n-gon with fewer than 3 vertices.")
         r = 1  # The radius of the circle

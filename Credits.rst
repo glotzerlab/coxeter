@@ -46,6 +46,7 @@ Bradley Dice
 * Added CircleCI support.
 * Add ability to check if points are contained in convex spheropolyhedra.
 * Revised and edited all documentation.
+* Updated doctests to be part of pytest suite.
 
 Brandon Butler
 

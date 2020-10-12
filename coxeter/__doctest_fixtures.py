@@ -18,6 +18,6 @@ import coxeter
 
 # Allow all doctests to access the parent coxeter namespace.
 @pytest.fixture(autouse=True)
-def add_coxeter(doctest_namespace):
-    """Add coxeter to the global doctest_namespace fixture."""
+def setup_namespace(doctest_namespace):
+    """Configure the global doctest_namespace fixture."""
     doctest_namespace["coxeter"] = coxeter
