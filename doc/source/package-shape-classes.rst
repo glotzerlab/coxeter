@@ -3,6 +3,6 @@ coxeter.shape\_classes package
 
 .. rubric:: Overview
 
-.. automodule:: coxeter.shape_classes
+.. automodule:: coxeter.shapes
    :members:
    :show-inheritance:
