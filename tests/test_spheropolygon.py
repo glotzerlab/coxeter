@@ -45,7 +45,7 @@ def radius_getter_setter_tests(r, square_points):
     convexspheropolygon.radius = r + 1
     assert convexspheropolygon.radius == r + 1
     with pytest.raises(ValueError):
-        convexspheropolygon.radius = 'invalid value'
+        convexspheropolygon.radius = "invalid value"
 
 
 @given(floats(-1000, -1))
