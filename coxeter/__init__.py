@@ -16,6 +16,6 @@ applications such as inertia tensors.
 from . import families, shapes
 from .shape_getters import from_gsd_type_shapes
 
-__all__ = ["shapes", "from_gsd_type_shapes", "families"]
+__all__ = ["families", "shapes", "from_gsd_type_shapes"]
 
 __version__ = "0.3.0"

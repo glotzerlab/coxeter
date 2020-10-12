@@ -61,7 +61,7 @@ class ConvexSpheropolygon(Shape2D):
         """Sort the vertices.
 
         For more information see
-        :meth:`~coxeter.shapes._polygon.Polygon.reorder_verts`.
+        :meth:`~coxeter.shapes.Polygon.reorder_verts`.
 
         Args:
             clockwise (bool):
