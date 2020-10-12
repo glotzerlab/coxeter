@@ -41,10 +41,7 @@ class Circle(Shape2D):
     """
 
     def __init__(self, radius, center=(0, 0, 0)):
-        if radius > 0:
-            self._radius = radius
-        else:
-            raise ValueError("Radius must be greater than zero.")
+        self.radius = radius
         self._center = np.asarray(center)
 
     @property

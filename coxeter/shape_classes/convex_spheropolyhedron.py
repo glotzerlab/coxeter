@@ -70,10 +70,7 @@ class ConvexSpheropolyhedron(Shape3D):
 
     def __init__(self, vertices, radius):
         self._polyhedron = ConvexPolyhedron(vertices)
-        if radius >= 0:
-            self._radius = radius
-        else:
-            raise ValueError("Radius must be greater than zero.")
+        self.radius = radius
 
     @property
     def gsd_shape_spec(self):
@@ -143,7 +140,7 @@ class ConvexSpheropolyhedron(Shape3D):
         if radius >= 0:
             self._radius = radius
         else:
-            raise ValueError("Radius must be greater than zero.")
+            raise ValueError("Rounding radius must be greater than or equal to zero.")
 
     @property
     def surface_area(self):
