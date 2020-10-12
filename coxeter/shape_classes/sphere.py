@@ -35,7 +35,11 @@ class Sphere(Shape3D):
     """
 
     def __init__(self, radius, center=(0, 0, 0)):
-        self._radius = radius
+        if radius > 0:
+            self._radius = radius
+        else:
+            raise ValueError("Radius must be greater than zero.")
+
         self._center = np.asarray(center)
 
     @property
@@ -60,7 +64,10 @@ class Sphere(Shape3D):
 
     @radius.setter
     def radius(self, radius):
-        self._radius = radius
+        if radius > 0:
+            self._radius = radius
+        else:
+            raise ValueError("Radius must be greater than zero.")
 
     @property
     def volume(self):
@@ -69,12 +76,22 @@ class Sphere(Shape3D):
 
     @volume.setter
     def volume(self, value):
-        self._radius = (3 * value / (4 * np.pi)) ** (1 / 3)
+        if value > 0:
+            self.radius = (3 * value / (4 * np.pi)) ** (1 / 3)
+        else:
+            raise ValueError("Volume must be greater than zero.")
 
     @property
     def surface_area(self):
         """float: Get the surface area."""
         return 4 * np.pi * self.radius ** 2
+
+    @surface_area.setter
+    def surface_area(self, area):
+        if area > 0:
+            self.radius = np.sqrt(area / (4 * np.pi))
+        else:
+            raise ValueError("Surface area must be greater than zero.")
 
     @property
     def inertia_tensor(self):
