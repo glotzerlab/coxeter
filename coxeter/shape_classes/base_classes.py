@@ -63,7 +63,7 @@ class Shape(ABC):
         `static structure factor <https://en.wikipedia.org/wiki/Structure_factor>`__
         :math:`S(\vec{q})` and describes the spatial distribution of scatterers, while
         the second term is called the
-        `form factor <https://en.wikipedia.org/wiki/Atomic_form_factor>`__
+        `form factor <http://gisaxs.com/index.php/Form_Factor>`__
         :math:`f(\vec{q})` and describes the local scattering profile.
 
         While the form factor (the scattering intensity) can be measured from
