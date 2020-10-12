@@ -9,6 +9,41 @@ from coxeter.shape_classes.utils import translate_inertia_tensor
 
 
 @given(floats(0.1, 1000), floats(0.1, 1000), floats(0.1, 1000))
+def a_b_c_getter_setter_tests(a, b, c):
+    ellipsoid = Ellipsoid(a, b, c)
+    assert ellipsoid.a == a
+    assert ellipsoid.b == b
+    assert ellipsoid.c == c
+    ellipsoid.a = a + 1
+    ellipsoid.b = b + 1
+    ellipsoid.c = c + 1
+    assert ellipsoid.a == a + 1
+    assert ellipsoid.b == b + 1
+    assert ellipsoid.c == c + 1
+
+
+@given(floats(-1000, -1), floats(-1000, -1), floats(-1000, -1))
+def invalid_a_b_c_setter_tests(a, b, c):
+    ellipsoid = Ellipsoid(1, 1, 1)
+    with pytest.raises(ValueError):
+        ellipsoid.a = a
+    with pytest.raises(ValueError):
+        ellipsoid.b = b
+    with pytest.raises(ValueError):
+        ellipsoid.c = c
+
+
+@given(floats(-1000, -1), floats(-1000, -1), floats(1000, 1))
+def invalid_a_b_c_tests(a, b, c):
+    with pytest.raises(ValueError):
+        Ellipsoid(a, c, c)
+    with pytest.raises(ValueError):
+        Ellipsoid(c, b, c)
+    with pytest.raises(ValueError):
+        Ellipsoid(c, c, a)
+
+
+@given(floats(0.1, 1000), floats(0.1, 1000), floats(0.1, 1000))
 def test_surface_area(a, b, c):
     """Check surface area against an approximate formula."""
     # Approximation from:

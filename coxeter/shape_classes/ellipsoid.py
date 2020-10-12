@@ -50,9 +50,9 @@ class Ellipsoid(Shape3D):
     """
 
     def __init__(self, a, b, c, center=(0, 0, 0)):
-        self._a = a
-        self._b = b
-        self._c = c
+        self.a = a
+        self.b = b
+        self.c = c
         self._center = np.asarray(center)
 
     @property
@@ -76,6 +76,8 @@ class Ellipsoid(Shape3D):
 
     @a.setter
     def a(self, a):
+        if a <= 0:
+            raise ValueError("a must be greater than zero.")
         self._a = a
 
     @property
@@ -85,6 +87,8 @@ class Ellipsoid(Shape3D):
 
     @b.setter
     def b(self, b):
+        if b <= 0:
+            raise ValueError("b must be greater than zero.")
         self._b = b
 
     @property
@@ -94,6 +98,8 @@ class Ellipsoid(Shape3D):
 
     @c.setter
     def c(self, c):
+        if c <= 0:
+            raise ValueError("c must be greater than zero.")
         self._c = c
 
     @property
