@@ -9,6 +9,7 @@ repos:
         args:
         - --indent
         - '4'
+        - --no-sort-keys
 -   repo: local
     hooks:
     -   id: flake8
