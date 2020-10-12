@@ -13,12 +13,29 @@ class Sphere(Shape3D):
         radius (float):
             Radius of the sphere.
         center (Sequence[float]):
-            The coordinates of the center of the circle (Default
+            The coordinates of the center of the sphere (Default
             value: (0, 0, 0)).
+
+    Example:
+        >>> sphere = coxeter.shape_classes.Sphere(1.0)
+        >>> assert np.isclose(sphere.radius, 1.0)
+        >>> assert np.allclose(sphere.center, [0., 0., 0.])
+        >>> sphere.gsd_shape_spec
+        {'type': 'Sphere', 'diameter': 2.0}
+        >>> assert np.allclose(
+        ...   np.diag(sphere.inertia_tensor),
+        ...   8. / 15. * np.pi)
+        >>> sphere.iq
+        1
+        >>> sphere.surface_area
+        12.56637...
+        >>> sphere.volume
+        4.18879...
+
     """
 
     def __init__(self, radius, center=(0, 0, 0)):
-        self._radius = radius
+        self.radius = radius
         self._center = np.asarray(center)
 
     @property
@@ -43,7 +60,10 @@ class Sphere(Shape3D):
 
     @radius.setter
     def radius(self, radius):
-        self._radius = radius
+        if radius > 0:
+            self._radius = radius
+        else:
+            raise ValueError("Radius must be greater than zero.")
 
     @property
     def volume(self):
@@ -52,12 +72,22 @@ class Sphere(Shape3D):
 
     @volume.setter
     def volume(self, value):
-        self._radius = (3 * value / (4 * np.pi)) ** (1 / 3)
+        if value > 0:
+            self.radius = (3 * value / (4 * np.pi)) ** (1 / 3)
+        else:
+            raise ValueError("Volume must be greater than zero.")
 
     @property
     def surface_area(self):
         """float: Get the surface area."""
         return 4 * np.pi * self.radius ** 2
+
+    @surface_area.setter
+    def surface_area(self, area):
+        if area > 0:
+            self.radius = np.sqrt(area / (4 * np.pi))
+        else:
+            raise ValueError("Surface area must be greater than zero.")
 
     @property
     def inertia_tensor(self):
@@ -90,6 +120,12 @@ class Sphere(Shape3D):
             :math:`(N, )` :class:`numpy.ndarray`:
                 Boolean array indicating which points are contained in the
                 sphere.
+
+        Example:
+            >>> sphere = coxeter.shape_classes.Sphere(1.0)
+            >>> sphere.is_inside([[0, 0, 0], [20, 20, 20]])
+            array([ True, False])
+
         """
         points = np.atleast_2d(points) - self.center
         return np.linalg.norm(points, axis=-1) <= self.radius

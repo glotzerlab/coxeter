@@ -11,15 +11,45 @@ class Ellipse(Shape2D):
 
     Args:
         a (float):
-            Principal axis a of the ellipse (radius in the x direction).
+            Principal axis a of the ellipse (radius in the :math:`x`
+            direction).
         b (float):
-            Principal axis b of the ellipse (radius in the y direction).
+            Principal axis b of the ellipse (radius in the :math:`y`
+            direction).
         center (Sequence[float]):
             The coordinates of the center of the ellipse (Default
             value: (0, 0, 0)).
+
+    Example:
+        >>> ellipse = coxeter.shape_classes.Ellipse(1.0, 2.0)
+        >>> ellipse.a
+        1.0
+        >>> ellipse.b
+        2.0
+        >>> ellipse.area
+        6.28318...
+        >>> ellipse.center
+        array([0, 0, 0])
+        >>> ellipse.circumference
+        9.68844...
+        >>> ellipse.eccentricity
+        0.86602...
+        >>> ellipse.gsd_shape_spec
+        {'type': 'Ellipsoid', 'a': 1.0, 'b': 2.0}
+        >>> ellipse.iq
+        0.84116...
+        >>> ellipse.perimeter
+        9.68844...
+        >>> ellipse.polar_moment_inertia
+        7.85398...
+
     """
 
     def __init__(self, a, b, center=(0, 0, 0)):
+        if a <= 0:
+            raise ValueError("a must be greater than zero.")
+        if b <= 0:
+            raise ValueError("b must be greater than zero.")
         self._a = a
         self._b = b
         self._center = np.asarray(center)
@@ -41,20 +71,24 @@ class Ellipse(Shape2D):
 
     @property
     def a(self):
-        """float: Length of principal axis a (radius in the x direction)."""  # noqa: D402, E501
+        """float: Length of principal axis a (radius in the :math:`x` direction)."""  # noqa: D402, E501
         return self._a
 
     @a.setter
     def a(self, a):
+        if a <= 0:
+            raise ValueError("a must be greater than zero.")
         self._a = a
 
     @property
     def b(self):
-        """float: Length of principal axis b (radius in the y direction)."""  # noqa: D402, E501
+        """float: Length of principal axis b (radius in the :math:`y` direction)."""  # noqa: D402, E501
         return self._b
 
     @b.setter
     def b(self, b):
+        if b <= 0:
+            raise ValueError("a must be greater than zero.")
         self._b = b
 
     @property
@@ -89,9 +123,9 @@ class Ellipse(Shape2D):
     def planar_moments_inertia(self):
         r"""Get the planar moments of inertia.
 
-        Moments are computed with respect to the x and y axis. In addition to
-        the two planar moments, this property also provides the product of
-        inertia.
+        Moments are computed with respect to the :math:`x` and :math:`y`
+        axes. In addition to the two planar moments, this property also
+        provides the product of inertia.
 
         The `planar moments <https://en.wikipedia.org/wiki/Polar_moment_of_inertia>`__
         and the
@@ -101,7 +135,7 @@ class Ellipse(Shape2D):
         .. math::
             \begin{align}
                 I_x &= {\int \int}_A y^2 dA = \frac{\pi}{4} a b^3 = \frac{Ab^2}{4} \\
-                I_y &= {\int \int}_A z^2 dA = \frac{\pi}{4} a^3 b = \frac{Aa^2}{4}\\
+                I_y &= {\int \int}_A x^2 dA = \frac{\pi}{4} a^3 b = \frac{Aa^2}{4} \\
                 I_{xy} &= {\int \int}_A xy dA = 0 \\
             \end{align}
 
@@ -119,18 +153,6 @@ class Ellipse(Shape2D):
         i_y += area * self.center[1] ** 2
         i_xy += area * self.center[0] * self.center[1]
         return i_x, i_y, i_xy
-
-    @property
-    def polar_moment_inertia(self):
-        """float: Get the polar moment of inertia.
-
-        The `polar moment of inertia <https://en.wikipedia.org/wiki/Polar_moment_of_inertia>`__
-        is always calculated about an axis perpendicular to the ellipse (i.e. the
-        normal vector) placed at the centroid of the ellipse.
-
-        The polar moment is computed as the sum of the two planar moments of inertia.
-        """  # noqa: E501
-        return np.sum(self.planar_moments_inertia[:2])
 
     @property
     def iq(self):

@@ -20,16 +20,16 @@ from .sphere import Sphere
 
 __all__ = [
     "Circle",
+    "ConvexPolygon",
     "ConvexPolyhedron",
+    "ConvexSpheropolygon",
     "ConvexSpheropolyhedron",
     "Ellipse",
     "Ellipsoid",
-    "ConvexPolygon",
     "Polygon",
     "Polyhedron",
     "Shape",
     "Shape2D",
     "Shape3D",
     "Sphere",
-    "ConvexSpheropolygon",
 ]

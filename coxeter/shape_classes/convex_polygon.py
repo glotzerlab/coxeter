@@ -22,6 +22,7 @@ def _is_convex(vertices, normal):
 
     Returns:
         bool: ``True`` if ``vertices`` define a convex polygon.
+
     """
     # TODO: Add a tolerance check in case a user provides collinear vertices on
     # the boundary of a convex hull.
@@ -56,6 +57,42 @@ class ConvexPolygon(Polygon):
             Providing this argument may be necessary if you have a large
             number of vertices and are rotated significantly out of the
             plane.
+
+    Example:
+        >>> square = coxeter.shape_classes.ConvexPolygon(
+        ...   [[1, 1], [-1, -1], [1, -1], [-1, 1]])
+        >>> import numpy as np
+        >>> assert np.isclose(square.area, 4.0)
+        >>> assert np.isclose(
+        ...   square.bounding_circle.radius,
+        ...   np.sqrt(2.))
+        >>> square.center
+        array([0., 0., 0.])
+        >>> assert np.isclose(
+        ...   square.circumcircle.radius,
+        ...   np.sqrt(2.))
+        >>> square.gsd_shape_spec
+        {'type': 'Polygon', 'vertices': [[1.0, 1.0, 0.0], [-1.0, 1.0, 0.0],
+        [-1.0, -1.0, 0.0], [1.0, -1.0, 0.0]]}
+        >>> assert np.isclose(square.incircle_from_center.radius, 1.0)
+        >>> assert np.allclose(
+        ...   square.inertia_tensor,
+        ...   [[0., 0., 0.],
+        ...    [0., 0., 0.],
+        ...    [0., 0., 8. / 3.]])
+        >>> square.normal
+        array([0., 0., 1.])
+        >>> assert np.allclose(
+        ...   square.planar_moments_inertia,
+        ...   (4. / 3., 4. / 3., 0.))
+        >>> assert np.isclose(square.polar_moment_inertia, 8. / 3.)
+        >>> assert np.isclose(square.signed_area, 4.0)
+        >>> square.vertices
+        array([[ 1.,  1.,  0.],
+               [-1.,  1.,  0.],
+               [-1., -1.,  0.],
+               [ 1., -1.,  0.]])
+
     """
 
     def __init__(self, vertices, normal=None, planar_tolerance=1e-5):
@@ -73,7 +110,7 @@ class ConvexPolygon(Polygon):
 
     @property
     def incircle_from_center(self):
-        """`coxeter.shape_classes.Circle`: Get the largest concentric inscribed circle.
+        """:class:`~.Circle`: Get the largest concentric inscribed circle.
 
         The requirement that the circle be centered at the centroid of the
         shape distinguishes this circle from most typical incircle

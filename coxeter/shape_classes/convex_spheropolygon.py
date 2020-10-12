@@ -7,6 +7,7 @@ a circle of some radius.
 import numpy as np
 
 from .base_classes import Shape2D
+from .circle import Circle
 from .convex_polygon import ConvexPolygon, _is_convex
 
 
@@ -26,6 +27,28 @@ class ConvexSpheropolygon(Shape2D):
             arbitrary choice may not preserve the orientation of the
             provided vertices, users may provide a normal instead
             (Default value: None).
+
+    Example:
+        >>> rounded_tri = coxeter.shape_classes.ConvexSpheropolygon(
+        ...   [[-1, 0], [0, 1], [1, 0]], radius=.1)
+        >>> rounded_tri.area
+        1.5142...
+        >>> rounded_tri.center
+        array([0.        , 0.333..., 0.        ])
+        >>> rounded_tri.gsd_shape_spec
+        {'type': 'Polygon', 'vertices': [[-1.0, 0.0, 0.0],
+        [0.0, 1.0, 0.0], [1.0, 0.0, 0.0]], 'rounding_radius': 0.1}
+        >>> rounded_tri.polygon
+        <coxeter.shape_classes.convex_polygon.ConvexPolygon object at 0x...>
+        >>> rounded_tri.radius
+        0.1
+        >>> rounded_tri.signed_area
+        1.5142...
+        >>> rounded_tri.vertices
+        array([[-1.,  0.,  0.],
+               [ 0.,  1.,  0.],
+               [ 1.,  0.,  0.]])
+
     """
 
     def __init__(self, vertices, radius, normal=None):
@@ -53,12 +76,26 @@ class ConvexSpheropolygon(Shape2D):
                 center, when this flag is True the point closer to the center
                 comes first, otherwise the point further away comes first
                 (Default value: True).
+
+        Example:
+            >>> rounded_tri = coxeter.shape_classes.ConvexSpheropolygon(
+            ...   [[-1, 0], [0, 1], [1, 0]], radius=0.1)
+            >>> rounded_tri.vertices
+            array([[-1.,  0.,  0.],
+                   [ 0.,  1.,  0.],
+                   [ 1.,  0.,  0.]])
+            >>> rounded_tri.reorder_verts(clockwise=True)
+            >>> rounded_tri.vertices
+            array([[-1.,  0.,  0.],
+                   [ 1.,  0.,  0.],
+                   [ 0.,  1.,  0.]])
+
         """
         self._polygon.reorder_verts(clockwise, ref_index, increasing_length)
 
     @property
     def polygon(self):
-        """:class:`~coxeter.shape_classes.ConvexPolygon`: The underlying polygon."""  # noqa: E501
+        """:class:`~coxeter.shape_classes.ConvexPolygon`: The underlying polygon."""
         return self._polygon
 
     @property
@@ -72,7 +109,7 @@ class ConvexSpheropolygon(Shape2D):
 
     @property
     def vertices(self):
-        """:math:`(N_{verts}, 3) :class:`numpy.ndarray` of float: Get the vertices of the spheropolygon."""  # noqa: E501
+        """:math:`(N_{verts}, 3)` :class:`numpy.ndarray` of float: Get the vertices of the spheropolygon."""  # noqa: E501
         return self._polygon.vertices
 
     @property
@@ -121,3 +158,8 @@ class ConvexSpheropolygon(Shape2D):
     @center.setter
     def center(self, new_center):
         self._polygon.center = new_center
+
+    @property
+    def perimeter(self):
+        """float: Get the perimeter of the spheropolygon."""
+        return self._polygon.perimeter + Circle(self._radius).perimeter

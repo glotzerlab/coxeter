@@ -12,14 +12,41 @@ class Ellipsoid(Shape3D):
 
     Args:
         a (float):
-            Principal axis a of the ellipsoid (radius in the x direction).
+            Principal axis a of the ellipsoid (radius in the :math:`x`
+            direction).
         b (float):
-            Principal axis b of the ellipsoid (radius in the y direction).
+            Principal axis b of the ellipsoid (radius in the :math:`y`
+            direction).
         c (float):
-            Principal axis c of the ellipsoid (radius in the z direction).
+            Principal axis c of the ellipsoid (radius in the :math:`z`
+            direction).
         center (Sequence[float]):
-            The coordinates of the center of the circle (Default
+            The coordinates of the center of the ellipsoid (Default
             value: (0, 0, 0)).
+
+    Example:
+        >>> ellipsoid = coxeter.shape_classes.Ellipsoid(1.0, 3.0, 2.0)
+        >>> ellipsoid.a
+        1.0
+        >>> ellipsoid.b
+        3.0
+        >>> ellipsoid.c
+        2.0
+        >>> ellipsoid.center
+        array([0, 0, 0])
+        >>> ellipsoid.gsd_shape_spec
+        {'type': 'Ellipsoid', 'a': 1.0, 'b': 3.0, 'c': 2.0}
+        >>> ellipsoid.inertia_tensor
+        array([[65.34512...,  0.        ,  0.        ],
+               [ 0.        , 25.13274...,  0.        ],
+               [ 0.        ,  0.        , 50.26548...]])
+        >>> ellipsoid.iq
+        0.61161...
+        >>> ellipsoid.surface_area
+        48.88214...
+        >>> ellipsoid.volume
+        25.13274...
+
     """
 
     def __init__(self, a, b, c, center=(0, 0, 0)):
@@ -44,7 +71,7 @@ class Ellipsoid(Shape3D):
 
     @property
     def a(self):
-        """float: Get or set the length of principal axis a (the x radius)."""  # noqa: D402, E501
+        """float: Get or set the length of principal axis a (the :math:`x` radius)."""  # noqa: D402, E501
         return self._a
 
     @a.setter
@@ -53,7 +80,7 @@ class Ellipsoid(Shape3D):
 
     @property
     def b(self):
-        """float: Get or set the length of principal axis b (the y radius)."""  # noqa: D402, E501
+        """float: Get or set the length of principal axis b (the :math:`y` radius)."""  # noqa: D402, E501
         return self._b
 
     @b.setter
@@ -62,7 +89,7 @@ class Ellipsoid(Shape3D):
 
     @property
     def c(self):
-        """float: Get or set the length of principal axis c (the z radius)."""  # noqa: D402, E501
+        """float: Get or set the length of principal axis c (the :math:`z` radius)."""  # noqa: D402, E501
         return self._c
 
     @c.setter
@@ -106,11 +133,6 @@ class Ellipsoid(Shape3D):
         inertia_tensor = np.diag([i_xx, i_yy, i_zz])
         return translate_inertia_tensor(self.center, inertia_tensor, vol)
 
-    @property
-    def iq(self):
-        """float: Get the isoperimetric quotient."""
-        return np.pi * 36 * self.volume ** 2 / (self.surface_area ** 3)
-
     def is_inside(self, points):
         """Determine whether a set of points are contained in this ellipsoid.
 
@@ -126,6 +148,12 @@ class Ellipsoid(Shape3D):
             :math:`(N, )` :class:`numpy.ndarray`:
                 Boolean array indicating which points are contained in the
                 ellipsoid.
+
+        Example:
+            >>> ellipsoid = coxeter.shape_classes.Ellipsoid(1.0, 2.0, 3.0)
+            >>> ellipsoid.is_inside([[0, 0, 0], [100, 1, 1]])
+            array([ True, False])
+
         """
         points = np.atleast_2d(points) - self.center
         scale = np.array([self.a, self.b, self.c])

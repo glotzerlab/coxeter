@@ -3,7 +3,7 @@
 While many computational geometry tools exist, they almost exclusively aim to
 solve problems on the more complex end that are the subject of much study, such
 as the construction of convex hulls, Delaunay triangulations, and Voronoi
-tesselations. The coxeter package is instead aimed at providing transparent
+tessellations. The coxeter package is instead aimed at providing transparent
 APIs for the generation of shapes and the calculation of quantities for which
 formulas are well-known but nontrivial to implement in robust ways. For
 instance, given a set of vertices defining a convex polyhedron, coxeter can

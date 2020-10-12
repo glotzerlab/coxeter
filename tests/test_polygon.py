@@ -2,12 +2,12 @@ import numpy as np
 import numpy.testing as npt
 import pytest
 import rowan
-from conftest import EllipseSurfaceStrategy
 from hypothesis import assume, example, given, settings
 from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats
 from scipy.spatial import ConvexHull
 
+from conftest import EllipseSurfaceStrategy
 from coxeter.shape_classes.convex_polygon import ConvexPolygon
 from coxeter.shape_classes.polygon import Polygon
 from coxeter.shape_families import RegularNGonFamily
@@ -357,3 +357,22 @@ def test_form_factor(square):
     # direction change should cause a sign flip that cancels the normal flip).
     new_square = Polygon(square.vertices[::-1, :])
     np.testing.assert_allclose(new_square.compute_form_factor_amplitude(ks), ampl)
+
+
+@pytest.mark.parametrize("num_sides", range(3, 6))
+def test_perimeter(num_sides):
+    """Test the polygon perimeter calculation."""
+
+    def unit_area_regular_n_gon_side_length(n):
+        r"""Compute the side length of a unit-area regular polygon analytically.
+
+        The area of regular n-gon is given by
+        :math:`\frac{s^2 n}{4 \tan\left(\frac{180}{n}\right)}`. This function sets
+        the area to 1 and inverts that formula.
+        """
+        return np.sqrt((4 * np.tan(np.pi / n)) / n)
+
+    poly = RegularNGonFamily.get_shape(num_sides)
+    assert np.isclose(
+        num_sides * unit_area_regular_n_gon_side_length(num_sides), poly.perimeter
+    )

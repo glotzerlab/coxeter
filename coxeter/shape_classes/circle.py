@@ -14,10 +14,32 @@ class Circle(Shape2D):
         center (Sequence[float]):
             The coordinates of the center of the circle (Default
             value: (0, 0, 0)).
+
+    Example:
+        >>> circle = coxeter.shape_classes.circle.Circle(radius=1.0, center=(1, 1, 1))
+        >>> import numpy as np
+        >>> assert np.isclose(circle.area, np.pi)
+        >>> circle.center
+        array([1, 1, 1])
+        >>> assert np.isclose(circle.circumference, 2 * np.pi)
+        >>> circle.eccentricity
+        0
+        >>> circle.gsd_shape_spec
+        {'type': 'Sphere', 'diameter': 2.0}
+        >>> circle.iq
+        1
+        >>> assert np.isclose(circle.perimeter, 2 * np.pi)
+        >>> assert np.allclose(
+        ...   circle.planar_moments_inertia,
+        ...   (5. / 4. * np.pi, 5. / 4. * np.pi, np.pi))
+        >>> assert np.isclose(circle.polar_moment_inertia, 5. / 2. * np.pi)
+        >>> circle.radius
+        1.0
+
     """
 
     def __init__(self, radius, center=(0, 0, 0)):
-        self._radius = radius
+        self.radius = radius
         self._center = np.asarray(center)
 
     @property
@@ -40,8 +62,11 @@ class Circle(Shape2D):
         return self._radius
 
     @radius.setter
-    def radius(self, radius):
-        self._radius = radius
+    def radius(self, r):
+        if r > 0:
+            self._radius = r
+        else:
+            raise ValueError("Radius must be greater than zero.")
 
     @property
     def area(self):
@@ -50,7 +75,10 @@ class Circle(Shape2D):
 
     @area.setter
     def area(self, value):
-        self._radius = np.sqrt(value / np.pi)
+        if value > 0:
+            self.radius = np.sqrt(value / np.pi)
+        else:
+            raise ValueError("Area must be greater than zero.")
 
     @property
     def eccentricity(self):
@@ -65,18 +93,29 @@ class Circle(Shape2D):
         """float: Get the perimeter of the circle."""
         return 2 * np.pi * self.radius
 
+    @perimeter.setter
+    def perimeter(self, value):
+        if value > 0:
+            self.radius = value / (2 * np.pi)
+        else:
+            raise ValueError("Perimeter must be greater than zero.")
+
     @property
     def circumference(self):
         """float: Get the circumference, alias for :meth:`~.Circle.perimeter`."""
         return self.perimeter
 
+    @circumference.setter
+    def circumference(self, value):
+        self.perimeter = value
+
     @property
     def planar_moments_inertia(self):
         r"""Get the planar moments of inertia.
 
-        Moments are computed with respect to the x and y axis. In addition to
-        the two planar moments, this property also provides the product of
-        inertia.
+        Moments are computed with respect to the :math:`x` and :math:`y`
+        axes. In addition to the two planar moments, this property also
+        provides the product of inertia.
 
         The `planar moments <https://en.wikipedia.org/wiki/Polar_moment_of_inertia>`__
         and the
@@ -86,7 +125,7 @@ class Circle(Shape2D):
         .. math::
             \begin{align}
                 I_x &= {\int \int}_A y^2 dA = \frac{\pi}{4} r^4 = \frac{Ar^2}{4} \\
-                I_y &= {\int \int}_A x^2 dA = \frac{\pi}{4} r^4 = \frac{Ar^2}{4}\\
+                I_y &= {\int \int}_A x^2 dA = \frac{\pi}{4} r^4 = \frac{Ar^2}{4} \\
                 I_{xy} &= {\int \int}_A xy dA = 0 \\
             \end{align}
 
@@ -103,19 +142,6 @@ class Circle(Shape2D):
         i_y += area * self.center[1] ** 2
         i_xy += area * self.center[0] * self.center[1]
         return i_x, i_y, i_xy
-
-    @property
-    def polar_moment_inertia(self):
-        """Get the polar moment of inertia.
-
-        The `polar moment of inertia <https://en.wikipedia.org/wiki/Polar_moment_of_inertia>`__
-        is always calculated about an axis perpendicular to the circle (i.e. the
-        normal vector) placed at the centroid of the circle.
-
-        The polar moment is computed as the sum of the two planar moments of
-        inertia.
-        """  # noqa: E501
-        return np.sum(self.planar_moments_inertia[:2])
 
     @property
     def iq(self):

@@ -25,7 +25,7 @@ def from_gsd_type_shapes(params, dimensions=3):  # noqa: C901
     schema does not differentiate between 2D and 3D shapes for spheres (vs
     circles) and ellipsoids (vs ellipses) because in context those can be
     inferred from simulation boxes.  To address this ambiguity, this function
-    accepts an dimensions parameter that can be used to disambiguate explicitly
+    accepts a dimensions parameter that can be used to disambiguate explicitly
     between these two cases.
 
     Args:
@@ -40,7 +40,7 @@ def from_gsd_type_shapes(params, dimensions=3):  # noqa: C901
             :class:`~.shape_classes.Ellipsoid` (Default value: 3).
 
     Returns:
-        list[:class:`~coxeter.shape_classes.Shape`]:
+        :class:`~coxeter.shape_classes.Shape`:
             The desired shape.
     """
     if "type" not in params:

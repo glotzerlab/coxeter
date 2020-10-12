@@ -17,6 +17,24 @@ def test_perimeter(r):
 
 
 @given(floats(0.1, 1000))
+def test_perimeter_setter(perimeter):
+    """Test setting the perimeter."""
+    circle = Circle(1)
+    circle.perimeter = perimeter
+    assert circle.radius == perimeter / (2 * np.pi)
+    assert circle.perimeter == approx(perimeter)
+    circle.perimeter = perimeter + 1
+    assert circle.radius == (perimeter + 1) / (2 * np.pi)
+    assert circle.perimeter == approx(perimeter + 1)
+    circle.circumference = perimeter
+    assert circle.radius == perimeter / (2 * np.pi)
+    assert circle.circumference == approx(perimeter)
+    circle.circumference = perimeter + 1
+    assert circle.radius == (perimeter + 1) / (2 * np.pi)
+    assert circle.circumference == approx(perimeter + 1)
+
+
+@given(floats(0.1, 1000))
 def test_area(r):
     circle = Circle(1)
     circle.radius = r
@@ -71,3 +89,23 @@ def test_center():
     center = (1, 1, 1)
     circle.center = center
     assert all(circle.center == center)
+
+
+@given(floats(0.1, 1000))
+def test_radius_getter_setter(r):
+    """Test getting and setting the radius."""
+    circle = Circle(r)
+    assert circle.radius == r
+    circle.radius = r + 1
+    assert circle.radius == r + 1
+
+
+def test_invalid_radius():
+    with pytest.raises(ValueError):
+        Circle(-1)
+
+
+def test_invalid_radius_setter():
+    circle = Circle(1)
+    with pytest.raises(ValueError):
+        circle.radius = -1

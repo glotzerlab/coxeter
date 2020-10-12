@@ -15,7 +15,7 @@ class ConvexSpheropolyhedron(Shape3D):
 
     A convex spheropolyhedron is defined as a convex polyhedron plus a
     rounding radius. All properties of the underlying polyhedron (the
-    vertices, the faces and their neighbors, etc) can be accessed directly
+    vertices, the faces and their neighbors, etc.) can be accessed directly
     through :attr:`.polyhedron`.
 
     Args:
@@ -23,11 +23,55 @@ class ConvexSpheropolyhedron(Shape3D):
             The vertices of the underlying polyhedron.
         radius (float):
             The rounding radius of the spheropolyhedron.
+
+    Example:
+        >>> spherocube = coxeter.shape_classes.ConvexSpheropolyhedron(
+        ...   [[1, 1, 1], [1, -1, 1], [1, 1, -1], [1, -1, -1],
+        ...    [-1, 1, 1], [-1, -1, 1], [-1, 1, -1], [-1, -1, -1]],
+        ...   radius=0.5)
+        >>> spherocube.center
+        array([0., 0., 0.])
+        >>> sphere = spherocube.circumsphere_from_center
+        >>> sphere.radius
+        2.2320...
+        >>> spherocube.gsd_shape_spec
+        {'type': 'ConvexPolyhedron', 'vertices': [[1.0, 1.0, 1.0], [1.0, -1.0, 1.0],
+        [1.0, 1.0, -1.0], [1.0, -1.0, -1.0], [-1.0, 1.0, 1.0], [-1.0, -1.0, 1.0],
+        [-1.0, 1.0, -1.0], [-1.0, -1.0, -1.0]], 'rounding_radius': 0.5}
+        >>> sphere = spherocube.insphere_from_center
+        >>> sphere.radius
+        1.5
+        >>> cube = spherocube.polyhedron
+        >>> cube.vertices
+        array([[ 1.,  1.,  1.],
+               [ 1., -1.,  1.],
+               [ 1.,  1., -1.],
+               [ 1., -1., -1.],
+               [-1.,  1.,  1.],
+               [-1., -1.,  1.],
+               [-1.,  1., -1.],
+               [-1., -1., -1.]])
+        >>> spherocube.radius
+        0.5
+        >>> spherocube.surface_area
+        45.991...
+        >>> spherocube.vertices
+        array([[ 1.,  1.,  1.],
+               [ 1., -1.,  1.],
+               [ 1.,  1., -1.],
+               [ 1., -1., -1.],
+               [-1.,  1.,  1.],
+               [-1., -1.,  1.],
+               [-1.,  1., -1.],
+               [-1., -1., -1.]])
+        >>> spherocube.volume
+        25.235...
+
     """
 
     def __init__(self, vertices, radius):
         self._polyhedron = ConvexPolyhedron(vertices)
-        self._radius = radius
+        self.radius = radius
 
     @property
     def gsd_shape_spec(self):
@@ -40,7 +84,7 @@ class ConvexSpheropolyhedron(Shape3D):
 
     @property
     def polyhedron(self):
-        """:class:`~coxeter.shape_classes.convex_polyhedron.ConvexPolyhedron`: The underlying polyhedron."""  # noqa: E501
+        """:class:`~.ConvexPolyhedron`: The underlying polyhedron."""
         return self._polyhedron
 
     @property
@@ -92,6 +136,13 @@ class ConvexSpheropolyhedron(Shape3D):
         """float: The rounding radius."""
         return self._radius
 
+    @radius.setter
+    def radius(self, radius):
+        if radius >= 0:
+            self._radius = radius
+        else:
+            raise ValueError("Rounding radius must be greater than or equal to zero.")
+
     @property
     def surface_area(self):
         """float: Get the surface area."""
@@ -134,7 +185,16 @@ class ConvexSpheropolyhedron(Shape3D):
             :math:`(N, )` :class:`numpy.ndarray`:
                 Boolean array indicating which points are contained in the
                 spheropolyhedron.
-        """  # noqa: E501
+
+        Example:
+            >>> sphero = coxeter.shape_classes.ConvexSpheropolyhedron(
+            ...   [[1, 1, 1], [1, -1, 1], [1, 1, -1], [1, -1, -1],
+            ...    [-1, 1, 1], [-1, -1, 1], [-1, 1, -1], [-1, -1, -1]],
+            ...   radius=0.5)
+            >>> sphero.is_inside([[0, 0, 0], [10, 10, 10]])
+            array([ True, False])
+
+        """
         # Determine which points are in the polyhedron and which are in the
         # bounded volume of faces extruded by the rounding radius
         points = np.atleast_2d(points)
@@ -247,6 +307,16 @@ class ConvexSpheropolyhedron(Shape3D):
         The requirement that the sphere be centered at the centroid of the
         shape distinguishes this sphere from most typical insphere
         calculations.
+
+        Example:
+            >>> sphero = coxeter.shape_classes.ConvexSpheropolyhedron(
+            ...   [[1, 1, 1], [1, -1, 1], [1, 1, -1], [1, -1, -1],
+            ...    [-1, 1, 1], [-1, -1, 1], [-1, 1, -1], [-1, -1, -1]],
+            ...   radius=0.5)
+            >>> sphere = sphero.insphere_from_center
+            >>> import numpy as np
+            >>> assert np.isclose(sphere.radius, 1.5)
+
         """
         insphere = self._polyhedron.insphere_from_center
         insphere.radius += self._radius

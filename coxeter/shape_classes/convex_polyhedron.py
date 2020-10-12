@@ -19,6 +19,63 @@ class ConvexPolyhedron(Polyhedron):
     Args:
         vertices (:math:`(N, 3)` :class:`numpy.ndarray`):
             The vertices of the polyhedron.
+
+    Example:
+        >>> cube = coxeter.shape_classes.ConvexPolyhedron(
+        ...   [[1, 1, 1], [1, -1, 1], [1, 1, -1], [1, -1, -1],
+        ...    [-1, 1, 1], [-1, -1, 1], [-1, 1, -1], [-1, -1, -1]])
+        >>> import numpy as np
+        >>> assert np.isclose(cube.asphericity, 1.5)
+        >>> bounding_sphere = cube.bounding_sphere
+        >>> assert np.isclose(bounding_sphere.radius, np.sqrt(3))
+        >>> cube.center
+        array([0., 0., 0.])
+        >>> circumsphere = cube.circumsphere
+        >>> assert np.isclose(circumsphere.radius, np.sqrt(3))
+        >>> cube.faces
+        [array([4, 5, 1, 0], dtype=int32), array([0, 2, 6, 4], dtype=int32),
+        array([6, 7, 5, 4], dtype=int32), array([0, 1, 3, 2], dtype=int32),
+        array([5, 7, 3, 1], dtype=int32), array([2, 3, 7, 6], dtype=int32)]
+        >>> cube.gsd_shape_spec
+        {'type': 'ConvexPolyhedron', 'vertices': [[1.0, 1.0, 1.0], [1.0, -1.0, 1.0],
+        [1.0, 1.0, -1.0], [1.0, -1.0, -1.0], [-1.0, 1.0, 1.0], [-1.0, -1.0, 1.0],
+        [-1.0, 1.0, -1.0], [-1.0, -1.0, -1.0]]}
+        >>> assert np.allclose(
+        ...   cube.inertia_tensor,
+        ...   np.diag([16. / 3., 16. / 3., 16. / 3.]))
+        >>> sphere = cube.insphere_from_center
+        >>> sphere.radius
+        1.0
+        >>> assert np.isclose(cube.iq, np.pi / 6.)
+        >>> assert np.isclose(cube.mean_curvature, 1.5)
+        >>> cube.neighbors
+        [array([1, 2, 3, 4]), array([0, 2, 3, 5]), array([0, 1, 4, 5]),
+        array([0, 1, 4, 5]), array([0, 2, 3, 5]), array([1, 2, 3, 4])]
+        >>> cube.normals
+        array([[-0., -0.,  1.],
+               [-0.,  1., -0.],
+               [-1.,  0., -0.],
+               [ 1., -0., -0.],
+               [-0., -1.,  0.],
+               [-0., -0., -1.]])
+        >>> cube.num_faces
+        6
+        >>> cube.num_vertices
+        8
+        >>> cube.surface_area
+        24.0
+        >>> assert np.isclose(cube.tau, 3. / 8. * np.pi)
+        >>> cube.vertices
+        array([[ 1.,  1.,  1.],
+               [ 1., -1.,  1.],
+               [ 1.,  1., -1.],
+               [ 1., -1., -1.],
+               [-1.,  1.,  1.],
+               [-1., -1.,  1.],
+               [-1.,  1., -1.],
+               [-1., -1., -1.]])
+        >>> assert np.isclose(cube.volume, 8.)
+
     """
 
     def __init__(self, vertices):
@@ -50,7 +107,7 @@ class ConvexPolyhedron(Polyhedron):
 
     @property
     def tau(self):
-        r"""float: Get the parameter :math:`tau = \frac{4\pi R^2}{S}`.
+        r"""float: Get the parameter :math:`\tau = \frac{4\pi R^2}{S}`.
 
         This parameter is defined in :cite:`Naumann19841` and is closely
         related to the Pitzer acentric factor. This quantity appears relevant

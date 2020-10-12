@@ -2,12 +2,12 @@ import numpy as np
 import numpy.testing as npt
 import pytest
 import rowan
-from conftest import EllipseSurfaceStrategy
 from hypothesis import assume, example, given, settings
 from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats
 from scipy.spatial import ConvexHull
 
+from conftest import EllipseSurfaceStrategy
 from coxeter.shape_classes import ConvexSpheropolygon
 
 
@@ -149,3 +149,8 @@ def test_convex_signed_area(square_points):
         assert np.isclose(poly.signed_area, -hull.volume - sphero_area)
 
     testfun()
+
+
+def test_sphero_square_perimeter(unit_rounded_square):
+    """Test calculating the perimeter of a spheropolygon."""
+    assert unit_rounded_square.perimeter == 4 + 2 * np.pi
