@@ -79,6 +79,11 @@ William Zygmunt
 
 * Helped clean up utils module.
 
+Tobias Dwyer
+
+* Added getter and setter tests to some of the shape classes.
+* Added examples for the shape classes.
+
 
 Source code
 -----------
