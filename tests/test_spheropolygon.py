@@ -5,6 +5,7 @@ import rowan
 from hypothesis import assume, example, given, settings
 from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats
+from pytest import approx
 from scipy.spatial import ConvexHull
 
 from conftest import EllipseSurfaceStrategy
@@ -108,6 +109,21 @@ def test_area(unit_rounded_square):
     shape.reorder_verts(True)
     assert shape.signed_area == -area
     assert shape.area == area
+
+
+@given(floats(0.1, 1000))
+def test_area_getter_setter(unit_rounded_square, area):
+    """Test setting the volume."""
+    shape = unit_rounded_square
+    shape.area = area
+    assert shape.signed_area == approx(area)
+    assert shape.area == approx(area)
+
+    # Reset to original area
+    original_area = 1 + 4 + np.pi
+    shape.area = original_area
+    assert shape.signed_area == approx(original_area)
+    assert shape.area == approx(original_area)
 
 
 def test_center(square_points, unit_rounded_square):
