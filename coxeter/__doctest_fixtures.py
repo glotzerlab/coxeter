@@ -11,7 +11,6 @@ is loaded as part of normal pytest runs and injects the appropriate variable int
 pytest doctest namespace.
 """
 
-import numpy as np
 import pytest
 
 import coxeter
@@ -22,4 +21,3 @@ import coxeter
 def setup_namespace(doctest_namespace):
     """Configure the global doctest_namespace fixture."""
     doctest_namespace["coxeter"] = coxeter
-    doctest_namespace["np"] = np

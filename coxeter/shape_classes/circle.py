@@ -17,6 +17,7 @@ class Circle(Shape2D):
 
     Example:
         >>> circle = coxeter.shape_classes.circle.Circle(radius=1.0, center=(1, 1, 1))
+        >>> import numpy as np
         >>> assert np.isclose(circle.area, np.pi)
         >>> circle.center
         array([1, 1, 1])

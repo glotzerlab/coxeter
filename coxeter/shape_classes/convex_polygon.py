@@ -61,6 +61,7 @@ class ConvexPolygon(Polygon):
     Example:
         >>> square = coxeter.shape_classes.ConvexPolygon(
         ...   [[1, 1], [-1, -1], [1, -1], [-1, 1]])
+        >>> import numpy as np
         >>> assert np.isclose(square.area, 4.0)
         >>> assert np.isclose(
         ...   square.bounding_circle.radius,

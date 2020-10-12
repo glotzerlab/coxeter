@@ -68,6 +68,7 @@ class Polyhedron(Shape3D):
         >>> cube = coxeter.shape_classes.Polyhedron(
         ...   vertices=cube.vertices, faces=cube.faces)
         >>> bounding_sphere = cube.bounding_sphere
+        >>> import numpy as np
         >>> assert np.isclose(bounding_sphere.radius, np.sqrt(3))
         >>> cube.center
         array([0., 0., 0.])
@@ -373,6 +374,7 @@ class Polyhedron(Shape3D):
             ...    [-1, 1, 1], [-1, -1, 1], [-1, 1, -1], [-1, -1, -1]])
             >>> cube = coxeter.shape_classes.Polyhedron(
             ...   vertices=cube.vertices,faces=cube.faces)
+            >>> import numpy as np
             >>> assert np.allclose(
             ...   cube.get_face_area([1, 2, 3]),
             ...   [4., 4., 4.])
@@ -544,6 +546,7 @@ class Polyhedron(Shape3D):
             ...    [-1, 1, 1], [-1, -1, 1], [-1, 1, -1], [-1, -1, -1]])
             >>> cube = coxeter.shape_classes.Polyhedron(
             ...   vertices=cube.vertices, faces=cube.faces)
+            >>> import numpy as np
             >>> assert np.isclose(cube.get_dihedral(1, 2), np.pi / 2.)
 
         """

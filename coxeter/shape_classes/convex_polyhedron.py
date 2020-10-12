@@ -24,6 +24,7 @@ class ConvexPolyhedron(Polyhedron):
         >>> cube = coxeter.shape_classes.ConvexPolyhedron(
         ...   [[1, 1, 1], [1, -1, 1], [1, 1, -1], [1, -1, -1],
         ...    [-1, 1, 1], [-1, -1, 1], [-1, 1, -1], [-1, -1, -1]])
+        >>> import numpy as np
         >>> assert np.isclose(cube.asphericity, 1.5)
         >>> bounding_sphere = cube.bounding_sphere
         >>> assert np.isclose(bounding_sphere.radius, np.sqrt(3))

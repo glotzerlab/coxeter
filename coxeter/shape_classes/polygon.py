@@ -94,6 +94,7 @@ class Polygon(Shape2D):
 
     Example:
         >>> triangle = coxeter.shape_classes.Polygon([[-1, 0], [0, 1], [1, 0]])
+        >>> import numpy as np
         >>> assert np.isclose(triangle.area, 1.0)
         >>> bounding_circle = triangle.bounding_circle
         >>> assert np.isclose(bounding_circle.radius, 1.0)

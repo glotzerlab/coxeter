@@ -307,6 +307,7 @@ class ConvexSpheropolyhedron(Shape3D):
             ...    [-1, 1, 1], [-1, -1, 1], [-1, 1, -1], [-1, -1, -1]],
             ...   radius=0.5)
             >>> sphere = sphero.insphere_from_center
+            >>> import numpy as np
             >>> assert np.isclose(sphere.radius, 1.5)
 
         """
