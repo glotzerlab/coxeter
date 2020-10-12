@@ -8,7 +8,7 @@ from hypothesis.strategies import floats
 from scipy.spatial import ConvexHull
 
 from conftest import EllipseSurfaceStrategy
-from coxeter.shape_classes import ConvexSpheropolygon
+from coxeter.shapes import ConvexSpheropolygon
 
 
 def get_square_points():

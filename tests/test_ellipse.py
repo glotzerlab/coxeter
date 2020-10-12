@@ -4,7 +4,7 @@ from hypothesis import given
 from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats
 
-from coxeter.shape_classes.ellipse import Ellipse
+from coxeter.shapes.ellipse import Ellipse
 
 
 @given(floats(0.1, 1000), floats(0.1, 1000))

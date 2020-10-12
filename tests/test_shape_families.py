@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from coxeter.shape_families import (
+from coxeter.families import (
     DOI_SHAPE_REPOSITORIES,
     Family323Plus,
     Family423,

@@ -5,8 +5,8 @@ from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats
 from pytest import approx
 
-from coxeter.shape_classes.sphere import Sphere
-from coxeter.shape_classes.utils import translate_inertia_tensor
+from coxeter.shapes.sphere import Sphere
+from coxeter.shapes.utils import translate_inertia_tensor
 
 
 @given(floats(0.1, 1000))

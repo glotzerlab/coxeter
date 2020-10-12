@@ -4,8 +4,8 @@ from hypothesis import given
 from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats
 
-from coxeter.shape_classes.ellipsoid import Ellipsoid
-from coxeter.shape_classes.utils import translate_inertia_tensor
+from coxeter.shapes.ellipsoid import Ellipsoid
+from coxeter.shapes.utils import translate_inertia_tensor
 
 
 @given(floats(0.1, 1000), floats(0.1, 1000), floats(0.1, 1000))
