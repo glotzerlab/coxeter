@@ -13,7 +13,7 @@ jobs:
 
     steps:
       - checkout
-      - run:
+      - run: &style-check
           name: Style check
           command: |
             python -m pip install --progress-bar off --user -U flake8 flake8-black flake8-bugbear flake8-docstrings flake8-rst-docstrings pep8-naming flake8-isort
@@ -30,7 +30,7 @@ jobs:
 
       - checkout
 
-      - run:
+      - run: &install-and-run-tests
           name: Install and run tests
           command: |
             python --version
@@ -59,22 +59,13 @@ jobs:
       - checkout
 
       - run:
-          name: Style check
-          command: |
-            python -m pip install --progress-bar off --user -U flake8 flake8-black flake8-bugbear flake8-docstrings flake8-rst-docstrings pep8-naming flake8-isort
-            python -m flake8 --show-source ./
+          <<: *style-check
 
       - run:
-          name: Install and run tests
-          command: |
-            python --version
-            python -m pip install .[test] --progress-bar off --user
-            python -c "import numpy; print('numpy', numpy.__version__)"
-            python -c "import scipy; print('scipy', scipy.__version__)"
-            python -m pytest
+          <<: *install-and-run-tests
 
       - run:
-          name: Deploy dist and wheels
+          name: Deploy source distribution and wheels
           command: |
             python --version
             python -m pip --version
