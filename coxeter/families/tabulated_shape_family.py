@@ -22,7 +22,7 @@ class TabulatedShapeFamily(ShapeFamily):
     dictionary. If a filename is provided, it must be a JSON file that can be
     parsed into an appropriately formatted dictionary, namely a set of
     key-value pairs such that the call operator of this class can generate
-    a :class:`~coxeter.shape_classes.Shape` from the dictionary. The raw parsed
+    a :class:`~coxeter.shapes.Shape` from the dictionary. The raw parsed
     JSON is accessible via the :attr:`~.data` attribute. Subclasses of this
     class implement the call operator to define exactly how the dictionary
     values are converted to a shape definition.
@@ -89,7 +89,7 @@ class TabulatedGSDShapeFamily(TabulatedShapeFamily):
     The values of the dictionary used to construct this class must adhere to
     the :ref:`GSD shape spec <shapes>`. Each mapping may contain additional
     data, which is ignored when the class is called to actually produce
-    :class:`~coxeter.shape_classes.Shape` objects.
+    :class:`~coxeter.shapes.Shape` objects.
 
     Args:
         filename_or_dict (str or Mapping):
@@ -106,6 +106,6 @@ class TabulatedGSDShapeFamily(TabulatedShapeFamily):
                 The key of the desired shape in the data dict.
 
         Returns:
-            :class:`~coxeter.shape_classes.Shape`: The requested shape.
+            :class:`~coxeter.shapes.Shape`: The requested shape.
         """
         return from_gsd_type_shapes(cls.data[name])

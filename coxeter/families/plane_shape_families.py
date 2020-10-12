@@ -8,7 +8,7 @@ generally taken from :cite:`Chen2014` and :cite:`Damasceno2012`.
 import numpy as np
 from scipy.constants import golden_ratio
 
-from ..shape_classes import ConvexPolyhedron
+from ..shapes import ConvexPolyhedron
 from .shape_family import ShapeFamily
 
 
@@ -172,7 +172,7 @@ class Family323Plus(TruncationPlaneShapeFamily):
                 The parameter :math:`c \in [1, 3]`.
 
         Returns:
-            :class:`~coxeter.shape_classes.ConvexPolyhedron`:
+            :class:`~coxeter.shapes.ConvexPolyhedron`:
                 The desired shape.
         """
         if not 1 <= a <= 3:
@@ -244,7 +244,7 @@ class Family423(TruncationPlaneShapeFamily):
                 The parameter :math:`c \in [2, 3]`.
 
         Returns:
-            :class:`~coxeter.shape_classes.ConvexPolyhedron`:
+            :class:`~coxeter.shapes.ConvexPolyhedron`:
                 The desired shape.
         """
         if not 1 <= a <= 2:
@@ -424,7 +424,7 @@ class Family523(TruncationPlaneShapeFamily):
                 The parameter :math:`c \in [S^2, 3]`.
 
         Returns:
-            :class:`~coxeter.shape_classes.ConvexPolyhedron`:
+            :class:`~coxeter.shapes.ConvexPolyhedron`:
                 The desired shape.
         """
         if not 1 <= a <= (cls.s * np.sqrt(5)):
@@ -461,7 +461,7 @@ class TruncatedTetrahedronFamily(Family323Plus):
                 The parameter :math:`truncation \in [0, 1]`.
 
         Returns:
-            :class:`~coxeter.shape_classes.ConvexPolyhedron`:
+            :class:`~coxeter.shapes.ConvexPolyhedron`:
                 The desired truncated tetrahedron.
         """
         if not 0 <= truncation <= 1:

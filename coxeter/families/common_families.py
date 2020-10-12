@@ -4,7 +4,7 @@ import os
 
 import numpy as np
 
-from ..shape_classes import ConvexPolygon
+from ..shapes import ConvexPolygon
 from .doi_data_repositories import _DATA_FOLDER
 from .shape_family import ShapeFamily
 from .tabulated_shape_family import TabulatedGSDShapeFamily
