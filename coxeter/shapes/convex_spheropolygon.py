@@ -7,7 +7,6 @@ a circle of some radius.
 import numpy as np
 
 from .base_classes import Shape2D
-from .circle import Circle
 from .convex_polygon import ConvexPolygon, _is_convex
 
 
@@ -163,4 +162,4 @@ class ConvexSpheropolygon(Shape2D):
     @property
     def perimeter(self):
         """float: Get the perimeter of the spheropolygon."""
-        return self._polygon.perimeter + Circle(self._radius).perimeter
+        return self._polygon.perimeter + 2 * np.pi * self.radius
