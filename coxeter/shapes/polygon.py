@@ -7,7 +7,7 @@ from ..bentley_ottmann import poly_point_isect
 from ..polytri import polytri
 from .base_classes import Shape2D
 from .circle import Circle
-from .utils import rotate_order2_tensor, translate_inertia_tensor
+from .utils import _generate_ax, rotate_order2_tensor, translate_inertia_tensor
 
 try:
     import miniball
@@ -430,7 +430,7 @@ class Polygon(Shape2D):
         """
         yield from polytri.triangulate(self.vertices)
 
-    def plot(self, ax, center=False, plot_verts=False, label_verts=False):
+    def plot(self, ax=None, center=False, plot_verts=False, label_verts=False):
         """Plot the polygon.
 
         Note that the polygon is always rotated into the :math:`xy` plane and
@@ -438,7 +438,8 @@ class Polygon(Shape2D):
 
         Args:
             ax (:class:`matplotlib.axes.Axes`):
-                The axes on which to draw the polygon.
+                The axes on which to draw the polygon. Axes will be created
+                if this is None (Default value: None).
             center (bool):
                 If True, the polygon vertices are plotted relative to its
                 center (Default value: False).
@@ -449,7 +450,7 @@ class Polygon(Shape2D):
                 If True, vertex indices will be added next to the vertices
                 (Default value: False).
         """
-        # TODO: Generate axis if one is not provided.
+        ax = _generate_ax(ax)
         verts = self._vertices - self.center if center else self._vertices
         verts = _align_points_by_normal(self._normal, verts)
         verts = np.concatenate((verts, verts[[0]]))

@@ -78,6 +78,10 @@ class Shape(ABC):
             "The form factor calculation is not implemented for this shape."
         )
 
+    def plot(self):
+        """Plot the shape."""
+        raise NotImplementedError("Plotting is not implemented for this shape.")
+
 
 class Shape2D(Shape):
     """An abstract representation of a shape in 2 dimensions."""

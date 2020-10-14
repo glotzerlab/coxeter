@@ -3,7 +3,7 @@ coxeter Developers
 
 The following people contributed to the development of coxeter.
 
-Vyas Ramasubramani - **Creator and former lead developer**
+Vyas Ramasubramani - **Creator and lead developer**
 
 * Created documentation pages.
 * Formalized contribution guidelines and contributor agreement.
@@ -30,7 +30,7 @@ Vyas Ramasubramani - **Creator and former lead developer**
 * Standardize usage of Sphere/Circle classes for circum, in, and bounding sphere/circle calculations.
 * Moved form factor amplitude calculations from legacy ft module to shape classes, cleaned and added more tests.
 
-Bryan VanSaders - **Original maintainer of euclid package**
+Bryan VanSaders - **Original maintainer of legacy euclid package**
 
 * Created package layout.
 * Original port of classes and methods into package.
@@ -48,6 +48,7 @@ Bradley Dice
 * Add ability to check if points are contained in convex spheropolyhedra.
 * Revised and edited all documentation.
 * Updated doctests to be part of pytest suite.
+* Added automatic axis creation for plotting.
 * Added spheropolygon area and perimeter setters.
 
 Brandon Butler
