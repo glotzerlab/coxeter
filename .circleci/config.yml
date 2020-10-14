@@ -78,6 +78,7 @@ jobs:
 
       - run:
           name: Install wheel
+          command:
             python -m pip install coxeter --progress-bar off --user -U --force-reinstall -f dist/
 
       - run:
