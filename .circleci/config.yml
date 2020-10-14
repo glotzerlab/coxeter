@@ -87,7 +87,7 @@ jobs:
       - run:
           name: Upload source distribution and wheels
           command: |
-            python -m twine upload --username ${PYPI_USERNAME} --password ${PYPI_PASSWORD} --repository testpypi dist/*
+            python -m twine upload --username ${PYPI_USERNAME} --password ${PYPI_PASSWORD} dist/*
 
 workflows:
   version: 2
