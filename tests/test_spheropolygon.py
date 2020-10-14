@@ -114,16 +114,15 @@ def test_area(unit_rounded_square):
 @given(area=floats(0.1, 1000))
 def test_area_getter_setter(unit_rounded_square, area):
     """Test setting the area."""
-    shape = unit_rounded_square
-    shape.area = area
-    assert shape.signed_area == approx(area)
-    assert shape.area == approx(area)
+    unit_rounded_square.area = area
+    assert unit_rounded_square.signed_area == approx(area)
+    assert unit_rounded_square.area == approx(area)
 
     # Reset to original area
     original_area = 1 + 4 + np.pi
-    shape.area = original_area
-    assert shape.signed_area == approx(original_area)
-    assert shape.area == approx(original_area)
+    unit_rounded_square.area = original_area
+    assert unit_rounded_square.signed_area == approx(original_area)
+    assert unit_rounded_square.area == approx(original_area)
 
 
 def test_center(square_points, unit_rounded_square):
@@ -204,12 +203,11 @@ def test_sphero_square_perimeter(unit_rounded_square):
 @given(perimeter=floats(0.1, 1000))
 def test_perimeter_setter(unit_rounded_square, perimeter):
     """Test setting the perimeter."""
-    shape = unit_rounded_square
-    shape.perimeter = perimeter
-    assert shape.perimeter == approx(perimeter)
+    unit_rounded_square.perimeter = perimeter
+    assert unit_rounded_square.perimeter == approx(perimeter)
 
     # Reset to original perimeter
     original_perimeter = 4 + 2 * np.pi
-    shape.perimeter = original_perimeter
-    assert shape.perimeter == approx(original_perimeter)
-    assert shape.radius == approx(1.0)
+    unit_rounded_square.perimeter = original_perimeter
+    assert unit_rounded_square.perimeter == approx(original_perimeter)
+    assert unit_rounded_square.radius == approx(1.0)
