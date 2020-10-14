@@ -8,7 +8,7 @@ from .base_classes import Shape3D
 from .convex_polygon import ConvexPolygon, _is_convex
 from .polygon import Polygon, _is_simple
 from .sphere import Sphere
-from .utils import translate_inertia_tensor
+from .utils import _generate_ax, _set_3d_axes_equal, translate_inertia_tensor
 
 try:
     import miniball
@@ -555,7 +555,7 @@ class Polyhedron(Shape3D):
         n1, n2 = self._equations[[a, b], :3]
         return np.arccos(np.dot(-n1, n2))
 
-    def plot(self, ax, plot_verts=False, label_verts=False):
+    def plot(self, ax=None, plot_verts=False, label_verts=False):
         """Plot the polyhedron.
 
         Note that the ``ax`` argument should be a 3D axes object; passing in
@@ -563,7 +563,8 @@ class Polyhedron(Shape3D):
 
         Args:
             ax (:class:`mpl_toolkits.mplot3d.axes3d.Axes3D`):
-                The axes on which to draw the polyhedron.
+                The axes on which to draw the polyhedron. Axes will be
+                created if this is None (Default value: None).
             plot_verts (bool):
                 If True, scatter points will be added at the vertices
                 (Default value: False).
@@ -571,7 +572,8 @@ class Polyhedron(Shape3D):
                 If True, vertex indices will be added next to the vertices
                 (Default value: False).
         """
-        # TODO: Generate axis if one is not provided.
+        ax = _generate_ax(ax, axes3d=True)
+
         # Determine dimensionality.
         for face in self.faces:
             verts = self.vertices[face]
@@ -585,6 +587,7 @@ class Polyhedron(Shape3D):
             shift = (np.max(self.vertices[:, 2]) - np.min(self.vertices[:, 2])) * 0.025
             for i, vert in enumerate(self.vertices):
                 ax.text(vert[0], vert[1], vert[2] + shift, "{}".format(i), fontsize=10)
+        _set_3d_axes_equal(ax)
 
     def diagonalize_inertia(self):
         """Orient the shape along its principal axes.
