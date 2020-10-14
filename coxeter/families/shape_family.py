@@ -23,7 +23,7 @@ class ShapeFamily(ABC):
     a stateless class, while also providing a suitable means for using inheritance to
     create meaningful relationships between shape families. It also simplifies user
     APIs, avoiding confusing idioms like ``shape = family()(SHAPE_NAME)``. For instance,
-    given a family for generating regular polygons, the getting a hexagon should look
+    given a family for generating regular polygons, getting a hexagon should look
     roughly like ``family.get_shape(n=6)``.
     """
 
