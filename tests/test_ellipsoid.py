@@ -9,7 +9,8 @@ from coxeter.shapes.utils import translate_inertia_tensor
 
 
 @given(floats(0.1, 1000), floats(0.1, 1000), floats(0.1, 1000))
-def a_b_c_getter_setter_tests(a, b, c):
+def test_a_b_c_getter_setter(a, b, c):
+    """Test getter and setter for a, b, and c."""
     ellipsoid = Ellipsoid(a, b, c)
     assert ellipsoid.a == a
     assert ellipsoid.b == b
@@ -22,25 +23,28 @@ def a_b_c_getter_setter_tests(a, b, c):
     assert ellipsoid.c == c + 1
 
 
-@given(floats(-1000, -1), floats(-1000, -1), floats(-1000, -1))
-def invalid_a_b_c_setter_tests(a, b, c):
+@given(floats(-1000, -1))
+def test_invalid_a_b_c_setter(a):
+    """Test setting invalid a, b, c values."""
+    # a is invalid
     ellipsoid = Ellipsoid(1, 1, 1)
     with pytest.raises(ValueError):
         ellipsoid.a = a
     with pytest.raises(ValueError):
-        ellipsoid.b = b
+        ellipsoid.b = a
     with pytest.raises(ValueError):
-        ellipsoid.c = c
+        ellipsoid.c = a
 
 
-@given(floats(-1000, -1), floats(-1000, -1), floats(1000, 1))
-def invalid_a_b_c_tests(a, b, c):
+@given(floats(-1000, -1), floats(0.1, 1000), floats(0.1, 1000))
+def test_invalid_a_b_c_constructor(a, b, c):
+    """Test invalid a, b, c values in constructor."""
     with pytest.raises(ValueError):
-        Ellipsoid(a, c, c)
+        Ellipsoid(a, b, c)
     with pytest.raises(ValueError):
-        Ellipsoid(c, b, c)
+        Ellipsoid(c, a, b)
     with pytest.raises(ValueError):
-        Ellipsoid(c, c, a)
+        Ellipsoid(b, c, a)
 
 
 @given(floats(0.1, 1000), floats(0.1, 1000), floats(0.1, 1000))

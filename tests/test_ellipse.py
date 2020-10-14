@@ -8,8 +8,8 @@ from coxeter.shapes.ellipse import Ellipse
 
 
 @given(floats(0.1, 1000), floats(0.1, 1000))
-def a_b_getter_setter_tests(a, b):
-    """Check getter and setter tests for a and b."""
+def test_a_b_getter_setter(a, b):
+    """Test getter and setter for a and b."""
     ellipse = Ellipse(a, b)
     assert ellipse.a == a
     assert ellipse.b == b
@@ -20,8 +20,8 @@ def a_b_getter_setter_tests(a, b):
 
 
 @given(floats(-1000, -1))
-def invalid_a_b_setter_tests(a):
-    """Check invalid a and b checks."""
+def test_invalid_a_b_setter(a):
+    """Test setting invalid a, b values."""
     ellipse = Ellipse(1, 1)
     with pytest.raises(ValueError):
         ellipse.a = a
@@ -30,8 +30,8 @@ def invalid_a_b_setter_tests(a):
 
 
 @given(floats(-1000, -1), floats(0.1, 1000))
-def invalid_a_b_check(a, b):
-    """Check invalid a and b."""
+def test_invalid_a_b_constructor(a, b):
+    """Test invalid a, b values in constructor."""
     with pytest.raises(ValueError):
         Ellipse(a, b)
     with pytest.raises(ValueError):
