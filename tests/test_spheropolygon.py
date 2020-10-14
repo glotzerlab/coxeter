@@ -5,6 +5,7 @@ import rowan
 from hypothesis import assume, example, given, settings
 from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats
+from pytest import approx
 from scipy.spatial import ConvexHull
 
 from conftest import EllipseSurfaceStrategy
@@ -110,6 +111,20 @@ def test_area(unit_rounded_square):
     assert shape.area == area
 
 
+@given(area=floats(0.1, 1000))
+def test_area_getter_setter(unit_rounded_square, area):
+    """Test setting the area."""
+    unit_rounded_square.area = area
+    assert unit_rounded_square.signed_area == approx(area)
+    assert unit_rounded_square.area == approx(area)
+
+    # Reset to original area
+    original_area = 1 + 4 + np.pi
+    unit_rounded_square.area = original_area
+    assert unit_rounded_square.signed_area == approx(original_area)
+    assert unit_rounded_square.area == approx(original_area)
+
+
 def test_center(square_points, unit_rounded_square):
     """Test centering the polygon."""
     square = unit_rounded_square
@@ -183,3 +198,16 @@ def test_convex_signed_area(square_points):
 def test_sphero_square_perimeter(unit_rounded_square):
     """Test calculating the perimeter of a spheropolygon."""
     assert unit_rounded_square.perimeter == 4 + 2 * np.pi
+
+
+@given(perimeter=floats(0.1, 1000))
+def test_perimeter_setter(unit_rounded_square, perimeter):
+    """Test setting the perimeter."""
+    unit_rounded_square.perimeter = perimeter
+    assert unit_rounded_square.perimeter == approx(perimeter)
+
+    # Reset to original perimeter
+    original_perimeter = 4 + 2 * np.pi
+    unit_rounded_square.perimeter = original_perimeter
+    assert unit_rounded_square.perimeter == approx(original_perimeter)
+    assert unit_rounded_square.radius == approx(1.0)

@@ -12,6 +12,8 @@ Added
 - Form factors amplitudes for sphere, polygons, and polyhedra.
 - Shape families associated with a DOI can be directly accessed via a dictionary.
 - Expected abstract interface for shapes (both 2D and 3D) has expanded.
+- Perimeter calculation for polygons.
+- Area and perimeter setters for spheropolygons.
 
 Changed
 ~~~~~~~

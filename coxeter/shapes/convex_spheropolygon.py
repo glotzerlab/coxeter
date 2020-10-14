@@ -148,8 +148,16 @@ class ConvexSpheropolygon(Shape2D):
         To get the area, we simply compute the signed area and take the
         absolute value.
         """
-        # TODO: area setter for spheropolygon
         return np.abs(self.signed_area)
+
+    @area.setter
+    def area(self, value):
+        if value > 0:
+            scale_factor = np.sqrt(value / self.area)
+            self.polygon._vertices *= scale_factor
+            self.radius *= scale_factor
+        else:
+            raise ValueError("Area must be greater than zero.")
 
     @property
     def center(self):
@@ -164,3 +172,12 @@ class ConvexSpheropolygon(Shape2D):
     def perimeter(self):
         """float: Get the perimeter of the spheropolygon."""
         return self._polygon.perimeter + Circle(self._radius).perimeter
+
+    @perimeter.setter
+    def perimeter(self, value):
+        if value > 0:
+            scale_factor = value / self.perimeter
+            self.polygon._vertices *= scale_factor
+            self.radius *= scale_factor
+        else:
+            raise ValueError("Perimeter must be greater than zero.")
