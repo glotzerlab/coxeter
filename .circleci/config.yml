@@ -79,7 +79,7 @@ jobs:
       - run:
           name: Install wheel
           command:
-            python -m pip install coxeter --progress-bar off --user -U --force-reinstall -f dist/
+            python -m pip install coxeter[test] --progress-bar off --user -U --force-reinstall -f dist/
 
       - run:
           <<: *run-tests
@@ -87,7 +87,7 @@ jobs:
       - run:
           name: Upload source distribution and wheels
           command: |
-            python -m twine upload --username ${PYPI_USERNAME} --password ${PYPI_PASSWORD} dist/*
+            python -m twine upload --username ${PYPI_USERNAME} --password ${PYPI_PASSWORD} --repository testpypi dist/*
 
 workflows:
   version: 2
@@ -105,9 +105,9 @@ workflows:
             - style-check
   deploy:
     jobs:
-      - pypi_wheels:
-          filters:
-            tags:
-              only: /^v.*/
-            branches:
-              ignore: /.*/
+      - pypi_wheels
+          #filters:
+          #  tags:
+          #    only: /^v.*/
+          #  branches:
+          #    ignore: /.*/
