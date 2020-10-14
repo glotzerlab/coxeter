@@ -2,7 +2,7 @@ The format is based on `Keep a Changelog <http://keepachangelog.com/en/1.0.0/>`_
 This project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`__.
 
 
-v0.4.0 - xxxx-xx-xx
+v0.4.0 - 2020-10-14
 -------------------
 
 Added
@@ -34,8 +34,8 @@ Fixed
 Removed
 ~~~~~~~
 
--  The symmetry.py module.
--  The ft.py module.
+- The symmetry.py module.
+- The ft.py module.
 - The symmetry.py module.
 - The get_params method of TabulatedShapeFamily.
 - The family_from_doi method (the underlying data dictionary is now directly exposed).
@@ -67,7 +67,7 @@ Changed
 Removed
 ~~~~~~~
 
--  The common_shapes subpackage.
+- The common_shapes subpackage.
 
 v0.2.0 - 2020-04-09
 -------------------
