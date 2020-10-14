@@ -111,7 +111,7 @@ def test_area(unit_rounded_square):
     assert shape.area == area
 
 
-@given(floats(0.1, 1000))
+@given(area=floats(0.1, 1000))
 def test_area_getter_setter(unit_rounded_square, area):
     """Test setting the area."""
     shape = unit_rounded_square
@@ -201,7 +201,7 @@ def test_sphero_square_perimeter(unit_rounded_square):
     assert unit_rounded_square.perimeter == 4 + 2 * np.pi
 
 
-@given(floats(0.1, 1000))
+@given(perimeter=floats(0.1, 1000))
 def test_perimeter_setter(unit_rounded_square, perimeter):
     """Test setting the perimeter."""
     shape = unit_rounded_square
