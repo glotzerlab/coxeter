@@ -36,7 +36,7 @@ def test_2d_verts(square_points):
     ConvexSpheropolygon(square_points, 1)
 
 
-@given(floats(0.1, 1000))
+@given(r=floats(0.1, 1000))
 def test_radius_getter_setter(square_points, r):
     """Test getting and setting the radius."""
     square_points = square_points[:, :2]
@@ -46,7 +46,7 @@ def test_radius_getter_setter(square_points, r):
     assert convexspheropolygon.radius == r + 1
 
 
-@given(floats(-1000, -1))
+@given(r=floats(-1000, -1))
 def test_invalid_radius_constructor(square_points, r):
     """Test invalid radius values in constructor."""
     square_points = square_points[:, :2]
@@ -54,7 +54,7 @@ def test_invalid_radius_constructor(square_points, r):
         ConvexSpheropolygon(square_points, r)
 
 
-@given(floats(-1000, -1))
+@given(r=floats(-1000, -1))
 def test_invalid_radius_setter(square_points, r):
     """Test setting invalid radius values."""
     square_points = square_points[:, :2]
