@@ -105,9 +105,9 @@ workflows:
             - style-check
   deploy:
     jobs:
-      - pypi_wheels
-          #filters:
-          #  tags:
-          #    only: /^v.*/
-          #  branches:
-          #    ignore: /.*/
+      - pypi_wheels:
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
