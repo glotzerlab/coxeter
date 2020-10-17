@@ -50,6 +50,7 @@ Bradley Dice
 * Updated doctests to be part of pytest suite.
 * Added automatic axis creation for plotting.
 * Added spheropolygon area and perimeter setters.
+* Added ellipse area setter and ellipsoid volume setter.
 
 Brandon Butler
 
