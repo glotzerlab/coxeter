@@ -3,6 +3,7 @@ import pytest
 from hypothesis import given
 from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats
+from pytest import approx
 
 from coxeter.shapes.ellipsoid import Ellipsoid
 from coxeter.shapes.utils import translate_inertia_tensor
@@ -70,6 +71,22 @@ def test_volume(a, b, c):
     ellipsoid.b = b
     ellipsoid.c = c
     assert ellipsoid.volume == 4 / 3 * np.pi * a * b * c
+
+
+@given(floats(0.1, 1000), floats(0.1, 1000), floats(0.1, 1000), floats(0.1, 1000))
+def test_set_volume(a, b, c, volume):
+    """Test setting the volume."""
+    ellipsoid = Ellipsoid(a, b, c)
+    original_volume = ellipsoid.volume
+    ellipsoid.volume = volume
+    assert ellipsoid.volume == approx(volume)
+
+    # Reset to original volume
+    ellipsoid.volume = original_volume
+    assert ellipsoid.volume == approx(original_volume)
+    assert ellipsoid.a == approx(a)
+    assert ellipsoid.b == approx(b)
+    assert ellipsoid.c == approx(c)
 
 
 def test_earth():

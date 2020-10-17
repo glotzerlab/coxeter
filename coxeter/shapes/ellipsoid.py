@@ -110,6 +110,16 @@ class Ellipsoid(Shape3D):
         """float: Get the volume."""
         return (4 / 3) * np.pi * self.a * self.b * self.c
 
+    @volume.setter
+    def volume(self, value):
+        if value > 0:
+            scale_factor = np.cbrt(value / self.volume)
+            self.a *= scale_factor
+            self.b *= scale_factor
+            self.c *= scale_factor
+        else:
+            raise ValueError("Volume must be greater than zero.")
+
     @property
     def surface_area(self):
         """float: Get the surface area."""
