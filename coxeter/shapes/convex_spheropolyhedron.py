@@ -138,7 +138,7 @@ class ConvexSpheropolyhedron(Shape3D):
 
     @radius.setter
     def radius(self, value):
-        if radius >= 0:
+        if value >= 0:
             self._radius = value
         else:
             raise ValueError("Rounding radius must be greater than or equal to zero.")
