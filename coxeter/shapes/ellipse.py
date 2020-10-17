@@ -98,6 +98,15 @@ class Ellipse(Shape2D):
         """float: The area."""
         return np.pi * self.a * self.b
 
+    @area.setter
+    def area(self, value):
+        if value > 0:
+            scale_factor = np.sqrt(value / self.area)
+            self.a *= scale_factor
+            self.b *= scale_factor
+        else:
+            raise ValueError("Area must be greater than zero.")
+
     @property
     def eccentricity(self):
         """float: The eccentricity."""
