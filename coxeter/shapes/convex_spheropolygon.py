@@ -164,8 +164,8 @@ class ConvexSpheropolygon(Shape2D):
         return self._polygon.center
 
     @center.setter
-    def center(self, new_center):
-        self._polygon.center = new_center
+    def center(self, value):
+        self._polygon.center = value
 
     @property
     def perimeter(self):

@@ -62,9 +62,9 @@ class Circle(Shape2D):
         return self._radius
 
     @radius.setter
-    def radius(self, r):
-        if r > 0:
-            self._radius = r
+    def radius(self, value):
+        if value > 0:
+            self._radius = value
         else:
             raise ValueError("Radius must be greater than zero.")
 
