@@ -119,7 +119,7 @@ class ConvexSpheropolygon(Shape2D):
         if value >= 0:
             self._radius = value
         else:
-            raise ValueError("Radius must be greater or equal to zero.")
+            raise ValueError("Radius must be greater than or equal to zero.")
 
     @property
     def signed_area(self):
