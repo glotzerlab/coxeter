@@ -1,4 +1,4 @@
-coxeter.shape\_families package
+coxeter.families package
 ===============================
 
 .. rubric:: Overview

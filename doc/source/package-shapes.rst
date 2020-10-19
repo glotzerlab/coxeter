@@ -1,4 +1,4 @@
-coxeter.shape\_classes package
+coxeter.shapes package
 ==============================
 
 .. rubric:: Overview
