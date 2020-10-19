@@ -299,8 +299,8 @@ class Polygon(Shape2D):
         return np.abs(self.signed_area)
 
     @area.setter
-    def area(self, new_area):
-        scale_factor = np.sqrt(new_area / self.area)
+    def area(self, value):
+        scale_factor = np.sqrt(value / self.area)
         self._vertices *= scale_factor
 
     @property

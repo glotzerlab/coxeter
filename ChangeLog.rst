@@ -1,6 +1,13 @@
 The format is based on `Keep a Changelog <http://keepachangelog.com/en/1.0.0/>`__.
 This project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`__.
 
+next
+----
+
+Added
+~~~~~
+
+- Ellipse area setter and Ellipsoid volume setter.
 
 v0.4.0 - 2020-10-14
 -------------------

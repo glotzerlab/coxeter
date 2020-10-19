@@ -3,6 +3,7 @@ import pytest
 from hypothesis import given
 from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats
+from pytest import approx
 
 from coxeter.shapes.ellipse import Ellipse
 
@@ -59,6 +60,21 @@ def test_area(a, b):
     ellipse.a = a
     ellipse.b = b
     assert ellipse.area == np.pi * a * b
+
+
+@given(floats(0.1, 1000), floats(0.1, 1000), floats(0.1, 1000))
+def test_set_area(a, b, area):
+    """Test setting the area."""
+    ellipse = Ellipse(a, b)
+    original_area = ellipse.area
+    ellipse.area = area
+    assert ellipse.area == approx(area)
+
+    # Reset to original area
+    ellipse.area = original_area
+    assert ellipse.area == approx(original_area)
+    assert ellipse.a == approx(a)
+    assert ellipse.b == approx(b)
 
 
 @given(floats(0.1, 1000), floats(0.1, 1000))

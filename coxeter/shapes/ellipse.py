@@ -75,10 +75,11 @@ class Ellipse(Shape2D):
         return self._a
 
     @a.setter
-    def a(self, a):
-        if a <= 0:
+    def a(self, value):
+        if value > 0:
+            self._a = value
+        else:
             raise ValueError("a must be greater than zero.")
-        self._a = a
 
     @property
     def b(self):
@@ -86,15 +87,25 @@ class Ellipse(Shape2D):
         return self._b
 
     @b.setter
-    def b(self, b):
-        if b <= 0:
-            raise ValueError("a must be greater than zero.")
-        self._b = b
+    def b(self, value):
+        if value > 0:
+            self._b = value
+        else:
+            raise ValueError("b must be greater than zero.")
 
     @property
     def area(self):
         """float: The area."""
         return np.pi * self.a * self.b
+
+    @area.setter
+    def area(self, value):
+        if value > 0:
+            scale_factor = np.sqrt(value / self.area)
+            self.a *= scale_factor
+            self.b *= scale_factor
+        else:
+            raise ValueError("Area must be greater than zero.")
 
     @property
     def eccentricity(self):

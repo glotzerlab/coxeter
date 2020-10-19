@@ -59,9 +59,9 @@ class Sphere(Shape3D):
         return self._radius
 
     @radius.setter
-    def radius(self, radius):
-        if radius > 0:
-            self._radius = radius
+    def radius(self, value):
+        if value > 0:
+            self._radius = value
         else:
             raise ValueError("Radius must be greater than zero.")
 
@@ -83,9 +83,9 @@ class Sphere(Shape3D):
         return 4 * np.pi * self.radius ** 2
 
     @surface_area.setter
-    def surface_area(self, area):
-        if area > 0:
-            self.radius = np.sqrt(area / (4 * np.pi))
+    def surface_area(self, value):
+        if value > 0:
+            self.radius = np.sqrt(value / (4 * np.pi))
         else:
             raise ValueError("Surface area must be greater than zero.")
 

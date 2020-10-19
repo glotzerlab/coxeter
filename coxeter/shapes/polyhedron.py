@@ -351,8 +351,8 @@ class Polyhedron(Shape3D):
         return np.sum(ds * self.get_face_area()) / 3
 
     @volume.setter
-    def volume(self, new_volume):
-        scale_factor = (new_volume / self.volume) ** (1 / 3)
+    def volume(self, value):
+        scale_factor = (value / self.volume) ** (1 / 3)
         self._vertices *= scale_factor
         self._equations[:, 3] *= scale_factor
 

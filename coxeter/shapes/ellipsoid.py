@@ -75,10 +75,11 @@ class Ellipsoid(Shape3D):
         return self._a
 
     @a.setter
-    def a(self, a):
-        if a <= 0:
+    def a(self, value):
+        if value > 0:
+            self._a = value
+        else:
             raise ValueError("a must be greater than zero.")
-        self._a = a
 
     @property
     def b(self):
@@ -86,10 +87,11 @@ class Ellipsoid(Shape3D):
         return self._b
 
     @b.setter
-    def b(self, b):
-        if b <= 0:
+    def b(self, value):
+        if value > 0:
+            self._b = value
+        else:
             raise ValueError("b must be greater than zero.")
-        self._b = b
 
     @property
     def c(self):
@@ -97,15 +99,26 @@ class Ellipsoid(Shape3D):
         return self._c
 
     @c.setter
-    def c(self, c):
-        if c <= 0:
+    def c(self, value):
+        if value > 0:
+            self._c = value
+        else:
             raise ValueError("c must be greater than zero.")
-        self._c = c
 
     @property
     def volume(self):
         """float: Get the volume."""
         return (4 / 3) * np.pi * self.a * self.b * self.c
+
+    @volume.setter
+    def volume(self, value):
+        if value > 0:
+            scale_factor = np.cbrt(value / self.volume)
+            self.a *= scale_factor
+            self.b *= scale_factor
+            self.c *= scale_factor
+        else:
+            raise ValueError("Volume must be greater than zero.")
 
     @property
     def surface_area(self):

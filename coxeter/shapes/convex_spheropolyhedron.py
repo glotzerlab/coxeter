@@ -98,8 +98,8 @@ class ConvexSpheropolyhedron(Shape3D):
         return self._polyhedron.center
 
     @center.setter
-    def center(self, new_center):
-        self._polyhedron.center = new_center
+    def center(self, value):
+        self._polyhedron.center = value
 
     @property
     def volume(self):
@@ -137,9 +137,9 @@ class ConvexSpheropolyhedron(Shape3D):
         return self._radius
 
     @radius.setter
-    def radius(self, radius):
-        if radius >= 0:
-            self._radius = radius
+    def radius(self, value):
+        if value >= 0:
+            self._radius = value
         else:
             raise ValueError("Rounding radius must be greater than or equal to zero.")
 
