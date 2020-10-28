@@ -67,7 +67,7 @@ def _set_3d_axes_equal(ax, limits=None):
     Args:
         ax (:class:`matplotlib.axes.Axes`):
             Axes object.
-        limits (:math:`(3, 2)` :class:`np.ndarray`):
+        limits (:math:`(3, 2)` :class:`numpy.ndarray`):
             Axis limits in the form :code:`[[xmin, xmax], [ymin, ymax],
             [zmin, zmax]]`. If :code:`None`, the limits are auto-detected
             (Default value = :code:`None`).

@@ -483,13 +483,13 @@ class Polyhedron(Shape3D):
 
     @property
     def bounding_sphere(self):
-        """:class:`~.Sphere`: Get the center and radius of the bounding sphere."""
+        """:class:`~.Sphere`: Get the polyhedron's bounding sphere."""
         if not MINIBALL:
             raise ImportError(
                 "The miniball module must be installed. It can "
                 "be installed as an extra with coxeter (e.g. "
-                "with pip install coxeter[bounding_sphere], or "
-                "directly from PyPI using pip install miniball."
+                "with `pip install coxeter[bounding_sphere]`) or "
+                "directly from PyPI using `pip install miniball`."
             )
 
         # The algorithm in miniball involves solving a linear system and

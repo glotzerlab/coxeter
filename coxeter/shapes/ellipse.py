@@ -95,7 +95,7 @@ class Ellipse(Shape2D):
 
     @property
     def area(self):
-        """float: The area."""
+        """float: Get or set the area."""
         return np.pi * self.a * self.b
 
     @area.setter
@@ -109,7 +109,12 @@ class Ellipse(Shape2D):
 
     @property
     def eccentricity(self):
-        """float: The eccentricity."""
+        r"""float: The eccentricity.
+
+        An ellipse's eccentricity is defined as :math:`e = \sqrt{1 -
+        \frac{b^2}{a^2}}` where :math:`b` is the length of the smaller
+        semi-axis and :math:`a` is the length of the larger semi-axis.
+        """
         # Requires that a >= b, so we sort the principal axes:
         b, a = sorted([self.a, self.b])
         e = np.sqrt(1 - b ** 2 / a ** 2)
@@ -132,7 +137,7 @@ class Ellipse(Shape2D):
 
     @property
     def planar_moments_inertia(self):
-        r"""Get the planar moments of inertia.
+        r"""list[float, float, float]: Get the planar and product moments of inertia.
 
         Moments are computed with respect to the :math:`x` and :math:`y`
         axes. In addition to the two planar moments, this property also

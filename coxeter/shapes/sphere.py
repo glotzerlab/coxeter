@@ -91,7 +91,10 @@ class Sphere(Shape3D):
 
     @property
     def inertia_tensor(self):
-        """float: Get the inertia tensor. Assumes constant density of 1."""
+        """:math:`(3, 3)` :class:`numpy.ndarray`: Get the inertia tensor.
+
+        Assumes a constant density of 1.
+        """
         vol = self.volume
         i_xx = vol * 2 / 5 * self.radius ** 2
         inertia_tensor = np.diag([i_xx, i_xx, i_xx])

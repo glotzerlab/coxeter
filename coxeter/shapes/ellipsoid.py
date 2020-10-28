@@ -107,7 +107,7 @@ class Ellipsoid(Shape3D):
 
     @property
     def volume(self):
-        """float: Get the volume."""
+        """float: Get or set the volume."""
         return (4 / 3) * np.pi * self.a * self.b * self.c
 
     @volume.setter
@@ -141,7 +141,7 @@ class Ellipsoid(Shape3D):
 
     @property
     def inertia_tensor(self):
-        """float: Get the inertia tensor.
+        """:math:`(3, 3)` :class:`numpy.ndarray`: Get the inertia tensor.
 
         Assumes a constant density of 1.
         """
