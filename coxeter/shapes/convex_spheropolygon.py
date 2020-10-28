@@ -59,8 +59,7 @@ class ConvexSpheropolygon(Shape2D):
     def reorder_verts(self, clockwise=False, ref_index=0, increasing_length=True):
         """Sort the vertices.
 
-        For more information see
-        :meth:`~coxeter.shapes.Polygon.reorder_verts`.
+        For more information see `Polygon.reorder_verts`.
 
         Args:
             clockwise (bool):

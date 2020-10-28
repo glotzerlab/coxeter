@@ -102,7 +102,7 @@ class Circle(Shape2D):
 
     @property
     def circumference(self):
-        """float: Get the circumference, alias for :attr:`~.Circle.perimeter`."""
+        """float: Get the circumference, alias for `Circle.perimeter`."""
         return self.perimeter
 
     @circumference.setter
