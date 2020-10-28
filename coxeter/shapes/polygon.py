@@ -56,7 +56,7 @@ def _is_simple(vertices):
 
 
 class Polygon(Shape2D):
-    """A simple (i.e. non-self-overlapping) polygon.
+    """A simple (non-self-overlapping) polygon.
 
     The polygon is embedded in 3-dimensions, so the normal
     vector determines which way is "up".
