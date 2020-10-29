@@ -486,8 +486,8 @@ class Polyhedron(Shape3D):
         """:class:`~.Sphere`: Get the polyhedron's bounding sphere."""
         if not MINIBALL:
             raise ImportError(
-                'The miniball module must be installed. It can '
-                'be installed as an extra with coxeter (e.g. '
+                "The miniball module must be installed. It can "
+                "be installed as an extra with coxeter (e.g. "
                 'with "pip install coxeter[bounding_sphere]") or '
                 'directly from PyPI using "pip install miniball".'
             )
