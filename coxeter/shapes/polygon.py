@@ -56,7 +56,7 @@ def _is_simple(vertices):
 
 
 class Polygon(Shape2D):
-    """A simple (i.e. non-self-overlapping) polygon.
+    """A simple (non-self-overlapping) polygon.
 
     The polygon is embedded in 3-dimensions, so the normal
     vector determines which way is "up".
@@ -264,11 +264,12 @@ class Polygon(Shape2D):
         """float: Get the polygon's area.
 
         To support polygons embedded in 3 dimensional space, we employ a
-        projection- and rescaling-based algorithm described
-        `here <https://geomalgorithms.com/a01-_area.html>`_. Specifically, the
-        polygon is projected onto the plane it is "most parallel" to, the area
-        of the projected polygon is computed, then the area is rescaled by the
-        component of the normal in the projected dimension.
+        projection- and rescaling-based algorithm described `here
+        <https://geomalgorithms.com/a01-_area.html#3D-Planar-Polygons>`__.
+        Specifically, the polygon is projected onto the plane it is "most
+        parallel" to, the area of the projected polygon is computed, then the
+        area is rescaled by the component of the normal in the projected
+        dimension.
         """
         # Choose the dimension to project out based on the largest magnitude
         # component of the normal vector.
@@ -305,7 +306,7 @@ class Polygon(Shape2D):
 
     @property
     def planar_moments_inertia(self):
-        r"""Get the planar moments of inertia.
+        r"""list[float, float, float]: Get the planar and product moments of inertia.
 
         Moments are computed with respect to the :math:`x` and :math:`y`
         axes. In addition to the two planar moments, this property also

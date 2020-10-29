@@ -102,7 +102,7 @@ class Circle(Shape2D):
 
     @property
     def circumference(self):
-        """float: Get the circumference, alias for :meth:`~.Circle.perimeter`."""
+        """float: Get the circumference, alias for `Circle.perimeter`."""
         return self.perimeter
 
     @circumference.setter
@@ -111,7 +111,7 @@ class Circle(Shape2D):
 
     @property
     def planar_moments_inertia(self):
-        r"""Get the planar moments of inertia.
+        r"""list[float, float, float]: Get the planar and product moments of inertia.
 
         Moments are computed with respect to the :math:`x` and :math:`y`
         axes. In addition to the two planar moments, this property also
