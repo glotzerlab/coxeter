@@ -166,6 +166,29 @@ class Ellipse(Shape2D):
         return i_x, i_y, i_xy
 
     @property
+    def shape_kernels(self, value):
+        r"""Get the shape kernel.
+
+        The shape kernel give the curve of a shape R in order to
+        give the curve of a shape for x and y.
+        x = R * cos(value)
+        y = R * sin(value)
+
+        Args:
+            value (array):
+                The array of theta that the shape kernel should be
+                calculated at
+        """
+        return np.sqrt(
+            (self.a * self.a + self.b * self.b)
+            / (
+                1
+                + (self.a * self.a) / (self.b * self.b) * np.sin(value) * np.sin(value)
+                + (self.b * self.b) / (self.a * self.a) * np.cos(value) * np.cos(value)
+            )
+        )
+
+    @property
     def iq(self):
         """float: The isoperimetric quotient."""
         return np.min([4 * np.pi * self.area / (self.perimeter ** 2), 1])
