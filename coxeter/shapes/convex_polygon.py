@@ -106,7 +106,7 @@ class ConvexPolygon(Polygon):
             # If the shape is nonconvex, the user must provide ordered vertices
             # to uniquely identify the polygon. We must check if there are any
             # intersections to avoid complex (self-intersecting) polygons.
-            raise ValueError("The provided vertices do not form a convex " "polygon.")
+            raise ValueError("The provided vertices do not form a convex polygon.")
 
     @property
     def incircle_from_center(self):
