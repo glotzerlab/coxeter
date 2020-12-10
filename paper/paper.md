@@ -1,5 +1,5 @@
 ---
-title: 'coxeter: A Python package for generating shapes and performing robust and flexible geometric and physical calculations'
+title: 'coxeter: Flexible and Robust geometric calculations in Python'
 tags:
   - Python
   - geometry
