@@ -58,6 +58,7 @@ intersphinx_mapping = {
     "numpy": ("https://numpy.org/doc/stable/", None),
     "matplotlib": ("https://matplotlib.org", None),
     "gsd": ("https://gsd.readthedocs.io/en/stable/", None),
+    "plato": ("https://plato-draw.readthedocs.io/en/latest/", None),
 }
 
 autodoc_default_options = {
