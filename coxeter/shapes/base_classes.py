@@ -43,7 +43,7 @@ class Shape(ABC):
 
     @property
     def gsd_shape_spec(self):
-        """dict: Get a :ref:`complete GSD specification <shapes>`."""  # noqa: D401
+        """dict: Get a :ref:`complete GSD specification <gsd:shapes>`."""  # noqa: D401
         raise NotImplementedError
 
     def is_inside(self, points):
@@ -137,7 +137,7 @@ class Shape(ABC):
         raise NotImplementedError("This shape does not have a plato primitive.")
 
     def to_plato_scene(self, backend=None, scene=None):
-        """Create a plato scene displaying this shape.
+        """Add this shape to a new or existing :class:`plato.draw.Scene`.
 
         Args:
             backend (str):
@@ -147,6 +147,10 @@ class Shape(ABC):
             scene (:class:`plato.draw.Scene`):
                 Scene object to render into. If not provided or None, a new
                 scene is created.
+
+        Returns:
+            :class:`plato.draw.Scene`:
+                A scene containing this shape.
         """
         if backend is None and scene is None:
             raise ValueError("Either backend or scene must be specified.")
