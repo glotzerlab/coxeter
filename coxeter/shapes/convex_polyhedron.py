@@ -196,5 +196,5 @@ class ConvexPolyhedron(Polyhedron):
             positions=np.array([self.center]),
             orientations=np.array([[1.0, 0.0, 0.0, 0.0]]),
             colors=np.array([[0.5, 0.5, 0.5, 1]]),
-            vertices=verts[:, :2],
+            vertices=self.vertices,
         )
