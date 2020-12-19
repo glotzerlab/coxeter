@@ -182,6 +182,16 @@ class Polyhedron(Shape3D):
             "faces": self.faces,
         }
 
+    def _rescale(self, scale):
+        """Multiply length scale.
+
+        Args:
+            scale (float):
+                Scale factor.
+        """
+        self._vertices *= scale
+        self._equations[:, 3] *= scale
+
     def merge_faces(self, atol=1e-8, rtol=1e-5):
         """Merge coplanar faces to a given tolerance.
 
@@ -352,9 +362,8 @@ class Polyhedron(Shape3D):
 
     @volume.setter
     def volume(self, value):
-        scale_factor = (value / self.volume) ** (1 / 3)
-        self._vertices *= scale_factor
-        self._equations[:, 3] *= scale_factor
+        scale = (value / self.volume) ** (1 / 3)
+        self._rescale(scale)
 
     def get_face_area(self, faces=None):
         """Get the total surface area of a set of faces.
@@ -397,6 +406,14 @@ class Polyhedron(Shape3D):
     def surface_area(self):
         """float: Get the surface area."""
         return np.sum(self.get_face_area())
+
+    @surface_area.setter
+    def surface_area(self, value):
+        if value > 0:
+            scale = np.sqrt(value / self.surface_area)
+            self._rescale(scale)
+        else:
+            raise ValueError("Surface area must be greater than zero.")
 
     def _surface_triangulation(self):
         """Generate a triangulation of the surface of the polyhedron.

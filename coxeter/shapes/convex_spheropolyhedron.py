@@ -101,6 +101,16 @@ class ConvexSpheropolyhedron(Shape3D):
     def center(self, value):
         self.polyhedron.center = value
 
+    def _rescale(self, scale):
+        """Multiply length scale.
+
+        Args:
+            scale (float):
+                Scale factor.
+        """
+        self.polyhedron._rescale(scale)
+        self.radius *= scale
+
     @property
     def volume(self):
         """float: The volume."""
@@ -130,6 +140,11 @@ class ConvexSpheropolyhedron(Shape3D):
             v_cyl += (np.pi * self.radius ** 2) * (phi / (2 * np.pi)) * edge_length
 
         return v_poly + v_sphere + v_face + v_cyl
+
+    @volume.setter
+    def volume(self, value):
+        scale = (value / self.volume) ** (1 / 3)
+        self._rescale(scale)
 
     @property
     def radius(self):
@@ -169,6 +184,14 @@ class ConvexSpheropolyhedron(Shape3D):
             a_cyl += (2 * np.pi * self.radius) * (phi / (2 * np.pi)) * edge_length
 
         return a_poly + a_sphere + a_cyl
+
+    @surface_area.setter
+    def surface_area(self, value):
+        if value > 0:
+            scale = np.sqrt(value / self.surface_area)
+            self._rescale(scale)
+        else:
+            raise ValueError("Surface area must be greater than zero.")
 
     def is_inside(self, points):
         """Determine whether points are contained in this spheropolyhedron.

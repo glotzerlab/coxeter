@@ -68,6 +68,15 @@ class Circle(Shape2D):
         else:
             raise ValueError("Radius must be greater than zero.")
 
+    def _rescale(self, scale):
+        """Multiply length scale.
+
+        Args:
+            scale (float):
+                Scale factor.
+        """
+        self.radius *= scale
+
     @property
     def area(self):
         """float: Get the area of the circle."""
