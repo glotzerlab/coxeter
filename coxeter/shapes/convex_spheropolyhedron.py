@@ -294,3 +294,12 @@ class ConvexSpheropolyhedron(Shape3D):
             f"coxeter.shapes.ConvexSpheropolyhedron(vertices={self.vertices.tolist()}, "
             f"radius={self.radius})"
         )
+
+    def _plato_primitive(self, backend):
+        return backend.ConvexSpheropolyhedra(
+            positions=np.array([self.center]),
+            orientations=np.array([[1.0, 0.0, 0.0, 0.0]]),
+            colors=np.array([[0.5, 0.5, 0.5, 1]]),
+            vertices=self.vertices,
+            radius=self.radius,
+        )

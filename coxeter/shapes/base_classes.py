@@ -133,6 +133,41 @@ class Shape(ABC):
     def __str__(self):
         return repr(self)
 
+    def _plato_primitive(self, backend, **kwargs):
+        raise NotImplementedError("This shape does not have a plato primitive.")
+
+    def to_plato_scene(self, backend=None, scene=None):
+        """Create a plato scene displaying this shape.
+
+        Args:
+            backend (str):
+                Name of backend to use from plato. The backend must support
+                the primitive corresponding to this shape. Defaults to None,
+                in which case the ``scene`` argument must be provided.
+            scene (:class:`plato.draw.Scene`):
+                Scene object to render into. If not provided or None, a new
+                scene is created.
+        """
+        if backend is None and scene is None:
+            raise ValueError("Either backend or scene must be specified.")
+
+        try:
+            import importlib
+
+            backend = importlib.import_module("plato.draw.{}".format(backend))
+        except ImportError:
+            raise ImportError(
+                "Backend plato.draw.{} could not be imported.".format(backend)
+            )
+
+        prim = self._plato_primitive(backend)
+
+        if scene is None:
+            scene = backend.Scene([prim])
+        else:
+            scene.add_primitive(prim)
+        return scene
+
 
 class Shape2D(Shape):
     """An abstract representation of a shape in 2 dimensions."""

@@ -194,3 +194,10 @@ class Sphere(Shape3D):
             f"coxeter.shapes.Sphere(radius={self.radius}, "
             f"center={self.centroid.tolist()})"
         )
+
+    def _plato_primitive(self, backend):
+        return backend.Spheres(
+            positions=np.array([self.center]),
+            colors=np.array([[0.5, 0.5, 0.5, 1]]),
+            radii=[self.radius],
+        )

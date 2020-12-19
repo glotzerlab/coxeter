@@ -710,3 +710,12 @@ class Polygon(Shape2D):
             f"coxeter.shapes.Polygon(vertices={self.vertices.tolist()}, "
             f"normal={self.normal.tolist()})"
         )
+
+    def _plato_primitive(self, backend):
+        verts = _align_points_by_normal(self.normal, self.vertices - self.center)
+        return backend.Polygons(
+            positions=np.array([[0.0, 0.0]]),
+            orientations=np.array([[1.0, 0.0, 0.0, 0.0]]),
+            colors=np.array([[0.5, 0.5, 0.5, 1]]),
+            vertices=verts[:, :2],
+        )

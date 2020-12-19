@@ -858,3 +858,13 @@ class Polyhedron(Shape3D):
             f"coxeter.shapes.Polyhedron(vertices={self.vertices.tolist()}, "
             f"faces={np.asarray(self.faces).tolist()})"
         )
+
+    def _plato_primitive(self, backend):
+        return backend.Mesh(
+            positions=np.array([self.center]),
+            orientations=np.array([[1.0, 0.0, 0.0, 0.0]]),
+            colors=np.array([[0.5, 0.5, 0.5, 1]] * len(self.vertices)),
+            vertices=self.vertices,
+            indices=self.faces,
+            shape_colors=np.array([[0.5, 0.5, 0.5, 1]]),
+        )
