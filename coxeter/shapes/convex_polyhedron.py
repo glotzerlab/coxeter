@@ -172,3 +172,11 @@ class ConvexPolyhedron(Polyhedron):
                 "circumsphere from center is not defined."
             )
         return Sphere(np.max(np.linalg.norm(self.vertices - center, axis=-1)), center)
+
+    def _plato_primitive(self, backend):
+        return backend.ConvexPolyhedra(
+            positions=np.array([self.center]),
+            orientations=np.array([[1.0, 0.0, 0.0, 0.0]]),
+            colors=np.array([[0.5, 0.5, 0.5, 1]]),
+            vertices=verts[:, :2],
+        )

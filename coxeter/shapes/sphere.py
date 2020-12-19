@@ -165,3 +165,10 @@ class Sphere(Shape3D):
         # Shift the form factor to the particle's position and scale by density.
         form_factor *= density * np.exp(-1j * np.dot(q, self.center))
         return form_factor
+
+    def _plato_primitive(self, backend):
+        return backend.Spheres(
+            positions=np.array([self.center]),
+            colors=np.array([[0.5, 0.5, 0.5, 1]]),
+            radii=[self.radius],
+        )

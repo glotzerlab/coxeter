@@ -344,3 +344,12 @@ class ConvexSpheropolyhedron(Shape3D):
         insphere = self.polyhedron.insphere_from_center
         insphere.radius += self.radius
         return insphere
+
+    def _plato_primitive(self, backend):
+        return backend.ConvexSpheropolyhedra(
+            positions=np.array([self.center]),
+            orientations=np.array([[1.0, 0.0, 0.0, 0.0]]),
+            colors=np.array([[0.5, 0.5, 0.5, 1]]),
+            vertices=self.vertices,
+            radius=self.radius,
+        )

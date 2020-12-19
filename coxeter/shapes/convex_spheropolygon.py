@@ -8,6 +8,7 @@ import numpy as np
 
 from .base_classes import Shape2D
 from .convex_polygon import ConvexPolygon, _is_convex
+from .polygon import _align_points_by_normal
 
 
 class ConvexSpheropolygon(Shape2D):
@@ -104,6 +105,11 @@ class ConvexSpheropolygon(Shape2D):
         }
 
     @property
+    def normal(self):
+        """:math:`(3, )` :class:`numpy.ndarray` of float: Get the normal vector."""
+        return self._polygon.normal
+
+    @property
     def vertices(self):
         """:math:`(N_{verts}, 3)` :class:`numpy.ndarray` of float: Get the vertices of the spheropolygon."""  # noqa: E501
         return self.polygon.vertices
@@ -187,3 +193,14 @@ class ConvexSpheropolygon(Shape2D):
             self._rescale(scale)
         else:
             raise ValueError("Perimeter must be greater than zero.")
+
+    def _plato_primitive(self, backend):
+        verts = self.vertices - self.center
+        verts = _align_points_by_normal(self.normal, verts)
+        return backend.Spheropolygons(
+            positions=np.array([[0.0, 0.0]]),
+            orientations=np.array([[1.0, 0.0, 0.0, 0.0]]),
+            colors=np.array([[0.5, 0.5, 0.5, 1]]),
+            vertices=verts[:, :2],
+            radius=self.radius,
+        )

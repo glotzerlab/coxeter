@@ -599,3 +599,13 @@ class Polygon(Shape2D):
         )
         form_factor *= density
         return form_factor
+
+    def _plato_primitive(self, backend):
+        verts = self.vertices - self.center
+        verts = _align_points_by_normal(self.normal, verts)
+        return backend.Polygons(
+            positions=np.array([[0.0, 0.0]]),
+            orientations=np.array([[1.0, 0.0, 0.0, 0.0]]),
+            colors=np.array([[0.5, 0.5, 0.5, 1]]),
+            vertices=verts[:, :2],
+        )

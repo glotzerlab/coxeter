@@ -692,3 +692,13 @@ class Polyhedron(Shape3D):
             ) / q_sqs[~zero_q]
 
         return form_factor
+
+    def _plato_primitive(self, backend):
+        return backend.Mesh(
+            positions=np.array([self.center]),
+            orientations=np.array([[1.0, 0.0, 0.0, 0.0]]),
+            colors=np.array([[0.5, 0.5, 0.5, 1]] * len(self.vertices)),
+            vertices=self.vertices,
+            indices=self.faces,
+            shape_colors=np.array([[0.5, 0.5, 0.5, 1]]),
+        )

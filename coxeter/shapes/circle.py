@@ -159,3 +159,10 @@ class Circle(Shape2D):
         This is 1 by definition for circles.
         """
         return 1
+
+    def _plato_primitive(self, backend):
+        return backend.Disks(
+            positions=np.array([self.center[:2]]),
+            colors=np.array([[0.5, 0.5, 0.5, 1]]),
+            radii=[self.radius],
+        )
