@@ -12,14 +12,14 @@ class Ellipsoid(Shape3D):
 
     Args:
         a (float):
-            Principal axis a of the ellipsoid (radius in the :math:`x`
-            direction).
+            Length of the principal semi-axis of the ellipsoid in the :math:`x`
+            direction.
         b (float):
-            Principal axis b of the ellipsoid (radius in the :math:`y`
-            direction).
+            Length of the principal semi-axis of the ellipsoid in the :math:`y`
+            direction.
         c (float):
-            Principal axis c of the ellipsoid (radius in the :math:`z`
-            direction).
+            Length of the principal semi-axis of the ellipsoid in the :math:`z`
+            direction.
         center (Sequence[float]):
             The coordinates of the center of the ellipsoid (Default
             value: (0, 0, 0)).
