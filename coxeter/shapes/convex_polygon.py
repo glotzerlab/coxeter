@@ -1,6 +1,7 @@
 """Defines a convex polygon."""
 
 import numpy as np
+from scipy import interpolate
 from scipy.spatial import ConvexHull
 
 from .circle import Circle
@@ -128,24 +129,27 @@ class ConvexPolygon(Polygon):
         return Circle(radius, self.center)
 
     def shape_kernel(self, value):
-        """Shape kernel from 0 to 2pi.
+        """Shape kernel from -pi to pi.
 
         This algorithm assumes the vertices are ordered
         counterclockwise and that they start in the first quadrant.
 
         Args:
-            value (integer):
-                How many points to calculate the shape kernel at.
+            value (array):
+                Points over which to calculate the shape kernel
+                which can only be from negative pi to pi.
 
         Returns:
-            kernel (:math:`(N, 1)` :class:`numpy.ndarray`)
-            theta (:math:`(N, 1)` :class:`numpy.ndarray`)
+            kernel (function: cubic spline to give shape kernel)
         """
+        # This is fine spacing that is good enough for most problems
+        # The kernel is needed for
+        spacing = 50000
         verts = self.vertices[:, :2]
         # Center vertices
         verts[:, 0] = verts[:, 0] - np.average(verts[:, 0])
         verts[:, 1] = verts[:, 1] - np.average(verts[:, 1])
-        theta = np.linspace(0, 2 * np.pi, value)
+        theta = np.linspace(0, 2 * np.pi, spacing)
         theta_component = np.arctan(verts[:, 1] / verts[:, 0])
         angle_between = []
         pairs = []
@@ -159,7 +163,6 @@ class ConvexPolygon(Polygon):
             else:
                 pairs.append([verts[i, :], verts[0, :]])
         for i in range(len(pairs)):
-            # angle_between.append(np.arccos(np.dot(pairs[i][0],pairs[i][1])))
             norm = np.sqrt(np.dot(pairs[i][0], pairs[i][0])) * np.sqrt(
                 np.dot(pairs[i][1], pairs[i][1])
             )
@@ -199,6 +202,7 @@ class ConvexPolygon(Polygon):
 
         # apply the equation of the line that applies in each region
         # we know that y = mx+b and we know that tan(theta) = y/x
+
         for i in range(len(theta)):
             for j in range(len(angle_range)):
                 if j < len(angle_range) - 1:
@@ -227,4 +231,9 @@ class ConvexPolygon(Polygon):
                             * (np.tan(theta[i]) ** 2 + 1)
                         )
         kernel = kernel[:, 0]
-        return kernel, theta
+        theta = theta - np.pi
+        kernel = interpolate.splrep(theta, kernel, s=0)
+
+        # Now we input this into an cubic spline
+
+        return interpolate.splev(value, kernel, der=0)

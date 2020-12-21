@@ -376,3 +376,17 @@ def test_perimeter(num_sides):
     assert np.isclose(
         num_sides * unit_area_regular_n_gon_side_length(num_sides), poly.perimeter
     )
+
+
+def test_convex_polygon_shape_kernel():
+    family = RegularNGonFamily()
+    theta = np.linspace(-np.pi, np.pi, 5000)
+    for i in range(4, 10):
+        shape1 = family.get_shape(i)
+        kernel = shape1.shape_kernel(theta)
+        kernel_points = np.zeros((len(kernel), 2))
+        kernel_points[:, 0] = kernel * np.cos(theta)
+        kernel_points[:, 1] = kernel * np.sin(theta)
+        shape2 = Polygon(kernel_points)
+        assert np.isclose(shape1.area, shape2.area)
+        assert np.isclose(shape1.perimeter, shape2.perimeter)
