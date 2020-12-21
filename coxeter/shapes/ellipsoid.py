@@ -15,10 +15,10 @@ class Ellipsoid(Shape3D):
             Length of the principal semi-axis of the ellipsoid in the :math:`x`
             direction.
         b (float):
-            Length of the principle semi-axis of the ellipsoid in the :math:`y`
+            Length of the principal semi-axis of the ellipsoid in the :math:`y`
             direction.
         c (float):
-            Length of the principle semi-axis of the ellipsoid in the :math:`z`
+            Length of the principal semi-axis of the ellipsoid in the :math:`z`
             direction.
         center (Sequence[float]):
             The coordinates of the center of the ellipsoid (Default
