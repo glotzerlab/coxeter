@@ -103,7 +103,7 @@ class ConvexPolyhedron(Polyhedron):
     @property
     def gsd_shape_spec(self):
         """dict: Get a :ref:`complete GSD specification <shapes>`."""  # noqa: D401
-        return {"type": "ConvexPolyhedron", "vertices": self._vertices.tolist()}
+        return {"type": "ConvexPolyhedron", "vertices": self.vertices.tolist()}
 
     @property
     def tau(self):
@@ -171,4 +171,4 @@ class ConvexPolyhedron(Polyhedron):
                 "The centroid is not contained in the shape. The "
                 "circumsphere from center is not defined."
             )
-        return Sphere(np.max(np.linalg.norm(self._vertices - center, axis=-1)), center)
+        return Sphere(np.max(np.linalg.norm(self.vertices - center, axis=-1)), center)
