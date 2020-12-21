@@ -41,6 +41,8 @@ extensions = [
     "autodocsumm",
 ]
 
+# For sphincontrib.bibtex (as of v2.0).
+bibtex_bibfiles = ["coxeter.bib"]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
