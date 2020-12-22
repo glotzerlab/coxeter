@@ -178,8 +178,8 @@ class Polyhedron(Shape3D):
         """dict: Get a :ref:`complete GSD specification <shapes>`."""  # noqa: D401
         return {
             "type": "Mesh",
-            "vertices": self._vertices.tolist(),
-            "faces": self._faces,
+            "vertices": self.vertices.tolist(),
+            "faces": self.faces,
         }
 
     def merge_faces(self, atol=1e-8, rtol=1e-5):

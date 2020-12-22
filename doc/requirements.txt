@@ -1,5 +1,5 @@
 numpy
 rowan>=1.2
 scipy
-sphinxcontrib-bibtex
+sphinxcontrib-bibtex>=2.0.0
 autodocsumm

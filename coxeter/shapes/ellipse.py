@@ -46,18 +46,14 @@ class Ellipse(Shape2D):
     """
 
     def __init__(self, a, b, center=(0, 0, 0)):
-        if a <= 0:
-            raise ValueError("a must be greater than zero.")
-        if b <= 0:
-            raise ValueError("b must be greater than zero.")
-        self._a = a
-        self._b = b
-        self._center = np.asarray(center)
+        self.a = a
+        self.b = b
+        self.center = center
 
     @property
     def gsd_shape_spec(self):
         """dict: Get a :ref:`complete GSD specification <shapes>`."""  # noqa: D401
-        return {"type": "Ellipsoid", "a": self._a, "b": self._b}
+        return {"type": "Ellipsoid", "a": self.a, "b": self.b}
 
     @property
     def center(self):

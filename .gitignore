@@ -18,3 +18,4 @@ lib64
 __pycache__
 .hypothesis
 *.pyc
+doc/source/bibtex.json

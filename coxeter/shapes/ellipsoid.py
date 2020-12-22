@@ -12,14 +12,14 @@ class Ellipsoid(Shape3D):
 
     Args:
         a (float):
-            Principal axis a of the ellipsoid (radius in the :math:`x`
-            direction).
+            Length of the principal semi-axis of the ellipsoid in the :math:`x`
+            direction.
         b (float):
-            Principal axis b of the ellipsoid (radius in the :math:`y`
-            direction).
+            Length of the principal semi-axis of the ellipsoid in the :math:`y`
+            direction.
         c (float):
-            Principal axis c of the ellipsoid (radius in the :math:`z`
-            direction).
+            Length of the principal semi-axis of the ellipsoid in the :math:`z`
+            direction.
         center (Sequence[float]):
             The coordinates of the center of the ellipsoid (Default
             value: (0, 0, 0)).
@@ -53,12 +53,12 @@ class Ellipsoid(Shape3D):
         self.a = a
         self.b = b
         self.c = c
-        self._center = np.asarray(center)
+        self.center = center
 
     @property
     def gsd_shape_spec(self):
         """dict: Get a :ref:`complete GSD specification <shapes>`."""  # noqa: D401
-        return {"type": "Ellipsoid", "a": self._a, "b": self._b, "c": self._c}
+        return {"type": "Ellipsoid", "a": self.a, "b": self.b, "c": self.c}
 
     @property
     def center(self):

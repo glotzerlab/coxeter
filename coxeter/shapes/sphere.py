@@ -36,12 +36,12 @@ class Sphere(Shape3D):
 
     def __init__(self, radius, center=(0, 0, 0)):
         self.radius = radius
-        self._center = np.asarray(center)
+        self.center = center
 
     @property
     def gsd_shape_spec(self):
         """dict: Get a :ref:`complete GSD specification <shapes>`."""  # noqa: D401
-        return {"type": "Sphere", "diameter": 2 * self._radius}
+        return {"type": "Sphere", "diameter": 2 * self.radius}
 
     @property
     def center(self):
