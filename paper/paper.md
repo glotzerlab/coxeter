@@ -31,17 +31,44 @@ date: 8 Dec 2020
 bibliography: paper.bib
 ---
 
-# Summary
+# Package Overview
 
-The coxeter Python package provides standardized representations of geometric objects.
-The library is primarily focused on two- and three-dimensional polytopes, for which many calculations require summations over triangulations or more complex integrals than for simple shapes like spheres and ellipsoids.
-The central objects in coxeter are the shape classes, each of which represents a unique type of shape, for instance ``Sphere`` or ``Polyhedron``.
-These classes use Python properties to transparently expose many geometric attributes to the user, and to maximize flexibility many of these attributes can be set, resulting in an on-the-fly redefinition of the shape.
+The coxeter Python package provides the tools to represent, generate, and compute properties of shapes in two and three dimensions.
+The package emphasizes simplicity and flexibility, using a common set of abstractions to present a largely uniform interface across various shapes and allowing easy mutation of almost all of their geometric attributes.
+The package also aims to function as a repository for specific groups of shapes, exposing an easy-to-use API for shape generation that users can easily extend to make particular sets of shapes collectively accessible.
+
+
+# Statement of Need
+
+Considerations of shape are becoming increasingly important in materials science as improved synthetic capabilities have allowed the creation of a wide range of anisotropic particles [@Glotzer2007b].
+Colloidal science in particular has seen immense growth in this area, and numerous studies have shown that particle shape is an important handle for controlling the self-assembly of colloidal crystals [@Damasceno2012d,@Glotzer2007b,@Chen2014].
+Precise modeling of these systems requires reproducible methods for generating shapes and calculating their properties [@Anderson2020,@Allen2006] **Add more citations of real shapes**.
+An important aspect of achieving this reproducibility is making canonical definitions of shapes used in particular studies readibly available to other researchers.
+Furthermore, since these shapes may be used in physics-based simulations, any calculations must be robust enough to handle any numerical issues that may arise across a wide range of different geometries.
+
+
+# Summary of Features
+
+## Shape Analysis **better title?**
+
+The central elements in coxeter are the shape classes, which encode the features of particular types of shapes.
+In order to enforce a highly uniform API and ensure conceptual clarity, all shape classes extend a small set of abstract base classes that encode specific subsets of properties: for instance, the standard properties of all shapes in two dimensions are embedded in the ``Shape2D`` class.
+In addition to standard types of shapes such as ellipsoids or polygons, coxeter also includes more esoteric shape classes like spheropolyhedra, which are important to modeling the imperfect rounded polyhedra frequently synthesized at the nano- and micron scales.
+Even simple properties like surface areas are generally nontrivial to compute for such shapes, but using coxeter they are no more difficult to work with than other, more common, shapes.
+Working with convex polygons and polyhedra using coxeter is greatly simplified via internal use of SciPy's convex hull calculations [@Virtanen2020], allowing the user to simply provide a set of vertices while coxeter performs the appropriate determination of facets and plane equations based on the simplices of the convex hull.
+
+The shape classes transparently expose many geometric attributes in the form of settable Python properties, allowing on-the-fly rescaling or transformation of the shape.
+This aspect of coxeter is designed to fill a common gap in most computational geometry libraries, which typically focus on solving more complex problems like finding convex hulls, Voronoi tesselations, and Delaunay triangulations [@cgal]; coxeter aims to provide a standard implementation for simpler calculations such as surface areas and bounding spheres for which formulas are generally well-known but often require careful consideration to calculate robustly and efficiently.
+These properties range from standard calculations like volumes and surface areas to less common metrics like mean curvatures and asphericities that are relevant for specific research avenues [@Irrgang2017].
+The package also provides various types of bounding and bounded spheres of shapes, which are critical measures of the extent of polygons and polyhedra within crystal structures.
+To simplify interoperability with other packages in the scientific computing ecosystem, non-scalar properties are generally provided as NumPy arrays [@Harris2020].
 
 In addition to purely geometric properties, shapes in coxeter also expose various physically relevant quantities in order to support a wide range of applications.
-Some examples of such properties are inertia tensors, which are necessary to completely define the equations of motion for anisotropic bodies, and scattering form factors, which are essentially Fourier transforms of the shape volume that are critical to characterizing structure in condensed matter physics.
-Since physical equations and observables can be highly sensitive to inputs, coxeter emphasizes robust methods for their evaluation [@Kallay2006].
-A number of less commonly used metrics, such as mean curvatures and asphericities, are also provided to support specific research avenues [Irrgang2017].
+Some examples of such properties are inertia tensors, which are integral to the equations of motion for anisotropic bodies, and scattering form factors, which are essentially Fourier transforms of the shape volume that are critical to characterizing structure in condensed matter physics.
+Since physical equations and observables can be highly sensitive to inputs like inertia tensors, coxeter emphasizes robust methods for their evaluation [@Kallay2006].
+Two dimensional shapes like polygons are embedded in three dimensions rather than in the plane, so coxeter uses the rowan library [@Ramasubramani2018] to rotate them into the plane and then compute various properties to avoid complications and numerical instabilitiesthat arise from performing integrals over planar lamina embedded in $\mathcal{R}^3$.
+
+## Shape Generation
 
 The library also serves as a repository for the generation of shapes.
 While simple classes of shapes like spheres and ellipsoids can be described via a small fixed set of parameters, the definitions of polygons and polyhedra can be arbitrarily long depending on the number of vertices of these shapes.
@@ -49,24 +76,13 @@ The shape family API in coxeter provides a flexible way to define and work with 
 These different types of shape families are handled using identical APIs, so users can easily switch between shapes that have completely different mathematical definitions using a single line of code.
 Additionally, since these shape families generate the coxeter's shape classes, calculating the various attributes of shapes is as simple as querying the properties of objects generated from families.
 
-
-# Statement of Need
-
-Considerations of shape are becoming increasingly important in materials science as improved synthetic capabilities have allowed the creation of a wide range of anisotropic particles [@Glotzer2007b].
-Colloidal science in particular has seen immense growth in this area, and numerous studies have shown that particle shape is an important handle for controlling the self-assembly of colloidal crystals [@Damasceno2012d,@Glotzer2007b,@Chen2014].
-Precise modeling of these systems requires robust, reproducible methods for generating shapes and calculating their properties [@Anderson2020,@Ramasubramani2020b,@Allen2006], a gap that coxeter aims to fill.
-
-The shape families in coxeter address the first part, providing a standard method for generating shapes.
-A number of such families are bundled into coxeter, but just as importantly, the framework allows users to work with arbitrary lists of shapes by providing an appropriately formatted JSON file, making it trivial to share representations of shapes.
+A number of such families are bundled into coxeter, but just as importantly, the framework allows users to work with arbitrary lists of shapes provided as dictionaries of attributes corresponding to specified schemata.
+This dictionary-based definition can be trivially converted to JSON, making it trivial to share representations of shapes.
 The library also stores mappings from digital object identifiers (DOIs) to families, so that any user can contribute families associated with published research to make them immediately collectively accessible.
-We anticipate that the set of shape families in coxeter will grow over time as users generate and contribute their shape families to coxeter, with the goal of providing a centralized repository for use in reproducing and extending prior research.
+We anticipate that the set of shape families in coxeter will grow over time as users generate and contribute their shape families to coxeter, with the goal of providing a centralized repository for use in reproducing and extending prior research, particularly in the field of shape-driven nanoparticle self-assembly.
+Currently coxeter primarily supports the schema proposed by the GSD library **cite**, making it directly compatible with the HOOMD-blue molecular simulation tool [@Anderson2020], but other schema can easily be implemented on an as-needed basis.
 
-The shape classes in coxeter address the second stated requirement, the ability to perform robust calculations of various properties of shapes.
-Most computational geometry libraries typically focus on solving more complex problems like finding convex hulls, Voronoi tesselations, and Delaunay triangulations [@cgal].
-The purpose of coxeter is to provide a standard implementation for simpler calculations such as volumes, bounding spheres, and inertia tensors, for which formulas are generally well-known but often require careful consideration to implement robust and efficient algorithms to compute.
-Inertia tensors are a particularly notable example since they can be quite difficult to compute accurately for arbitrary polytopes and require specialized algorithms [@Kallay2006].
-Physics-based models, for instance molecular dynamics simulations based on fundamental laws of motion, can be highly sensitive to the precise values of these quantities, necessitating their accurate evaluation.
-
+**Still need to add refs/citations for papers that used coxeter**
 
 # Acknowledgements
 
