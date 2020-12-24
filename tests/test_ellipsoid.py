@@ -64,6 +64,18 @@ def test_surface_area(a, b, c):
     assert ellipsoid.surface_area == pytest.approx(approx_surface, rel=0.015)
 
 
+@given(floats(0.1, 1000))
+def test_set_surface_area(value):
+    """Test setting the surface area."""
+    ellipsoid = Ellipsoid(1, 2, 3)
+    area_old = ellipsoid.surface_area
+    ellipsoid.surface_area = value
+    assert ellipsoid.surface_area == approx(value)
+    assert ellipsoid.a == approx(1 * np.sqrt(value / area_old))
+    assert ellipsoid.b == approx(2 * np.sqrt(value / area_old))
+    assert ellipsoid.c == approx(3 * np.sqrt(value / area_old))
+
+
 @given(floats(0.1, 1000), floats(0.1, 1000), floats(0.1, 1000))
 def test_volume(a, b, c):
     ellipsoid = Ellipsoid(1, 1, 1)
