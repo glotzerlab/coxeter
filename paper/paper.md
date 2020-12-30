@@ -63,7 +63,7 @@ These properties range from standard calculations like volumes and surface areas
 The package also provides various types of bounding and bounded spheres of shapes, which are critical measures of the extent of polygons and polyhedra within crystal structures.
 To simplify interoperability with other packages in the scientific computing ecosystem, non-scalar properties are generally provided as NumPy arrays [@Harris2020].
 
-In addition to purely geometric properties, shapes in coxeter also expose various physically relevant quantities in order to support a wide range of applications.
+In addition to purely geometric properties, shapes in coxeter also expose various physically relevant quantities in order to support a wide range of applications for shapes of constant density.
 Some examples of such properties are inertia tensors, which are integral to the equations of motion for anisotropic bodies, and scattering form factors, which are essentially Fourier transforms of the shape volume that are critical to characterizing structure in condensed matter physics.
 Since physical equations and observables can be highly sensitive to inputs like inertia tensors, coxeter emphasizes robust methods for their evaluation [@Kallay2006].
 Two dimensional shapes like polygons are embedded in three dimensions rather than in the plane, so coxeter uses the rowan library [@Ramasubramani2018] to rotate them into the plane and then compute various properties to avoid complications and numerical instabilities that arise from performing integrals over planar lamina embedded in 3D Euclidean space.
@@ -77,7 +77,7 @@ These different types of shape families are handled using identical APIs, so use
 Shape families generate coxeter shape classes from input parameters, simplifying access to computed geometric and physical properties.
 
 A number of such families are bundled into coxeter, but just as importantly, the framework allows users to work with arbitrary lists of shapes provided as dictionaries of attributes.
-This dictionary-based definition can be trivially converted to JSON, making it trivial to share representations of shapes.
+This dictionary-based definition can be simply converted to JSON, making it trivial to share representations of shapes.
 The library also stores mappings from digital object identifiers (DOIs) to families, so that any user can contribute families associated with published research to make them immediately collectively accessible.
 We anticipate that the set of shape families in coxeter will grow over time as users generate and contribute their shape families to coxeter, with the goal of providing a centralized repository for use in reproducing and extending prior research, particularly in the field of shape-driven nanoparticle self-assembly.
 Currently coxeter primarily supports the schema proposed by the GSD library **should we cite? there's no canonical source other than RTD**, making it directly compatible with the HOOMD-blue molecular simulation tool [@Anderson2020], but other schema can easily be implemented on an as-needed basis.
