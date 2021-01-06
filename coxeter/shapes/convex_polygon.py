@@ -1,7 +1,6 @@
 """Defines a convex polygon."""
 
 import numpy as np
-from scipy import interpolate
 from scipy.spatial import ConvexHull
 
 from .circle import Circle
@@ -129,7 +128,7 @@ class ConvexPolygon(Polygon):
         return Circle(radius, self.center)
 
     def shape_kernel(self, value):
-        """Shape kernel from -pi to pi.
+        """Shape kernel from 0 to 2pi.
 
         This algorithm assumes the vertices are ordered
         counterclockwise and that they start in the first quadrant.
@@ -137,26 +136,22 @@ class ConvexPolygon(Polygon):
         Args:
             value (array):
                 Points over which to calculate the shape kernel
-                which can only be from negative pi to pi.
+                which can only be from negative 0 to 2pi.
 
         Returns:
-            kernel (function: cubic spline to give shape kernel)
+            kernel
         """
-        # This is fine spacing that is good enough for most problems
-        # The kernel is needed for
-        spacing = 50000
         verts = self.vertices[:, :2]
-        # Center vertices
+        theta = value
         verts[:, 0] = verts[:, 0] - np.average(verts[:, 0])
         verts[:, 1] = verts[:, 1] - np.average(verts[:, 1])
-        theta = np.linspace(0, 2 * np.pi, spacing)
         theta_component = np.arctan(verts[:, 1] / verts[:, 0])
         angle_between = []
         pairs = []
         slopes = []
-        kernel = np.zeros((len(theta), 1))
         y_int = []
         angle_range = np.zeros((len(verts), 2))
+
         for i in range(len(verts)):
             if i < len(verts) - 1:
                 pairs.append([verts[i, :], verts[i + 1, :]])
@@ -169,9 +164,8 @@ class ConvexPolygon(Polygon):
             angle_between.append(np.arccos(np.dot(pairs[i][0], pairs[i][1]) / norm))
 
         # get the slopes
+
         for i in range(len(pairs)):
-            # if the slope is infinite the radial
-            # solution goes one way otherwise it goes the other
             if pairs[i][0][0] - pairs[i][1][0] == 0.0:
                 slopes.append("inf")
             else:
@@ -180,15 +174,18 @@ class ConvexPolygon(Polygon):
                     / (pairs[i][0][0] - pairs[i][1][0])
                 )
 
-        # Get the y_intercept
+        # Get the y_intercepts
+
         for i in range(len(pairs)):
-            if slopes[i] == "inf" or abs(slopes[i] > 10 ** 5):
+            if slopes[i] == "inf" or abs(slopes[i]) > 10e5:
                 y_int.append("inf")
             else:
                 y_int.append(pairs[i][0][1] - slopes[i] * pairs[i][0][0])
 
         # Get the ranges of theta for the parameterization
+
         theta_initial = theta_component[0]
+
         for i in range(len(verts)):
             if i < len(verts) - 1:
                 min_angle = theta_initial
@@ -198,42 +195,42 @@ class ConvexPolygon(Polygon):
                 angle_range[i, 1] = max_angle
             else:
                 angle_range[i, 0] = max_angle
-                angle_range[i, 1] = theta_component[0]
+                angle_range[i, 1] = 2 * np.pi
 
-        # apply the equation of the line that applies in each region
-        # we know that y = mx+b and we know that tan(theta) = y/x
+        # Make the kernel:
 
-        for i in range(len(theta)):
-            for j in range(len(angle_range)):
-                if j < len(angle_range) - 1:
-                    if theta[i] > angle_range[j, 0] and theta[i] <= angle_range[j, 1]:
-                        if slopes[j] == "inf" or abs(slopes[j] > 10 ** 5):
-                            kernel[i] = np.sqrt(
-                                verts[j, 0] ** 2 * (1 + np.tan(theta[i]) ** 2)
-                            )
-                            break
-                        else:
-                            kernel[i] = np.sqrt(
-                                (y_int[j] / (np.tan(theta[i]) - slopes[j])) ** 2
-                                * (np.tan(theta[i]) ** 2 + 1)
-                            )
-                            break
+        kernel = 0 * theta
+        angle_range = angle_range
 
+        for i in range(len(angle_range)):
+            if slopes[i] == 0:
+                wh = np.where(
+                    (theta >= angle_range[i, 0]) & (theta <= angle_range[i, 1])
+                )
+                kernel[wh] = np.sqrt(
+                    y_int[i] * y_int[i] / (1 - np.cos(theta[wh]) * np.cos(theta[wh]))
+                )
+            elif slopes[i] == "inf" or y_int[i] == "inf":
+                wh = np.where(
+                    (theta >= angle_range[i, 0]) & (theta <= angle_range[i, 1])
+                )
+                x_int = pairs[i][0][0]
+                kernel[wh] = np.sqrt(
+                    x_int * x_int / (1 - np.sin(theta[wh]) * np.sin(theta[wh]))
+                )
+            else:
+                if i != len(angle_range) - 1:
+                    wh = np.where(
+                        (theta >= angle_range[i, 0]) & (theta <= angle_range[i, 1])
+                    )
                 else:
-                    if slopes[j] == "inf" or abs(slopes[j]) > 10 ** 5:
+                    wh = np.where(
+                        ((theta >= angle_range[i, 0]) & (theta <= angle_range[i, 1]))
+                        | ((theta >= 0) & (theta <= angle_range[0, 0]))
+                    )
+                sl_k = np.tan(theta[wh])
+                x = y_int[i] / (sl_k - slopes[i])
+                y = sl_k * x
+                kernel[wh] = np.sqrt(x * x + y * y)
 
-                        kernel[i] = np.sqrt(
-                            verts[j, 0] ** 2 * (1 + np.tan(theta[i]) ** 2)
-                        )
-                    else:
-                        kernel[i] = np.sqrt(
-                            (y_int[j] / (np.tan(theta[i]) - slopes[j])) ** 2
-                            * (np.tan(theta[i]) ** 2 + 1)
-                        )
-        kernel = kernel[:, 0]
-        theta = theta - np.pi
-        kernel = interpolate.splrep(theta, kernel, s=0)
-
-        # Now we input this into an cubic spline
-
-        return interpolate.splev(value, kernel, der=0)
+        return kernel
