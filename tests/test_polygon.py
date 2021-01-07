@@ -378,15 +378,36 @@ def test_perimeter(num_sides):
     )
 
 
-def test_convex_polygon_shape_kernel():
-    family = RegularNGonFamily()
-    theta = np.linspace(-np.pi, np.pi, 5000)
-    for i in range(4, 10):
-        shape1 = family.get_shape(i)
-        kernel = shape1.shape_kernel(theta)
-        kernel_points = np.zeros((len(kernel), 2))
-        kernel_points[:, 0] = kernel * np.cos(theta)
-        kernel_points[:, 1] = kernel * np.sin(theta)
-        shape2 = Polygon(kernel_points)
-        assert np.isclose(shape1.area, shape2.area)
-        assert np.isclose(shape1.perimeter, shape2.perimeter)
+@pytest.mark.parametrize("num_sides", range(3, 10))
+def test_convex_polygon_shape_kernel_unit_area_ngon(num_sides):
+    """Check shape kernel consistency with perimeter and area."""
+    theta = np.linspace(0, 2 * np.pi, 1000000)
+    shape = RegularNGonFamily.get_shape(num_sides)
+    kernel = shape.shape_kernel(theta)
+    xy = np.array([kernel * np.cos(theta), kernel * np.sin(theta)])
+    xy = np.transpose(xy)
+    kern_shape = ConvexHull(xy)
+
+    # Test the volume
+    assert np.isclose(shape.area, kern_shape.volume)
+    # Test the perimeter
+    assert np.isclose(shape.perimeter, kern_shape.area)
+
+
+@pytest.mark.parametrize("num_sides", range(3, 10))
+def test_nonregular_convex_polygon_shape_kernel_unit_area_ngon(num_sides):
+    """Check shape kernel consistency with perimeter and area."""
+    theta = np.linspace(0, 2 * np.pi, 1000000)
+    shape = RegularNGonFamily.get_shape(num_sides)
+    verts = shape.vertices[:, :2]
+    # shift making shape a nonregular polygon
+    verts[0, 1] = verts[0, 1] + 0.2
+    shape = ConvexPolygon(verts)
+    kernel = shape.shape_kernel(theta)
+    xy = np.array([kernel * np.cos(theta), kernel * np.sin(theta)])
+    xy = np.transpose(xy)
+    kern_shape = ConvexHull(xy)
+    # Test the volume
+    assert np.isclose(shape.area, kern_shape.volume)
+    # Test the perimeter
+    assert np.isclose(shape.perimeter, kern_shape.area)

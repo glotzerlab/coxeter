@@ -165,19 +165,21 @@ class Ellipse(Shape2D):
         i_xy += area * self.center[0] * self.center[1]
         return i_x, i_y, i_xy
 
-    @property
-    def shape_kernels(self, value):
+    def shape_kernel(self, value):
         r"""Get the shape kernel.
 
-        The shape kernel give the curve of a shape R in order to
-        give the curve of a shape for x and y.
-        x = R * cos(value)
-        y = R * sin(value)
+        Takes an array of values in terms of angle and
+        calculates the shape kernel for the given ellipse
+        at that point.
 
         Args:
             value (array):
                 The array of theta that the shape kernel should be
-                calculated at
+                calculated at.
+
+        Returns:
+            kernel (array):
+
         """
         return np.sqrt(
             (self.a * self.a + self.b * self.b)
