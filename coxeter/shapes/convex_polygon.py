@@ -220,6 +220,7 @@ class ConvexPolygon(Polygon):
                         x_int * x_int / (1 - np.sin(theta[wh]) * np.sin(theta[wh]))
                     )
                 else:
+                    x_int = pairs[i][0][0]
                     wh = np.where(
                         ((theta >= angle_range[i, 0]) & (theta <= angle_range[i, 1]))
                         | ((theta >= 0) & (theta <= angle_range[0, 0]))

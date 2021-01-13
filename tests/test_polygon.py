@@ -411,3 +411,33 @@ def test_nonregular_convex_polygon_shape_kernel_unit_area_ngon(num_sides):
     assert np.isclose(shape.area, kern_shape.volume)
     # Test the perimeter
     assert np.isclose(shape.perimeter, kern_shape.area)
+
+
+def test_kernel_values_for_square():
+    """Check shape kernel of a square with infinite slopes."""
+    verts = np.array([[1, 1], [-1, 1], [-1, -1], [1, -1]])
+    theta = np.linspace(0, 2 * np.pi, 1000000)
+    shape = ConvexPolygon(verts)
+    kernel = shape.shape_kernel(theta)
+    xy = np.array([kernel * np.cos(theta), kernel * np.sin(theta)])
+    xy = np.transpose(xy)
+    kern_shape = ConvexHull(xy)
+    # Test the volume
+    assert np.isclose(shape.area, kern_shape.volume)
+    # Test the perimeter
+    assert np.isclose(shape.perimeter, kern_shape.area)
+
+
+def test_kernel_values_for_square_triangle():
+    """Check shape kernel of a triangle with infinite slopes."""
+    verts = np.array([[1, 1], [-1, 0], [1, -1]])
+    theta = np.linspace(0, 2 * np.pi, 1000000)
+    shape = ConvexPolygon(verts)
+    kernel = shape.shape_kernel(theta)
+    xy = np.array([kernel * np.cos(theta), kernel * np.sin(theta)])
+    xy = np.transpose(xy)
+    kern_shape = ConvexHull(xy)
+    # Test the volume
+    assert np.isclose(shape.area, kern_shape.volume)
+    # Test the perimeter
+    assert np.isclose(shape.perimeter, kern_shape.area)
