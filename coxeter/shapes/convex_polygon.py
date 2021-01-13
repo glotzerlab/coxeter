@@ -211,13 +211,22 @@ class ConvexPolygon(Polygon):
                     y_int[i] * y_int[i] / (1 - np.cos(theta[wh]) * np.cos(theta[wh]))
                 )
             elif slopes[i] == "inf" or y_int[i] == "inf":
-                wh = np.where(
-                    (theta >= angle_range[i, 0]) & (theta <= angle_range[i, 1])
-                )
-                x_int = pairs[i][0][0]
-                kernel[wh] = np.sqrt(
-                    x_int * x_int / (1 - np.sin(theta[wh]) * np.sin(theta[wh]))
-                )
+                if i != len(angle_range) - 1:
+                    wh = np.where(
+                        (theta >= angle_range[i, 0]) & (theta <= angle_range[i, 1])
+                    )
+                    x_int = pairs[i][0][0]
+                    kernel[wh] = np.sqrt(
+                        x_int * x_int / (1 - np.sin(theta[wh]) * np.sin(theta[wh]))
+                    )
+                else:
+                    wh = np.where(
+                        ((theta >= angle_range[i, 0]) & (theta <= angle_range[i, 1]))
+                        | ((theta >= 0) & (theta <= angle_range[0, 0]))
+                    )
+                    kernel[wh] = np.sqrt(
+                        x_int * x_int / (1 - np.sin(theta[wh]) * np.sin(theta[wh]))
+                    )
             else:
                 if i != len(angle_range) - 1:
                     wh = np.where(
