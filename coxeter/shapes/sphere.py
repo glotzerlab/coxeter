@@ -65,6 +65,15 @@ class Sphere(Shape3D):
         else:
             raise ValueError("Radius must be greater than zero.")
 
+    def _rescale(self, scale):
+        """Multiply length scale.
+
+        Args:
+            scale (float):
+                Scale factor.
+        """
+        self.radius *= scale
+
     @property
     def volume(self):
         """float: Get the volume of the sphere."""

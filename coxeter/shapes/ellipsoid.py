@@ -105,6 +105,17 @@ class Ellipsoid(Shape3D):
         else:
             raise ValueError("c must be greater than zero.")
 
+    def _rescale(self, scale):
+        """Multiply length scale.
+
+        Args:
+            scale (float):
+                Scale factor.
+        """
+        self.a *= scale
+        self.b *= scale
+        self.c *= scale
+
     @property
     def volume(self):
         """float: Get or set the volume."""
@@ -113,10 +124,8 @@ class Ellipsoid(Shape3D):
     @volume.setter
     def volume(self, value):
         if value > 0:
-            scale_factor = np.cbrt(value / self.volume)
-            self.a *= scale_factor
-            self.b *= scale_factor
-            self.c *= scale_factor
+            scale = np.cbrt(value / self.volume)
+            self._rescale(scale)
         else:
             raise ValueError("Volume must be greater than zero.")
 
@@ -138,6 +147,14 @@ class Ellipsoid(Shape3D):
 
         result = 2 * np.pi * (c ** 2 + a * b * elliptic_part)
         return result
+
+    @surface_area.setter
+    def surface_area(self, value):
+        if value > 0:
+            scale = np.sqrt(value / self.surface_area)
+            self._rescale(scale)
+        else:
+            raise ValueError("Surface area must be greater than zero.")
 
     @property
     def inertia_tensor(self):

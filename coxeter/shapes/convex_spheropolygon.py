@@ -120,6 +120,16 @@ class ConvexSpheropolygon(Shape2D):
         else:
             raise ValueError("Radius must be greater than or equal to zero.")
 
+    def _rescale(self, scale):
+        """Multiply length scale.
+
+        Args:
+            scale (float):
+                Scale factor.
+        """
+        self.polygon._vertices *= scale
+        self.radius *= scale
+
     @property
     def signed_area(self):
         """Get the signed area of the spheropolygon.
@@ -151,9 +161,8 @@ class ConvexSpheropolygon(Shape2D):
     @area.setter
     def area(self, value):
         if value > 0:
-            scale_factor = np.sqrt(value / self.area)
-            self.polygon._vertices *= scale_factor
-            self.radius *= scale_factor
+            scale = np.sqrt(value / self.area)
+            self._rescale(scale)
         else:
             raise ValueError("Area must be greater than zero.")
 
@@ -174,8 +183,7 @@ class ConvexSpheropolygon(Shape2D):
     @perimeter.setter
     def perimeter(self, value):
         if value > 0:
-            scale_factor = value / self.perimeter
-            self.polygon._vertices *= scale_factor
-            self.radius *= scale_factor
+            scale = value / self.perimeter
+            self._rescale(scale)
         else:
             raise ValueError("Perimeter must be greater than zero.")

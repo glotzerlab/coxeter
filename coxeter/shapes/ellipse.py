@@ -89,6 +89,16 @@ class Ellipse(Shape2D):
         else:
             raise ValueError("b must be greater than zero.")
 
+    def _rescale(self, scale):
+        """Multiply length scale.
+
+        Args:
+            scale (float):
+                Scale factor.
+        """
+        self.a *= scale
+        self.b *= scale
+
     @property
     def area(self):
         """float: Get or set the area."""
@@ -97,9 +107,8 @@ class Ellipse(Shape2D):
     @area.setter
     def area(self, value):
         if value > 0:
-            scale_factor = np.sqrt(value / self.area)
-            self.a *= scale_factor
-            self.b *= scale_factor
+            scale = np.sqrt(value / self.area)
+            self._rescale(scale)
         else:
             raise ValueError("Area must be greater than zero.")
 
@@ -126,10 +135,22 @@ class Ellipse(Shape2D):
         result = 4 * a * ellipe(self.eccentricity ** 2)
         return result
 
+    @perimeter.setter
+    def perimeter(self, value):
+        if value > 0:
+            scale = value / self.perimeter
+            self._rescale(scale)
+        else:
+            raise ValueError("Perimeter must be greater than zero.")
+
     @property
     def circumference(self):
         """float: Alias for `Ellipse.perimeter`."""
         return self.perimeter
+
+    @circumference.setter
+    def circumference(self, value):
+        self.perimeter = value
 
     @property
     def planar_moments_inertia(self):

@@ -250,6 +250,15 @@ class Polygon(Shape2D):
         """:math:`(N_{verts}, 3)` :class:`numpy.ndarray` of float: Get the vertices of the polygon."""  # noqa: E501
         return self._vertices
 
+    def _rescale(self, scale):
+        """Multiply length scale.
+
+        Args:
+            scale (float):
+                Scale factor.
+        """
+        self._vertices *= scale
+
     @property
     def perimeter(self):
         """float: Get the perimeter of the polygon."""
@@ -258,6 +267,14 @@ class Polygon(Shape2D):
                 np.roll(self.vertices, axis=0, shift=-1) - self.vertices, axis=-1
             )
         )
+
+    @perimeter.setter
+    def perimeter(self, value):
+        if value > 0:
+            scale = value / self.perimeter
+            self._rescale(scale)
+        else:
+            raise ValueError("Perimeter must be greater than zero.")
 
     @property
     def signed_area(self):
@@ -301,8 +318,8 @@ class Polygon(Shape2D):
 
     @area.setter
     def area(self, value):
-        scale_factor = np.sqrt(value / self.area)
-        self._vertices *= scale_factor
+        scale = np.sqrt(value / self.area)
+        self._rescale(scale)
 
     @property
     def planar_moments_inertia(self):
@@ -391,22 +408,24 @@ class Polygon(Shape2D):
         # is important: we must translate before rotating so that the parallel
         # axis theorem can be applied in the reverse direction (rotating about
         # the origin before translating to the actual centroid).
-        center = self.center
+        original_center = self.center.copy()
+        original_vertices = self._vertices.copy()
+        original_normal = self._normal.copy()
+
         self.center = (0, 0, 0)
         mat, _ = rowan.mapping.kabsch(
             [self.normal, -self.normal], [[0, 0, 1], [0, 0, -1]]
         )
         self._vertices = self._vertices.dot(mat.T)
-        original_normal = self._normal
         self._normal = np.asarray([0, 0, 1])
 
         inertia_tensor = np.diag([0, 0, self.polar_moment_inertia])
         shifted_inertia_tensor = translate_inertia_tensor(
-            center, rotate_order2_tensor(mat, inertia_tensor), self.area
+            original_center, rotate_order2_tensor(mat, inertia_tensor), self.area
         )
 
-        self.center = center
-        self._vertices = self._vertices.dot(mat)
+        self.center = original_center
+        self._vertices = original_vertices
         self._normal = original_normal
 
         return shifted_inertia_tensor

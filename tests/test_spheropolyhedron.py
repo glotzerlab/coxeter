@@ -2,6 +2,7 @@ import numpy as np
 import pytest
 from hypothesis import given
 from hypothesis.strategies import floats
+from pytest import approx
 
 from conftest import make_sphero_cube
 
@@ -22,6 +23,13 @@ def test_volume_polyhedron(convex_cube, cube_points):
     assert sphero_cube.volume == convex_cube.volume
 
 
+@given(value=floats(0.1, 1))
+def test_set_volume(value):
+    sphero_cube = make_sphero_cube(radius=0)
+    sphero_cube.volume = value
+    assert sphero_cube.volume == approx(value)
+
+
 @given(radius=floats(0.1, 1))
 def test_surface_area(radius):
     sphero_cube = make_sphero_cube(radius=radius)
@@ -29,6 +37,13 @@ def test_surface_area(radius):
     sa_sphere = 4 * np.pi * radius ** 2
     sa_cyl = 12 * (2 * np.pi * radius) / 4
     assert np.isclose(sphero_cube.surface_area, sa_cube + sa_sphere + sa_cyl)
+
+
+@given(value=floats(0.1, 1))
+def test_set_surface_area(value):
+    sphero_cube = make_sphero_cube(radius=0)
+    sphero_cube.surface_area = value
+    assert sphero_cube.surface_area == approx(value)
 
 
 def test_surface_area_polyhedron(convex_cube):
