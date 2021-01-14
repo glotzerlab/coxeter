@@ -37,31 +37,43 @@ def test_2d_verts(square_points):
     ConvexSpheropolygon(square_points, 1)
 
 
-@given(r=floats(0.1, 1000))
-def test_radius_getter_setter(square_points, r):
+def test_radius_getter_setter(square_points):
     """Test getting and setting the radius."""
-    square_points = square_points[:, :2]
-    convexspheropolygon = ConvexSpheropolygon(square_points, r)
-    assert convexspheropolygon.radius == r
-    convexspheropolygon.radius = r + 1
-    assert convexspheropolygon.radius == r + 1
+
+    @given(r=floats(0.1, 1000))
+    def testfun(r):
+        square_points_2d = square_points[:, :2]
+        convexspheropolygon = ConvexSpheropolygon(square_points_2d, r)
+        assert convexspheropolygon.radius == r
+        convexspheropolygon.radius = r + 1
+        assert convexspheropolygon.radius == r + 1
+
+    testfun()
 
 
-@given(r=floats(-1000, -1))
-def test_invalid_radius_constructor(square_points, r):
+def test_invalid_radius_constructor(square_points):
     """Test invalid radius values in constructor."""
-    square_points = square_points[:, :2]
-    with pytest.raises(ValueError):
-        ConvexSpheropolygon(square_points, r)
+
+    @given(r=floats(-1000, -1))
+    def testfun(r):
+        square_points_2d = square_points[:, :2]
+        with pytest.raises(ValueError):
+            ConvexSpheropolygon(square_points_2d, r)
+
+    testfun()
 
 
-@given(r=floats(-1000, -1))
-def test_invalid_radius_setter(square_points, r):
+def test_invalid_radius_setter(square_points):
     """Test setting invalid radius values."""
-    square_points = square_points[:, :2]
-    spheropolygon = ConvexSpheropolygon(square_points, 1)
-    with pytest.raises(ValueError):
-        spheropolygon.radius = r
+
+    @given(r=floats(-1000, -1))
+    def testfun(r):
+        square_points_2d = square_points[:, :2]
+        spheropolygon = ConvexSpheropolygon(square_points_2d, 1)
+        with pytest.raises(ValueError):
+            spheropolygon.radius = r
+
+    testfun()
 
 
 def test_duplicate_points(square_points):
@@ -109,18 +121,22 @@ def test_area(unit_rounded_square):
     assert shape.area == area
 
 
-@given(area=floats(0.1, 1000))
-def test_area_getter_setter(unit_rounded_square, area):
+def test_area_getter_setter(unit_rounded_square):
     """Test setting the area."""
-    unit_rounded_square.area = area
-    assert unit_rounded_square.signed_area == approx(area)
-    assert unit_rounded_square.area == approx(area)
 
-    # Reset to original area
-    original_area = 1 + 4 + np.pi
-    unit_rounded_square.area = original_area
-    assert unit_rounded_square.signed_area == approx(original_area)
-    assert unit_rounded_square.area == approx(original_area)
+    @given(area=floats(0.1, 1000))
+    def testfun(area):
+        unit_rounded_square.area = area
+        assert unit_rounded_square.signed_area == approx(area)
+        assert unit_rounded_square.area == approx(area)
+
+        # Reset to original area
+        original_area = 1 + 4 + np.pi
+        unit_rounded_square.area = original_area
+        assert unit_rounded_square.signed_area == approx(original_area)
+        assert unit_rounded_square.area == approx(original_area)
+
+    testfun()
 
 
 def test_center(square_points, unit_rounded_square):
@@ -198,14 +214,18 @@ def test_sphero_square_perimeter(unit_rounded_square):
     assert unit_rounded_square.perimeter == 4 + 2 * np.pi
 
 
-@given(perimeter=floats(0.1, 1000))
-def test_perimeter_setter(unit_rounded_square, perimeter):
+def test_perimeter_setter(unit_rounded_square):
     """Test setting the perimeter."""
-    unit_rounded_square.perimeter = perimeter
-    assert unit_rounded_square.perimeter == approx(perimeter)
 
-    # Reset to original perimeter
-    original_perimeter = 4 + 2 * np.pi
-    unit_rounded_square.perimeter = original_perimeter
-    assert unit_rounded_square.perimeter == approx(original_perimeter)
-    assert unit_rounded_square.radius == approx(1.0)
+    @given(perimeter=floats(0.1, 1000))
+    def testfun(perimeter):
+        unit_rounded_square.perimeter = perimeter
+        assert unit_rounded_square.perimeter == approx(perimeter)
+
+        # Reset to original perimeter
+        original_perimeter = 4 + 2 * np.pi
+        unit_rounded_square.perimeter = original_perimeter
+        assert unit_rounded_square.perimeter == approx(original_perimeter)
+        assert unit_rounded_square.radius == approx(1.0)
+
+    testfun()
