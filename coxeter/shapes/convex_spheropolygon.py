@@ -237,20 +237,13 @@ class ConvexSpheropolygon(Shape2D):
 
         # compute intermediates
         for i in range(num_verts):
-            DEBUG = False
-            if i == 0:
-                DEBUG = True
             v1 = self._polygon.vertices[i-1]
             v2 = self._polygon.vertices[i]
             v3 = self._polygon.vertices[i+1] if i+1 < num_verts else self._polygon.vertices[0]
             v12 = v1 - v2
             v32 = v3 - v2
-            if DEBUG: print(v12);
-            if DEBUG: print(v32);
             v12n = self._get_outward_unit_normal(v12, v2)
-            if DEBUG: print(v12n);
             v32n = self._get_outward_unit_normal(v32, v2)
-            if DEBUG: print(v32n);
 
             # get the new vertex corresponding to the old one
             v12norm = np.linalg.norm(v12)
@@ -269,7 +262,6 @@ class ConvexSpheropolygon(Shape2D):
             )
 
         # compute shape kernel for the new set of vertices
-        print(angle_ranges)
         kernel = ConvexPolygon(new_verts).shape_kernel(value)
 
         # get the shape kernel for this shape by adjusting indices of shape kernel
