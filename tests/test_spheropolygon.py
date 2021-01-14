@@ -10,6 +10,7 @@ from scipy.spatial import ConvexHull
 
 from conftest import EllipseSurfaceStrategy
 from coxeter.shapes import ConvexSpheropolygon
+from coxeter.families import RegularNGonFamily
 
 
 def get_square_points():
@@ -209,3 +210,19 @@ def test_perimeter_setter(unit_rounded_square, perimeter):
     unit_rounded_square.perimeter = original_perimeter
     assert unit_rounded_square.perimeter == approx(original_perimeter)
     assert unit_rounded_square.radius == approx(1.0)
+
+
+@pytest.mark.parametrize("num_sides", range(3, 10))
+def test_shape_kernel_regular_ngons(num_sides):
+    """Make sure shape kernel works for regular ngons."""
+    theta = np.linspace(0, 2 * np.pi, 10000)
+    shape = RegularNGonFamily.get_shape(num_sides)
+    verts = shape.vertices[:, :2]
+    shape = ConvexSpheropolygon(verts, .1)
+    kernel = shape.shape_kernel(theta)
+    xy = np.array([kernel * np.cos(theta), kernel * np.sin(theta)])
+    xy = np.transpose(xy)
+    hull_shape = ConvexHull(xy)
+    assert np.isclose(shape.area, hull_shape.volume)
+    assert np.isclose(shape.perimeter, hull_shape.area)
+
