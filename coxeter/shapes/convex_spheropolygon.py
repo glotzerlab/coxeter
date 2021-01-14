@@ -180,3 +180,113 @@ class ConvexSpheropolygon(Shape2D):
             self.radius *= scale_factor
         else:
             raise ValueError("Perimeter must be greater than zero.")
+
+    def _get_outward_unit_normal(self, vector, point):
+        """Get the outward unit normal vector a to line defined by the given
+        vector that goes through the given point."""
+        # get an outward unit normal for all kinds of slopes
+        if vector[0] == 0:  # infinte slope
+            xint = point[0]
+            nvecu = np.array([np.sign(xint) * 1, 0, 0])
+            return nvecu
+
+        slope = vector[1] / vector[0]
+        yint = point[1] - slope * point[0]
+        if slope == 0:
+            nvecu = np.array([0, np.sign(yint) * 1, 0])
+        else:  # now do the math for non-weird slopes
+            normal_vector = np.array([-slope, 1, 0])
+            nvecu = normal_vector / np.linalg.norm(normal_vector)
+            # make sure unit normal is OUTWARD
+            if slope > 0:
+                if yint > 0 and nvecu[0] > 0:
+                    nvecu *= -1
+                elif yint < 0 and nvecu[0] < 0:
+                    nvecu *= -1
+            else:
+                if yint > 0 and nvecu[0] < 0:
+                    nvecu *= -1
+                elif yint < 0 and nvecu[0] > 0:
+                    nvecu *= -1
+        return nvecu
+
+    def _get_polar_angle(self, vector):
+        """Get the polar angle for the given vector from 0 to 2pi."""
+        angle = np.arctan(vector[1] / vector[0])
+        if vector[0] < 0:  # 2nd/3rd quadrant
+            angle += np.pi
+        elif vector[0] > 0 and vector[1] < 0:  # 4th quadrant
+            angle += 2 * np.pi
+        return angle
+
+    def shape_kernel(self, value):
+        """Shape kernel from 0 to 2pi.
+
+        Args:
+            value (array):
+                Angles over which to calculate the shape kernel, must be between
+                0 and 2pi.
+
+        Returns:
+            array: The distance to the surface of the shape at each given angle.
+        """
+        num_verts = len(self._polygon.vertices)
+        # intermediate data
+        new_verts = np.zeros_like(self._polygon.vertices)  # expanded vertices
+        angle_ranges = []  # angle ranges where we need to round
+
+        # compute intermediates
+        for i in range(num_verts):
+            DEBUG = False
+            if i == 0:
+                DEBUG = True
+            v1 = self._polygon.vertices[i-1]
+            v2 = self._polygon.vertices[i]
+            v3 = self._polygon.vertices[i+1] if i+1 < num_verts else self._polygon.vertices[0]
+            v12 = v1 - v2
+            v32 = v3 - v2
+            if DEBUG: print(v12);
+            if DEBUG: print(v32);
+            v12n = self._get_outward_unit_normal(v12, v2)
+            if DEBUG: print(v12n);
+            v32n = self._get_outward_unit_normal(v32, v2)
+            if DEBUG: print(v32n);
+
+            # get the new vertex corresponding to the old one
+            v12norm = np.linalg.norm(v12)
+            v32norm = np.linalg.norm(v32)
+            phi = np.arccos(np.dot(v32, v12) / (v32norm * v12norm))
+            uvec = v12n + v32n
+            uvec /= np.linalg.norm(uvec)
+            new_verts[i] = v2 + uvec * self.radius / np.sin(phi / 2)
+
+            # define the angle range for rounding
+            pt1 = v2 + v12n * self.radius
+            pt3 = v2 + v32n * self.radius
+            angle_ranges.append(
+                (self._get_polar_angle(pt1),
+                 self._get_polar_angle(pt3))
+            )
+
+        # compute shape kernel for the new set of vertices
+        print(angle_ranges)
+        kernel = ConvexPolygon(new_verts).shape_kernel(value)
+
+        # get the shape kernel for this shape by adjusting indices of shape kernel
+        # for the new vertices
+        new_kernel = kernel
+        for i in range(len(angle_ranges)):
+            theta1, theta2 = angle_ranges[i]
+            if theta2 < theta1:  # case the angle range crosses the 2pi boundary
+                indices = np.where( (value >= theta1) | (value <= theta2) )
+            else:
+                indices = np.where( (value >= theta1) & (value <= theta2) )
+            v = self._polygon.vertices[i]
+            norm_v = np.linalg.norm(v)
+            phi = self._get_polar_angle(v)
+            a = 1
+            b = -2 * norm_v * np.cos(value[indices] - phi)
+            c = norm_v**2 - self.radius**2
+            new_kernel[indices] = (-b + np.sqrt(b**2 - 4 * a * c)) / (2 * a)
+
+        return new_kernel
