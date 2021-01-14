@@ -7,7 +7,7 @@ version: 2
 jobs:
   style-check:
     docker:
-      - image: circleci/python:3.8
+      - image: circleci/python:3.9
 
     working_directory: ~/repo
 
@@ -20,9 +20,9 @@ jobs:
             python -m flake8 --show-source ./
 
 
-  test-3.8: &test-template
+  test-3.9: &test-template
     docker:
-      - image: circleci/python:3.8
+      - image: circleci/python:3.9
 
     working_directory: ~/repo
 
@@ -43,6 +43,11 @@ jobs:
             python -c "import scipy; print('scipy', scipy.__version__)"
             python -m pytest
 
+  test-3.8:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.8
+
   test-3.7:
     <<: *test-template
     docker:
@@ -55,7 +60,7 @@ jobs:
 
   pypi_wheels: &pypi_wheels
     docker:
-      - image: circleci/python:3.8
+      - image: circleci/python:3.9
 
     working_directory: ~/repo
 
@@ -94,6 +99,9 @@ workflows:
   test:
     jobs:
       - style-check
+      - test-3.9:
+          requires:
+            - style-check
       - test-3.8:
           requires:
             - style-check
