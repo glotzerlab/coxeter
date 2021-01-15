@@ -218,6 +218,8 @@ class ConvexSpheropolygon(Shape2D):
 
     def _get_polar_angle(self, vector):
         """Get the polar angle for the given vector from 0 to 2pi."""
+        if vector[0] == 0:
+            return (1 - 1 * np.sign(vector[1]) / 2) * np.pi
         angle = np.arctan(vector[1] / vector[0])
         if vector[0] < 0:  # 2nd/3rd quadrant
             angle += np.pi

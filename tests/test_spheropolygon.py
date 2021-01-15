@@ -4,7 +4,7 @@ import pytest
 import rowan
 from hypothesis import assume, example, given, settings
 from hypothesis.extra.numpy import arrays
-from hypothesis.strategies import floats
+from hypothesis.strategies import floats, integers, tuples
 from pytest import approx
 from scipy.spatial import ConvexHull
 
@@ -232,15 +232,13 @@ def test_perimeter_setter(unit_rounded_square):
     testfun()
 
 
-@pytest.mark.parametrize("num_sides", range(3, 10))
-@pytest.mark.parametrize("rounding_radius", [0.1, 0.5, 5])
-@pytest.mark.parametrize("vertex_shift", np.array([[0, 0], [0.2, -0.3]]))
+@given(integers(3, 10), floats(.1, 10), tuples(floats(-1.0, 1.0), floats(-1.0, 1.0)))
 def test_shape_kernel_regular_ngons(num_sides, rounding_radius, vertex_shift):
     """Make sure shape kernel works for regular ngons."""
     theta = np.linspace(0, 2 * np.pi, 10000)
     shape = RegularNGonFamily.get_shape(num_sides)
     verts = shape.vertices[:, :2]
-    verts += vertex_shift
+    verts += np.asarray(vertex_shift)
     shape = ConvexSpheropolygon(verts, rounding_radius)
     kernel = shape.shape_kernel(theta)
     xy = np.array([kernel * np.cos(theta), kernel * np.sin(theta)])
