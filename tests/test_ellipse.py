@@ -149,7 +149,7 @@ def test_center():
 @given(floats(0.1, 10), floats(0.1, 10))
 def test_shape_kernel(a, b):
     """Test consistent volume and area for shape kernel of an ellipse."""
-    theta = np.linspace(0, 2 * np.pi, 10000)
+    theta = np.linspace(0, 2 * np.pi, 20000)
     ellipse = Ellipse(a, b)
     kernel = ellipse.shape_kernel(theta)
     xy = np.array([kernel * np.cos(theta), kernel * np.sin(theta)])
