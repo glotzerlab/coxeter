@@ -11,6 +11,10 @@ repos:
         - --indent
         - '4'
         - --no-sort-keys
+    -   id: check-builtin-literals
+    -   id: check-executables-have-shebangs
+    -   id: check-json
+    -   id: check-yaml
 -   repo: local
     hooks:
     -   id: flake8
