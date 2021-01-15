@@ -4,6 +4,7 @@ from hypothesis import given
 from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats
 from pytest import approx
+from scipy.spatial import ConvexHull
 
 from coxeter.shapes.circle import Circle
 
@@ -109,3 +110,20 @@ def test_invalid_radius_setter():
     circle = Circle(1)
     with pytest.raises(ValueError):
         circle.radius = -1
+
+
+@given(floats(0.1, 10))
+def test_shape_kernel(r):
+    """Test calculating the shape kernel."""
+    theta = np.linspace(0, 2 * np.pi, 10000)
+    circle = Circle(r)
+    kernel = circle.shape_kernel(theta)
+    xy = np.array([kernel * np.cos(theta), kernel * np.sin(theta)])
+    xy = np.transpose(xy)
+    circle_hull = ConvexHull(xy)
+
+    # Test the area
+    assert np.isclose(circle.area, circle_hull.volume)
+
+    # Test the circumference
+    assert np.isclose(circle.perimeter, circle_hull.area)

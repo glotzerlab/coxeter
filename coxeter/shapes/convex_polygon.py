@@ -126,3 +126,121 @@ class ConvexPolygon(Polygon):
 
         radius = np.min(distances)
         return Circle(radius, self.center)
+
+    def shape_kernel(self, value):
+        """Shape kernel from 0 to 2pi.
+
+        This algorithm assumes the vertices are ordered
+        counterclockwise and that they start in the first quadrant.
+
+        Args:
+            value (array):
+                Points over which to calculate the shape kernel
+                which can only be from negative 0 to 2pi.
+
+        Returns:
+            kernel
+        """
+        verts = self.vertices[:, :2]
+        theta = value
+        verts[:, 0] = verts[:, 0] - np.average(verts[:, 0])
+        verts[:, 1] = verts[:, 1] - np.average(verts[:, 1])
+        theta_component = np.arctan(verts[:, 1] / verts[:, 0])
+        angle_between = []
+        pairs = []
+        slopes = []
+        y_int = []
+        angle_range = np.zeros((len(verts), 2))
+
+        for i in range(len(verts)):
+            if i < len(verts) - 1:
+                pairs.append([verts[i, :], verts[i + 1, :]])
+            else:
+                pairs.append([verts[i, :], verts[0, :]])
+        for i in range(len(pairs)):
+            norm = np.sqrt(np.dot(pairs[i][0], pairs[i][0])) * np.sqrt(
+                np.dot(pairs[i][1], pairs[i][1])
+            )
+            angle_between.append(np.arccos(np.dot(pairs[i][0], pairs[i][1]) / norm))
+
+        # get the slopes
+
+        for i in range(len(pairs)):
+            if pairs[i][0][0] - pairs[i][1][0] == 0.0:
+                slopes.append("inf")
+            else:
+                slopes.append(
+                    (pairs[i][0][1] - pairs[i][1][1])
+                    / (pairs[i][0][0] - pairs[i][1][0])
+                )
+
+        # Get the y_intercepts
+
+        for i in range(len(pairs)):
+            if slopes[i] == "inf" or abs(slopes[i]) > 10e5:
+                y_int.append("inf")
+            else:
+                y_int.append(pairs[i][0][1] - slopes[i] * pairs[i][0][0])
+
+        # Get the ranges of theta for the parameterization
+
+        theta_initial = theta_component[0]
+
+        for i in range(len(verts)):
+            if i < len(verts) - 1:
+                min_angle = theta_initial
+                max_angle = theta_initial + angle_between[i]
+                theta_initial = max_angle
+                angle_range[i, 0] = min_angle
+                angle_range[i, 1] = max_angle
+            else:
+                angle_range[i, 0] = max_angle
+                angle_range[i, 1] = 2 * np.pi
+
+        # Make the kernel:
+
+        kernel = 0 * theta
+        angle_range = angle_range
+
+        for i in range(len(angle_range)):
+            if slopes[i] == 0:
+                wh = np.where(
+                    (theta >= angle_range[i, 0]) & (theta <= angle_range[i, 1])
+                )
+                kernel[wh] = np.sqrt(
+                    y_int[i] * y_int[i] / (1 - np.cos(theta[wh]) * np.cos(theta[wh]))
+                )
+            elif slopes[i] == "inf" or y_int[i] == "inf":
+                if i != len(angle_range) - 1:
+                    wh = np.where(
+                        (theta >= angle_range[i, 0]) & (theta <= angle_range[i, 1])
+                    )
+                    x_int = pairs[i][0][0]
+                    kernel[wh] = np.sqrt(
+                        x_int * x_int / (1 - np.sin(theta[wh]) * np.sin(theta[wh]))
+                    )
+                else:
+                    x_int = pairs[i][0][0]
+                    wh = np.where(
+                        ((theta >= angle_range[i, 0]) & (theta <= angle_range[i, 1]))
+                        | ((theta >= 0) & (theta <= angle_range[0, 0]))
+                    )
+                    kernel[wh] = np.sqrt(
+                        x_int * x_int / (1 - np.sin(theta[wh]) * np.sin(theta[wh]))
+                    )
+            else:
+                if i != len(angle_range) - 1:
+                    wh = np.where(
+                        (theta >= angle_range[i, 0]) & (theta <= angle_range[i, 1])
+                    )
+                else:
+                    wh = np.where(
+                        ((theta >= angle_range[i, 0]) & (theta <= angle_range[i, 1]))
+                        | ((theta >= 0) & (theta <= angle_range[0, 0]))
+                    )
+                sl_k = np.tan(theta[wh])
+                x = y_int[i] / (sl_k - slopes[i])
+                y = sl_k * x
+                kernel[wh] = np.sqrt(x * x + y * y)
+
+        return kernel

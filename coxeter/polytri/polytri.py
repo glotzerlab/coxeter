@@ -48,7 +48,7 @@ def near_zero(v):
     False
     """
     if isinstance(v, (float, int)):
-        return v > -1E-6 and v < 1E-6
+        return v > -1e-6 and v < 1e-6
     else:
         return np.allclose(v, np.zeros(np.shape(v)))
 
@@ -73,9 +73,9 @@ def calculate_normal_2d(polygon):
     sum = 0
     for (x1, y1), (x2, y2) in looped_pairs(polygon):
         sum += (x2 - x1) * (y2 + y1)
-    if sum > 1E-6:
+    if sum > 1e-6:
         return 1
-    elif sum < -1E-6:
+    elif sum < -1e-6:
         return -1
     else:
         raise ValueError("No normal found")
@@ -116,9 +116,9 @@ def looped_slice_inv(seq, start, count):
     [3]
     """
     if start + count > len(seq):
-        return seq[start + count - len(seq): start]
+        return seq[start + count - len(seq) : start]
     else:
-        return chain(seq[:start], seq[start + count:])
+        return chain(seq[:start], seq[start + count :])
 
 
 def any_point_in_triangle(triangle, points):
@@ -167,7 +167,7 @@ def triangulate(polygon):
             raise ValueError("Triangulation failed")
         (a, b, c) = looped_slice(polygon, i, 3)
         triangle = (a, b, c)
-        if ((a == b).all() or (b == c).all()):
+        if (a == b).all() or (b == c).all():
             # Duplicate vertex, just skip
             del polygon[(i + 1) % len(polygon)]
             continue
@@ -175,10 +175,9 @@ def triangulate(polygon):
         x = np.cross(c - b, b - a)
         dot = np.dot(normal, x)
         yld = False
-        if dot > 1E-6:
+        if dot > 1e-6:
             triangle = (a, b, c)
-            if not any_point_in_triangle(triangle,
-                                         looped_slice_inv(polygon, i, 3)):
+            if not any_point_in_triangle(triangle, looped_slice_inv(polygon, i, 3)):
                 del polygon[(i + 1) % len(polygon)]
                 yield triangle
                 i = 0

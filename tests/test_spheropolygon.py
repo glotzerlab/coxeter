@@ -4,11 +4,12 @@ import pytest
 import rowan
 from hypothesis import assume, example, given, settings
 from hypothesis.extra.numpy import arrays
-from hypothesis.strategies import floats
+from hypothesis.strategies import floats, integers, tuples
 from pytest import approx
 from scipy.spatial import ConvexHull
 
 from conftest import EllipseSurfaceStrategy
+from coxeter.families import RegularNGonFamily
 from coxeter.shapes import ConvexSpheropolygon
 
 
@@ -229,3 +230,19 @@ def test_perimeter_setter(unit_rounded_square):
         assert unit_rounded_square.radius == approx(1.0)
 
     testfun()
+
+
+@given(integers(3, 10), floats(0.1, 10), tuples(floats(-1.0, 1.0), floats(-1.0, 1.0)))
+def test_shape_kernel_regular_ngons(num_sides, rounding_radius, vertex_shift):
+    """Make sure shape kernel works for regular ngons."""
+    theta = np.linspace(0, 2 * np.pi, 10000)
+    shape = RegularNGonFamily.get_shape(num_sides)
+    verts = shape.vertices[:, :2]
+    verts += np.asarray(vertex_shift)
+    shape = ConvexSpheropolygon(verts, rounding_radius)
+    kernel = shape.shape_kernel(theta)
+    xy = np.array([kernel * np.cos(theta), kernel * np.sin(theta)])
+    xy = np.transpose(xy)
+    hull_shape = ConvexHull(xy)
+    assert np.isclose(shape.area, hull_shape.volume)
+    assert np.isclose(shape.perimeter, hull_shape.area)
