@@ -182,20 +182,19 @@ class ConvexSpheropolygon(Shape2D):
             raise ValueError("Perimeter must be greater than zero.")
 
     def _get_outward_unit_normal(self, vector, point):
-        """Get the outward unit normal vector a to line defined by the given
-        vector that goes through the given point."""
+        """Get the outward unit normal vector to the given vector going through point."""  # noqa: E501
         # get an outward unit normal for all kinds of slopes
         if vector[0] == 0:  # infinte slope
             xint = point[0]
-            nvecu = np.array([np.sign(xint) * 1, 0, 0])
+            nvecu = np.array([np.sign(xint) * 1, 0])
             return nvecu
 
         slope = vector[1] / vector[0]
         yint = point[1] - slope * point[0]
         if slope == 0:
-            nvecu = np.array([0, np.sign(yint) * 1, 0])
+            nvecu = np.array([0, np.sign(yint) * 1])
         else:  # now do the math for non-weird slopes
-            normal_vector = np.array([-slope, 1, 0])
+            normal_vector = np.array([-slope, 1])
             nvecu = normal_vector / np.linalg.norm(normal_vector)
             # make sure unit normal is OUTWARD
             if slope > 0:
@@ -231,15 +230,17 @@ class ConvexSpheropolygon(Shape2D):
             array: The distance to the surface of the shape at each given angle.
         """
         num_verts = len(self._polygon.vertices)
+        verts = self._polygon.vertices[:, :2]
+        verts -= np.average(verts, axis=0)
         # intermediate data
-        new_verts = np.zeros_like(self._polygon.vertices)  # expanded vertices
+        new_verts = np.zeros_like(verts)  # expanded vertices
         angle_ranges = []  # angle ranges where we need to round
 
         # compute intermediates
         for i in range(num_verts):
-            v1 = self._polygon.vertices[i-1]
-            v2 = self._polygon.vertices[i]
-            v3 = self._polygon.vertices[i+1] if i+1 < num_verts else self._polygon.vertices[0]
+            v1 = verts[i - 1]
+            v2 = verts[i]
+            v3 = verts[i + 1] if i + 1 < num_verts else verts[0]
             v12 = v1 - v2
             v32 = v3 - v2
             v12n = self._get_outward_unit_normal(v12, v2)
@@ -257,8 +258,7 @@ class ConvexSpheropolygon(Shape2D):
             pt1 = v2 + v12n * self.radius
             pt3 = v2 + v32n * self.radius
             angle_ranges.append(
-                (self._get_polar_angle(pt1),
-                 self._get_polar_angle(pt3))
+                (self._get_polar_angle(pt1), self._get_polar_angle(pt3))
             )
 
         # compute shape kernel for the new set of vertices
@@ -270,15 +270,15 @@ class ConvexSpheropolygon(Shape2D):
         for i in range(len(angle_ranges)):
             theta1, theta2 = angle_ranges[i]
             if theta2 < theta1:  # case the angle range crosses the 2pi boundary
-                indices = np.where( (value >= theta1) | (value <= theta2) )
+                indices = np.where((value >= theta1) | (value <= theta2))
             else:
-                indices = np.where( (value >= theta1) & (value <= theta2) )
-            v = self._polygon.vertices[i]
+                indices = np.where((value >= theta1) & (value <= theta2))
+            v = verts[i]
             norm_v = np.linalg.norm(v)
             phi = self._get_polar_angle(v)
             a = 1
             b = -2 * norm_v * np.cos(value[indices] - phi)
-            c = norm_v**2 - self.radius**2
-            new_kernel[indices] = (-b + np.sqrt(b**2 - 4 * a * c)) / (2 * a)
+            c = norm_v ** 2 - self.radius ** 2
+            new_kernel[indices] = (-b + np.sqrt(b ** 2 - 4 * a * c)) / (2 * a)
 
         return new_kernel

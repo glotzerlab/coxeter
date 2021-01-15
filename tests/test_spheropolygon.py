@@ -213,12 +213,14 @@ def test_perimeter_setter(unit_rounded_square, perimeter):
 
 
 @pytest.mark.parametrize("num_sides", range(3, 10))
-@pytest.mark.parametrize("rounding_radius", [.1, .5, 5])
-def test_shape_kernel_regular_ngons(num_sides, rounding_radius):
+@pytest.mark.parametrize("rounding_radius", [0.1, 0.5, 5])
+@pytest.mark.parametrize("vertex_shift", np.array([[0, 0], [0.2, -0.3]]))
+def test_shape_kernel_regular_ngons(num_sides, rounding_radius, vertex_shift):
     """Make sure shape kernel works for regular ngons."""
     theta = np.linspace(0, 2 * np.pi, 10000)
     shape = RegularNGonFamily.get_shape(num_sides)
     verts = shape.vertices[:, :2]
+    verts += vertex_shift
     shape = ConvexSpheropolygon(verts, rounding_radius)
     kernel = shape.shape_kernel(theta)
     xy = np.array([kernel * np.cos(theta), kernel * np.sin(theta)])
@@ -226,4 +228,3 @@ def test_shape_kernel_regular_ngons(num_sides, rounding_radius):
     hull_shape = ConvexHull(xy)
     assert np.isclose(shape.area, hull_shape.volume)
     assert np.isclose(shape.perimeter, hull_shape.area)
-
