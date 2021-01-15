@@ -4,7 +4,6 @@ from hypothesis import given
 from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats
 from pytest import approx
-from scipy.spatial import ConvexHull
 
 from coxeter.shapes.ellipse import Ellipse
 
@@ -144,20 +143,3 @@ def test_center():
     center = (1, 1, 1)
     ellipse.center = center
     assert all(ellipse.center == center)
-
-
-@given(floats(0.1, 10), floats(0.1, 10))
-def test_shape_kernel(a, b):
-    """Test consistent volume and area for shape kernel of an ellipse."""
-    theta = np.linspace(0, 2 * np.pi, 20000)
-    ellipse = Ellipse(a, b)
-    kernel = ellipse.shape_kernel(theta)
-    xy = np.array([kernel * np.cos(theta), kernel * np.sin(theta)])
-    xy = np.transpose(xy)
-    kern_ellipse = ConvexHull(xy)
-
-    # Test the area of the ellipse
-    assert np.isclose(kern_ellipse.volume, ellipse.area, rtol=1e-4)
-
-    # Test the perimeter of the ellipse:
-    assert np.isclose(kern_ellipse.area, ellipse.perimeter, rtol=1e-4)

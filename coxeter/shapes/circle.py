@@ -159,19 +159,3 @@ class Circle(Shape2D):
         This is 1 by definition for circles.
         """
         return 1
-
-    def shape_kernel(self, value):
-        """Shape kernel from 0 to 2pi.
-
-        Kernel is simply the radius for a circle so we
-        simply replace array elements with the radius.
-
-        Args:
-            value (array):
-                Points over which to calculate the shape kernel
-                which can only be from negative 0 to 2pi.
-
-        Returns:
-            kernel
-        """
-        return value * 0.0 + self.radius
