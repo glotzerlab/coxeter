@@ -9,8 +9,8 @@ from pytest import approx
 from scipy.spatial import ConvexHull
 
 from conftest import EllipseSurfaceStrategy
-from coxeter.shapes import ConvexSpheropolygon
 from coxeter.families import RegularNGonFamily
+from coxeter.shapes import ConvexSpheropolygon
 
 
 def get_square_points():
