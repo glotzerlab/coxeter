@@ -1,16 +1,19 @@
+
 # BentleyOttmann sweep-line implementation
 # (for finding all intersections in a set of line segments)
 
 __all__ = (
     "isect_segments",
     "isect_polygon",
+
     # same as above but includes segments with each intersections
     "isect_segments_include_segments",
     "isect_polygon_include_segments",
+
     # for testing only (correct but slow)
     "isect_segments__naive",
     "isect_polygon__naive",
-)
+    )
 
 # ----------------------------------------------------------------------------
 # Main Poly Intersection
@@ -44,31 +47,28 @@ X, Y = 0, 1
 # -----------------------------------------------------------------------------
 # Switchable Number Implementation
 
-NUMBER_TYPE = "native"
+NUMBER_TYPE = 'native'
 
-if NUMBER_TYPE == "native":
+if NUMBER_TYPE == 'native':
     Real = float
     NUM_EPS = Real("1e-10")
     NUM_INF = Real(float("inf"))
-elif NUMBER_TYPE == "decimal":
+elif NUMBER_TYPE == 'decimal':
     # Not passing tests!
     import decimal
-
     Real = decimal.Decimal
     decimal.getcontext().prec = 80
     NUM_EPS = Real("1e-10")
     NUM_INF = Real(float("inf"))
-elif NUMBER_TYPE == "numpy":
+elif NUMBER_TYPE == 'numpy':
     import numpy
-
     Real = numpy.float64
     del numpy
     NUM_EPS = Real("1e-10")
     NUM_INF = Real(float("inf"))
-elif NUMBER_TYPE == "gmpy2":
+elif NUMBER_TYPE == 'gmpy2':
     # Not passing tests!
     import gmpy2
-
     gmpy2.set_context(gmpy2.ieee(128))
     Real = gmpy2.mpz
     NUM_EPS = Real(float("1e-10"))
@@ -87,19 +87,16 @@ class Event:
         "type",
         "point",
         "segment",
+
         # this is just cache,
         # we may remove or calculate slope on the fly
         "slope",
         "span",
-    ) + (
-        ()
-        if not USE_DEBUG
-        else (
-            # debugging only
-            "other",
-            "in_sweep",
-        )
-    )
+        ) + (() if not USE_DEBUG else (
+         # debugging only
+        "other",
+        "in_sweep",
+        ))
 
     class Type:
         END = 0
@@ -109,7 +106,7 @@ class Event:
             START_VERTICAL = 3
 
     def __init__(self, type, point, segment, slope):
-        assert isinstance(point, tuple)
+        assert(isinstance(point, tuple))
         self.type = type
         self.point = point
         self.segment = segment
@@ -153,7 +150,7 @@ class Event:
         else:
             fac = delta_x1 / self.span
             ifac = NUM_ONE - fac
-        assert fac <= NUM_ONE
+        assert(fac <= NUM_ONE)
         return (self.segment[0][Y] * fac) + (self.segment[1][Y] * ifac)
 
     @staticmethod
@@ -175,7 +172,7 @@ class Event:
 
         delta_y = this_y - that_y
 
-        assert (delta_y < NUM_ZERO) == (this_y < that_y)
+        assert((delta_y < NUM_ZERO) == (this_y < that_y))
         # NOTE, VERY IMPORTANT TO USE EPSILON HERE!
         # otherwise w/ float precision errors we get incorrect comparisons
         # can get very strange & hard to debug output without this.
@@ -201,14 +198,13 @@ class Event:
         return 0
 
     def __repr__(self):
-        return "Event(0x%x, s0=%r, s1=%r, p=%r, type=%d, slope=%r)" % (
+        return ("Event(0x%x, s0=%r, s1=%r, p=%r, type=%d, slope=%r)" % (
             id(self),
-            self.segment[0],
-            self.segment[1],
+            self.segment[0], self.segment[1],
             self.point,
             self.type,
             self.slope,
-        )
+            ))
 
 
 class SweepLine:
@@ -218,6 +214,7 @@ class SweepLine:
         # {Point: set(Event, ...), ...}
         "intersections",
         "queue",
+
         # Events (sorted set of ordered events, no values)
         #
         # note: START & END events are considered the same so checking if an event is in the tree
@@ -229,7 +226,7 @@ class SweepLine:
         "_current_event_point_x",
         # A flag to indicate if we're slightly before or after the line.
         "_before",
-    )
+        )
 
     def __init__(self):
         self.intersections = {}
@@ -262,13 +259,9 @@ class SweepLine:
             return [
                 (
                     (float(p[0]), float(p[1])),
-                    [
-                        (
-                            (float(event.segment[0][0]), float(event.segment[0][1])),
-                            (float(event.segment[1][0]), float(event.segment[1][1])),
-                        )
-                        for event in event_set
-                    ],
+                    [((float(event.segment[0][0]), float(event.segment[0][1])),
+                      (float(event.segment[1][0]), float(event.segment[1][1])))
+                     for event in event_set],
                 )
                 for p, event_set in self.intersections.items()
             ]
@@ -277,11 +270,9 @@ class SweepLine:
     def _check_intersection(self, a: Event, b: Event):
         # Return immediately in case either of the events is null, or
         # if one of them is an INTERSECTION event.
-        if (
-            (a is None or b is None)
-            or (a.type == Event.Type.INTERSECTION)
-            or (b.type == Event.Type.INTERSECTION)
-        ):
+        if ((a is None or b is None) or
+                (a.type == Event.Type.INTERSECTION) or
+                (b.type == Event.Type.INTERSECTION)):
 
             return
 
@@ -290,8 +281,8 @@ class SweepLine:
 
         # Get the intersection point between 'a' and 'b'.
         p = isect_seg_seg_v2_point(
-            a.segment[0], a.segment[1], b.segment[0], b.segment[1]
-        )
+                a.segment[0], a.segment[1],
+                b.segment[0], b.segment[1])
 
         # No intersection exists.
         if p is None:
@@ -301,13 +292,10 @@ class SweepLine:
         # USE_IGNORE_SEGMENT_ENDINGS is true,
         # return from this method.
         if USE_IGNORE_SEGMENT_ENDINGS:
-            if (
-                len_squared_v2v2(p, a.segment[0]) < NUM_EPS_SQ
-                or len_squared_v2v2(p, a.segment[1]) < NUM_EPS_SQ
-            ) and (
-                len_squared_v2v2(p, b.segment[0]) < NUM_EPS_SQ
-                or len_squared_v2v2(p, b.segment[1]) < NUM_EPS_SQ
-            ):
+            if ((len_squared_v2v2(p, a.segment[0]) < NUM_EPS_SQ or
+                 len_squared_v2v2(p, a.segment[1]) < NUM_EPS_SQ) and
+                (len_squared_v2v2(p, b.segment[0]) < NUM_EPS_SQ or
+                 len_squared_v2v2(p, b.segment[1]) < NUM_EPS_SQ)):
 
                 return
 
@@ -334,11 +322,11 @@ class SweepLine:
         self._current_event_point_x = p[X]
 
     def insert(self, event):
-        assert event not in self._events_current_sweep
-        assert not USE_VERTICAL or event.type != Event.Type.START_VERTICAL
+        assert(event not in self._events_current_sweep)
+        assert(not USE_VERTICAL or event.type != Event.Type.START_VERTICAL)
         if USE_DEBUG:
-            assert event.in_sweep == False
-            assert event.other.in_sweep == False
+            assert(event.in_sweep == False)
+            assert(event.other.in_sweep == False)
 
         self._events_current_sweep.insert(event, None)
 
@@ -350,15 +338,15 @@ class SweepLine:
         try:
             self._events_current_sweep.remove(event)
             if USE_DEBUG:
-                assert event.in_sweep == True
-                assert event.other.in_sweep == True
+                assert(event.in_sweep == True)
+                assert(event.other.in_sweep == True)
                 event.in_sweep = False
                 event.other.in_sweep = False
             return True
         except KeyError:
             if USE_DEBUG:
-                assert event.in_sweep == False
-                assert event.other.in_sweep == False
+                assert(event.in_sweep == False)
+                assert(event.other.in_sweep == False)
             return False
 
     def above(self, event):
@@ -367,14 +355,14 @@ class SweepLine:
     def below(self, event):
         return self._events_current_sweep.prev_key(event, None)
 
-    """
+    '''
     def above_all(self, event):
         while True:
             event = self.above(event)
             if event is None:
                 break
             yield event
-    """
+    '''
 
     def above_all(self, event):
         # assert(event not in self._events_current_sweep)
@@ -385,13 +373,14 @@ class SweepLine:
             return
         # done already
         # self._sweep_to(events_current[0])
-        assert p[0] == self._current_event_point_x
+        assert(p[0] == self._current_event_point_x)
 
         if not USE_IGNORE_SEGMENT_ENDINGS:
             if len(events_current) > 1:
                 for i in range(0, len(events_current) - 1):
                     for j in range(i + 1, len(events_current)):
-                        self._check_intersection(events_current[i], events_current[j])
+                        self._check_intersection(
+                                events_current[i], events_current[j])
 
         for e in events_current:
             self.handle_event(e)
@@ -451,11 +440,12 @@ class SweepLine:
                 self._check_intersection(e, e_below)
                 if USE_PARANOID:
                     self._check_intersection(e_above, e_below)
-        elif USE_VERTICAL and (t == Event.Type.START_VERTICAL):
+        elif (USE_VERTICAL and
+                (t == Event.Type.START_VERTICAL)):
 
             # just check sanity
-            assert event.segment[0][X] == event.segment[1][X]
-            assert event.segment[0][Y] <= event.segment[1][Y]
+            assert(event.segment[0][X] == event.segment[1][X])
+            assert(event.segment[0][Y] <= event.segment[1][Y])
 
             # In this case we only need to find all segments in this span.
             y_above_max = event.segment[1][Y]
@@ -464,7 +454,8 @@ class SweepLine:
             for e_above in self.above_all(event):
                 if e_above.type == Event.Type.START_VERTICAL:
                     continue
-                y_above = e_above.y_intercept_x(self._current_event_point_x)
+                y_above = e_above.y_intercept_x(
+                        self._current_event_point_x)
                 if USE_IGNORE_SEGMENT_ENDINGS:
                     if y_above >= y_above_max - NUM_EPS:
                         break
@@ -488,14 +479,14 @@ class EventQueue:
         # The sorted map holding the points -> event list
         # [Point: Event] (tree)
         "events_scan",
-    )
+        )
 
     def __init__(self, segments, line: SweepLine):
         self.events_scan = RBTree()
         # segments = [s for s in segments if s[0][0] != s[1][0] and s[0][1] != s[1][1]]
 
         for s in segments:
-            assert s[0][X] <= s[1][X]
+            assert(s[0][X] <= s[1][X])
 
             slope = slope_v2v2(*s)
 
@@ -510,7 +501,7 @@ class EventQueue:
                 self.offer(s[0], e_start)
             else:
                 e_start = Event(Event.Type.START, s[0], s, slope)
-                e_end = Event(Event.Type.END, s[1], s, slope)
+                e_end   = Event(Event.Type.END,   s[1], s, slope)
 
                 if USE_DEBUG:
                     e_start.other = e_end
@@ -526,15 +517,15 @@ class EventQueue:
         Offer a new event ``s`` at point ``p`` in this queue.
         """
         existing = self.events_scan.setdefault(
-            p, ([], [], [], []) if USE_VERTICAL else ([], [], [])
-        )
+                p, ([], [], [], []) if USE_VERTICAL else
+                   ([], [], []))
         # Can use double linked-list for easy insertion at beginning/end
-        """
+        '''
         if e.type == Event.Type.END:
             existing.insert(0, e)
         else:
             existing.append(e)
-        """
+        '''
 
         existing[e.type].append(e)
 
@@ -546,7 +537,7 @@ class EventQueue:
         :return: the first (lowest) item from this queue.
         :rtype: Point, Event pair.
         """
-        assert len(self.events_scan) != 0
+        assert(len(self.events_scan) != 0)
         p, events_current = self.events_scan.pop_min()
         return p, events_current
 
@@ -557,9 +548,9 @@ def isect_segments_impl(segments, include_segments=False) -> list:
         segments = [
             # in nearly all cases, comparing X is enough,
             # but compare Y too for vertical lines
-            (s[0], s[1]) if (s[0] <= s[1]) else (s[1], s[0])
-            for s in segments
-        ]
+            (s[0], s[1]) if (s[0] <= s[1]) else
+            (s[1], s[0])
+            for s in segments]
     else:
         segments = [
             # in nearly all cases, comparing X is enough,
@@ -567,14 +558,12 @@ def isect_segments_impl(segments, include_segments=False) -> list:
             (
                 (Real(s[0][0]), Real(s[0][1])),
                 (Real(s[1][0]), Real(s[1][1])),
-            )
-            if (s[0] <= s[1])
-            else (
+            ) if (s[0] <= s[1]) else
+            (
                 (Real(s[1][0]), Real(s[1][1])),
                 (Real(s[0][0]), Real(s[0][1])),
             )
-            for s in segments
-        ]
+            for s in segments]
 
     sweep_line = SweepLine()
     queue = EventQueue(segments, sweep_line)
@@ -596,7 +585,9 @@ def isect_segments_impl(segments, include_segments=False) -> list:
 
 def isect_polygon_impl(points, include_segments=False) -> list:
     n = len(points)
-    segments = [(tuple(points[i]), tuple(points[(i + 1) % n])) for i in range(n)]
+    segments = [
+        (tuple(points[i]), tuple(points[(i + 1) % n]))
+        for i in range(n)]
     return isect_segments_impl(segments, include_segments=include_segments)
 
 
@@ -631,11 +622,15 @@ def slope_v2v2(p1, p2):
 
 
 def sub_v2v2(a, b):
-    return (a[0] - b[0], a[1] - b[1])
+    return (
+        a[0] - b[0],
+        a[1] - b[1])
 
 
 def dot_v2v2(a, b):
-    return (a[0] * b[0]) + (a[1] * b[1])
+    return (
+        (a[0] * b[0]) +
+        (a[1] * b[1]))
 
 
 def len_squared_v2v2(a, b):
@@ -664,18 +659,13 @@ def isect_seg_seg_v2_point(v1, v2, v3, v4, bias=NUM_ZERO):
     if div == NUM_ZERO:
         return None
 
-    vi = (
-        (
-            (v3[0] - v4[0]) * (v1[0] * v2[1] - v1[1] * v2[0])
-            - (v1[0] - v2[0]) * (v3[0] * v4[1] - v3[1] * v4[0])
-        )
-        / div,
-        (
-            (v3[1] - v4[1]) * (v1[0] * v2[1] - v1[1] * v2[0])
-            - (v1[1] - v2[1]) * (v3[0] * v4[1] - v3[1] * v4[0])
-        )
-        / div,
-    )
+    vi = (((v3[0] - v4[0]) *
+           (v1[0] * v2[1] - v1[1] * v2[0]) - (v1[0] - v2[0]) *
+           (v3[0] * v4[1] - v3[1] * v4[0])) / div,
+          ((v3[1] - v4[1]) *
+           (v1[0] * v2[1] - v1[1] * v2[0]) - (v1[1] - v2[1]) *
+           (v3[0] * v4[1] - v3[1] * v4[0])) / div,
+          )
 
     fac = line_point_factor_v2(vi, v1, v2, default=-NUM_ONE)
     if fac < NUM_ZERO - bias or fac > NUM_ONE + bias:
@@ -702,21 +692,20 @@ def isect_segments__naive(segments) -> list:
     # order points left -> right
     if Real is float:
         segments = [
-            (s[0], s[1]) if s[0][X] <= s[1][X] else (s[1], s[0]) for s in segments
-        ]
+            (s[0], s[1]) if s[0][X] <= s[1][X] else
+            (s[1], s[0])
+            for s in segments]
     else:
         segments = [
             (
                 (Real(s[0][0]), Real(s[0][1])),
                 (Real(s[1][0]), Real(s[1][1])),
-            )
-            if (s[0] <= s[1])
-            else (
+            ) if (s[0] <= s[1]) else
+            (
                 (Real(s[1][0]), Real(s[1][1])),
                 (Real(s[0][0]), Real(s[0][1])),
             )
-            for s in segments
-        ]
+            for s in segments]
 
     n = len(segments)
 
@@ -746,6 +735,7 @@ def isect_polygon__naive(points) -> list:
     else:
         points = [(Real(p[0]), Real(p[1])) for p in points]
 
+
     for i in range(n):
         a0, a1 = points[i], points[(i + 1) % n]
         for j in range(i + 1, n):
@@ -755,13 +745,10 @@ def isect_polygon__naive(points) -> list:
                 if ix is not None:
 
                     if USE_IGNORE_SEGMENT_ENDINGS:
-                        if (
-                            len_squared_v2v2(ix, a0) < NUM_EPS_SQ
-                            or len_squared_v2v2(ix, a1) < NUM_EPS_SQ
-                        ) and (
-                            len_squared_v2v2(ix, b0) < NUM_EPS_SQ
-                            or len_squared_v2v2(ix, b1) < NUM_EPS_SQ
-                        ):
+                        if ((len_squared_v2v2(ix, a0) < NUM_EPS_SQ or
+                             len_squared_v2v2(ix, a1) < NUM_EPS_SQ) and
+                            (len_squared_v2v2(ix, b0) < NUM_EPS_SQ or
+                             len_squared_v2v2(ix, b1) < NUM_EPS_SQ)):
                             continue
 
                     isect.append(ix)
@@ -786,7 +773,6 @@ def isect_polygon__naive(points) -> list:
 # ABCTree
 
 from operator import attrgetter
-
 _sentinel = object()
 
 
@@ -796,7 +782,6 @@ class _ABCTree(object):
         self._root = None
         self._count = 0
         if cmp is None:
-
             def cmp(cmp_data, a, b):
                 if a < b:
                     return -1
@@ -804,7 +789,6 @@ class _ABCTree(object):
                     return 1
                 else:
                     return 0
-
         self._cmp = cmp
         self._cmp_data = cmp_data
         if items is not None:
@@ -812,13 +796,11 @@ class _ABCTree(object):
 
     def clear(self):
         """T.clear() -> None.  Remove all items from T."""
-
         def _clear(node):
             if node is not None:
                 _clear(node.left)
                 _clear(node.right)
                 node.free()
-
         _clear(self._root)
         self._count = 0
         self._root = None
@@ -858,7 +840,6 @@ class _ABCTree(object):
         value = node.value
         self.remove(key)
         return key, value
-
     popitem = pop_item  # for compatibility  to dict()
 
     def min_item(self):
@@ -893,9 +874,7 @@ class _ABCTree(object):
             if cmp == 0:
                 break
             elif cmp < 0:
-                if (succ_node is None) or self._cmp(
-                    self._cmp_data, node.key, succ_node.key
-                ) < 0:
+                if (succ_node is None) or self._cmp(self._cmp_data, node.key, succ_node.key) < 0:
                     succ_node = node
                 node = node.left
             else:
@@ -938,9 +917,7 @@ class _ABCTree(object):
             elif cmp < 0:
                 node = node.left
             else:
-                if (prev_node is None) or self._cmp(
-                    self._cmp_data, prev_node.key, node.key
-                ) < 0:
+                if (prev_node is None) or self._cmp(self._cmp_data, prev_node.key, node.key) < 0:
                     prev_node = node
                 node = node.right
 
@@ -966,7 +943,7 @@ class _ABCTree(object):
 
     def __repr__(self):
         """T.__repr__(...) <==> repr(x)"""
-        tpl = "%s({%s})" % (self.__class__.__name__, "%s")
+        tpl = "%s({%s})" % (self.__class__.__name__, '%s')
         return tpl % ", ".join(("%r: %r" % item for item in self.items()))
 
     def __contains__(self, key):
@@ -992,7 +969,6 @@ class _ABCTree(object):
         except KeyError:
             self.insert(key, default)
             return default
-
     setdefault = set_default  # for compatibility to dict()
 
     def get(self, key, default=None):
@@ -1007,9 +983,7 @@ class _ABCTree(object):
         If key is not found, d is returned if given, otherwise KeyError is raised
         """
         if len(args) > 1:
-            raise TypeError(
-                "pop expected at most 2 arguments, got %d" % (1 + len(args))
-            )
+            raise TypeError("pop expected at most 2 arguments, got %d" % (1 + len(args)))
         try:
             value = self.get_value(key)
             self.remove(key)
@@ -1066,7 +1040,7 @@ class _ABCTree(object):
         """
         return (k for k, v in self.iter_items(start_key, end_key, reverse=reverse))
 
-    def iter_items(self, start_key=None, end_key=None, reverse=False):
+    def iter_items(self,  start_key=None, end_key=None, reverse=False):
         """Iterates over the (key, value) items of the associated tree,
         in ascending order if reverse is True, iterate in descending order,
         reverse defaults to False"""
@@ -1080,30 +1054,16 @@ class _ABCTree(object):
             return self._iter_items_forward(start_key, end_key)
 
     def _iter_items_forward(self, start_key=None, end_key=None):
-        for item in self._iter_items(
-            left=attrgetter("left"),
-            right=attrgetter("right"),
-            start_key=start_key,
-            end_key=end_key,
-        ):
+        for item in self._iter_items(left=attrgetter("left"), right=attrgetter("right"),
+                                     start_key=start_key, end_key=end_key):
             yield item
 
     def _iter_items_backward(self, start_key=None, end_key=None):
-        for item in self._iter_items(
-            left=attrgetter("right"),
-            right=attrgetter("left"),
-            start_key=start_key,
-            end_key=end_key,
-        ):
+        for item in self._iter_items(left=attrgetter("right"), right=attrgetter("left"),
+                                     start_key=start_key, end_key=end_key):
             yield item
 
-    def _iter_items(
-        self,
-        left=attrgetter("left"),
-        right=attrgetter("right"),
-        start_key=None,
-        end_key=None,
-    ):
+    def _iter_items(self, left=attrgetter("left"), right=attrgetter("right"), start_key=None, end_key=None):
         node = self._root
         stack = []
         go_left = True
@@ -1132,22 +1092,18 @@ class _ABCTree(object):
             if start_key is None:
                 start_key = self.min_key()
             if end_key is None:
-                return lambda x: self._cmp(self._cmp_data, start_key, x) <= 0
+                return (lambda x: self._cmp(self._cmp_data, start_key, x) <= 0)
             else:
-                return (
-                    lambda x: self._cmp(self._cmp_data, start_key, x) <= 0
-                    and self._cmp(self._cmp_data, x, end_key) < 0
-                )
+                return (lambda x: self._cmp(self._cmp_data, start_key, x) <= 0 and
+                        self._cmp(self._cmp_data, x, end_key) < 0)
 
 
 # ------
 # RBTree
 
-
 class Node(object):
     """Internal object, represents a tree node."""
-
-    __slots__ = ["key", "value", "red", "left", "right"]
+    __slots__ = ['key', 'value', 'red', 'left', 'right']
 
     def __init__(self, key=None, value=None):
         self.key = key
@@ -1180,7 +1136,6 @@ class RBTree(_ABCTree):
 
     see: http://en.wikipedia.org/wiki/Red_black_tree
     """
-
     @staticmethod
     def is_red(node):
         if (node is not None) and node.red:
@@ -1240,13 +1195,9 @@ class RBTree(_ABCTree):
             if RBTree.is_red(node) and RBTree.is_red(parent):
                 direction2 = 1 if grand_grand_parent.right is grand_parent else 0
                 if node is parent[last]:
-                    grand_grand_parent[direction2] = RBTree.jsw_single(
-                        grand_parent, 1 - last
-                    )
+                    grand_grand_parent[direction2] = RBTree.jsw_single(grand_parent, 1 - last)
                 else:
-                    grand_grand_parent[direction2] = RBTree.jsw_double(
-                        grand_parent, 1 - last
-                    )
+                    grand_grand_parent[direction2] = RBTree.jsw_double(grand_parent, 1 - last)
 
             # Stop if found
             if self._cmp(self._cmp_data, key, node.key) == 0:
@@ -1300,9 +1251,7 @@ class RBTree(_ABCTree):
                 elif not RBTree.is_red(node[1 - direction]):
                     sibling = parent[1 - last]
                     if sibling is not None:
-                        if (not RBTree.is_red(sibling[1 - last])) and (
-                            not RBTree.is_red(sibling[last])
-                        ):
+                        if (not RBTree.is_red(sibling[1 - last])) and (not RBTree.is_red(sibling[last])):
                             # Color flip
                             parent.red = False
                             sibling.red = True
@@ -1310,13 +1259,9 @@ class RBTree(_ABCTree):
                         else:
                             direction2 = 1 if grand_parent.right is parent else 0
                             if RBTree.is_red(sibling[last]):
-                                grand_parent[direction2] = RBTree.jsw_double(
-                                    parent, last
-                                )
-                            elif RBTree.is_red(sibling[1 - last]):
-                                grand_parent[direction2] = RBTree.jsw_single(
-                                    parent, last
-                                )
+                                grand_parent[direction2] = RBTree.jsw_double(parent, last)
+                            elif RBTree.is_red(sibling[1-last]):
+                                grand_parent[direction2] = RBTree.jsw_single(parent, last)
                             # Ensure correct coloring
                             grand_parent[direction2].red = True
                             node.red = True
