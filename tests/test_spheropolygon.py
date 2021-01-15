@@ -232,7 +232,7 @@ def test_perimeter_setter(unit_rounded_square):
     testfun()
 
 
-@given(integers(3, 10), floats(.1, 10), tuples(floats(-1.0, 1.0), floats(-1.0, 1.0)))
+@given(integers(3, 10), floats(0.1, 10), tuples(floats(-1.0, 1.0), floats(-1.0, 1.0)))
 def test_shape_kernel_regular_ngons(num_sides, rounding_radius, vertex_shift):
     """Make sure shape kernel works for regular ngons."""
     theta = np.linspace(0, 2 * np.pi, 10000)
