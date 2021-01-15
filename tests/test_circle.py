@@ -115,7 +115,7 @@ def test_invalid_radius_setter():
 @given(floats(0.1, 10))
 def test_shape_kernel(r):
     """Test calculating the shape kernel."""
-    theta = np.linspace(0, 2 * np.pi, 100000)
+    theta = np.linspace(0, 2 * np.pi, 10000)
     circle = Circle(r)
     kernel = circle.shape_kernel(theta)
     xy = np.array([kernel * np.cos(theta), kernel * np.sin(theta)])
