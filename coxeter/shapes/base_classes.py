@@ -20,6 +20,16 @@ class Shape(ABC):
         """:math:`(3, )` :class:`numpy.ndarray` of float: Get or set the centroid of the shape."""  # noqa: E501
         pass
 
+    @abstractmethod
+    def _rescale(self, scale):
+        """Multiply length scale.
+
+        Args:
+            scale (float):
+                Scale factor.
+        """
+        pass
+
     @property
     def gsd_shape_spec(self):
         """dict: Get a :ref:`complete GSD specification <shapes>`."""  # noqa: D401

@@ -12,14 +12,14 @@ class Ellipsoid(Shape3D):
 
     Args:
         a (float):
-            Principal axis a of the ellipsoid (radius in the :math:`x`
-            direction).
+            Length of the principal semi-axis of the ellipsoid in the :math:`x`
+            direction.
         b (float):
-            Principal axis b of the ellipsoid (radius in the :math:`y`
-            direction).
+            Length of the principal semi-axis of the ellipsoid in the :math:`y`
+            direction.
         c (float):
-            Principal axis c of the ellipsoid (radius in the :math:`z`
-            direction).
+            Length of the principal semi-axis of the ellipsoid in the :math:`z`
+            direction.
         center (Sequence[float]):
             The coordinates of the center of the ellipsoid (Default
             value: (0, 0, 0)).
@@ -53,12 +53,12 @@ class Ellipsoid(Shape3D):
         self.a = a
         self.b = b
         self.c = c
-        self._center = np.asarray(center)
+        self.center = center
 
     @property
     def gsd_shape_spec(self):
         """dict: Get a :ref:`complete GSD specification <shapes>`."""  # noqa: D401
-        return {"type": "Ellipsoid", "a": self._a, "b": self._b, "c": self._c}
+        return {"type": "Ellipsoid", "a": self.a, "b": self.b, "c": self.c}
 
     @property
     def center(self):
@@ -105,18 +105,27 @@ class Ellipsoid(Shape3D):
         else:
             raise ValueError("c must be greater than zero.")
 
+    def _rescale(self, scale):
+        """Multiply length scale.
+
+        Args:
+            scale (float):
+                Scale factor.
+        """
+        self.a *= scale
+        self.b *= scale
+        self.c *= scale
+
     @property
     def volume(self):
-        """float: Get the volume."""
+        """float: Get or set the volume."""
         return (4 / 3) * np.pi * self.a * self.b * self.c
 
     @volume.setter
     def volume(self, value):
         if value > 0:
-            scale_factor = np.cbrt(value / self.volume)
-            self.a *= scale_factor
-            self.b *= scale_factor
-            self.c *= scale_factor
+            scale = np.cbrt(value / self.volume)
+            self._rescale(scale)
         else:
             raise ValueError("Volume must be greater than zero.")
 
@@ -139,9 +148,17 @@ class Ellipsoid(Shape3D):
         result = 2 * np.pi * (c ** 2 + a * b * elliptic_part)
         return result
 
+    @surface_area.setter
+    def surface_area(self, value):
+        if value > 0:
+            scale = np.sqrt(value / self.surface_area)
+            self._rescale(scale)
+        else:
+            raise ValueError("Surface area must be greater than zero.")
+
     @property
     def inertia_tensor(self):
-        """float: Get the inertia tensor.
+        """:math:`(3, 3)` :class:`numpy.ndarray`: Get the inertia tensor.
 
         Assumes a constant density of 1.
         """

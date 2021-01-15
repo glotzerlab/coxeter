@@ -6,6 +6,7 @@ import rowan
 from hypothesis import example, given, settings
 from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats, integers
+from pytest import approx
 from scipy.spatial import ConvexHull
 
 from conftest import (
@@ -46,6 +47,17 @@ def test_normal_detection(convex_cube):
 def test_surface_area(cube):
     """Test surface area calculation."""
     assert cube.surface_area == 6
+
+
+@pytest.mark.parametrize(
+    "cube", ["convex_cube", "oriented_cube", "unoriented_cube"], indirect=True
+)
+def test_set_surface_area(cube):
+    """Test surface area calculation."""
+    cube_old = cube
+    cube.surface_area = 4
+    assert cube.surface_area == approx(4)
+    assert cube.vertices == approx(cube_old.vertices * (4 / cube_old.surface_area))
 
 
 @pytest.mark.parametrize(

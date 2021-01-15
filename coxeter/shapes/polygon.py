@@ -56,7 +56,7 @@ def _is_simple(vertices):
 
 
 class Polygon(Shape2D):
-    """A simple (i.e. non-self-overlapping) polygon.
+    """A simple (non-self-overlapping) polygon.
 
     The polygon is embedded in 3-dimensions, so the normal
     vector determines which way is "up".
@@ -238,7 +238,7 @@ class Polygon(Shape2D):
     @property
     def gsd_shape_spec(self):
         """dict: Get a :ref:`complete GSD specification <shapes>`."""  # noqa: D401
-        return {"type": "Polygon", "vertices": self._vertices.tolist()}
+        return {"type": "Polygon", "vertices": self.vertices.tolist()}
 
     @property
     def normal(self):
@@ -250,6 +250,15 @@ class Polygon(Shape2D):
         """:math:`(N_{verts}, 3)` :class:`numpy.ndarray` of float: Get the vertices of the polygon."""  # noqa: E501
         return self._vertices
 
+    def _rescale(self, scale):
+        """Multiply length scale.
+
+        Args:
+            scale (float):
+                Scale factor.
+        """
+        self._vertices *= scale
+
     @property
     def perimeter(self):
         """float: Get the perimeter of the polygon."""
@@ -259,16 +268,25 @@ class Polygon(Shape2D):
             )
         )
 
+    @perimeter.setter
+    def perimeter(self, value):
+        if value > 0:
+            scale = value / self.perimeter
+            self._rescale(scale)
+        else:
+            raise ValueError("Perimeter must be greater than zero.")
+
     @property
     def signed_area(self):
         """float: Get the polygon's area.
 
         To support polygons embedded in 3 dimensional space, we employ a
-        projection- and rescaling-based algorithm described
-        `here <https://geomalgorithms.com/a01-_area.html>`_. Specifically, the
-        polygon is projected onto the plane it is "most parallel" to, the area
-        of the projected polygon is computed, then the area is rescaled by the
-        component of the normal in the projected dimension.
+        projection- and rescaling-based algorithm described `here
+        <https://geomalgorithms.com/a01-_area.html#3D-Planar-Polygons>`__.
+        Specifically, the polygon is projected onto the plane it is "most
+        parallel" to, the area of the projected polygon is computed, then the
+        area is rescaled by the component of the normal in the projected
+        dimension.
         """
         # Choose the dimension to project out based on the largest magnitude
         # component of the normal vector.
@@ -300,12 +318,12 @@ class Polygon(Shape2D):
 
     @area.setter
     def area(self, value):
-        scale_factor = np.sqrt(value / self.area)
-        self._vertices *= scale_factor
+        scale = np.sqrt(value / self.area)
+        self._rescale(scale)
 
     @property
     def planar_moments_inertia(self):
-        r"""Get the planar moments of inertia.
+        r"""list[float, float, float]: Get the planar and product moments of inertia.
 
         Moments are computed with respect to the :math:`x` and :math:`y`
         axes. In addition to the two planar moments, this property also
@@ -390,22 +408,24 @@ class Polygon(Shape2D):
         # is important: we must translate before rotating so that the parallel
         # axis theorem can be applied in the reverse direction (rotating about
         # the origin before translating to the actual centroid).
-        center = self.center
+        original_center = self.center.copy()
+        original_vertices = self._vertices.copy()
+        original_normal = self._normal.copy()
+
         self.center = (0, 0, 0)
         mat, _ = rowan.mapping.kabsch(
             [self.normal, -self.normal], [[0, 0, 1], [0, 0, -1]]
         )
         self._vertices = self._vertices.dot(mat.T)
-        original_normal = self._normal
         self._normal = np.asarray([0, 0, 1])
 
         inertia_tensor = np.diag([0, 0, self.polar_moment_inertia])
         shifted_inertia_tensor = translate_inertia_tensor(
-            center, rotate_order2_tensor(mat, inertia_tensor), self.area
+            original_center, rotate_order2_tensor(mat, inertia_tensor), self.area
         )
 
-        self.center = center
-        self._vertices = self._vertices.dot(mat)
+        self.center = original_center
+        self._vertices = original_vertices
         self._normal = original_normal
 
         return shifted_inertia_tensor

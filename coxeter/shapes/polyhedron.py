@@ -178,9 +178,19 @@ class Polyhedron(Shape3D):
         """dict: Get a :ref:`complete GSD specification <shapes>`."""  # noqa: D401
         return {
             "type": "Mesh",
-            "vertices": self._vertices.tolist(),
-            "faces": self._faces,
+            "vertices": self.vertices.tolist(),
+            "faces": self.faces,
         }
+
+    def _rescale(self, scale):
+        """Multiply length scale.
+
+        Args:
+            scale (float):
+                Scale factor.
+        """
+        self._vertices *= scale
+        self._equations[:, 3] *= scale
 
     def merge_faces(self, atol=1e-8, rtol=1e-5):
         """Merge coplanar faces to a given tolerance.
@@ -352,9 +362,8 @@ class Polyhedron(Shape3D):
 
     @volume.setter
     def volume(self, value):
-        scale_factor = (value / self.volume) ** (1 / 3)
-        self._vertices *= scale_factor
-        self._equations[:, 3] *= scale_factor
+        scale = (value / self.volume) ** (1 / 3)
+        self._rescale(scale)
 
     def get_face_area(self, faces=None):
         """Get the total surface area of a set of faces.
@@ -397,6 +406,14 @@ class Polyhedron(Shape3D):
     def surface_area(self):
         """float: Get the surface area."""
         return np.sum(self.get_face_area())
+
+    @surface_area.setter
+    def surface_area(self, value):
+        if value > 0:
+            scale = np.sqrt(value / self.surface_area)
+            self._rescale(scale)
+        else:
+            raise ValueError("Surface area must be greater than zero.")
 
     def _surface_triangulation(self):
         """Generate a triangulation of the surface of the polyhedron.
@@ -483,13 +500,13 @@ class Polyhedron(Shape3D):
 
     @property
     def bounding_sphere(self):
-        """:class:`~.Sphere`: Get the center and radius of the bounding sphere."""
+        """:class:`~.Sphere`: Get the polyhedron's bounding sphere."""
         if not MINIBALL:
             raise ImportError(
                 "The miniball module must be installed. It can "
                 "be installed as an extra with coxeter (e.g. "
-                "with pip install coxeter[bounding_sphere], or "
-                "directly from PyPI using pip install miniball."
+                'with "pip install coxeter[bounding_sphere]") or '
+                'directly from PyPI using "pip install miniball".'
             )
 
         # The algorithm in miniball involves solving a linear system and

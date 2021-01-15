@@ -5,6 +5,7 @@ import rowan
 from hypothesis import assume, example, given, settings
 from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats
+from pytest import approx
 from scipy.spatial import ConvexHull
 
 from conftest import EllipseSurfaceStrategy
@@ -375,6 +376,18 @@ def test_perimeter(num_sides):
     poly = RegularNGonFamily.get_shape(num_sides)
     assert np.isclose(
         num_sides * unit_area_regular_n_gon_side_length(num_sides), poly.perimeter
+    )
+
+
+@given(floats(0.1, 1000))
+def test_set_perimeter(value):
+    """Test the perimeter and circumference setter."""
+    square = RegularNGonFamily.get_shape(4)
+    square.perimeter = value
+    assert square.perimeter == approx(value)
+    assert square.vertices == approx(
+        RegularNGonFamily.get_shape(4).vertices
+        * (value / RegularNGonFamily.get_shape(4).perimeter)
     )
 
 

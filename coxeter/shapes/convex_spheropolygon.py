@@ -59,8 +59,7 @@ class ConvexSpheropolygon(Shape2D):
     def reorder_verts(self, clockwise=False, ref_index=0, increasing_length=True):
         """Sort the vertices.
 
-        For more information see
-        :meth:`~coxeter.shapes.Polygon.reorder_verts`.
+        For more information see `Polygon.reorder_verts`.
 
         Args:
             clockwise (bool):
@@ -88,7 +87,7 @@ class ConvexSpheropolygon(Shape2D):
                    [ 0.,  1.,  0.]])
 
         """
-        self._polygon.reorder_verts(clockwise, ref_index, increasing_length)
+        self.polygon.reorder_verts(clockwise, ref_index, increasing_length)
 
     @property
     def polygon(self):
@@ -100,14 +99,14 @@ class ConvexSpheropolygon(Shape2D):
         """dict: Get a :ref:`complete GSD specification <shapes>`."""  # noqa: D401
         return {
             "type": "Polygon",
-            "vertices": self._polygon._vertices.tolist(),
-            "rounding_radius": self._radius,
+            "vertices": self.polygon.vertices.tolist(),
+            "rounding_radius": self.radius,
         }
 
     @property
     def vertices(self):
         """:math:`(N_{verts}, 3)` :class:`numpy.ndarray` of float: Get the vertices of the spheropolygon."""  # noqa: E501
-        return self._polygon.vertices
+        return self.polygon.vertices
 
     @property
     def radius(self):
@@ -121,6 +120,16 @@ class ConvexSpheropolygon(Shape2D):
         else:
             raise ValueError("Radius must be greater than or equal to zero.")
 
+    def _rescale(self, scale):
+        """Multiply length scale.
+
+        Args:
+            scale (float):
+                Scale factor.
+        """
+        self.polygon._vertices *= scale
+        self.radius *= scale
+
     @property
     def signed_area(self):
         """Get the signed area of the spheropolygon.
@@ -128,7 +137,7 @@ class ConvexSpheropolygon(Shape2D):
         The area is computed as the sum of the underlying polygon area and the
         area added by the rounding radius.
         """
-        poly_area = self._polygon.signed_area
+        poly_area = self.polygon.signed_area
 
         drs = self.vertices - np.roll(self.vertices, shift=-1, axis=0)
         edge_area = np.sum(np.linalg.norm(drs, axis=1)) * self.radius
@@ -152,32 +161,30 @@ class ConvexSpheropolygon(Shape2D):
     @area.setter
     def area(self, value):
         if value > 0:
-            scale_factor = np.sqrt(value / self.area)
-            self.polygon._vertices *= scale_factor
-            self.radius *= scale_factor
+            scale = np.sqrt(value / self.area)
+            self._rescale(scale)
         else:
             raise ValueError("Area must be greater than zero.")
 
     @property
     def center(self):
         """:math:`(3, )` :class:`numpy.ndarray` of float: Get or set the centroid of the shape."""  # noqa: E501
-        return self._polygon.center
+        return self.polygon.center
 
     @center.setter
     def center(self, value):
-        self._polygon.center = value
+        self.polygon.center = value
 
     @property
     def perimeter(self):
         """float: Get the perimeter of the spheropolygon."""
-        return self._polygon.perimeter + 2 * np.pi * self.radius
+        return self.polygon.perimeter + 2 * np.pi * self.radius
 
     @perimeter.setter
     def perimeter(self, value):
         if value > 0:
-            scale_factor = value / self.perimeter
-            self.polygon._vertices *= scale_factor
-            self.radius *= scale_factor
+            scale = value / self.perimeter
+            self._rescale(scale)
         else:
             raise ValueError("Perimeter must be greater than zero.")
 

@@ -55,8 +55,25 @@ def test_perimeter(a, b):
     assert ellipse.circumference == pytest.approx(approx_perimeter, rel=1e-3)
 
 
+@given(floats(0.1, 1000))
+def test_perimeter_setter(value):
+    """Test perimeter and circumference getter and setter."""
+    ellipse = Ellipse(1, 2)
+    perimeter_old = ellipse.perimeter
+    circumference_old = ellipse.circumference
+    ellipse.circumference = value
+    assert ellipse.circumference == approx(value)
+    assert ellipse.a == approx(1 * value / circumference_old)
+    assert ellipse.b == approx(2 * value / circumference_old)
+    ellipse = Ellipse(1, 2)
+    ellipse.perimeter = value
+    assert ellipse.perimeter == approx(value)
+    assert ellipse.a == approx(1 * value / perimeter_old)
+    assert ellipse.b == approx(2 * value / perimeter_old)
+
+
 @given(floats(0.1, 1000), floats(0.1, 1000))
-def test_area(a, b):
+def test_area_getter(a, b):
     ellipse = Ellipse(1, 1)
     ellipse.a = a
     ellipse.b = b

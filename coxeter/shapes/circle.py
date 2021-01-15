@@ -40,12 +40,12 @@ class Circle(Shape2D):
 
     def __init__(self, radius, center=(0, 0, 0)):
         self.radius = radius
-        self._center = np.asarray(center)
+        self.center = center
 
     @property
     def gsd_shape_spec(self):
         """dict: Get a :ref:`complete GSD specification <shapes>`."""  # noqa: D401
-        return {"type": "Sphere", "diameter": 2 * self._radius}
+        return {"type": "Sphere", "diameter": 2 * self.radius}
 
     @property
     def center(self):
@@ -67,6 +67,15 @@ class Circle(Shape2D):
             self._radius = value
         else:
             raise ValueError("Radius must be greater than zero.")
+
+    def _rescale(self, scale):
+        """Multiply length scale.
+
+        Args:
+            scale (float):
+                Scale factor.
+        """
+        self.radius *= scale
 
     @property
     def area(self):
@@ -102,7 +111,7 @@ class Circle(Shape2D):
 
     @property
     def circumference(self):
-        """float: Get the circumference, alias for :meth:`~.Circle.perimeter`."""
+        """float: Get the circumference, alias for `Circle.perimeter`."""
         return self.perimeter
 
     @circumference.setter
@@ -111,7 +120,7 @@ class Circle(Shape2D):
 
     @property
     def planar_moments_inertia(self):
-        r"""Get the planar moments of inertia.
+        r"""list[float, float, float]: Get the planar and product moments of inertia.
 
         Moments are computed with respect to the :math:`x` and :math:`y`
         axes. In addition to the two planar moments, this property also

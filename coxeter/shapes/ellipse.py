@@ -46,18 +46,14 @@ class Ellipse(Shape2D):
     """
 
     def __init__(self, a, b, center=(0, 0, 0)):
-        if a <= 0:
-            raise ValueError("a must be greater than zero.")
-        if b <= 0:
-            raise ValueError("b must be greater than zero.")
-        self._a = a
-        self._b = b
-        self._center = np.asarray(center)
+        self.a = a
+        self.b = b
+        self.center = center
 
     @property
     def gsd_shape_spec(self):
         """dict: Get a :ref:`complete GSD specification <shapes>`."""  # noqa: D401
-        return {"type": "Ellipsoid", "a": self._a, "b": self._b}
+        return {"type": "Ellipsoid", "a": self.a, "b": self.b}
 
     @property
     def center(self):
@@ -93,23 +89,37 @@ class Ellipse(Shape2D):
         else:
             raise ValueError("b must be greater than zero.")
 
+    def _rescale(self, scale):
+        """Multiply length scale.
+
+        Args:
+            scale (float):
+                Scale factor.
+        """
+        self.a *= scale
+        self.b *= scale
+
     @property
     def area(self):
-        """float: The area."""
+        """float: Get or set the area."""
         return np.pi * self.a * self.b
 
     @area.setter
     def area(self, value):
         if value > 0:
-            scale_factor = np.sqrt(value / self.area)
-            self.a *= scale_factor
-            self.b *= scale_factor
+            scale = np.sqrt(value / self.area)
+            self._rescale(scale)
         else:
             raise ValueError("Area must be greater than zero.")
 
     @property
     def eccentricity(self):
-        """float: The eccentricity."""
+        r"""float: The eccentricity.
+
+        An ellipse's eccentricity is defined as :math:`e = \sqrt{1 -
+        \frac{b^2}{a^2}}` where :math:`b` is the length of the smaller
+        semi-axis and :math:`a` is the length of the larger semi-axis.
+        """
         # Requires that a >= b, so we sort the principal axes:
         b, a = sorted([self.a, self.b])
         e = np.sqrt(1 - b ** 2 / a ** 2)
@@ -125,14 +135,26 @@ class Ellipse(Shape2D):
         result = 4 * a * ellipe(self.eccentricity ** 2)
         return result
 
+    @perimeter.setter
+    def perimeter(self, value):
+        if value > 0:
+            scale = value / self.perimeter
+            self._rescale(scale)
+        else:
+            raise ValueError("Perimeter must be greater than zero.")
+
     @property
     def circumference(self):
-        """float: Alias for :meth:`~.Ellipse.perimeter`."""
+        """float: Alias for `Ellipse.perimeter`."""
         return self.perimeter
+
+    @circumference.setter
+    def circumference(self, value):
+        self.perimeter = value
 
     @property
     def planar_moments_inertia(self):
-        r"""Get the planar moments of inertia.
+        r"""list[float, float, float]: Get the planar and product moments of inertia.
 
         Moments are computed with respect to the :math:`x` and :math:`y`
         axes. In addition to the two planar moments, this property also

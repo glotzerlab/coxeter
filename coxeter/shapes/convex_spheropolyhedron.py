@@ -78,8 +78,8 @@ class ConvexSpheropolyhedron(Shape3D):
         """dict: Get a :ref:`complete GSD specification <shapes>`."""  # noqa: D401
         return {
             "type": "ConvexPolyhedron",
-            "vertices": self.polyhedron._vertices.tolist(),
-            "rounding_radius": self._radius,
+            "vertices": self.polyhedron.vertices.tolist(),
+            "rounding_radius": self.radius,
         }
 
     @property
@@ -90,16 +90,26 @@ class ConvexSpheropolyhedron(Shape3D):
     @property
     def vertices(self):
         """Get the vertices of the spheropolyhedron."""
-        return self._polyhedron.vertices
+        return self.polyhedron.vertices
 
     @property
     def center(self):
         """:math:`(3, )` :class:`numpy.ndarray` of float: Get or set the centroid of the shape."""  # noqa: E501
-        return self._polyhedron.center
+        return self.polyhedron.center
 
     @center.setter
     def center(self, value):
-        self._polyhedron.center = value
+        self.polyhedron.center = value
+
+    def _rescale(self, scale):
+        """Multiply length scale.
+
+        Args:
+            scale (float):
+                Scale factor.
+        """
+        self.polyhedron._rescale(scale)
+        self.radius *= scale
 
     @property
     def volume(self):
@@ -115,9 +125,9 @@ class ConvexSpheropolyhedron(Shape3D):
         # 4) The volume of the extruded faces, which is the surface area of
         #    each face multiplied by the rounding radius.
         v_poly = self.polyhedron.volume
-        v_sphere = (4 / 3) * np.pi * self._radius ** 3
+        v_sphere = (4 / 3) * np.pi * self.radius ** 3
         v_cyl = 0
-        v_face = self.polyhedron.surface_area * self._radius
+        v_face = self.polyhedron.surface_area * self.radius
 
         # For every pair of faces, find the dihedral angle, divide by 2*pi to
         # get the fraction of a cylinder it includes, then multiply by the edge
@@ -130,6 +140,11 @@ class ConvexSpheropolyhedron(Shape3D):
             v_cyl += (np.pi * self.radius ** 2) * (phi / (2 * np.pi)) * edge_length
 
         return v_poly + v_sphere + v_face + v_cyl
+
+    @volume.setter
+    def volume(self, value):
+        scale = (value / self.volume) ** (1 / 3)
+        self._rescale(scale)
 
     @property
     def radius(self):
@@ -155,7 +170,7 @@ class ConvexSpheropolyhedron(Shape3D):
         #    angle of the face to determine what fraction of the cylinder to
         #    include.
         a_poly = self.polyhedron.surface_area
-        a_sphere = 4 * np.pi * self._radius ** 2
+        a_sphere = 4 * np.pi * self.radius ** 2
         a_cyl = 0
 
         # For every pair of faces, find the dihedral angle, divide by 2*pi to
@@ -169,6 +184,14 @@ class ConvexSpheropolyhedron(Shape3D):
             a_cyl += (2 * np.pi * self.radius) * (phi / (2 * np.pi)) * edge_length
 
         return a_poly + a_sphere + a_cyl
+
+    @surface_area.setter
+    def surface_area(self, value):
+        if value > 0:
+            scale = np.sqrt(value / self.surface_area)
+            self._rescale(scale)
+        else:
+            raise ValueError("Surface area must be greater than zero.")
 
     def is_inside(self, points):
         """Determine whether points are contained in this spheropolyhedron.
@@ -296,8 +319,8 @@ class ConvexSpheropolyhedron(Shape3D):
         shape distinguishes this sphere from most typical circumsphere
         calculations.
         """  # noqa: E501
-        circumsphere = self._polyhedron.circumsphere_from_center
-        circumsphere.radius += self._radius
+        circumsphere = self.polyhedron.circumsphere_from_center
+        circumsphere.radius += self.radius
         return circumsphere
 
     @property
@@ -318,6 +341,6 @@ class ConvexSpheropolyhedron(Shape3D):
             >>> assert np.isclose(sphere.radius, 1.5)
 
         """
-        insphere = self._polyhedron.insphere_from_center
-        insphere.radius += self._radius
+        insphere = self.polyhedron.insphere_from_center
+        insphere.radius += self.radius
         return insphere

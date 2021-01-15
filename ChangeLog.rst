@@ -9,6 +9,12 @@ Added
 
 - Ellipse area setter and Ellipsoid volume setter.
 
+Changed
+~~~~~~~
+
+- Ensure that hypothesis-based tests don't implicitly reuse pytest fixtures.
+
+
 v0.4.0 - 2020-10-14
 -------------------
 

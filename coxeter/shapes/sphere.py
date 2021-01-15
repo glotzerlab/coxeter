@@ -36,12 +36,12 @@ class Sphere(Shape3D):
 
     def __init__(self, radius, center=(0, 0, 0)):
         self.radius = radius
-        self._center = np.asarray(center)
+        self.center = center
 
     @property
     def gsd_shape_spec(self):
         """dict: Get a :ref:`complete GSD specification <shapes>`."""  # noqa: D401
-        return {"type": "Sphere", "diameter": 2 * self._radius}
+        return {"type": "Sphere", "diameter": 2 * self.radius}
 
     @property
     def center(self):
@@ -64,6 +64,15 @@ class Sphere(Shape3D):
             self._radius = value
         else:
             raise ValueError("Radius must be greater than zero.")
+
+    def _rescale(self, scale):
+        """Multiply length scale.
+
+        Args:
+            scale (float):
+                Scale factor.
+        """
+        self.radius *= scale
 
     @property
     def volume(self):
@@ -91,7 +100,10 @@ class Sphere(Shape3D):
 
     @property
     def inertia_tensor(self):
-        """float: Get the inertia tensor. Assumes constant density of 1."""
+        """:math:`(3, 3)` :class:`numpy.ndarray`: Get the inertia tensor.
+
+        Assumes a constant density of 1.
+        """
         vol = self.volume
         i_xx = vol * 2 / 5 * self.radius ** 2
         inertia_tensor = np.diag([i_xx, i_xx, i_xx])
