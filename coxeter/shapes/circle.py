@@ -174,4 +174,4 @@ class Circle(Shape2D):
         Returns:
             kernel
         """
-        return value * 0.0 + self.radius
+        return np.ones_like(value) * self.radius

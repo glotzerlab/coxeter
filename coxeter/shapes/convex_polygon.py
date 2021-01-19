@@ -199,8 +199,7 @@ class ConvexPolygon(Polygon):
 
         # Make the kernel:
 
-        kernel = 0 * theta
-        angle_range = angle_range
+        kernel = np.zeros_like(theta)
 
         for i in range(len(angle_range)):
             if slopes[i] == 0:
