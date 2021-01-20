@@ -60,7 +60,13 @@ All code should of course also follow the principles in `PEP 20 <https://www.pyt
 
 .. tip::
 
-    Developers should format their code using black and isort locally using the commands:
+    Developers should format their code using black and isort locally. Running the pre-commit hooks will take care of this:
+
+    .. code-block:: bash
+
+        pre-commit run
+
+    Alternatively, the tools can be run manually using the commands:
 
     .. code-block:: bash
 

@@ -44,7 +44,7 @@ def main():
 
     # Process the input
 
-    pstrings = list()
+    pstrings = []
     instring = sys.stdin.read()
     # Strip out quotes
     instring = instring.replace('"', "")
