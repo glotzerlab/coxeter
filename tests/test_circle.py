@@ -118,3 +118,11 @@ def test_invalid_radius_setter():
 def test_is_inside(radius, center):
     circle = Circle(1, center)
     assert circle.is_inside([radius, 0, 0] + center).squeeze() == (radius <= 1)
+
+
+def test_inertia_tensor():
+    """Test the inertia tensor calculation."""
+    circle = Circle(1)
+    circle.center = (0, 0, 0)
+    assert np.sum(circle.inertia_tensor > 1e-6) == 1
+    assert circle.inertia_tensor[2, 2] == np.pi / 2

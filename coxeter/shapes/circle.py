@@ -152,6 +152,11 @@ class Circle(Shape2D):
         i_xy += area * self.center[0] * self.center[1]
         return i_x, i_y, i_xy
 
+    @property
+    def inertia_tensor(self):
+        r""":math:`(3, 3)` :class:`numpy.ndarray`: Get the inertia tensor."""
+        return np.diag([0, 0, self.polar_moment_inertia])
+
     def is_inside(self, points):
         """Determine whether a set of points are contained in this circle.
 
