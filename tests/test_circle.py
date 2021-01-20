@@ -109,3 +109,12 @@ def test_invalid_radius_setter():
     circle = Circle(1)
     with pytest.raises(ValueError):
         circle.radius = -1
+
+
+@given(
+    floats(0.1, 10),
+    arrays(np.float64, (3,), elements=floats(-10, 10, width=64), unique=True),
+)
+def test_is_inside(radius, center):
+    circle = Circle(1, center)
+    assert circle.is_inside([radius, 0, 0] + center).squeeze() == (radius <= 1)
