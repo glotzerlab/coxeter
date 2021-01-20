@@ -229,3 +229,13 @@ def test_perimeter_setter(unit_rounded_square):
         assert unit_rounded_square.radius == approx(1.0)
 
     testfun()
+
+
+def test_inertia(unit_rounded_square):
+    """None of the inertia calculations are implemented for this class."""
+    with pytest.raises(NotImplementedError):
+        unit_rounded_square.planar_moments_inertia
+    with pytest.raises(NotImplementedError):
+        unit_rounded_square.polar_moment_inertia
+    with pytest.raises(NotImplementedError):
+        unit_rounded_square.inertia_tensor
