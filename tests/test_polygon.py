@@ -8,7 +8,7 @@ from hypothesis.strategies import floats
 from pytest import approx
 from scipy.spatial import ConvexHull
 
-from conftest import EllipseSurfaceStrategy
+from conftest import assert_shape_kernel_2d, EllipseSurfaceStrategy
 from coxeter.families import RegularNGonFamily
 from coxeter.shapes.convex_polygon import ConvexPolygon
 from coxeter.shapes.polygon import Polygon
@@ -397,14 +397,7 @@ def test_convex_polygon_shape_kernel_unit_area_ngon(num_sides):
     theta = np.linspace(0, 2 * np.pi, 1000000)
     shape = RegularNGonFamily.get_shape(num_sides)
     kernel = shape.shape_kernel(theta)
-    xy = np.array([kernel * np.cos(theta), kernel * np.sin(theta)])
-    xy = np.transpose(xy)
-    kern_shape = ConvexHull(xy)
-
-    # Test the volume
-    assert np.isclose(shape.area, kern_shape.volume)
-    # Test the perimeter
-    assert np.isclose(shape.perimeter, kern_shape.area)
+    assert_shape_kernel_2d(shape, theta, kernel)
 
 
 @pytest.mark.parametrize("num_sides", range(3, 10))
@@ -417,13 +410,7 @@ def test_nonregular_convex_polygon_shape_kernel_unit_area_ngon(num_sides):
     verts[0, 1] = verts[0, 1] + 0.2
     shape = ConvexPolygon(verts)
     kernel = shape.shape_kernel(theta)
-    xy = np.array([kernel * np.cos(theta), kernel * np.sin(theta)])
-    xy = np.transpose(xy)
-    kern_shape = ConvexHull(xy)
-    # Test the volume
-    assert np.isclose(shape.area, kern_shape.volume)
-    # Test the perimeter
-    assert np.isclose(shape.perimeter, kern_shape.area)
+    assert_shape_kernel_2d(shape, theta, kernel)
 
 
 def test_kernel_values_for_square():
@@ -432,13 +419,7 @@ def test_kernel_values_for_square():
     theta = np.linspace(0, 2 * np.pi, 1000000)
     shape = ConvexPolygon(verts)
     kernel = shape.shape_kernel(theta)
-    xy = np.array([kernel * np.cos(theta), kernel * np.sin(theta)])
-    xy = np.transpose(xy)
-    kern_shape = ConvexHull(xy)
-    # Test the volume
-    assert np.isclose(shape.area, kern_shape.volume)
-    # Test the perimeter
-    assert np.isclose(shape.perimeter, kern_shape.area)
+    assert_shape_kernel_2d(shape, theta, kernel)
 
 
 def test_kernel_values_for_square_triangle():
@@ -447,10 +428,4 @@ def test_kernel_values_for_square_triangle():
     theta = np.linspace(0, 2 * np.pi, 1000000)
     shape = ConvexPolygon(verts)
     kernel = shape.shape_kernel(theta)
-    xy = np.array([kernel * np.cos(theta), kernel * np.sin(theta)])
-    xy = np.transpose(xy)
-    kern_shape = ConvexHull(xy)
-    # Test the volume
-    assert np.isclose(shape.area, kern_shape.volume)
-    # Test the perimeter
-    assert np.isclose(shape.perimeter, kern_shape.area)
+    assert_shape_kernel_2d(shape, theta, kernel)

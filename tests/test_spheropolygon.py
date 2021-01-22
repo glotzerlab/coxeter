@@ -8,7 +8,7 @@ from hypothesis.strategies import floats, integers, tuples
 from pytest import approx
 from scipy.spatial import ConvexHull
 
-from conftest import EllipseSurfaceStrategy
+from conftest import assert_shape_kernel_2d, EllipseSurfaceStrategy
 from coxeter.families import RegularNGonFamily
 from coxeter.shapes import ConvexSpheropolygon
 
@@ -241,8 +241,4 @@ def test_shape_kernel_regular_ngons(num_sides, rounding_radius, vertex_shift):
     verts += np.asarray(vertex_shift)
     shape = ConvexSpheropolygon(verts, rounding_radius)
     kernel = shape.shape_kernel(theta)
-    xy = np.array([kernel * np.cos(theta), kernel * np.sin(theta)])
-    xy = np.transpose(xy)
-    hull_shape = ConvexHull(xy)
-    assert np.isclose(shape.area, hull_shape.volume)
-    assert np.isclose(shape.perimeter, hull_shape.area)
+    assert_shape_kernel_2d(shape, theta, kernel)

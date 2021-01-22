@@ -1,6 +1,7 @@
 import numpy as np
 import pytest
 from hypothesis.strategies import builds, floats, integers
+from scipy.spatial import ConvexHull
 
 from coxeter.shapes import ConvexPolyhedron, ConvexSpheropolyhedron, Polyhedron
 
@@ -118,3 +119,17 @@ EllipsoidSurfaceStrategy = builds(
 EllipseSurfaceStrategy = builds(
     points_from_ellipsoid_surface, floats(0.1, 5), floats(0.1, 5), n=integers(5, 15)
 )
+
+
+def assert_shape_kernel_2d(shape, angles, computed_kernel):
+    """Check correctness of 2d shape kernel implementations."""
+    xy = np.array([computed_kernel * np.cos(angles),
+                   computed_kernel * np.sin(angles)])
+    xy = np.transpose(xy)
+    hull = ConvexHull(xy)
+
+    # Test the area
+    assert np.isclose(shape.area, hull.volume)
+
+    # Test the circumference
+    assert np.isclose(shape.perimeter, hull.area)
