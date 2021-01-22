@@ -88,6 +88,27 @@ class Shape(ABC):
             "The form factor calculation is not implemented for this shape."
         )
 
+    def distance_to_surface(self, angles):
+        r"""The distance to the surface of the shape at the given angles.
+
+        Gets the distance between the center of the shape and its surface at
+        each of the angles provided. For circles, this is always the radius, no
+        matter where the circle is centered.
+
+        Args:
+            angles (:math:`(N,)` :class:`numpy.ndarray`):
+                Angles between :math:`0` and :math:`2 \pi` over which to
+                calculate the distances.
+
+        Returns:
+            :math:`(N,)` :class:`numpy.ndarray`:
+                An array of distances from the center of the shape to its surface
+                at each of the given angles.
+        """
+        raise NotImplementedError(
+            "The distance to surface calculation is not implemented for this shape."
+        )
+
     def plot(self):
         """Plot the shape."""
         raise NotImplementedError("Plotting is not implemented for this shape.")

@@ -5,7 +5,7 @@ from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats
 from pytest import approx
 
-from conftest import assert_shape_kernel_2d
+from conftest import assert_distance_to_surface_2d
 from coxeter.shapes.circle import Circle
 
 
@@ -113,9 +113,9 @@ def test_invalid_radius_setter():
 
 
 @given(floats(0.1, 10))
-def test_shape_kernel(r):
-    """Test calculating the shape kernel."""
+def test_distance_to_surface(r):
+    """Test calculating the shape distance."""
     theta = np.linspace(0, 2 * np.pi, 10000)
     circle = Circle(r)
-    kernel = circle.shape_kernel(theta)
-    assert_shape_kernel_2d(circle, theta, kernel)
+    distance = circle.distance_to_surface(theta)
+    assert_distance_to_surface_2d(circle, theta, distance)

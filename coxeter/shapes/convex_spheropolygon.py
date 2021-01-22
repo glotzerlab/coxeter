@@ -227,19 +227,13 @@ class ConvexSpheropolygon(Shape2D):
             angle += 2 * np.pi
         return angle
 
-    def shape_kernel(self, angles):
-        """Shape Kernel.
+    def distance_to_surface(self, angles):
+        """Distance to the surface of this shape.
 
-        This algorithm assumes the vertices are ordered counterclockwise.
+        This algorithm assumes vertices are ordered counterclockwise.
 
-        Args:
-            angles (:math:`(N,)` :class:`numpy.ndarray`):
-                Angles between :math:`0` and :math:`2 \\pi` over which to
-                calculate the shape kernel.
-
-        Returns:
-            :math:`(N,)` :class:`numpy.ndarray`: An array of distances from the
-            center of the shape to its surface at each of the given angles.
+        For more general information about this calculation, see
+        `Shape.distance_to_surface`.
         """
         num_verts = len(self._polygon.vertices)
         verts = self._polygon.vertices[:, :2]
@@ -274,7 +268,7 @@ class ConvexSpheropolygon(Shape2D):
             )
 
         # compute shape kernel for the new set of vertices
-        kernel = ConvexPolygon(new_verts).shape_kernel(angles)
+        kernel = ConvexPolygon(new_verts).distance_to_surface(angles)
 
         # get the shape kernel for this shape by adjusting indices of shape kernel
         # for the new vertices

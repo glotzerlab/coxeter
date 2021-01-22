@@ -5,7 +5,7 @@ from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats
 from pytest import approx
 
-from conftest import assert_shape_kernel_2d
+from conftest import assert_distance_to_surface_2d
 from coxeter.shapes.ellipse import Ellipse
 
 
@@ -147,9 +147,9 @@ def test_center():
 
 
 @given(floats(0.1, 10), floats(0.1, 10))
-def test_shape_kernel(a, b):
-    """Test consistent volume and area for shape kernel of an ellipse."""
+def test_distance_to_surface(a, b):
+    """Test consistent volume and area for shape distance of an ellipse."""
     theta = np.linspace(0, 2 * np.pi, 50000)
     ellipse = Ellipse(a, b)
-    kernel = ellipse.shape_kernel(theta)
-    assert_shape_kernel_2d(ellipse, theta, kernel)
+    distance = ellipse.distance_to_surface(theta)
+    assert_distance_to_surface_2d(ellipse, theta, distance)

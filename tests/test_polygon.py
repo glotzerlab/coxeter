@@ -8,7 +8,7 @@ from hypothesis.strategies import floats
 from pytest import approx
 from scipy.spatial import ConvexHull
 
-from conftest import assert_shape_kernel_2d, EllipseSurfaceStrategy
+from conftest import assert_distance_to_surface_2d, EllipseSurfaceStrategy
 from coxeter.families import RegularNGonFamily
 from coxeter.shapes.convex_polygon import ConvexPolygon
 from coxeter.shapes.polygon import Polygon
@@ -392,40 +392,40 @@ def test_set_perimeter(value):
 
 
 @pytest.mark.parametrize("num_sides", range(3, 10))
-def test_convex_polygon_shape_kernel_unit_area_ngon(num_sides):
-    """Check shape kernel consistency with perimeter and area."""
+def test_convex_polygon_distance_to_surface_unit_area_ngon(num_sides):
+    """Check shape distance consistency with perimeter and area."""
     theta = np.linspace(0, 2 * np.pi, 1000000)
     shape = RegularNGonFamily.get_shape(num_sides)
-    kernel = shape.shape_kernel(theta)
-    assert_shape_kernel_2d(shape, theta, kernel)
+    distance = shape.distance_to_surface(theta)
+    assert_distance_to_surface_2d(shape, theta, distance)
 
 
 @pytest.mark.parametrize("num_sides", range(3, 10))
-def test_nonregular_convex_polygon_shape_kernel_unit_area_ngon(num_sides):
-    """Check shape kernel consistency with perimeter and area."""
+def test_nonregular_convex_polygon_distance_to_surface_unit_area_ngon(num_sides):
+    """Check shape distance consistency with perimeter and area."""
     theta = np.linspace(0, 2 * np.pi, 1000000)
     shape = RegularNGonFamily.get_shape(num_sides)
     verts = shape.vertices[:, :2]
     # shift making shape a nonregular polygon
     verts[0, 1] = verts[0, 1] + 0.2
     shape = ConvexPolygon(verts)
-    kernel = shape.shape_kernel(theta)
-    assert_shape_kernel_2d(shape, theta, kernel)
+    distance = shape.distance_to_surface(theta)
+    assert_distance_to_surface_2d(shape, theta, distance)
 
 
-def test_kernel_values_for_square():
-    """Check shape kernel of a square with infinite slopes."""
+def test_distance_values_for_square():
+    """Check shape distance of a square with infinite slopes."""
     verts = np.array([[1, 1], [-1, 1], [-1, -1], [1, -1]])
     theta = np.linspace(0, 2 * np.pi, 1000000)
     shape = ConvexPolygon(verts)
-    kernel = shape.shape_kernel(theta)
-    assert_shape_kernel_2d(shape, theta, kernel)
+    distance = shape.distance_to_surface(theta)
+    assert_distance_to_surface_2d(shape, theta, distance)
 
 
-def test_kernel_values_for_square_triangle():
-    """Check shape kernel of a triangle with infinite slopes."""
+def test_distance_values_for_square_triangle():
+    """Check shape distance of a triangle with infinite slopes."""
     verts = np.array([[1, 1], [-1, 0], [1, -1]])
     theta = np.linspace(0, 2 * np.pi, 1000000)
     shape = ConvexPolygon(verts)
-    kernel = shape.shape_kernel(theta)
-    assert_shape_kernel_2d(shape, theta, kernel)
+    distance = shape.distance_to_surface(theta)
+    assert_distance_to_surface_2d(shape, theta, distance)
