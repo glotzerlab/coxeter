@@ -160,18 +160,18 @@ class Circle(Shape2D):
         """
         return 1
 
-    def shape_kernel(self, value):
-        """Shape kernel from 0 to 2pi.
+    def shape_kernel(self, angles):
+        """Shape Kernel.
 
-        Kernel is simply the radius for a circle so we
-        simply replace array elements with the radius.
+        The shape kernel for a circle is simply the radius.
 
         Args:
-            value (array):
-                Points over which to calculate the shape kernel
-                which can only be from negative 0 to 2pi.
+            angles (:math:`(N,)` :class:`numpy.ndarray`):
+                Angles between :math:`0` and :math:`2 \\pi` over which to
+                calculate the shape kernel.
 
         Returns:
-            kernel
+            :math:`(N,)` :class:`numpy.ndarray`: An array of distances from the
+            center of the shape to its surface at each of the given angles.
         """
         return np.ones_like(value) * self.radius

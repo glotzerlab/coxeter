@@ -187,21 +187,19 @@ class Ellipse(Shape2D):
         i_xy += area * self.center[0] * self.center[1]
         return i_x, i_y, i_xy
 
-    def shape_kernel(self, value):
-        r"""Get the shape kernel.
+    def shape_kernel(self, angles):
+        """Shape Kernel.
 
-        Takes an array of values in terms of angle and
-        calculates the shape kernel for the given ellipse
-        at that point.
+        The shape kernel for an ellipse.
 
         Args:
-            value (array):
-                The array of theta that the shape kernel should be
-                calculated at.
+            angles (:math:`(N,)` :class:`numpy.ndarray`):
+                Angles between :math:`0` and :math:`2 \\pi` over which to
+                calculate the shape kernel.
 
         Returns:
-            kernel (array):
-
+            :math:`(N,)` :class:`numpy.ndarray`: An array of distances from the
+            center of the shape to its surface at each of the given angles.
         """
         return np.sqrt(
             (self.a * self.a + self.b * self.b)

@@ -127,19 +127,20 @@ class ConvexPolygon(Polygon):
         radius = np.min(distances)
         return Circle(radius, self.center)
 
-    def shape_kernel(self, value):
-        """Shape kernel from 0 to 2pi.
+    def shape_kernel(self, angles):
+        """Shape Kernel.
 
-        This algorithm assumes the vertices are ordered
-        counterclockwise and that they start in the first quadrant.
+        This algorithm assumes the vertices are ordered counterclockwise and
+        that they start in the first quadrant.
 
         Args:
-            value (array):
-                Points over which to calculate the shape kernel
-                which can only be from negative 0 to 2pi.
+            angles (:math:`(N,)` :class:`numpy.ndarray`):
+                Angles between :math:`0` and :math:`2 \\pi` over which to
+                calculate the shape kernel.
 
         Returns:
-            kernel
+            :math:`(N,)` :class:`numpy.ndarray`: An array of distances from the
+            center of the shape to its surface at each of the given angles.
         """
         verts = self.vertices[:, :2]
         theta = value
