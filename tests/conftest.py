@@ -123,8 +123,9 @@ EllipseSurfaceStrategy = builds(
 
 def assert_distance_to_surface_2d(shape, angles, computed_distance):
     """Check correctness of 2d shape distance implementations."""
-    xy = np.array([computed_distance * np.cos(angles),
-                   computed_distance * np.sin(angles)])
+    xy = np.array(
+        [computed_distance * np.cos(angles), computed_distance * np.sin(angles)]
+    )
     xy = np.transpose(xy)
     hull = ConvexHull(xy)
 

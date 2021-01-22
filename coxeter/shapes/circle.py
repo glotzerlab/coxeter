@@ -160,6 +160,6 @@ class Circle(Shape2D):
         """
         return 1
 
-    def distance_to_surface(self, angles):
+    def distance_to_surface(self, angles):  # noqa: D102
         # use parent docstring
         return np.ones_like(angles) * self.radius

@@ -89,7 +89,7 @@ class Shape(ABC):
         )
 
     def distance_to_surface(self, angles):
-        r"""The distance to the surface of the shape at the given angles.
+        r"""Compute the distance to the surface of the shape at the given angles.
 
         Gets the distance between the center of the shape and its surface at
         each of the angles provided. For circles, this is always the radius, no

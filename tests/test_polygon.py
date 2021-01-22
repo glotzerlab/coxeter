@@ -8,7 +8,7 @@ from hypothesis.strategies import floats
 from pytest import approx
 from scipy.spatial import ConvexHull
 
-from conftest import assert_distance_to_surface_2d, EllipseSurfaceStrategy
+from conftest import EllipseSurfaceStrategy, assert_distance_to_surface_2d
 from coxeter.families import RegularNGonFamily
 from coxeter.shapes.convex_polygon import ConvexPolygon
 from coxeter.shapes.polygon import Polygon
