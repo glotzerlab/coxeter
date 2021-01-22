@@ -205,8 +205,8 @@ class Ellipse(Shape2D):
             (self.a * self.a + self.b * self.b)
             / (
                 1
-                + (self.a * self.a) / (self.b * self.b) * np.sin(value) * np.sin(value)
-                + (self.b * self.b) / (self.a * self.a) * np.cos(value) * np.cos(value)
+                + (self.a * self.a) / (self.b * self.b) * np.sin(angles) * np.sin(angles)
+                + (self.b * self.b) / (self.a * self.a) * np.cos(angles) * np.cos(angles)
             )
         )
 

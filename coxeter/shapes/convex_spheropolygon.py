@@ -274,7 +274,7 @@ class ConvexSpheropolygon(Shape2D):
             )
 
         # compute shape kernel for the new set of vertices
-        kernel = ConvexPolygon(new_verts).shape_kernel(value)
+        kernel = ConvexPolygon(new_verts).shape_kernel(angles)
 
         # get the shape kernel for this shape by adjusting indices of shape kernel
         # for the new vertices
@@ -282,14 +282,14 @@ class ConvexSpheropolygon(Shape2D):
         for i in range(len(angle_ranges)):
             theta1, theta2 = angle_ranges[i]
             if theta2 < theta1:  # case the angle range crosses the 2pi boundary
-                indices = np.where((value >= theta1) | (value <= theta2))
+                indices = np.where((angles >= theta1) | (angles <= theta2))
             else:
-                indices = np.where((value >= theta1) & (value <= theta2))
+                indices = np.where((angles >= theta1) & (angles <= theta2))
             v = verts[i]
             norm_v = np.linalg.norm(v)
             phi = self._get_polar_angle(v)
             a = 1
-            b = -2 * norm_v * np.cos(value[indices] - phi)
+            b = -2 * norm_v * np.cos(angles[indices] - phi)
             c = norm_v ** 2 - self.radius ** 2
             new_kernel[indices] = (-b + np.sqrt(b ** 2 - 4 * a * c)) / (2 * a)
 

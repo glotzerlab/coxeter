@@ -174,4 +174,4 @@ class Circle(Shape2D):
             :math:`(N,)` :class:`numpy.ndarray`: An array of distances from the
             center of the shape to its surface at each of the given angles.
         """
-        return np.ones_like(value) * self.radius
+        return np.ones_like(angles) * self.radius

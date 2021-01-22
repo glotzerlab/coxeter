@@ -143,7 +143,7 @@ class ConvexPolygon(Polygon):
             center of the shape to its surface at each of the given angles.
         """
         verts = self.vertices[:, :2]
-        theta = value
+        theta = angles
         verts[:, 0] = verts[:, 0] - np.average(verts[:, 0])
         verts[:, 1] = verts[:, 1] - np.average(verts[:, 1])
         theta_component = np.arctan(verts[:, 1] / verts[:, 0])
