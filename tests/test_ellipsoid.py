@@ -5,7 +5,7 @@ from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats
 from pytest import approx
 
-from conftest import sphere_isclose
+from conftest import _test_get_set_minimal_bounding_sphere_radius, sphere_isclose
 from coxeter.shapes import Ellipsoid, Sphere
 from coxeter.shapes.utils import translate_inertia_tensor
 
@@ -200,3 +200,13 @@ def test_minimal_centered_bounding_sphere(a, b, c, center):
     ellipsoid = Ellipsoid(a, b, c, center)
     bounding_sphere = ellipsoid.minimal_centered_bounding_sphere
     sphere_isclose(bounding_sphere, Sphere(max(a, b, c), center))
+
+
+@given(
+    floats(0.1, 1000),
+    floats(0.1, 1000),
+    floats(0.1, 1000),
+    arrays(np.float64, (3,), elements=floats(-10, 10, width=64), unique=True),
+)
+def test_get_set_minimal_bounding_circle_radius(a, b, c, center):
+    _test_get_set_minimal_bounding_sphere_radius(Ellipsoid(a, b, c, center))

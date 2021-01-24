@@ -1,10 +1,14 @@
 import numpy as np
 import pytest
-from hypothesis import given
+from hypothesis import given, settings
 from hypothesis.strategies import floats
 from pytest import approx
 
-from conftest import make_sphero_cube, platonic_solids
+from conftest import (
+    _test_get_set_minimal_bounding_sphere_radius,
+    make_sphero_cube,
+    platonic_solids,
+)
 from coxeter.shapes import ConvexSpheropolyhedron
 
 
@@ -133,3 +137,12 @@ def test_bounding_sphere_platonic(poly):
 
         bounding_sphere = spheropoly.minimal_bounding_sphere
         assert np.allclose(rmax_sq, bounding_sphere.radius ** 2, rtol=1e-4)
+
+
+@settings(deadline=500)
+@given(floats(0.1, 1))
+def test_get_set_minimal_bounding_sphere_radius(r):
+    for poly in platonic_solids():
+        _test_get_set_minimal_bounding_sphere_radius(
+            ConvexSpheropolyhedron(poly.vertices, r)
+        )

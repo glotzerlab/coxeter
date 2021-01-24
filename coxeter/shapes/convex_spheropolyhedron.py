@@ -349,5 +349,5 @@ class ConvexSpheropolyhedron(Shape3D):
     @property
     def minimal_bounding_sphere(self):
         """:class:`~.Sphere`: Get the minimal bounding sphere."""
-        polygon_sphere = self.polygon.minimal_bounding_sphere
-        return Sphere(polygon_sphere.radius + self.radius, polygon_sphere.center)
+        polyhedron_sphere = self.polyhedron.minimal_bounding_sphere
+        return Sphere(polyhedron_sphere.radius + self.radius, polyhedron_sphere.center)

@@ -8,7 +8,11 @@ from hypothesis.strategies import floats
 from pytest import approx
 from scipy.spatial import ConvexHull
 
-from conftest import EllipseSurfaceStrategy, sphere_isclose
+from conftest import (
+    EllipseSurfaceStrategy,
+    _test_get_set_minimal_bounding_sphere_radius,
+    sphere_isclose,
+)
 from coxeter.families import RegularNGonFamily
 from coxeter.shapes.convex_polygon import ConvexPolygon
 from coxeter.shapes.polygon import Polygon
@@ -392,3 +396,9 @@ def test_set_perimeter(value):
         RegularNGonFamily.get_shape(4).vertices
         * (value / RegularNGonFamily.get_shape(4).perimeter)
     )
+
+
+def test_get_set_minimal_bounding_circle_radius():
+    family = RegularNGonFamily()
+    for i in range(3, 10):
+        _test_get_set_minimal_bounding_sphere_radius(family.get_shape(i))

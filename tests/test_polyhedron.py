@@ -11,6 +11,7 @@ from scipy.spatial import ConvexHull
 
 from conftest import (
     EllipsoidSurfaceStrategy,
+    _test_get_set_minimal_bounding_sphere_radius,
     get_oriented_cube_faces,
     get_oriented_cube_normals,
     platonic_solids,
@@ -522,3 +523,8 @@ def test_form_factor(cube):
         ],
         atol=1e-7,
     )
+
+
+def test_get_set_minimal_bounding_sphere_radius():
+    for poly in platonic_solids():
+        _test_get_set_minimal_bounding_sphere_radius(poly)

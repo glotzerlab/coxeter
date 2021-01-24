@@ -3,7 +3,7 @@ import pytest
 from hypothesis.strategies import builds, floats, integers
 
 from coxeter.families import PlatonicFamily
-from coxeter.shapes import ConvexPolyhedron, ConvexSpheropolyhedron, Polyhedron
+from coxeter.shapes import ConvexPolyhedron, ConvexSpheropolyhedron, Polyhedron, Shape2D
 
 
 # Need to declare this outside the fixture so that it can be used in multiple
@@ -133,5 +133,25 @@ def sphere_isclose(c1, c2, *args, **kwargs):
 
 
 def platonic_solids():
+    """Generate platonic solids."""
     for shape_name in PlatonicFamily.data:
         yield PlatonicFamily.get_shape(shape_name)
+
+
+def _test_get_set_minimal_bounding_sphere_radius(shape):
+    """Test getting and setting the minimal bounding circle radius.
+
+    This function will work for any shape in two or three dimensions based on
+    the generic base class APIs, so it can be called in other pytest tests.
+    """
+    if isinstance(shape, Shape2D):
+        attr = "minimal_bounding_circle"
+    else:
+        attr = "minimal_bounding_sphere"
+
+    bounding_sphere = getattr(shape, attr)
+    bounding_sphere_radius = getattr(shape, attr + "_radius")
+
+    assert np.isclose(bounding_sphere_radius, bounding_sphere.radius)
+    setattr(shape, attr + "_radius", bounding_sphere_radius * 2)
+    assert np.isclose(getattr(shape, attr).radius, bounding_sphere_radius * 2)

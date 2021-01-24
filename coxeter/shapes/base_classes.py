@@ -187,6 +187,18 @@ class Shape2D(Shape):
             "this shape."
         )
 
+    @property
+    def minimal_bounding_circle_radius(self):
+        """float: Get or set the radius of the minimal bounding circle.
+
+        See :meth:`~.minimal_bounding_circle` for more information.
+        """
+        return self.minimal_bounding_circle.radius
+
+    @minimal_bounding_circle_radius.setter
+    def minimal_bounding_circle_radius(self, value):
+        self._rescale(value / self.minimal_bounding_circle_radius)
+
 
 class Shape3D(Shape):
     """An abstract representation of a shape in 3 dimensions."""
@@ -272,3 +284,15 @@ class Shape3D(Shape):
             "The minimal bounding sphere calculation is not implemented for "
             "this shape."
         )
+
+    @property
+    def minimal_bounding_sphere_radius(self):
+        """float: Get or set the radius of the minimal bounding sphere.
+
+        See :meth:`~.minimal_bounding_sphere` for more information.
+        """
+        return self.minimal_bounding_sphere.radius
+
+    @minimal_bounding_sphere_radius.setter
+    def minimal_bounding_sphere_radius(self, value):
+        self._rescale(value / self.minimal_bounding_sphere_radius)
