@@ -1,5 +1,7 @@
 """Defines a polyhedron."""
 
+import warnings
+
 import numpy as np
 import rowan
 from scipy.sparse.csgraph import connected_components
@@ -500,6 +502,17 @@ class Polyhedron(Shape3D):
 
     @property
     def bounding_sphere(self):
+        """:class:`~.Sphere`: Get the polyhedron's bounding sphere."""
+        warnings.warn(
+            "The bounding_sphere property is deprecated, use "
+            "minimal_bounding_sphere instead",
+            DeprecationWarning,
+        )
+
+        return self.minimal_bounding_sphere
+
+    @property
+    def minimal_bounding_sphere(self):
         """:class:`~.Sphere`: Get the polyhedron's bounding sphere."""
         if not MINIBALL:
             raise ImportError(

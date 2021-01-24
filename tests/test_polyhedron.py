@@ -13,6 +13,7 @@ from conftest import (
     EllipsoidSurfaceStrategy,
     get_oriented_cube_faces,
     get_oriented_cube_normals,
+    sphere_isclose,
 )
 from coxeter.families import DOI_SHAPE_REPOSITORIES, PlatonicFamily
 from coxeter.shapes.convex_polyhedron import ConvexPolyhedron
@@ -340,7 +341,11 @@ def test_bounding_sphere_platonic(poly):
     poly.center = [0, 0, 0]
     r2 = np.sum(poly.vertices ** 2, axis=1)
 
-    assert np.allclose(r2, poly.bounding_sphere.radius ** 2, rtol=1e-4)
+    bounding_sphere = poly.minimal_bounding_sphere
+    assert np.allclose(r2, bounding_sphere.radius ** 2, rtol=1e-4)
+
+    with pytest.deprecated_call():
+        assert sphere_isclose(bounding_sphere, poly.bounding_sphere)
 
 
 def test_inside_boundaries(convex_cube):
