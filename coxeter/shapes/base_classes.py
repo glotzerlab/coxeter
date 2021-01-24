@@ -156,15 +156,11 @@ class Shape2D(Shape):
 
     @property
     def minimal_centered_bounding_circle(self):
-        """:class:`~.Circle`: Get a bounding circle sharing the center of this shape.
+        """:class:`~.Circle`: Get the smallest bounding concentric circle.
 
-        A `bounding circle <https://en.wikipedia.org/wiki/Polar_moment_of_inertia>`__
-        of a collection of points in :math:`n` dimensions is a circle containing
-        all of the points. There are an infinite set of possible bounding circles
-        for a shape (since any circle that entirely contains a bounding circle is
-        also a bounding circle), so additional constraints must be imposed to
-        define a unique circle. This property provides the smallest bounding circle
-        of a shape whose center coincides with the center of the shape.
+        This property gives the smallest
+        `bounding circle <https://en.wikipedia.org/wiki/Bounding_sphere>`__
+        whose center coincides with the center of the shape.
         """
         # TODO: The definition of center in coxeter is currently under
         # discussion and implementations of this property may have to be
@@ -177,15 +173,14 @@ class Shape2D(Shape):
 
     @property
     def minimal_bounding_circle(self):
-        """:class:`~.Circle`: Get a bounding circle sharing the center of this shape.
+        """:class:`~.Circle`: Get the smallset bounding circle.
 
-        A `bounding circle <https://en.wikipedia.org/wiki/Polar_moment_of_inertia>`__
-        of a collection of points in :math:`n` dimensions is a circle containing
-        all of the points. There are an infinite set of possible bounding circles
-        for a shape (since any circle that entirely contains a bounding circle is
-        also a bounding circle), so additional constraints must be imposed to
-        define a unique circle. This property provides the smallest bounding circle
-        of a shape.
+        A `bounding circle <https://en.wikipedia.org/wiki/Bounding_sphere>`__
+        in two dimensions is a circle containing all of the points. There are
+        an infinite set of possible bounding circles for a shape (since any
+        circle that entirely contains a bounding circle is also a bounding
+        circle), so additional constraints must be imposed to define a unique
+        circle. This property provides the smallest bounding circle of a shape.
         """
         raise NotImplementedError(
             "The minimal bounding circle calculation is not implemented for "

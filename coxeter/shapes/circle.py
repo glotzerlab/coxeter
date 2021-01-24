@@ -159,3 +159,16 @@ class Circle(Shape2D):
         This is 1 by definition for circles.
         """
         return 1
+
+    def __eq__(self, other):
+        return self.radius == other.radius and self.center == other.center
+
+    @property
+    def minimal_centered_bounding_circle(self):
+        """:class:`~.Circle`: Get the smallest bounding concentric circle."""
+        return type(self)(self.radius, self.center)
+
+    @property
+    def minimal_bounding_circle(self):
+        """:class:`~.Circle`: Get the smallest bounding circle."""
+        return type(self)(self.radius, self.center)

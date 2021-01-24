@@ -109,3 +109,21 @@ def test_invalid_radius_setter():
     circle = Circle(1)
     with pytest.raises(ValueError):
         circle.radius = -1
+
+
+@given(
+    floats(0.1, 1000),
+    arrays(np.float64, (3,), elements=floats(-10, 10, width=64), unique=True),
+)
+def test_minimal_bounding_circle(r, center):
+    circ = Circle(r, center)
+    circ.minimal_bounding_circle == circ
+
+
+@given(
+    floats(0.1, 1000),
+    arrays(np.float64, (3,), elements=floats(-10, 10, width=64), unique=True),
+)
+def test_minimal_centered_bounding_circle(r, center):
+    circ = Circle(r, center)
+    circ.minimal_bounding_circle == circ
