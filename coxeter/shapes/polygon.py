@@ -1,5 +1,7 @@
 """Defines a polygon."""
 
+import warnings
+
 import numpy as np
 import rowan
 
@@ -488,6 +490,17 @@ class Polygon(Shape2D):
 
     @property
     def bounding_circle(self):
+        """:class:`~.Circle`: Get the minimal bounding circle."""
+        warnings.warn(
+            "The bounding_circle property is deprecated, use "
+            "minimal_bounding_circle instead",
+            DeprecationWarning,
+        )
+
+        return self.minimal_bounding_circle
+
+    @property
+    def minimal_bounding_circle(self):
         """:class:`~.Circle`: Get the minimal bounding circle."""
         if not MINIBALL:
             raise ImportError(

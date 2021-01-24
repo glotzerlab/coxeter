@@ -118,3 +118,13 @@ EllipsoidSurfaceStrategy = builds(
 EllipseSurfaceStrategy = builds(
     points_from_ellipsoid_surface, floats(0.1, 5), floats(0.1, 5), n=integers(5, 15)
 )
+
+
+def circle_isclose(c1, c2, *args, **kwargs):
+    """Check if two circles are almost equal.
+
+    All args and kwargs are forwarded to np.isclose and np.allclose.
+    """
+    return np.isclose(c1.radius, c2.radius, *args, **kwargs) and np.allclose(
+        c1.center, c2.center, *args, **kwargs
+    )

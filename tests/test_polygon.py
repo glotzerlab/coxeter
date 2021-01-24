@@ -8,7 +8,7 @@ from hypothesis.strategies import floats
 from pytest import approx
 from scipy.spatial import ConvexHull
 
-from conftest import EllipseSurfaceStrategy
+from conftest import EllipseSurfaceStrategy, circle_isclose
 from coxeter.families import RegularNGonFamily
 from coxeter.shapes.convex_polygon import ConvexPolygon
 from coxeter.shapes.polygon import Polygon
@@ -246,17 +246,20 @@ def test_triangulate(square):
     assert not np.all(np.asarray(triangles[0]) == np.asarray(triangles[1]))
 
 
-def test_bounding_circle_radius_regular_polygon():
+def test_minimal_bounding_circle_radius_regular_polygon():
     family = RegularNGonFamily()
     for i in range(3, 10):
         vertices = family.make_vertices(i)
         rmax = np.max(np.linalg.norm(vertices, axis=-1))
 
         poly = Polygon(vertices)
-        circle = poly.bounding_circle
+        circle = poly.minimal_bounding_circle
 
         assert np.isclose(rmax, circle.radius)
         assert np.allclose(circle.center, 0)
+
+        with pytest.deprecated_call():
+            assert circle_isclose(circle, poly.bounding_circle)
 
 
 @given(EllipseSurfaceStrategy)
@@ -268,11 +271,11 @@ def test_bounding_circle_radius_random_hull(points):
     # an upper bound on the bounding sphere radius, but need not be the radius
     # because the ball need not be centered at the centroid.
     rmax = np.max(np.linalg.norm(poly.vertices, axis=-1))
-    circle = poly.bounding_circle
+    circle = poly.minimal_bounding_circle
     assert circle.radius <= rmax + 1e-6
 
     poly.center = [0, 0, 0]
-    circle = poly.bounding_circle
+    circle = poly.minimal_bounding_circle
     assert circle.radius <= rmax + 1e-6
 
 
@@ -292,8 +295,8 @@ def test_bounding_circle_radius_random_hull_rotation(points, rotation):
     rotated_vertices = rowan.rotate(rotation, poly.vertices)
     poly_rotated = Polygon(rotated_vertices)
 
-    circle = poly.bounding_circle
-    rotated_circle = poly_rotated.bounding_circle
+    circle = poly.minimal_bounding_circle
+    rotated_circle = poly_rotated.minimal_bounding_circle
     assert np.isclose(circle.radius, rotated_circle.radius)
 
 
