@@ -14,8 +14,7 @@ from conftest import (
     sphere_isclose,
 )
 from coxeter.families import RegularNGonFamily
-from coxeter.shapes.convex_polygon import ConvexPolygon
-from coxeter.shapes.polygon import Polygon
+from coxeter.shapes import Circle, ConvexPolygon, Polygon
 
 
 def polygon_from_hull(verts):
@@ -402,3 +401,12 @@ def test_get_set_minimal_bounding_circle_radius():
     family = RegularNGonFamily()
     for i in range(3, 10):
         _test_get_set_minimal_bounding_sphere_radius(family.get_shape(i))
+
+
+def test_minimal_centered_bounding_circle():
+    family = RegularNGonFamily()
+    for i in range(3, 10):
+        poly = family.get_shape(i)
+        poly.minimal_centered_bounding_circle == Circle(
+            np.linalg.norm(poly.vertices, axis=-1).max()
+        )

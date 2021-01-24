@@ -126,3 +126,11 @@ class ConvexPolygon(Polygon):
 
         radius = np.min(distances)
         return Circle(radius, self.center)
+
+    @property
+    def minimal_centered_bounding_circle(self):
+        """:class:`~.Circle`: Get the smallest bounding concentric circle."""
+        # The radius is determined by the furthest vertex from the center.
+        return Circle(
+            np.linalg.norm(self.vertices - self.center, axis=-1).max(), self.center
+        )
