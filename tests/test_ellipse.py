@@ -5,6 +5,7 @@ from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats
 from pytest import approx
 
+from conftest import sphere_isclose
 from coxeter.shapes import Circle, Ellipse
 
 
@@ -155,7 +156,7 @@ def test_center():
 def test_minimal_bounding_circle(a, b, center):
     ellipse = Ellipse(a, b, center)
     bounding_circle = ellipse.minimal_bounding_circle
-    bounding_circle == Circle(max(a, b), center)
+    assert sphere_isclose(bounding_circle, Circle(max(a, b), center))
 
 
 @given(
@@ -166,4 +167,4 @@ def test_minimal_bounding_circle(a, b, center):
 def test_minimal_centered_bounding_circle(a, b, center):
     ellipse = Ellipse(a, b, center)
     bounding_circle = ellipse.minimal_centered_bounding_circle
-    bounding_circle == Circle(max(a, b), center)
+    assert sphere_isclose(bounding_circle, Circle(max(a, b), center))

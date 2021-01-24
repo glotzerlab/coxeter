@@ -120,10 +120,11 @@ EllipseSurfaceStrategy = builds(
 )
 
 
-def circle_isclose(c1, c2, *args, **kwargs):
-    """Check if two circles are almost equal.
+def sphere_isclose(c1, c2, *args, **kwargs):
+    """Check if two spheres are almost equal.
 
-    All args and kwargs are forwarded to np.isclose and np.allclose.
+    Works for both circles and spheres. All args and kwargs are forwarded to
+    np.isclose and np.allclose.
     """
     return np.isclose(c1.radius, c2.radius, *args, **kwargs) and np.allclose(
         c1.center, c2.center, *args, **kwargs

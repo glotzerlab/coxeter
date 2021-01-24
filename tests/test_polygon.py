@@ -8,7 +8,7 @@ from hypothesis.strategies import floats
 from pytest import approx
 from scipy.spatial import ConvexHull
 
-from conftest import EllipseSurfaceStrategy, circle_isclose
+from conftest import EllipseSurfaceStrategy, sphere_isclose
 from coxeter.families import RegularNGonFamily
 from coxeter.shapes.convex_polygon import ConvexPolygon
 from coxeter.shapes.polygon import Polygon
@@ -259,7 +259,7 @@ def test_minimal_bounding_circle_radius_regular_polygon():
         assert np.allclose(circle.center, 0)
 
         with pytest.deprecated_call():
-            assert circle_isclose(circle, poly.bounding_circle)
+            assert sphere_isclose(circle, poly.bounding_circle)
 
 
 @given(EllipseSurfaceStrategy)

@@ -5,6 +5,7 @@ from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats
 from pytest import approx
 
+from conftest import sphere_isclose
 from coxeter.shapes import Circle
 
 
@@ -117,7 +118,7 @@ def test_invalid_radius_setter():
 )
 def test_minimal_bounding_circle(r, center):
     circ = Circle(r, center)
-    circ.minimal_bounding_circle == circ
+    assert sphere_isclose(circ.minimal_centered_bounding_circle, circ)
 
 
 @given(
@@ -126,4 +127,4 @@ def test_minimal_bounding_circle(r, center):
 )
 def test_minimal_centered_bounding_circle(r, center):
     circ = Circle(r, center)
-    circ.minimal_centered_bounding_circle == circ
+    assert sphere_isclose(circ.minimal_centered_bounding_circle, circ)

@@ -5,6 +5,7 @@ from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats
 from pytest import approx
 
+from conftest import sphere_isclose
 from coxeter.shapes import Sphere
 from coxeter.shapes.utils import translate_inertia_tensor
 
@@ -174,7 +175,7 @@ def test_form_factor():
 def test_minimal_bounding_sphere(r, center):
     sphere = Sphere(r, center)
     bounding_sphere = sphere.minimal_bounding_sphere
-    bounding_sphere == Sphere(r, center)
+    assert sphere_isclose(bounding_sphere, Sphere(r, center))
 
 
 @given(
@@ -184,4 +185,4 @@ def test_minimal_bounding_sphere(r, center):
 def test_minimal_centered_bounding_sphere(r, center):
     sphere = Sphere(r, center)
     bounding_sphere = sphere.minimal_centered_bounding_sphere
-    bounding_sphere == Sphere(r, center)
+    assert sphere_isclose(bounding_sphere, Sphere(r, center))

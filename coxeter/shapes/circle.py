@@ -160,9 +160,6 @@ class Circle(Shape2D):
         """
         return 1
 
-    def __eq__(self, other):
-        return self.radius == other.radius and self.center == other.center
-
     @property
     def minimal_centered_bounding_circle(self):
         """:class:`~.Circle`: Get the smallest bounding concentric circle."""
