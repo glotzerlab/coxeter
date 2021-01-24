@@ -236,7 +236,7 @@ def test_perimeter_setter(unit_rounded_square):
 
 
 @given(floats(0.1, 1000))
-def test_minimal_bounding_circle_radius_regular_polygon(radius):
+def test_minimal_bounding_circle_regular_polygon(radius):
     family = RegularNGonFamily()
     for i in range(3, 10):
         vertices = family.make_vertices(i)
@@ -244,6 +244,20 @@ def test_minimal_bounding_circle_radius_regular_polygon(radius):
 
         poly = ConvexSpheropolygon(vertices, radius)
         circle = poly.minimal_bounding_circle
+
+        assert np.isclose(rmax, circle.radius)
+        assert np.allclose(circle.center, 0)
+
+
+@given(floats(0.1, 1000))
+def test_minimal_centered_bounding_circle_regular_polygon(radius):
+    family = RegularNGonFamily()
+    for i in range(3, 10):
+        vertices = family.make_vertices(i)
+        rmax = np.max(np.linalg.norm(vertices, axis=-1)) + radius
+
+        poly = ConvexSpheropolygon(vertices, radius)
+        circle = poly.minimal_centered_bounding_circle
 
         assert np.isclose(rmax, circle.radius)
         assert np.allclose(circle.center, 0)

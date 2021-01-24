@@ -194,3 +194,9 @@ class ConvexSpheropolygon(Shape2D):
         """:class:`~.Circle`: Get the minimal bounding circle."""
         polygon_circle = self.polygon.minimal_bounding_circle
         return Circle(polygon_circle.radius + self.radius, polygon_circle.center)
+
+    @property
+    def minimal_centered_bounding_circle(self):
+        """:class:`~.Circle`: Get the minimal concentric bounding circle."""
+        polygon_circle = self.polygon.minimal_centered_bounding_circle
+        return Circle(polygon_circle.radius + self.radius, polygon_circle.center)
