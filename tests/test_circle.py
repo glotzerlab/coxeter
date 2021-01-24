@@ -126,4 +126,4 @@ def test_minimal_bounding_circle(r, center):
 )
 def test_minimal_centered_bounding_circle(r, center):
     circ = Circle(r, center)
-    circ.minimal_bounding_circle == circ
+    circ.minimal_centered_bounding_circle == circ

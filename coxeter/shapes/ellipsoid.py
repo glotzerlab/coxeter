@@ -4,6 +4,7 @@ import numpy as np
 from scipy.special import ellipeinc, ellipkinc
 
 from .base_classes import Shape3D
+from .sphere import Sphere
 from .utils import translate_inertia_tensor
 
 
@@ -194,3 +195,13 @@ class Ellipsoid(Shape3D):
         points = np.atleast_2d(points) - self.center
         scale = np.array([self.a, self.b, self.c])
         return np.linalg.norm(points / scale, axis=-1) <= 1
+
+    @property
+    def minimal_centered_bounding_sphere(self):
+        """:class:`~.Sphere`: Get the smallest bounding concentric sphere."""
+        return Sphere(max(self.a, self.b, self.c), self.center)
+
+    @property
+    def minimal_bounding_sphere(self):
+        """:class:`~.Sphere`: Get the smallest bounding sphere."""
+        return Sphere(max(self.a, self.b, self.c), self.center)

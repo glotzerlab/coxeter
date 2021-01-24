@@ -5,7 +5,7 @@ from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats
 from pytest import approx
 
-from coxeter.shapes.ellipsoid import Ellipsoid
+from coxeter.shapes import Ellipsoid, Sphere
 from coxeter.shapes.utils import translate_inertia_tensor
 
 
@@ -175,3 +175,27 @@ def test_center():
     center = (1, 1, 1)
     ellipsoid.center = center
     assert all(ellipsoid.center == center)
+
+
+@given(
+    floats(0.1, 1000),
+    floats(0.1, 1000),
+    floats(0.1, 1000),
+    arrays(np.float64, (3,), elements=floats(-10, 10, width=64), unique=True),
+)
+def test_minimal_bounding_sphere(a, b, c, center):
+    ellipsoid = Ellipsoid(a, b, c, center)
+    bounding_sphere = ellipsoid.minimal_bounding_sphere
+    bounding_sphere == Sphere(max(a, b, c), center)
+
+
+@given(
+    floats(0.1, 1000),
+    floats(0.1, 1000),
+    floats(0.1, 1000),
+    arrays(np.float64, (3,), elements=floats(-10, 10, width=64), unique=True),
+)
+def test_minimal_centered_bounding_sphere(a, b, c, center):
+    ellipsoid = Ellipsoid(a, b, c, center)
+    bounding_sphere = ellipsoid.minimal_centered_bounding_sphere
+    bounding_sphere == Sphere(max(a, b, c), center)

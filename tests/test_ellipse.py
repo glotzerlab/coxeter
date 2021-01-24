@@ -165,5 +165,5 @@ def test_minimal_bounding_circle(a, b, center):
 )
 def test_minimal_centered_bounding_circle(a, b, center):
     ellipse = Ellipse(a, b, center)
-    bounding_circle = ellipse.minimal_bounding_circle
+    bounding_circle = ellipse.minimal_centered_bounding_circle
     bounding_circle == Circle(max(a, b), center)

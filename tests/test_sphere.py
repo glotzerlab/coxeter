@@ -183,5 +183,5 @@ def test_minimal_bounding_sphere(r, center):
 )
 def test_minimal_centered_bounding_sphere(r, center):
     sphere = Sphere(r, center)
-    bounding_sphere = sphere.minimal_bounding_sphere
+    bounding_sphere = sphere.minimal_centered_bounding_sphere
     bounding_sphere == Sphere(r, center)
