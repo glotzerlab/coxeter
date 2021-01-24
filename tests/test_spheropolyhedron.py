@@ -4,7 +4,8 @@ from hypothesis import given
 from hypothesis.strategies import floats
 from pytest import approx
 
-from conftest import make_sphero_cube
+from conftest import make_sphero_cube, platonic_solids
+from coxeter.shapes import ConvexSpheropolyhedron
 
 
 @given(radius=floats(0.1, 1))
@@ -119,3 +120,16 @@ def test_inside_boundaries():
     assert np.all(sphero_cube.is_inside(verts * (1 + 2 * np.sqrt(1 / 3))))
     # Points are just outside the very corners of the spherical caps
     assert np.all(~sphero_cube.is_inside(verts * (1 + 2 * np.sqrt(1 / 3) + 1e-6)))
+
+
+@pytest.mark.parametrize("poly", platonic_solids())
+def test_bounding_sphere_platonic(poly):
+    @given(floats(0.1, 1000))
+    def testfun(radius):
+        # Ensure polyhedron is centered, then compute distances.
+        spheropoly = ConvexSpheropolyhedron(poly.vertices, radius)
+        spheropoly.center = [0, 0, 0]
+        rmax_sq = np.sum(spheropoly.vertices ** 2, axis=1) + radius * radius
+
+        bounding_sphere = spheropoly.minimal_bounding_sphere
+        assert np.allclose(rmax_sq, bounding_sphere.radius ** 2, rtol=1e-4)

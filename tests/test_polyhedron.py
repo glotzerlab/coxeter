@@ -13,6 +13,7 @@ from conftest import (
     EllipsoidSurfaceStrategy,
     get_oriented_cube_faces,
     get_oriented_cube_normals,
+    platonic_solids,
     sphere_isclose,
 )
 from coxeter.families import DOI_SHAPE_REPOSITORIES, PlatonicFamily
@@ -29,11 +30,6 @@ def damasceno_shapes():
     family = DOI_SHAPE_REPOSITORIES["10.1126/science.1220869"][0]
     for shape_data in family.data.values():
         yield shape_data
-
-
-def platonic_solids():
-    for shape_name in PlatonicFamily.data:
-        yield PlatonicFamily.get_shape(shape_name)
 
 
 def test_normal_detection(convex_cube):

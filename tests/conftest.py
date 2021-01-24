@@ -2,6 +2,7 @@ import numpy as np
 import pytest
 from hypothesis.strategies import builds, floats, integers
 
+from coxeter.families import PlatonicFamily
 from coxeter.shapes import ConvexPolyhedron, ConvexSpheropolyhedron, Polyhedron
 
 
@@ -129,3 +130,8 @@ def sphere_isclose(c1, c2, *args, **kwargs):
     return np.isclose(c1.radius, c2.radius, *args, **kwargs) and np.allclose(
         c1.center, c2.center, *args, **kwargs
     )
+
+
+def platonic_solids():
+    for shape_name in PlatonicFamily.data:
+        yield PlatonicFamily.get_shape(shape_name)

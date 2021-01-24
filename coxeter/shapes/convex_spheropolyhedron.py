@@ -8,6 +8,7 @@ import numpy as np
 
 from .base_classes import Shape3D
 from .convex_polyhedron import ConvexPolyhedron
+from .sphere import Sphere
 
 
 class ConvexSpheropolyhedron(Shape3D):
@@ -344,3 +345,9 @@ class ConvexSpheropolyhedron(Shape3D):
         insphere = self.polyhedron.insphere_from_center
         insphere.radius += self.radius
         return insphere
+
+    @property
+    def minimal_bounding_sphere(self):
+        """:class:`~.Sphere`: Get the minimal bounding sphere."""
+        polygon_sphere = self.polygon.minimal_bounding_sphere
+        return Sphere(polygon_sphere.radius + self.radius, polygon_sphere.center)
