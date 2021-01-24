@@ -166,9 +166,9 @@ class Circle(Shape2D):
     @property
     def minimal_centered_bounding_circle(self):
         """:class:`~.Circle`: Get the smallest bounding concentric circle."""
-        return type(self)(self.radius, self.center)
+        return Circle(self.radius, self.center)
 
     @property
     def minimal_bounding_circle(self):
         """:class:`~.Circle`: Get the smallest bounding circle."""
-        return type(self)(self.radius, self.center)
+        return Circle(self.radius, self.center)

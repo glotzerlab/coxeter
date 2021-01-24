@@ -5,7 +5,7 @@ from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats
 from pytest import approx
 
-from coxeter.shapes.ellipse import Ellipse
+from coxeter.shapes import Circle, Ellipse
 
 
 @given(floats(0.1, 1000), floats(0.1, 1000))
@@ -124,6 +124,8 @@ def test_inertia_tensor(a, b, center):
     ellipse = Ellipse(a, b)
     assert np.all(np.asarray(ellipse.planar_moments_inertia) >= 0)
 
+    # We must set the center after construction so that the inertia tensor
+    # calculation is not shifted away from the origin.
     ellipse.center = center
     area = ellipse.area
     expected = [np.pi / 4 * a * b ** 3, np.pi / 4 * a ** 3 * b, 0]
@@ -143,3 +145,25 @@ def test_center():
     center = (1, 1, 1)
     ellipse.center = center
     assert all(ellipse.center == center)
+
+
+@given(
+    floats(0.1, 1000),
+    floats(0.1, 1000),
+    arrays(np.float64, (3,), elements=floats(-10, 10, width=64), unique=True),
+)
+def test_minimal_bounding_circle(a, b, center):
+    ellipse = Ellipse(a, b, center)
+    bounding_circle = ellipse.minimal_bounding_circle
+    bounding_circle == Circle(max(a, b), center)
+
+
+@given(
+    floats(0.1, 1000),
+    floats(0.1, 1000),
+    arrays(np.float64, (3,), elements=floats(-10, 10, width=64), unique=True),
+)
+def test_minimal_centered_bounding_circle(a, b, center):
+    ellipse = Ellipse(a, b, center)
+    bounding_circle = ellipse.minimal_bounding_circle
+    bounding_circle == Circle(max(a, b), center)

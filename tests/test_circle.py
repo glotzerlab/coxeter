@@ -5,7 +5,7 @@ from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats
 from pytest import approx
 
-from coxeter.shapes.circle import Circle
+from coxeter.shapes import Circle
 
 
 @given(floats(0.1, 1000))

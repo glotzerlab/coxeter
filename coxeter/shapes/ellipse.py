@@ -3,7 +3,7 @@
 import numpy as np
 from scipy.special import ellipe
 
-from .base_classes import Shape2D
+from . import Circle, Shape2D
 
 
 class Ellipse(Shape2D):
@@ -191,3 +191,13 @@ class Ellipse(Shape2D):
     def iq(self):
         """float: The isoperimetric quotient."""
         return np.min([4 * np.pi * self.area / (self.perimeter ** 2), 1])
+
+    @property
+    def minimal_centered_bounding_circle(self):
+        """:class:`~.Circle`: Get the smallest bounding concentric circle."""
+        return Circle(max(self.a, self.b), self.center)
+
+    @property
+    def minimal_bounding_circle(self):
+        """:class:`~.Circle`: Get the smallest bounding circle."""
+        return Circle(max(self.a, self.b), self.center)
