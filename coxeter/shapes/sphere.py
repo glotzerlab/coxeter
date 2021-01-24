@@ -165,3 +165,16 @@ class Sphere(Shape3D):
         # Shift the form factor to the particle's position and scale by density.
         form_factor *= density * np.exp(-1j * np.dot(q, self.center))
         return form_factor
+
+    def __eq__(self, other):
+        return self.radius == other.radius and self.center == other.center
+
+    @property
+    def minimal_centered_bounding_sphere(self):
+        """:class:`~.Sphere`: Get the smallest bounding concentric sphere."""
+        return Sphere(self.radius, self.center)
+
+    @property
+    def minimal_bounding_sphere(self):
+        """:class:`~.Sphere`: Get the smallest bounding sphere."""
+        return Sphere(self.radius, self.center)
