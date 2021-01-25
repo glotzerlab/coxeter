@@ -426,6 +426,7 @@ def test_minimal_centered_bounding_circle():
     family = RegularNGonFamily()
     for i in range(3, 10):
         poly = family.get_shape(i)
-        poly.minimal_centered_bounding_circle == Circle(
-            np.linalg.norm(poly.vertices, axis=-1).max()
+        assert sphere_isclose(
+            poly.minimal_centered_bounding_circle,
+            Circle(np.linalg.norm(poly.vertices, axis=-1).max()),
         )
