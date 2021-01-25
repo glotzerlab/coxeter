@@ -8,6 +8,9 @@ Added
 ~~~~~
 
 - Ellipse area setter and Ellipsoid volume setter.
+- Point-in-shape checks for circles.
+- Point-in-shape checks for ellipses.
+- Inertia tensors for 2D shapes that implement moments of inertia.
 
 Changed
 ~~~~~~~

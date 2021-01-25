@@ -270,3 +270,13 @@ def test_get_set_minimal_bounding_circle_radius(r):
         _test_get_set_minimal_bounding_sphere_radius(
             ConvexSpheropolygon(family.make_vertices(i), r)
         )
+
+
+def test_inertia(unit_rounded_square):
+    """None of the inertia calculations are implemented for this class."""
+    with pytest.raises(NotImplementedError):
+        unit_rounded_square.planar_moments_inertia
+    with pytest.raises(NotImplementedError):
+        unit_rounded_square.polar_moment_inertia
+    with pytest.raises(NotImplementedError):
+        unit_rounded_square.inertia_tensor

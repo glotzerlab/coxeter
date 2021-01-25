@@ -121,7 +121,7 @@ def test_eccentricity_ratio(a, k):
     floats(0.1, 1000),
     arrays(np.float64, (3,), elements=floats(-10, 10, width=64), unique=True),
 )
-def test_inertia_tensor(a, b, center):
+def test_moment_inertia(a, b, center):
     ellipse = Ellipse(a, b)
     assert np.all(np.asarray(ellipse.planar_moments_inertia) >= 0)
 
@@ -186,3 +186,24 @@ def test_get_set_minimal_bounding_ellipse_radius(a, b, center):
 )
 def test_get_set_minimal_centered_bounding_ellipse_radius(a, b, center):
     _test_get_set_minimal_bounding_sphere_radius(Ellipse(a, b, center), True)
+
+
+def test_inertia_tensor():
+    """Test the inertia tensor calculation."""
+    ellipse = Ellipse(1, 2)
+    ellipse.center = (0, 0, 0)
+    assert np.sum(ellipse.inertia_tensor > 1e-6) == 1
+    assert ellipse.inertia_tensor[2, 2] == 5 * np.pi / 2
+
+
+@given(
+    floats(0.1, 10),
+    floats(0.1, 10),
+    arrays(np.float64, (3,), elements=floats(-10, 10, width=64), unique=True),
+)
+def test_is_inside(x, y, center):
+    a, b = 1, 2
+    ellipse = Ellipse(a, b, center)
+    assert ellipse.is_inside([x, y, 0] + center).squeeze() == np.all(
+        np.array([x / a, y / b]) <= 1
+    )

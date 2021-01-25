@@ -136,6 +136,17 @@ class Shape2D(Shape):
         return np.sum(self.planar_moments_inertia[:2])
 
     @property
+    def inertia_tensor(self):
+        r""":math:`(3, 3)` :class:`numpy.ndarray`: Get the inertia tensor.
+
+        For non-orientable 2D shapes, the inertia tensor can be trivially
+        constructed from the polar moment of inertia. This calculation assumes
+        that the shape lies in the :math:`xy`-plane. Shapes that can be
+        rotated relative to this plane must define their own methods.
+        """
+        return np.diag([0, 0, self.polar_moment_inertia])
+
+    @property
     def iq(self):
         r"""float: The isoperimetric quotient.
 

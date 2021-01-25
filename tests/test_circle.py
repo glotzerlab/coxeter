@@ -144,3 +144,20 @@ def test_get_set_minimal_bounding_circle_radius(r, center):
 )
 def test_get_set_minimal_centered_bounding_circle_radius(r, center):
     _test_get_set_minimal_bounding_sphere_radius(Circle(r, center), True)
+
+
+@given(
+    floats(0.1, 10),
+    arrays(np.float64, (3,), elements=floats(-10, 10, width=64), unique=True),
+)
+def test_is_inside(x, center):
+    circle = Circle(1, center)
+    assert circle.is_inside([x, 0, 0] + center).squeeze() == (x <= 1)
+
+
+def test_inertia_tensor():
+    """Test the inertia tensor calculation."""
+    circle = Circle(1)
+    circle.center = (0, 0, 0)
+    assert np.sum(circle.inertia_tensor > 1e-6) == 1
+    assert circle.inertia_tensor[2, 2] == np.pi / 2
