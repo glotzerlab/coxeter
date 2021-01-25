@@ -178,12 +178,6 @@ class ConvexPolyhedron(Polyhedron):
     def minimal_centered_bounding_sphere(self):
         """:class:`~.Sphere`: Get the smallest bounding concentric sphere."""
         # The radius is determined by the furthest vertex from the center.
-        center = self.center
-        if not self.is_inside(center):
-            raise ValueError(
-                "The centroid is not contained in the shape. The "
-                "circumsphere from center is not defined."
-            )
         return Sphere(
             np.linalg.norm(self.vertices - self.center, axis=-1).max(), self.center
         )
