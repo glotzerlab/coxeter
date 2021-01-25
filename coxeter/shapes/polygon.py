@@ -562,6 +562,15 @@ class Polygon(Shape2D):
 
         return Circle(np.linalg.norm(x), x + self.vertices[0])
 
+    @property
+    def circumcircle_radius(self):
+        """float: Get the radius of the polygon's circumcircle."""
+        return self.circumcircle.radius
+
+    @circumcircle_radius.setter
+    def circumcircle_radius(self, value):
+        self._rescale(value / self.circumcircle_radius)
+
     def compute_form_factor_amplitude(self, q, density=1.0):  # noqa: D102
         """Calculate the form factor intensity.
 

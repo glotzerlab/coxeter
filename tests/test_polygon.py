@@ -316,6 +316,19 @@ def test_circumcircle():
         assert np.allclose(circle.center, 0)
 
 
+def test_circumcircle_radius():
+    family = RegularNGonFamily()
+    for i in range(3, 10):
+        vertices = family.make_vertices(i)
+        rmax = np.max(np.linalg.norm(vertices, axis=-1))
+
+        poly = Polygon(vertices)
+
+        assert np.isclose(rmax, poly.circumcircle_radius)
+        poly.circumcircle_radius *= 2
+        assert np.isclose(poly.circumcircle.radius, rmax * 2)
+
+
 def test_incircle_from_center(convex_square):
     circle = convex_square.incircle_from_center
     assert np.all(circle.center == convex_square.center)
