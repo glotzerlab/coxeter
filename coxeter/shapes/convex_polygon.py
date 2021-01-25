@@ -138,44 +138,37 @@ class ConvexPolygon(Polygon):
         """
         verts = self.vertices[:, :2]
         theta = angles
-        verts[:, 0] = verts[:, 0] - np.average(verts[:, 0])
-        verts[:, 1] = verts[:, 1] - np.average(verts[:, 1])
+        verts[:, 0] -= np.average(verts[:, 0])
+        verts[:, 1] -= np.average(verts[:, 1])
         theta_component = np.arctan(verts[:, 1] / verts[:, 0])
-        angle_between = []
-        pairs = []
-        slopes = []
-        y_int = []
+
+        # Pair vertices with numpy roll
+        p1 = verts
+        p2 = np.roll(verts, -1, axis=0)
+
+        slopes = np.zeros(len(p1), dtype=object)
+        y_int = np.zeros(len(p1), dtype=object)
         angle_range = np.zeros((len(verts), 2))
 
-        for i in range(len(verts)):
-            if i < len(verts) - 1:
-                pairs.append([verts[i, :], verts[i + 1, :]])
-            else:
-                pairs.append([verts[i, :], verts[0, :]])
-        for i in range(len(pairs)):
-            norm = np.sqrt(np.dot(pairs[i][0], pairs[i][0])) * np.sqrt(
-                np.dot(pairs[i][1], pairs[i][1])
-            )
-            angle_between.append(np.arccos(np.dot(pairs[i][0], pairs[i][1]) / norm))
+        norm = np.sqrt(np.sum(p1 * p1, axis=1) * np.sum(p2 * p2, axis=1))
+        angle_between = np.arccos(np.sum(p1 * p2, axis=1) / norm)
 
         # get the slopes
 
-        for i in range(len(pairs)):
-            if pairs[i][0][0] - pairs[i][1][0] == 0.0:
-                slopes.append("inf")
-            else:
-                slopes.append(
-                    (pairs[i][0][1] - pairs[i][1][1])
-                    / (pairs[i][0][0] - pairs[i][1][0])
-                )
+        sl_inf = np.where((p1[:, 0] - p2[:, 0] == 0.0))
+        sl_ninf = np.where((p1[:, 0] - p2[:, 0] != 0.0))
+
+        slopes[sl_inf] = "inf"
+        slopes[sl_ninf] = (p1[sl_ninf, 1] - p2[sl_ninf, 1]) / (
+            p1[sl_ninf, 0] - p2[sl_ninf, 0]
+        )
 
         # Get the y_intercepts
+        y_inf1 = np.where((slopes == "inf"))
+        y_ninf = np.where((slopes != "inf"))
 
-        for i in range(len(pairs)):
-            if slopes[i] == "inf" or abs(slopes[i]) > 10e5:
-                y_int.append("inf")
-            else:
-                y_int.append(pairs[i][0][1] - slopes[i] * pairs[i][0][0])
+        y_int[y_inf1] = "inf"
+        y_int[y_ninf] = p1[y_ninf, 1] - slopes[y_ninf] * p1[y_ninf, 0]
 
         # Get the ranges of theta for the parameterization
 
@@ -209,12 +202,12 @@ class ConvexPolygon(Polygon):
                     wh = np.where(
                         (theta >= angle_range[i, 0]) & (theta <= angle_range[i, 1])
                     )
-                    x_int = pairs[i][0][0]
+                    x_int = p1[i, 0]
                     kernel[wh] = np.sqrt(
                         x_int * x_int / (1 - np.sin(theta[wh]) * np.sin(theta[wh]))
                     )
                 else:
-                    x_int = pairs[i][0][0]
+                    x_int = p1[i, 0]
                     wh = np.where(
                         ((theta >= angle_range[i, 0]) & (theta <= angle_range[i, 1]))
                         | ((theta >= 0) & (theta <= angle_range[0, 0]))
