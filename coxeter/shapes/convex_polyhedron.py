@@ -1,5 +1,7 @@
 """Defines a convex polyhedron."""
 
+import warnings
+
 import numpy as np
 from scipy.spatial import ConvexHull
 
@@ -165,10 +167,23 @@ class ConvexPolyhedron(Polyhedron):
         shape distinguishes this sphere from most typical circumsphere
         calculations.
         """  # noqa: E501
+        warnings.warn(
+            "The circumsphere_from_center property is deprecated, use "
+            "minimal_centered_bounding_circle instead",
+            DeprecationWarning,
+        )
+        return self.minimal_centered_bounding_sphere
+
+    @property
+    def minimal_centered_bounding_sphere(self):
+        """:class:`~.Sphere`: Get the smallest bounding concentric sphere."""
+        # The radius is determined by the furthest vertex from the center.
         center = self.center
         if not self.is_inside(center):
             raise ValueError(
                 "The centroid is not contained in the shape. The "
                 "circumsphere from center is not defined."
             )
-        return Sphere(np.max(np.linalg.norm(self.vertices - center, axis=-1)), center)
+        return Sphere(
+            np.linalg.norm(self.vertices - self.center, axis=-1).max(), self.center
+        )

@@ -280,7 +280,7 @@ def test_circumsphere_platonic(poly):
     assert np.allclose(r2, circumsphere.radius ** 2)
 
 
-def test_circumsphere_from_center():
+def test_minimal_centered_bounding_circle():
     """Validate circumsphere by testing the polyhedron.
 
     This checks that all points outside this circumsphere are also outside the
@@ -321,13 +321,16 @@ def test_circumsphere_from_center():
         poly = shapes[shape_index]
         poly.center = center
 
-        sphere = poly.circumsphere_from_center
+        sphere = poly.minimal_centered_bounding_sphere
         scaled_points = points * sphere.radius + sphere.center
         points_outside = np.logical_not(sphere.is_inside(scaled_points))
 
         # Verify that all points outside the circumsphere are also outside the
         # polyhedron.
         assert not np.any(np.logical_and(points_outside, poly.is_inside(scaled_points)))
+
+        with pytest.deprecated_call():
+            assert sphere_isclose(sphere, poly.circumsphere_from_center)
 
     testfun()
 

@@ -127,7 +127,7 @@ def test_inside_boundaries():
 
 
 @pytest.mark.parametrize("poly", platonic_solids())
-def test_bounding_sphere_platonic(poly):
+def test_minimal_bounding_sphere_platonic(poly):
     @given(floats(0.1, 1000))
     def testfun(radius):
         # Ensure polyhedron is centered, then compute distances.
@@ -136,6 +136,19 @@ def test_bounding_sphere_platonic(poly):
         rmax_sq = np.sum(spheropoly.vertices ** 2, axis=1) + radius * radius
 
         bounding_sphere = spheropoly.minimal_bounding_sphere
+        assert np.allclose(rmax_sq, bounding_sphere.radius ** 2, rtol=1e-4)
+
+
+@pytest.mark.parametrize("poly", platonic_solids())
+def test_minimal_centered_bounding_sphere_platonic(poly):
+    @given(floats(0.1, 1000))
+    def testfun(radius):
+        # Ensure polyhedron is centered, then compute distances.
+        spheropoly = ConvexSpheropolyhedron(poly.vertices, radius)
+        spheropoly.center = [0, 0, 0]
+        rmax_sq = np.sum(spheropoly.vertices ** 2, axis=1) + radius * radius
+
+        bounding_sphere = spheropoly.minimal_centered_bounding_sphere
         assert np.allclose(rmax_sq, bounding_sphere.radius ** 2, rtol=1e-4)
 
 
