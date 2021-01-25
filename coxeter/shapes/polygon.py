@@ -98,7 +98,7 @@ class Polygon(Shape2D):
         >>> triangle = coxeter.shapes.Polygon([[-1, 0], [0, 1], [1, 0]])
         >>> import numpy as np
         >>> assert np.isclose(triangle.area, 1.0)
-        >>> bounding_circle = triangle.bounding_circle
+        >>> bounding_circle = triangle.minimal_bounding_circle
         >>> assert np.isclose(bounding_circle.radius, 1.0)
         >>> assert np.allclose(triangle.center, [0., 1. / 3., 0.])
         >>> circumcircle = triangle.circumcircle

@@ -4,6 +4,8 @@ A convex spheropolyhedron is defined by the Minkowski sum of a convex
 polyhedron and a sphere of some radius.
 """
 
+import warnings
+
 import numpy as np
 
 from .base_classes import Shape3D
@@ -32,7 +34,7 @@ class ConvexSpheropolyhedron(Shape3D):
         ...   radius=0.5)
         >>> spherocube.center
         array([0., 0., 0.])
-        >>> sphere = spherocube.circumsphere_from_center
+        >>> sphere = spherocube.minimal_centered_bounding_sphere
         >>> sphere.radius
         2.2320...
         >>> spherocube.gsd_shape_spec
@@ -320,9 +322,12 @@ class ConvexSpheropolyhedron(Shape3D):
         shape distinguishes this sphere from most typical circumsphere
         calculations.
         """  # noqa: E501
-        circumsphere = self.polyhedron.circumsphere_from_center
-        circumsphere.radius += self.radius
-        return circumsphere
+        warnings.warn(
+            "The circumsphere_from_center property is deprecated, use "
+            "minimal_centered_bounding_sphere instead",
+            DeprecationWarning,
+        )
+        return self.minimal_centered_bounding_sphere
 
     @property
     def insphere_from_center(self):
@@ -355,5 +360,5 @@ class ConvexSpheropolyhedron(Shape3D):
     @property
     def minimal_centered_bounding_sphere(self):
         """:class:`~.Sphere`: Get the minimal concentric bounding sphere."""
-        polyhedron_sphere = self.polyhedron.minimal_concentric_bounding_sphere
+        polyhedron_sphere = self.polyhedron.minimal_centered_bounding_sphere
         return Sphere(polyhedron_sphere.radius + self.radius, polyhedron_sphere.center)

@@ -28,7 +28,7 @@ class ConvexPolyhedron(Polyhedron):
         ...    [-1, 1, 1], [-1, -1, 1], [-1, 1, -1], [-1, -1, -1]])
         >>> import numpy as np
         >>> assert np.isclose(cube.asphericity, 1.5)
-        >>> bounding_sphere = cube.bounding_sphere
+        >>> bounding_sphere = cube.minimal_bounding_sphere
         >>> assert np.isclose(bounding_sphere.radius, np.sqrt(3))
         >>> cube.center
         array([0., 0., 0.])
@@ -169,7 +169,7 @@ class ConvexPolyhedron(Polyhedron):
         """  # noqa: E501
         warnings.warn(
             "The circumsphere_from_center property is deprecated, use "
-            "minimal_centered_bounding_circle instead",
+            "minimal_centered_bounding_sphere instead",
             DeprecationWarning,
         )
         return self.minimal_centered_bounding_sphere

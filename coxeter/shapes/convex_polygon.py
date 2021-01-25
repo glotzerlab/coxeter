@@ -64,7 +64,7 @@ class ConvexPolygon(Polygon):
         >>> import numpy as np
         >>> assert np.isclose(square.area, 4.0)
         >>> assert np.isclose(
-        ...   square.bounding_circle.radius,
+        ...   square.minimal_bounding_circle.radius,
         ...   np.sqrt(2.))
         >>> square.center
         array([0., 0., 0.])

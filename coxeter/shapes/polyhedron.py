@@ -69,7 +69,7 @@ class Polyhedron(Shape3D):
         ...    [-1, 1, 1], [-1, -1, 1], [-1, 1, -1], [-1, -1, -1]])
         >>> cube = coxeter.shapes.Polyhedron(
         ...   vertices=cube.vertices, faces=cube.faces)
-        >>> bounding_sphere = cube.bounding_sphere
+        >>> bounding_sphere = cube.minimal_bounding_sphere
         >>> import numpy as np
         >>> assert np.isclose(bounding_sphere.radius, np.sqrt(3))
         >>> cube.center
