@@ -243,28 +243,32 @@ class ConvexSpheropolygon(Shape2D):
         angle_ranges = []  # angle ranges where we need to round
 
         # compute intermediates
+        v1 = np.roll(verts, 1, axis=0)
+        v2 = verts
+        v3 = np.roll(verts, -1, axis=0)
+        v12 = v1 - v2
+        v32 = v3 - v2
+        v12n = np.zeros_like(v12)
+        v32n = np.zeros_like(v32)
         for i in range(num_verts):
-            v1 = verts[i - 1]
-            v2 = verts[i]
-            v3 = verts[i + 1] if i + 1 < num_verts else verts[0]
-            v12 = v1 - v2
-            v32 = v3 - v2
-            v12n = self._get_outward_unit_normal(v12, v2)
-            v32n = self._get_outward_unit_normal(v32, v2)
+            v12n[i] = self._get_outward_unit_normal(v12[i], v2[i])
+            v32n[i] = self._get_outward_unit_normal(v32[i], v2[i])
 
-            # get the new vertex corresponding to the old one
-            v12norm = np.linalg.norm(v12)
-            v32norm = np.linalg.norm(v32)
-            phi = np.arccos(np.dot(v32, v12) / (v32norm * v12norm))
-            uvec = v12n + v32n
-            uvec /= np.linalg.norm(uvec)
-            new_verts[i] = v2 + uvec * self.radius / np.sin(phi / 2)
+        # get the new vertex corresponding to the old one
+        v12norm = np.linalg.norm(v12, axis=1)
+        v32norm = np.linalg.norm(v32, axis=1)
+        dot = np.multiply(v32, v12).sum(1)
+        phi = np.arccos(dot / (v32norm * v12norm))
+        uvec = v12n + v32n
+        uvec /= np.linalg.norm(uvec, axis=1)[:, None]
+        new_verts = v2 + uvec * self.radius / (np.sin(phi / 2)[:, None])
 
-            # define the angle range for rounding
-            pt1 = v2 + v12n * self.radius
-            pt3 = v2 + v32n * self.radius
+        # define the angle range for rounding
+        pt1 = v2 + v12n * self.radius
+        pt3 = v2 + v32n * self.radius
+        for i in range(num_verts):
             angle_ranges.append(
-                (self._get_polar_angle(pt1), self._get_polar_angle(pt3))
+                (self._get_polar_angle(pt1[i]), self._get_polar_angle(pt3[i]))
             )
 
         # compute shape kernel for the new set of vertices
@@ -272,7 +276,6 @@ class ConvexSpheropolygon(Shape2D):
 
         # get the shape kernel for this shape by adjusting indices of shape kernel
         # for the new vertices
-        new_kernel = kernel
         for i in range(len(angle_ranges)):
             theta1, theta2 = angle_ranges[i]
             if theta2 < theta1:  # case the angle range crosses the 2pi boundary
@@ -285,6 +288,6 @@ class ConvexSpheropolygon(Shape2D):
             a = 1
             b = -2 * norm_v * np.cos(angles[indices] - phi)
             c = norm_v ** 2 - self.radius ** 2
-            new_kernel[indices] = (-b + np.sqrt(b ** 2 - 4 * a * c)) / (2 * a)
+            kernel[indices] = (-b + np.sqrt(b ** 2 - 4 * a * c)) / (2 * a)
 
-        return new_kernel
+        return kernel
