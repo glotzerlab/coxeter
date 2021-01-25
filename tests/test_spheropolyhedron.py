@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from hypothesis import given, settings
+from hypothesis import given
 from hypothesis.strategies import floats
 from pytest import approx
 
@@ -152,10 +152,17 @@ def test_minimal_centered_bounding_sphere_platonic(poly):
         assert np.allclose(rmax_sq, bounding_sphere.radius ** 2, rtol=1e-4)
 
 
-@settings(deadline=500)
-@given(floats(0.1, 1))
-def test_get_set_minimal_bounding_sphere_radius(r):
-    for poly in platonic_solids():
-        _test_get_set_minimal_bounding_sphere_radius(
-            ConvexSpheropolyhedron(poly.vertices, r)
-        )
+@pytest.mark.parametrize("poly", platonic_solids())
+def test_get_set_minimal_bounding_sphere_radius(poly):
+    # This test is slow because miniball is slow. To speed it up to the extent
+    # possible, it only generates each platonic solid once rather than once for
+    # each rounding radius tested, and the spheropolyhedron is constructed
+    # outside the inner test function and only the radius is updated inside.
+    spoly = ConvexSpheropolyhedron(poly.vertices, 0)
+
+    @given(floats(0.1, 1))
+    def testfun(r):
+        spoly.radius = r
+        _test_get_set_minimal_bounding_sphere_radius(spoly)
+
+    testfun()
