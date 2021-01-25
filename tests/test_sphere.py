@@ -99,9 +99,9 @@ def test_inertia_tensor(r, center):
     floats(0.1, 10),
     arrays(np.float64, (3,), elements=floats(-10, 10, width=64), unique=True),
 )
-def test_is_inside(radius, center):
+def test_is_inside(x, center):
     sphere = Sphere(1, center)
-    assert sphere.is_inside([radius, 0, 0] + center).squeeze() == (radius <= 1)
+    assert sphere.is_inside([x, 0, 0] + center).squeeze() == (x <= 1)
 
 
 def test_center():
