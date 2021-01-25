@@ -556,6 +556,15 @@ class Polyhedron(Shape3D):
 
         return Sphere(np.linalg.norm(x), x + self.vertices[0])
 
+    @property
+    def circumsphere_radius(self):
+        """float: Get the radius of the polygon's circumsphere."""
+        return self.circumsphere.radius
+
+    @circumsphere_radius.setter
+    def circumsphere_radius(self, value):
+        self._rescale(value / self.circumsphere_radius)
+
     def get_dihedral(self, a, b):
         """Get the dihedral angle between a pair of faces.
 

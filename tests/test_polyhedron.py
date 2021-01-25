@@ -280,6 +280,17 @@ def test_circumsphere_platonic(poly):
     assert np.allclose(r2, circumsphere.radius ** 2)
 
 
+@pytest.mark.parametrize("poly", platonic_solids())
+def test_circumsphere_radius_platonic(poly):
+    # Ensure polyhedron is centered, then compute distances.
+    poly.center = [0, 0, 0]
+    r2 = np.sum(poly.vertices ** 2, axis=1)
+
+    assert np.allclose(r2, poly.circumsphere_radius ** 2)
+    poly.circumsphere_radius *= 2
+    assert np.allclose(r2 * 4, poly.circumsphere_radius ** 2)
+
+
 def test_minimal_centered_bounding_circle():
     """Validate circumsphere by testing the polyhedron.
 
