@@ -177,3 +177,12 @@ def test_minimal_centered_bounding_circle(a, b, center):
 )
 def test_get_set_minimal_bounding_ellipse_radius(a, b, center):
     _test_get_set_minimal_bounding_sphere_radius(Ellipse(a, b, center))
+
+
+@given(
+    floats(0.1, 1000),
+    floats(0.1, 1000),
+    arrays(np.float64, (3,), elements=floats(-10, 10, width=64), unique=True),
+)
+def test_get_set_minimal_centered_bounding_ellipse_radius(a, b, center):
+    _test_get_set_minimal_bounding_sphere_radius(Ellipse(a, b, center), True)

@@ -138,16 +138,15 @@ def platonic_solids():
         yield PlatonicFamily.get_shape(shape_name)
 
 
-def _test_get_set_minimal_bounding_sphere_radius(shape):
+def _test_get_set_minimal_bounding_sphere_radius(shape, centered=False):
     """Test getting and setting the minimal bounding circle radius.
 
     This function will work for any shape in two or three dimensions based on
     the generic base class APIs, so it can be called in other pytest tests.
     """
-    if isinstance(shape, Shape2D):
-        attr = "minimal_bounding_circle"
-    else:
-        attr = "minimal_bounding_sphere"
+    base_attr = "minimal" + ("_centered_" if centered else "_")
+    sphere_type = "circle" if isinstance(shape, Shape2D) else "sphere"
+    attr = base_attr + "bounding_" + sphere_type
 
     bounding_sphere = getattr(shape, attr)
     bounding_sphere_radius = getattr(shape, attr + "_radius")
