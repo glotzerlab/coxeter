@@ -2,7 +2,8 @@ import numpy as np
 import pytest
 from hypothesis.strategies import builds, floats, integers
 
-from coxeter.shapes import ConvexPolyhedron, ConvexSpheropolyhedron, Polyhedron
+from coxeter.families import PlatonicFamily
+from coxeter.shapes import ConvexPolyhedron, ConvexSpheropolyhedron, Polyhedron, Shape2D
 
 
 # Need to declare this outside the fixture so that it can be used in multiple
@@ -118,3 +119,38 @@ EllipsoidSurfaceStrategy = builds(
 EllipseSurfaceStrategy = builds(
     points_from_ellipsoid_surface, floats(0.1, 5), floats(0.1, 5), n=integers(5, 15)
 )
+
+
+def sphere_isclose(c1, c2, *args, **kwargs):
+    """Check if two spheres are almost equal.
+
+    Works for both circles and spheres. All args and kwargs are forwarded to
+    np.isclose and np.allclose.
+    """
+    return np.isclose(c1.radius, c2.radius, *args, **kwargs) and np.allclose(
+        c1.center, c2.center, *args, **kwargs
+    )
+
+
+def platonic_solids():
+    """Generate platonic solids."""
+    for shape_name in PlatonicFamily.data:
+        yield PlatonicFamily.get_shape(shape_name)
+
+
+def _test_get_set_minimal_bounding_sphere_radius(shape, centered=False):
+    """Test getting and setting the minimal bounding circle radius.
+
+    This function will work for any shape in two or three dimensions based on
+    the generic base class APIs, so it can be called in other pytest tests.
+    """
+    base_attr = "minimal" + ("_centered_" if centered else "_")
+    sphere_type = "circle" if isinstance(shape, Shape2D) else "sphere"
+    attr = base_attr + "bounding_" + sphere_type
+
+    bounding_sphere = getattr(shape, attr)
+    bounding_sphere_radius = getattr(shape, attr + "_radius")
+
+    assert np.isclose(bounding_sphere_radius, bounding_sphere.radius)
+    setattr(shape, attr + "_radius", bounding_sphere_radius * 2)
+    assert np.isclose(getattr(shape, attr).radius, bounding_sphere_radius * 2)

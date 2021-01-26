@@ -8,10 +8,13 @@ from hypothesis.strategies import floats
 from pytest import approx
 from scipy.spatial import ConvexHull
 
-from conftest import EllipseSurfaceStrategy
+from conftest import (
+    EllipseSurfaceStrategy,
+    _test_get_set_minimal_bounding_sphere_radius,
+    sphere_isclose,
+)
 from coxeter.families import RegularNGonFamily
-from coxeter.shapes.convex_polygon import ConvexPolygon
-from coxeter.shapes.polygon import Polygon
+from coxeter.shapes import Circle, ConvexPolygon, Polygon
 
 
 def polygon_from_hull(verts):
@@ -246,17 +249,20 @@ def test_triangulate(square):
     assert not np.all(np.asarray(triangles[0]) == np.asarray(triangles[1]))
 
 
-def test_bounding_circle_radius_regular_polygon():
+def test_minimal_bounding_circle_radius_regular_polygon():
     family = RegularNGonFamily()
     for i in range(3, 10):
         vertices = family.make_vertices(i)
         rmax = np.max(np.linalg.norm(vertices, axis=-1))
 
         poly = Polygon(vertices)
-        circle = poly.bounding_circle
+        circle = poly.minimal_bounding_circle
 
         assert np.isclose(rmax, circle.radius)
         assert np.allclose(circle.center, 0)
+
+        with pytest.deprecated_call():
+            assert sphere_isclose(circle, poly.bounding_circle)
 
 
 @given(EllipseSurfaceStrategy)
@@ -268,11 +274,11 @@ def test_bounding_circle_radius_random_hull(points):
     # an upper bound on the bounding sphere radius, but need not be the radius
     # because the ball need not be centered at the centroid.
     rmax = np.max(np.linalg.norm(poly.vertices, axis=-1))
-    circle = poly.bounding_circle
+    circle = poly.minimal_bounding_circle
     assert circle.radius <= rmax + 1e-6
 
     poly.center = [0, 0, 0]
-    circle = poly.bounding_circle
+    circle = poly.minimal_bounding_circle
     assert circle.radius <= rmax + 1e-6
 
 
@@ -292,8 +298,8 @@ def test_bounding_circle_radius_random_hull_rotation(points, rotation):
     rotated_vertices = rowan.rotate(rotation, poly.vertices)
     poly_rotated = Polygon(rotated_vertices)
 
-    circle = poly.bounding_circle
-    rotated_circle = poly_rotated.bounding_circle
+    circle = poly.minimal_bounding_circle
+    rotated_circle = poly_rotated.minimal_bounding_circle
     assert np.isclose(circle.radius, rotated_circle.radius)
 
 
@@ -308,6 +314,19 @@ def test_circumcircle():
 
         assert np.isclose(rmax, circle.radius)
         assert np.allclose(circle.center, 0)
+
+
+def test_circumcircle_radius():
+    family = RegularNGonFamily()
+    for i in range(3, 10):
+        vertices = family.make_vertices(i)
+        rmax = np.max(np.linalg.norm(vertices, axis=-1))
+
+        poly = Polygon(vertices)
+
+        assert np.isclose(rmax, poly.circumcircle_radius)
+        poly.circumcircle_radius *= 2
+        assert np.isclose(poly.circumcircle.radius, rmax * 2)
 
 
 def test_incircle_from_center(convex_square):
@@ -389,3 +408,25 @@ def test_set_perimeter(value):
         RegularNGonFamily.get_shape(4).vertices
         * (value / RegularNGonFamily.get_shape(4).perimeter)
     )
+
+
+def test_get_set_minimal_bounding_circle_radius():
+    family = RegularNGonFamily()
+    for i in range(3, 10):
+        _test_get_set_minimal_bounding_sphere_radius(family.get_shape(i))
+
+
+def test_get_set_minimal_centered_bounding_circle_radius():
+    family = RegularNGonFamily()
+    for i in range(3, 10):
+        _test_get_set_minimal_bounding_sphere_radius(family.get_shape(i), True)
+
+
+def test_minimal_centered_bounding_circle():
+    family = RegularNGonFamily()
+    for i in range(3, 10):
+        poly = family.get_shape(i)
+        assert sphere_isclose(
+            poly.minimal_centered_bounding_circle,
+            Circle(np.linalg.norm(poly.vertices, axis=-1).max()),
+        )

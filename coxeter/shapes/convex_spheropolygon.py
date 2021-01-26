@@ -7,6 +7,7 @@ a circle of some radius.
 import numpy as np
 
 from .base_classes import Shape2D
+from .circle import Circle
 from .convex_polygon import ConvexPolygon, _is_convex
 
 
@@ -187,3 +188,15 @@ class ConvexSpheropolygon(Shape2D):
             self._rescale(scale)
         else:
             raise ValueError("Perimeter must be greater than zero.")
+
+    @property
+    def minimal_bounding_circle(self):
+        """:class:`~.Circle`: Get the minimal bounding circle."""
+        polygon_circle = self.polygon.minimal_bounding_circle
+        return Circle(polygon_circle.radius + self.radius, polygon_circle.center)
+
+    @property
+    def minimal_centered_bounding_circle(self):
+        """:class:`~.Circle`: Get the minimal concentric bounding circle."""
+        polygon_circle = self.polygon.minimal_centered_bounding_circle
+        return Circle(polygon_circle.radius + self.radius, polygon_circle.center)

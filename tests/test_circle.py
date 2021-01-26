@@ -5,7 +5,8 @@ from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats
 from pytest import approx
 
-from coxeter.shapes.circle import Circle
+from conftest import _test_get_set_minimal_bounding_sphere_radius, sphere_isclose
+from coxeter.shapes import Circle
 
 
 @given(floats(0.1, 1000))
@@ -109,6 +110,40 @@ def test_invalid_radius_setter():
     circle = Circle(1)
     with pytest.raises(ValueError):
         circle.radius = -1
+
+
+@given(
+    floats(0.1, 1000),
+    arrays(np.float64, (3,), elements=floats(-10, 10, width=64), unique=True),
+)
+def test_minimal_bounding_circle(r, center):
+    circ = Circle(r, center)
+    assert sphere_isclose(circ.minimal_centered_bounding_circle, circ)
+
+
+@given(
+    floats(0.1, 1000),
+    arrays(np.float64, (3,), elements=floats(-10, 10, width=64), unique=True),
+)
+def test_minimal_centered_bounding_circle(r, center):
+    circ = Circle(r, center)
+    assert sphere_isclose(circ.minimal_centered_bounding_circle, circ)
+
+
+@given(
+    floats(0.1, 1000),
+    arrays(np.float64, (3,), elements=floats(-10, 10, width=64), unique=True),
+)
+def test_get_set_minimal_bounding_circle_radius(r, center):
+    _test_get_set_minimal_bounding_sphere_radius(Circle(r, center))
+
+
+@given(
+    floats(0.1, 1000),
+    arrays(np.float64, (3,), elements=floats(-10, 10, width=64), unique=True),
+)
+def test_get_set_minimal_centered_bounding_circle_radius(r, center):
+    _test_get_set_minimal_bounding_sphere_radius(Circle(r, center), True)
 
 
 @given(

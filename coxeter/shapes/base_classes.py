@@ -165,6 +165,63 @@ class Shape2D(Shape):
         """  # noqa: E501
         return 4 * np.pi * self.area / (self.perimeter ** 2)
 
+    @property
+    def minimal_centered_bounding_circle(self):
+        """:class:`~.Circle`: Get the smallest bounding concentric circle.
+
+        This property gives the smallest
+        `bounding circle <https://en.wikipedia.org/wiki/Bounding_sphere>`__
+        whose center coincides with the center of the shape.
+        """
+        # TODO: The definition of center in coxeter is currently under
+        # discussion and implementations of this property may have to be
+        # adapted accordingly, see
+        # https://github.com/glotzerlab/coxeter/issues/129
+        raise NotImplementedError(
+            "The minimal centered bounding circle calculation is not implemented "
+            "for this shape."
+        )
+
+    @property
+    def minimal_bounding_circle(self):
+        """:class:`~.Circle`: Get the smallset bounding circle.
+
+        A `bounding circle <https://en.wikipedia.org/wiki/Bounding_sphere>`__
+        in two dimensions is a circle containing all of the points. There are
+        an infinite set of possible bounding circles for a shape (since any
+        circle that entirely contains a bounding circle is also a bounding
+        circle), so additional constraints must be imposed to define a unique
+        circle. This property provides the smallest bounding circle of a shape.
+        """
+        raise NotImplementedError(
+            "The minimal bounding circle calculation is not implemented for "
+            "this shape."
+        )
+
+    @property
+    def minimal_bounding_circle_radius(self):
+        """float: Get or set the radius of the minimal bounding circle.
+
+        See :meth:`~.minimal_bounding_circle` for more information.
+        """
+        return self.minimal_bounding_circle.radius
+
+    @minimal_bounding_circle_radius.setter
+    def minimal_bounding_circle_radius(self, value):
+        self._rescale(value / self.minimal_bounding_circle_radius)
+
+    @property
+    def minimal_centered_bounding_circle_radius(self):
+        """float: Get or set the radius of the minimal centered bounding circle.
+
+        See :meth:`~.minimal_centered_bounding_circle` for more information.
+        """
+        return self.minimal_centered_bounding_circle.radius
+
+    @minimal_centered_bounding_circle_radius.setter
+    def minimal_centered_bounding_circle_radius(self, value):
+        self._rescale(value / self.minimal_centered_bounding_circle_radius)
+
 
 class Shape3D(Shape):
     """An abstract representation of a shape in 3 dimensions."""
@@ -212,3 +269,65 @@ class Shape3D(Shape):
             \end{align}
         """  # noqa: E501
         return np.pi * 36 * self.volume ** 2 / (self.surface_area ** 3)
+
+    @property
+    def minimal_centered_bounding_sphere(self):
+        """:class:`~.Sphere`: Get a bounding sphere sharing the center of this shape.
+
+        A `bounding sphere <https://en.wikipedia.org/wiki/Polar_moment_of_inertia>`__
+        of a collection of points in is a sphere containing all of the points.
+        There are an infinite set of possible bounding spheres for a shape
+        (since any sphere that entirely contains a bounding sphere is also a
+        bounding sphere), so additional constraints must be imposed to define a
+        unique sphere. This property provides the smallest bounding sphere of a
+        shape whose center coincides with the center of the shape.
+        """
+        # TODO: The definition of center in coxeter is currently under
+        # discussion and implementations of this property may have to be
+        # adapted accordingly, see
+        # https://github.com/glotzerlab/coxeter/issues/129
+        raise NotImplementedError(
+            "The minimal centered bounding sphere calculation is not implemented "
+            "for this shape."
+        )
+
+    @property
+    def minimal_bounding_sphere(self):
+        """:class:`~.Sphere`: Get a bounding sphere sharing the center of this shape.
+
+        A `bounding sphere <https://en.wikipedia.org/wiki/Polar_moment_of_inertia>`__
+        of a collection of points in dimensions is a sphere containing all of
+        the points. There are an infinite set of possible bounding spheres for
+        a shape (since any sphere that entirely contains a bounding sphere is
+        also a bounding sphere), so additional constraints must be imposed to
+        define a unique sphere. This property provides the smallest bounding
+        sphere of a shape.
+        """
+        raise NotImplementedError(
+            "The minimal bounding sphere calculation is not implemented for "
+            "this shape."
+        )
+
+    @property
+    def minimal_bounding_sphere_radius(self):
+        """float: Get or set the radius of the minimal bounding sphere.
+
+        See :meth:`~.minimal_bounding_sphere` for more information.
+        """
+        return self.minimal_bounding_sphere.radius
+
+    @minimal_bounding_sphere_radius.setter
+    def minimal_bounding_sphere_radius(self, value):
+        self._rescale(value / self.minimal_bounding_sphere_radius)
+
+    @property
+    def minimal_centered_bounding_sphere_radius(self):
+        """float: Get or set the radius of the minimal concentric bounding sphere.
+
+        See :meth:`~.minimal_centered_bounding_sphere` for more information.
+        """
+        return self.minimal_centered_bounding_sphere.radius
+
+    @minimal_centered_bounding_sphere_radius.setter
+    def minimal_centered_bounding_sphere_radius(self, value):
+        self._rescale(value / self.minimal_centered_bounding_sphere_radius)
