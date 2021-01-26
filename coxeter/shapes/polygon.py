@@ -546,10 +546,21 @@ class Polygon(Shape2D):
         Raises:
             RuntimeError: If no circumcircle exists for this polygon.
 
+        Note:
+            The circumcircle here is found by setting up and solving an
+            overdetermined system of linear equations.  The condition that the
+            center of the circumcircle must be equidistant from all the vertices
+            defines a set of quadratic equations. Working in a coordinate system
+            where one of the vertices is placed at the origin guarantees that the
+            distance from the center of the circle to the origin is equal to the
+            circumcircle radius, reducing the system of quadratic equations to a
+            system of linear equations. Since the system of equations will be
+            overdetermined for any shape with more than three vertices, it is
+            solved using a least squares solver, with the residual being used to
+            evaluate the existence of a circumcircle. Since the polygon is
+            embedded in 3D we must constrain the solutions to the plane of the
+            polygon.
         """
-        # Solves a linear system of equations to find a point equidistant from
-        # all the vertices if it exists. Since the polygon is embedded in 3D,
-        # we must constrain our solutions to the plane of the polygon.
         points = np.concatenate(
             (self.vertices[1:] - self.vertices[0], self.normal[np.newaxis])
         )

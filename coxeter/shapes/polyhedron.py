@@ -547,7 +547,21 @@ class Polyhedron(Shape3D):
 
     @property
     def circumsphere(self):
-        """:class:`~.Sphere`: Get the polyhedron's circumsphere."""
+        """:class:`~.Sphere`: Get the polyhedron's circumsphere.
+
+        Note:
+            The circumsphere here is found by setting up and solving an
+            overdetermined system of linear equations.  The condition that the
+            center of the circumsphere must be equidistant from all the vertices
+            defines a set of quadratic equations. Working in a coordinate system
+            where one of the vertices is placed at the origin guarantees that the
+            distance from the center of the sphere to the origin is equal to the
+            circumsphere radius, reducing the system of quadratic equations to a
+            system of linear equations. Since the system of equations will be
+            overdetermined for any shape with more than four vertices, it is
+            solved using a least squares solver, with the residual being used to
+            evaluate the existence of a circumsphere.
+        """
         points = self.vertices[1:] - self.vertices[0]
         half_point_lengths = np.sum(points * points, axis=1) / 2
         x, resids, _, _ = np.linalg.lstsq(points, half_point_lengths, None)
