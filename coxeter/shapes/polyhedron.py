@@ -608,7 +608,7 @@ class Polyhedron(Shape3D):
         A = np.hstack((self.normals, np.ones((self.num_faces, 1))))
         x, resids, _, _ = np.linalg.lstsq(A, b, None)
         if len(self.vertices) > 4 and not np.isclose(resids, 0):
-            raise RuntimeError("No circumsphere for this polyhedron.")
+            raise RuntimeError("No insphere for this polyhedron.")
 
         return Sphere(x[3], x[:3])
 

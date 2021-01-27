@@ -252,6 +252,11 @@ class Polygon(Shape2D):
         """:math:`(N_{verts}, 3)` :class:`numpy.ndarray` of float: Get the vertices of the polygon."""  # noqa: E501
         return self._vertices
 
+    @property
+    def num_vertices(self):
+        """int: Get the number of vertices."""
+        return self.vertices.shape[0]
+
     def _rescale(self, scale):
         """Multiply length scale.
 
@@ -553,11 +558,11 @@ class Polygon(Shape2D):
         # with position r_i, dot(r_i - C, r_i - C) = r^2, which is equivalent
         # to dot(r_i, r_i) - 2 dot(C, r_i) + dot(C, C) = r^2, a system of
         # quadratic equations. If we choose r_0 as the origin, then dot(C, C) =
-        # r^2 and we instead have the linear equations dot(p_i, p_i) / 2 =
-        # dot(C, p_i) where p_i = r_i - r_0. This is the set of equations that
-        # we solve. The polygon is embedded in 3D, which imposes the additional
-        # constraint that the circumcircle must lie in the plane of the
-        # polygon.
+        # r^2 and we instead have the linear equations dot(C, p_i) =
+        # dot(p_i, p_i) / 2 where p_i = r_i - r_0. This is the set of equations
+        # that we solve. The polygon is embedded in 3D, which imposes the
+        # additional constraint that the circumcircle must lie in the plane of
+        # the polygon.
         points = np.concatenate(
             (self.vertices[1:] - self.vertices[0], self.normal[np.newaxis])
         )
@@ -578,6 +583,60 @@ class Polygon(Shape2D):
     @circumcircle_radius.setter
     def circumcircle_radius(self, value):
         self._rescale(value / self.circumcircle_radius)
+
+    @property
+    def incircle(self):
+        """:class:`~.Sphere`: Get the polygon's incircle.
+
+        Note:
+            The incircle of a polygon is defined as the circle contained within
+            the polygon that is tangent to all its faces. This condition
+            uniquely defines the circle, if it exists. The set of equations
+            defined by this equation is solved using a least squares approach,
+            with the magnitude of the residual used to determine whether or not
+            the incircle exists.
+
+        """
+        # The incircle is defined by center C and radius r. For face i
+        # defined by its unit normal n_i and any point in the plane (choose a
+        # vertex v_i for convenience), we must have dot(C + r n_i - v_i, n_i) = 0.
+        # Defining the vector Cr = (C_x, C_y, C_z, r), and the augmented
+        # normals m = (n_x, n_y, n_z, 1), rearranging gives the equations that
+        # we solve: dot(m_i, cr) = dot(n_i, v_i). The polygon is embedded in
+        # 3D, which imposes the additional constraint that the incircle must
+        # lie in the plane of the polygon.
+
+        outward_normals = np.cross(
+            # Order is important here to get the outward facing normal.
+            np.roll(self.vertices, axis=0, shift=-1) - self.vertices,
+            self.normal,
+        )
+        outward_normals /= np.linalg.norm(outward_normals, axis=-1)[:, np.newaxis]
+
+        # vstack the row corresponding to the constraint equation
+        A = np.vstack(
+            (
+                # hstack on the coefficient of 1 for the radius
+                np.hstack((outward_normals, np.ones((self.num_vertices, 1)))),
+                # The coefficient of the radius in the plane constraint is 0.
+                np.append(self.normal, 0),
+            )
+        )
+
+        b = np.concatenate(
+            (
+                # Arbitrarily choose the first vertex in every edge for the dot product.
+                np.sum(outward_normals * self.vertices, axis=-1),
+                # Can use the dot product of the normal with any of the vertices.
+                [np.dot(self.normal, self.vertices[0])],
+            )
+        )
+
+        x, resids, _, _ = np.linalg.lstsq(A, b, None)
+        if len(self.vertices) > 4 and not np.isclose(resids, 0):
+            raise RuntimeError("No incircle for this polygon.")
+
+        return Circle(x[3], x[:3])
 
     def compute_form_factor_amplitude(self, q, density=1.0):  # noqa: D102
         """Calculate the form factor intensity.
