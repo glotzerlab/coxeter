@@ -539,11 +539,11 @@ def test_form_factor(cube):
     )
 
 
-def test_get_set_minimal_bounding_sphere_radius():
-    for poly in platonic_solids():
-        _test_get_set_minimal_bounding_sphere_radius(poly)
+@pytest.mark.parametrize("poly", platonic_solids())
+def test_get_set_minimal_bounding_sphere_radius(poly):
+    _test_get_set_minimal_bounding_sphere_radius(poly)
 
 
-def test_get_set_minimal_centered_bounding_sphere_radius():
-    for poly in platonic_solids():
-        _test_get_set_minimal_bounding_sphere_radius(poly, True)
+@pytest.mark.parametrize("poly", platonic_solids())
+def test_get_set_minimal_centered_bounding_sphere_radius(poly):
+    _test_get_set_minimal_bounding_sphere_radius(poly, True)

@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 from hypothesis.strategies import builds, floats, integers
 
-from coxeter.families import PlatonicFamily
+from coxeter.families import PlatonicFamily, RegularNGonFamily
 from coxeter.shapes import ConvexPolyhedron, ConvexSpheropolyhedron, Polyhedron, Shape2D
 
 
@@ -136,6 +136,12 @@ def platonic_solids():
     """Generate platonic solids."""
     for shape_name in PlatonicFamily.data:
         yield PlatonicFamily.get_shape(shape_name)
+
+
+def regular_polygons(n=10):
+    """Generate regular polygons."""
+    for i in range(3, n + 1):
+        yield RegularNGonFamily.get_shape(i)
 
 
 def _test_get_set_minimal_bounding_sphere_radius(shape, centered=False):
