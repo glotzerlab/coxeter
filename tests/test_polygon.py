@@ -326,7 +326,7 @@ def test_incircle_from_center(convex_square):
 
 @pytest.mark.parametrize("poly", regular_polygons())
 def test_incircle(poly):
-    # The incircle should be centered by default.
+    # The incircle should be centered for regular polygons.
     assert sphere_isclose(poly.incircle, poly.incircle_from_center)
 
     def check_rotation_invariance(quat):

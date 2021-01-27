@@ -11,6 +11,7 @@ from scipy.spatial import ConvexHull
 
 from conftest import (
     EllipsoidSurfaceStrategy,
+    Random3DRotationStrategy,
     _test_get_set_minimal_bounding_sphere_radius,
     get_oriented_cube_faces,
     get_oriented_cube_normals,
@@ -22,15 +23,18 @@ from coxeter.shapes.convex_polyhedron import ConvexPolyhedron
 from coxeter.shapes.utils import rotate_order2_tensor, translate_inertia_tensor
 from utils import compute_inertia_mc
 
-
-def damasceno_shapes():
-    """Generate the shapes from :cite:`Damasceno2012a`.
-
-    We yield the raw shape dicts to allow excluding subsets for different tests.
-    """
-    family = DOI_SHAPE_REPOSITORIES["10.1126/science.1220869"][0]
-    for shape_data in family.data.values():
-        yield shape_data
+# Generate the shapes from :cite:`Damasceno2012a`. Use the raw shape dicts to
+# allow excluding subsets for different tests.
+_damasceno_data = DOI_SHAPE_REPOSITORIES["10.1126/science.1220869"][0].data
+_damasceno_shape_names = _damasceno_data.keys()
+named_damasceno_shapes_mark = pytest.mark.parametrize(
+    argnames="shape",
+    argvalues=[_damasceno_data[shape_id] for shape_id in _damasceno_shape_names],
+    ids=[
+        f"{shape_id}: {_damasceno_data[shape_id]['name']}"
+        for shape_id in _damasceno_shape_names
+    ],
+)
 
 
 def test_normal_detection(convex_cube):
@@ -140,7 +144,7 @@ def test_moment_inertia(cube):
     assert np.allclose(cube.inertia_tensor, np.diag([1 / 6] * 3))
 
 
-@pytest.mark.parametrize("shape", damasceno_shapes())
+@named_damasceno_shapes_mark
 def test_volume_damasceno_shapes(shape):
     if shape["name"] in ("RESERVED", "Sphere"):
         return
@@ -155,7 +159,7 @@ def test_volume_damasceno_shapes(shape):
     os.getenv("CI", "false") != "true" and os.getenv("CIRCLECI", "false") != "true",
     reason="Test is too slow to run during rapid development",
 )
-@pytest.mark.parametrize("shape", damasceno_shapes())
+@named_damasceno_shapes_mark
 def test_moment_inertia_damasceno_shapes(shape):
     # These shapes pass the test for a sufficiently high number of samples, but
     # the number is too high to be worth running them regularly.
@@ -397,6 +401,20 @@ def test_insphere_from_center_convex_hulls(points, test_points):
     points_in_poly = poly.is_inside(test_points)
     assert np.all(points_in_sphere <= points_in_poly)
     assert insphere.volume < poly.volume
+
+
+@named_platonic_mark
+def test_insphere_new(poly):
+    # The insphere should be centered for platonic solids.
+    assert sphere_isclose(poly.insphere, poly.insphere_from_center, atol=1e-4)
+
+    # The insphere of a platonic solid should be rotation invariant.
+    @given(Random3DRotationStrategy)
+    def check_rotation_invariance(quat):
+        rotated_poly = ConvexPolyhedron(rowan.rotate(quat, poly.vertices))
+        assert sphere_isclose(poly.insphere, rotated_poly.insphere, atol=1e-4)
+
+    check_rotation_invariance()
 
 
 @given(arrays(np.float64, (4, 3), elements=floats(-10, 10, width=64), unique=True))

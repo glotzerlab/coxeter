@@ -167,11 +167,11 @@ def platonic_solids():
 
 # A convenient mark decorator that also includes names for the polyhedra.
 # Assumes that the argument name is "poly".
-_platonic_shapes = PlatonicFamily.data.keys()
+_platonic_shape_names = PlatonicFamily.data.keys()
 named_platonic_mark = pytest.mark.parametrize(
     argnames="poly",
-    argvalues=[PlatonicFamily.get_shape(name) for name in _platonic_shapes],
-    ids=_platonic_shapes,
+    argvalues=[PlatonicFamily.get_shape(name) for name in _platonic_shape_names],
+    ids=_platonic_shape_names,
 )
 
 
