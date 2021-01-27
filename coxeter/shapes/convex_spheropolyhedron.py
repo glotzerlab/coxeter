@@ -306,14 +306,6 @@ class ConvexSpheropolyhedron(Shape3D):
 
         return in_polyhedron | in_sphero_shape
 
-    def inertia_tensor(self):
-        """:math:`(3, 3)` :class:`numpy.ndarray`: Get the inertia tensor.
-
-        Warnings:
-            This calculation is not implemented for :class:`~.ConvexSpheropolyhedron`.
-        """
-        raise NotImplementedError
-
     @property
     def circumsphere_from_center(self):
         """:class:`~.Sphere`: Get the smallest circumscribed sphere centered at the centroid.

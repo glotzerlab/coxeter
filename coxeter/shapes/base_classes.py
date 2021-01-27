@@ -52,6 +52,10 @@ class Shape(ABC):
         """
         raise NotImplementedError
 
+    def inertia_tensor(self):
+        """:math:`(3, 3)` :class:`numpy.ndarray`: Get the inertia tensor."""
+        raise NotImplementedError
+
     def compute_form_factor_amplitude(self, q):
         r"""Calculate the form factor intensity.
 
@@ -288,10 +292,6 @@ class Shape3D(Shape):
     def surface_area(self):
         """float: Get or set the surface area of the shape."""
         pass
-
-    def inertia_tensor(self):
-        """:math:`(3, 3)` :class:`numpy.ndarray`: Get the inertia tensor."""
-        raise NotImplementedError
 
     @property
     def iq(self):
