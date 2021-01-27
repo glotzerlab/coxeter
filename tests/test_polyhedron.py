@@ -390,10 +390,10 @@ def test_inside(convex_cube):
     EllipsoidSurfaceStrategy,
     arrays(np.float64, (100, 3), elements=floats(0, 1, width=64), unique=True),
 )
-def test_insphere_from_center_convex_hulls(points, test_points):
+def test_maximal_centered_bounded_sphere_convex_hulls(points, test_points):
     hull = ConvexHull(points)
     poly = ConvexPolyhedron(points[hull.vertices])
-    insphere = poly.insphere_from_center
+    insphere = poly.maximal_centered_bounded_sphere
     assert poly.is_inside(insphere.center)
 
     test_points *= insphere.radius * 3
@@ -402,11 +402,16 @@ def test_insphere_from_center_convex_hulls(points, test_points):
     assert np.all(points_in_sphere <= points_in_poly)
     assert insphere.volume < poly.volume
 
+    with pytest.deprecated_call():
+        assert sphere_isclose(insphere, poly.insphere_from_center)
+
 
 @named_platonic_mark
-def test_insphere_new(poly):
+def test_insphere(poly):
     # The insphere should be centered for platonic solids.
-    assert sphere_isclose(poly.insphere, poly.insphere_from_center, atol=1e-4)
+    assert sphere_isclose(
+        poly.insphere, poly.maximal_centered_bounded_sphere, atol=1e-4
+    )
 
     # The insphere of a platonic solid should be rotation invariant.
     @given(Random3DRotationStrategy)
