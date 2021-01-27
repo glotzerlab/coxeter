@@ -541,26 +541,23 @@ class Polygon(Shape2D):
         A `circumcircle
         <https://en.wikipedia.org/wiki/Circumscribed_circle>`__ must touch
         all the points of the polygon. A circumcircle exists if and only if
-        there is a point equidistant from all the vertices.
+        there is a point equidistant from all the vertices. The circumcircle is
+        found by finding the least squares solution of the overdetermined system
+        of linear equations defined by this constraint, and the circumcircle
+        only exists if the resulting solution has no residual.
 
         Raises:
             RuntimeError: If no circumcircle exists for this polygon.
-
-        Note:
-            The circumcircle here is found by setting up and solving an
-            overdetermined system of linear equations.  The condition that the
-            center of the circumcircle must be equidistant from all the vertices
-            defines a set of quadratic equations. Working in a coordinate system
-            where one of the vertices is placed at the origin guarantees that the
-            distance from the center of the circle to the origin is equal to the
-            circumcircle radius, reducing the system of quadratic equations to a
-            system of linear equations. Since the system of equations will be
-            overdetermined for any shape with more than three vertices, it is
-            solved using a least squares solver, with the residual being used to
-            evaluate the existence of a circumcircle. Since the polygon is
-            embedded in 3D we must constrain the solutions to the plane of the
-            polygon.
         """
+        # The circumsphere is defined by center C and radius r. For vertex i
+        # with position r_i, dot(r_i - C, r_i - C) = r^2, which is equivalent
+        # to dot(r_i, r_i) - 2 dot(C, r_i) + dot(C, C) = r^2, a system of
+        # quadratic equations. If we choose r_0 as the origin, then dot(C, C) =
+        # r^2 and we instead have the linear equations dot(p_i, p_i) / 2 =
+        # dot(C, p_i) where p_i = r_i - r_0. This is the set of equations that
+        # we solve. The polygon is embedded in 3D, which imposes the additional
+        # constraint that the circumcircle must lie in the plane of the
+        # polygon.
         points = np.concatenate(
             (self.vertices[1:] - self.vertices[0], self.normal[np.newaxis])
         )
