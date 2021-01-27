@@ -138,9 +138,28 @@ class ConvexPolygon(Polygon):
         """
         verts = self.vertices[:, :2]
         theta = angles
-        verts[:, 0] -= np.average(verts[:, 0])
-        verts[:, 1] -= np.average(verts[:, 1])
-        theta_component = np.arctan(verts[:, 1] / verts[:, 0])
+        verts -= np.average(verts, axis=0)
+
+        # Rearrange the verts so that we start with the lowest angle
+        theta_component = np.arctan2(verts[:, 1], verts[:, 0])
+
+        # Go from 0 to 2 pi
+        theta_component[theta_component < 0] += 2 * np.pi
+
+        # find and reorganize to start with smallest angle
+        verts = np.roll(
+            verts,
+            len(theta_component)
+            - np.where((np.min(theta_component) == theta_component))[0],
+            axis=0,
+        )
+
+        theta_component = np.roll(
+            theta_component,
+            len(theta_component)
+            - np.where((np.min(theta_component) == theta_component))[0],
+            axis=0,
+        )
 
         # Pair vertices with numpy roll
         p1 = verts

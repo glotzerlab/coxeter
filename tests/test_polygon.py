@@ -413,6 +413,20 @@ def test_nonregular_convex_polygon_distance_to_surface_unit_area_ngon(num_sides)
     assert_distance_to_surface_2d(shape, theta, distance)
 
 
+@pytest.mark.parametrize("num_sides", range(3, 10))
+def test_convex_polygon_distance_to_surface_unit_area_ngon_non_first_quadrant(
+    num_sides,
+):
+    """Check shape distance consistency with the relaxation of first quadrant vertex."""
+    theta = np.linspace(0, 2 * np.pi, 1000000)
+    shape = RegularNGonFamily.get_shape(num_sides)
+    # Roll the verts so we don't start in first quadrant
+    verts = np.roll(shape.vertices, 1, axis=0)
+    shape = ConvexPolygon(verts)
+    distance = shape.distance_to_surface(theta)
+    assert_distance_to_surface_2d(shape, theta, distance)
+
+
 def test_distance_values_for_square():
     """Check shape distance of a square with infinite slopes."""
     verts = np.array([[1, 1], [-1, 1], [-1, -1], [1, -1]])
