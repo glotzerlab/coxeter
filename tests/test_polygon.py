@@ -10,6 +10,8 @@ from scipy.spatial import ConvexHull
 
 from conftest import (
     EllipseSurfaceStrategy,
+    Random2DRotationStrategy,
+    Random3DRotationStrategy,
     _test_get_set_minimal_bounding_sphere_radius,
     regular_polygons,
     sphere_isclose,
@@ -322,10 +324,23 @@ def test_incircle_from_center(convex_square):
     assert circle.radius == 0.5
 
 
-# def test_incircle_from_center(convex_square):
-#     circle = convex_square.incircle_from_center
-#     assert np.all(circle.center == convex_square.center)
-#     assert circle.radius == 0.5
+@pytest.mark.parametrize("poly", regular_polygons())
+def test_incircle(poly):
+    # The incircle should be centered by default.
+    assert sphere_isclose(poly.incircle, poly.incircle_from_center)
+
+    def check_rotation_invariance(quat):
+        rotated_poly = ConvexPolygon(rowan.rotate(quat, poly.vertices))
+        assert sphere_isclose(poly.incircle, rotated_poly.incircle)
+
+    # The incircle of a regular polygon should be rotation invariant.
+    given(Random2DRotationStrategy)(check_rotation_invariance)()
+
+    # The calculation should also be robust to out-of-plane rotations. Note
+    # that currently this test relies on the fact that circles are not
+    # orientable, otherwise they would need to be rotated back into the plane
+    # for the comparison.
+    given(Random3DRotationStrategy)(check_rotation_invariance)()
 
 
 def test_form_factor(square):

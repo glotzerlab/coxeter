@@ -1,5 +1,6 @@
 import numpy as np
 import pytest
+import rowan
 from hypothesis.strategies import builds, floats, integers
 
 from coxeter.families import PlatonicFamily, RegularNGonFamily
@@ -119,6 +120,32 @@ EllipsoidSurfaceStrategy = builds(
 EllipseSurfaceStrategy = builds(
     points_from_ellipsoid_surface, floats(0.1, 5), floats(0.1, 5), n=integers(5, 15)
 )
+
+
+def quaternion_from_axis_angle(x, y, z, theta):
+    """Generate a quaternion from axis [x, y, z] and angle theta."""
+    if x == y == z == 0:
+        return np.array([1, 0, 0, 0])
+    axis = np.array([x, y, z])
+    axis /= np.linalg.norm(axis)
+    return rowan.from_axis_angle(axis, theta)
+
+
+Random3DRotationStrategy = builds(
+    quaternion_from_axis_angle,
+    floats(-1, 1, allow_nan=False),
+    floats(-1, 1, allow_nan=False),
+    floats(-1, 1, allow_nan=False),
+    floats(0, 2 * np.pi, allow_nan=False),
+).filter(lambda quat: not np.isnan(quat).any())
+
+Random2DRotationStrategy = builds(
+    quaternion_from_axis_angle,
+    floats(0, 0, allow_nan=False),
+    floats(0, 0, allow_nan=False),
+    floats(-1, 1, allow_nan=False),
+    floats(0, 2 * np.pi, allow_nan=False),
+).filter(lambda quat: not np.isnan(quat).any())
 
 
 def sphere_isclose(c1, c2, *args, **kwargs):
