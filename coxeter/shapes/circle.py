@@ -191,11 +191,21 @@ class Circle(Shape2D):
         return 1
 
     @property
+    def minimal_bounding_circle(self):
+        """:class:`~.Circle`: Get the smallest bounding circle."""
+        return Circle(self.radius, self.center)
+
+    @property
     def minimal_centered_bounding_circle(self):
         """:class:`~.Circle`: Get the smallest bounding concentric circle."""
         return Circle(self.radius, self.center)
 
     @property
-    def minimal_bounding_circle(self):
-        """:class:`~.Circle`: Get the smallest bounding circle."""
+    def maximal_bounding_circle(self):
+        """:class:`~.Circle`: Get the largest bounded circle."""
+        return Circle(self.radius, self.center)
+
+    @property
+    def maximal_centered_bounded_circle(self):
+        """:class:`~.Circle`: Get the largest bounded concentric circle."""
         return Circle(self.radius, self.center)
