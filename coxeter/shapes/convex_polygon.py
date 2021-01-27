@@ -130,8 +130,7 @@ class ConvexPolygon(Polygon):
     def distance_to_surface(self, angles):
         """Distance to the surface of the shape.
 
-        This calculation assumes vertices are ordered counterclockwise and
-        start in the first quadrant.
+        This calculation assumes vertices are ordered counterclockwise
 
         For more generic information about this calculation, see
         `Shape.distance_to_surface`.
