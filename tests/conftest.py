@@ -165,6 +165,16 @@ def platonic_solids():
         yield PlatonicFamily.get_shape(shape_name)
 
 
+# A convenient mark decorator that also includes names for the polyhedra.
+# Assumes that the argument name is "poly".
+_platonic_shapes = PlatonicFamily.data.keys()
+named_platonic_mark = pytest.mark.parametrize(
+    argnames="poly",
+    argvalues=[PlatonicFamily.get_shape(name) for name in _platonic_shapes],
+    ids=_platonic_shapes,
+)
+
+
 def regular_polygons(n=10):
     """Generate regular polygons."""
     for i in range(3, n + 1):

@@ -14,7 +14,7 @@ from conftest import (
     _test_get_set_minimal_bounding_sphere_radius,
     get_oriented_cube_faces,
     get_oriented_cube_normals,
-    platonic_solids,
+    named_platonic_mark,
     sphere_isclose,
 )
 from coxeter.families import DOI_SHAPE_REPOSITORIES, PlatonicFamily
@@ -269,7 +269,7 @@ def test_asphericity():
     pass
 
 
-@pytest.mark.parametrize("poly", platonic_solids())
+@named_platonic_mark
 def test_circumsphere_platonic(poly):
     circumsphere = poly.circumsphere
 
@@ -280,7 +280,7 @@ def test_circumsphere_platonic(poly):
     assert np.allclose(r2, circumsphere.radius ** 2)
 
 
-@pytest.mark.parametrize("poly", platonic_solids())
+@named_platonic_mark
 def test_circumsphere_radius_platonic(poly):
     # Ensure polyhedron is centered, then compute distances.
     poly.center = [0, 0, 0]
@@ -346,7 +346,7 @@ def test_minimal_centered_bounding_circle():
     testfun()
 
 
-@pytest.mark.parametrize("poly", platonic_solids())
+@named_platonic_mark
 def test_bounding_sphere_platonic(poly):
     # Ensure polyhedron is centered, then compute distances.
     poly.center = [0, 0, 0]
@@ -539,11 +539,11 @@ def test_form_factor(cube):
     )
 
 
-@pytest.mark.parametrize("poly", platonic_solids())
+@named_platonic_mark
 def test_get_set_minimal_bounding_sphere_radius(poly):
     _test_get_set_minimal_bounding_sphere_radius(poly)
 
 
-@pytest.mark.parametrize("poly", platonic_solids())
+@named_platonic_mark
 def test_get_set_minimal_centered_bounding_sphere_radius(poly):
     _test_get_set_minimal_bounding_sphere_radius(poly, True)
