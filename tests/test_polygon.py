@@ -318,16 +318,19 @@ def test_circumcircle_radius(poly):
     assert np.isclose(poly.circumcircle.radius, rmax * 2)
 
 
-def test_incircle_from_center(convex_square):
-    circle = convex_square.incircle_from_center
+def test_maximal_centered_bounded_circle(convex_square):
+    circle = convex_square.maximal_centered_bounded_circle
     assert np.all(circle.center == convex_square.center)
     assert circle.radius == 0.5
+
+    with pytest.deprecated_call():
+        assert sphere_isclose(convex_square.incircle_from_center, circle)
 
 
 @pytest.mark.parametrize("poly", regular_polygons())
 def test_incircle(poly):
     # The incircle should be centered for regular polygons.
-    assert sphere_isclose(poly.incircle, poly.incircle_from_center)
+    assert sphere_isclose(poly.incircle, poly.maximal_centered_bounded_circle)
 
     def check_rotation_invariance(quat):
         rotated_poly = ConvexPolygon(rowan.rotate(quat, poly.vertices))
