@@ -168,9 +168,6 @@ class ConvexPolygon(Polygon):
         y_int = np.zeros(len(p1), dtype=object)
         angle_range = np.zeros((len(verts), 2))
 
-        norm = np.sqrt(np.sum(p1 * p1, axis=1) * np.sum(p2 * p2, axis=1))
-        angle_between = np.arccos(np.sum(p1 * p2, axis=1) / norm)
-
         # get the slopes
 
         sl_inf = np.where((p1[:, 0] - p2[:, 0] == 0.0))
@@ -190,18 +187,9 @@ class ConvexPolygon(Polygon):
 
         # Get the ranges of theta for the parameterization
 
-        theta_initial = theta_component[0]
-
-        for i in range(len(verts)):
-            if i < len(verts) - 1:
-                min_angle = theta_initial
-                max_angle = theta_initial + angle_between[i]
-                theta_initial = max_angle
-                angle_range[i, 0] = min_angle
-                angle_range[i, 1] = max_angle
-            else:
-                angle_range[i, 0] = max_angle
-                angle_range[i, 1] = 2 * np.pi
+        angle_range[:, 0] = theta_component
+        angle_range[:, 1] = np.roll(theta_component, -1, axis=0)
+        angle_range[len(angle_range) - 1, 1] = 2 * np.pi
 
         # Make the kernel:
 
