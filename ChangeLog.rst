@@ -11,9 +11,10 @@ Added
 - Point-in-shape checks for circles.
 - Point-in-shape checks for ellipses.
 - Inertia tensors for 2D shapes that implement moments of inertia.
-- Add minimal bounding sphere for all shapes.
-- Add minimal centered bounding sphere calculations for all shapes except general polygons and polyhedra.
-- Enable getting and setting the circumsphere or bounding sphere radius of a polyhedron (for both types of bounding sphere).
+- Minimal bounding sphere for all shapes.
+- Minimal centered bounding sphere calculations for all shapes except general polygons and polyhedra.
+- Getters and setters for the circumsphere or bounding sphere radius of a polyhedron (for both types of bounding sphere).
+- A repr for all shapes.
 
 Changed
 ~~~~~~~

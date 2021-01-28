@@ -34,6 +34,7 @@ Vyas Ramasubramani - **Creator and lead developer**
 * Added minimal bounding sphere for all shapes.
 * Added minimal centered bounding sphere calculations for all shapes except general polygons and polyhedra.
 * Enabled getting and setting the circumsphere or bounding sphere radius of a polyhedron (for both types of bounding sphere).
+* Added repr for all shapes.
 
 Bryan VanSaders - **Original maintainer of legacy euclid package**
 
