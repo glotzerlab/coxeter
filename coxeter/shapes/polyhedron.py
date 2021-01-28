@@ -605,8 +605,8 @@ class Polyhedron(Shape3D):
         # we solve: dot(m_i, cr) = dot(n_i, v_i).
         first_vertices = np.array([verts[0] for verts in self.faces])
         b = np.sum(self.normals * self.vertices[first_vertices], axis=-1)
-        A = np.hstack((self.normals, np.ones((self.num_faces, 1))))
-        x, resids, _, _ = np.linalg.lstsq(A, b, None)
+        a = np.hstack((self.normals, np.ones((self.num_faces, 1))))
+        x, resids, _, _ = np.linalg.lstsq(a, b, None)
         if len(self.vertices) > 4 and not np.isclose(resids, 0):
             raise RuntimeError("No insphere for this polyhedron.")
 

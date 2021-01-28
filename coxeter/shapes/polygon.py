@@ -614,7 +614,7 @@ class Polygon(Shape2D):
         outward_normals /= np.linalg.norm(outward_normals, axis=-1)[:, np.newaxis]
 
         # vstack the row corresponding to the constraint equation
-        A = np.vstack(
+        a = np.vstack(
             (
                 # hstack on the coefficient of 1 for the radius
                 np.hstack((outward_normals, np.ones((self.num_vertices, 1)))),
@@ -632,7 +632,7 @@ class Polygon(Shape2D):
             )
         )
 
-        x, resids, _, _ = np.linalg.lstsq(A, b, None)
+        x, resids, _, _ = np.linalg.lstsq(a, b, None)
         if len(self.vertices) > 4 and not np.isclose(resids, 0):
             raise RuntimeError("No incircle for this polygon.")
 
