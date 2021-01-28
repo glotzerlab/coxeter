@@ -202,3 +202,8 @@ def test_get_set_minimal_bounding_circle_radius(r, center):
 )
 def test_get_set_minimal_centered_bounding_circle_radius(r, center):
     _test_get_set_minimal_bounding_sphere_radius(Sphere(r, center), True)
+
+
+def test_repr():
+    sphere = Sphere(1, [1, 2, 3])
+    assert str(sphere), str(eval(repr(sphere)))

@@ -166,3 +166,8 @@ def test_get_set_minimal_bounding_sphere_radius(poly):
         _test_get_set_minimal_bounding_sphere_radius(spoly)
 
     testfun()
+
+
+def test_repr():
+    sphero_cube = make_sphero_cube(radius=1)
+    assert str(sphero_cube), str(eval(repr(sphero_cube)))

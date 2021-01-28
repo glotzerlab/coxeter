@@ -58,7 +58,7 @@ def convex_cube():
 
 @pytest.fixture
 def oriented_cube():
-    return Polyhedron(get_cube_points(), get_oriented_cube_faces())
+    return Polyhedron(get_cube_points(), get_oriented_cube_faces().tolist())
 
 
 @pytest.fixture

@@ -280,3 +280,7 @@ def test_inertia(unit_rounded_square):
         unit_rounded_square.polar_moment_inertia
     with pytest.raises(NotImplementedError):
         unit_rounded_square.inertia_tensor
+
+
+def test_repr(unit_rounded_square):
+    assert str(unit_rounded_square), str(eval(repr(unit_rounded_square)))

@@ -200,3 +200,9 @@ class ConvexSpheropolygon(Shape2D):
         """:class:`~.Circle`: Get the minimal concentric bounding circle."""
         polygon_circle = self.polygon.minimal_centered_bounding_circle
         return Circle(polygon_circle.radius + self.radius, polygon_circle.center)
+
+    def __repr__(self):
+        return (
+            f"coxeter.shapes.ConvexSpheropolygon(vertices={self.vertices.tolist()}, "
+            f"radius={self.radius}, normal={self.polygon.normal.tolist()})"
+        )

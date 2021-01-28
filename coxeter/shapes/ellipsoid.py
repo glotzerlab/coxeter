@@ -205,3 +205,9 @@ class Ellipsoid(Shape3D):
     def minimal_bounding_sphere(self):
         """:class:`~.Sphere`: Get the smallest bounding sphere."""
         return Sphere(max(self.a, self.b, self.c), self.center)
+
+    def __repr__(self):
+        return (
+            f"coxeter.shapes.Ellipsoid(a={self.a}, b={self.b}, c={self.c}, "
+            f"center={self.center.tolist()})"
+        )

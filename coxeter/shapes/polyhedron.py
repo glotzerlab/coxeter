@@ -714,3 +714,9 @@ class Polyhedron(Shape3D):
             ) / q_sqs[~zero_q]
 
         return form_factor
+
+    def __repr__(self):
+        return (
+            f"coxeter.shapes.Polyhedron(vertices={self.vertices.tolist()}, "
+            f"faces={np.asarray(self.faces).tolist()})"
+        )
