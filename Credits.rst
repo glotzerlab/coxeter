@@ -33,7 +33,10 @@ Vyas Ramasubramani - **Creator and lead developer**
 * Added generic inertia tensors for 2D shapes.
 * Added minimal bounding sphere for all shapes.
 * Added minimal centered bounding sphere calculations for all shapes except general polygons and polyhedra.
-* Enabled getting and setting the circumsphere or bounding sphere radius of a polyhedron (for both types of bounding sphere).
+* Enabled getting and setting the circumsphere or bounding sphere/circle radius of a polyhedron/polygon (for both types of bounding sphere/circle).
+* Added maximal bounding sphere for all shapes.
+* Added maximal centered bounded sphere calculations for all shapes except general polygons and polyhedra.
+* Enabled getting and setting the insphere or bounded sphere/circle radius of a polyhedron/polygon (for both types of bounding sphere/circle).
 
 Bryan VanSaders - **Original maintainer of legacy euclid package**
 
