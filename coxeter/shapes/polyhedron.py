@@ -612,6 +612,15 @@ class Polyhedron(Shape3D):
 
         return Sphere(x[3], x[:3])
 
+    @property
+    def insphere_radius(self):
+        """float: Get the radius of the polygon's insphere."""
+        return self.insphere.radius
+
+    @insphere_radius.setter
+    def insphere_radius(self, value):
+        self._rescale(value / self.insphere_radius)
+
     def get_dihedral(self, a, b):
         """Get the dihedral angle between a pair of faces.
 

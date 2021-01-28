@@ -638,6 +638,15 @@ class Polygon(Shape2D):
 
         return Circle(x[3], x[:3])
 
+    @property
+    def incircle_radius(self):
+        """float: Get the radius of the polygon's incircle."""
+        return self.incircle.radius
+
+    @incircle_radius.setter
+    def incircle_radius(self, value):
+        self._rescale(value / self.incircle_radius)
+
     def compute_form_factor_amplitude(self, q, density=1.0):  # noqa: D102
         """Calculate the form factor intensity.
 
