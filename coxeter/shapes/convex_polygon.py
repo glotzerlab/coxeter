@@ -134,9 +134,11 @@ class ConvexPolygon(Polygon):
         `Shape.distance_to_surface`.
         """
         # Get the angles associated with each vertex in [0, 2*pi).
+        # TODO: This code has precision problems for near 0 values.
         verts = (_align_points_by_normal(self.normal, self.vertices) - self.center)[
             :, :2
         ]
+        verts = self.vertices[:, :2]
         angles_to_vertices = np.mod(
             np.arctan2(
                 # TODO: This mod will fail due to precision issues right around 2 * pi.
