@@ -135,83 +135,59 @@ class ConvexPolygon(Polygon):
         For more generic information about this calculation, see
         `Shape.distance_to_surface`.
         """
+        num_verts = len(self.vertices)
+
         # Rearrange the verts so that we start with the lowest angle
         verts = (self.vertices - self.center)[:, :2]
-        theta_component = np.arctan2(verts[:, 1], verts[:, 0])
-        np.mod(theta_component, 2 * np.pi, out=theta_component)
+        angles_to_vertices = np.arctan2(verts[:, 1], verts[:, 0])
+        np.mod(angles_to_vertices, 2 * np.pi, out=angles_to_vertices)
 
         # find and reorganize to start with smallest angle
-        shift = (
-            len(theta_component)
-            - np.where((np.min(theta_component) == theta_component))[0]
-        )
+        shift = -np.argmin(angles_to_vertices)
         verts = np.roll(verts, shift=shift, axis=0)
-        theta_component = np.roll(theta_component, shift, axis=0)
+        angles_to_vertices = np.roll(angles_to_vertices, shift, axis=0)
 
         # Pair vertices with numpy roll
         p1 = verts
-        p2 = np.roll(verts, -1, axis=0)
+        p2 = np.roll(verts, shift=-1, axis=0)
 
         # get the slopes
-        slopes = np.ones(len(p1)) * np.inf
-        sl_ninf = np.where((p1[:, 0] - p2[:, 0] != 0.0))
-        slopes[sl_ninf] = (p1[sl_ninf, 1] - p2[sl_ninf, 1]) / (
-            p1[sl_ninf, 0] - p2[sl_ninf, 0]
+        slopes = np.ones(num_verts) * np.inf
+        finite_slopes = np.where((p1[:, 0] - p2[:, 0] != 0.0))
+        slopes[finite_slopes] = (p1[finite_slopes, 1] - p2[finite_slopes, 1]) / (
+            p1[finite_slopes, 0] - p2[finite_slopes, 0]
         )
 
         # Get the y_intercepts
-        y_int = np.ones(len(p1)) * np.inf
-        y_ninf = np.where((slopes != np.inf))
-        y_int[y_ninf] = p1[y_ninf, 1] - slopes[y_ninf] * p1[y_ninf, 0]
+        y_int = np.ones(num_verts) * np.inf
+        y_int[finite_slopes] = (
+            p1[finite_slopes, 1] - slopes[finite_slopes] * p1[finite_slopes, 0]
+        )
 
-        # Get the ranges of angles for the parameterization
-        angle_range = np.vstack(
-            (theta_component, np.roll(theta_component, -1, axis=0))
-        ).T
-        angle_range[len(angle_range) - 1, 1] = 2 * np.pi
+        # Make the distances:
+        distances = np.zeros_like(angles)
 
-        # Make the kernel:
-        kernel = np.zeros_like(angles)
+        for i in range(num_verts):
+            inside_range = (angles >= angles_to_vertices[i]) & (
+                angles <= angles_to_vertices[np.mod(i + 1, num_verts)]
+            )
+            if i == num_verts - 1:
+                inside_range |= (angles >= 0) & (angles <= angles_to_vertices[0])
+            wh = np.where(inside_range)
 
-        for i in range(len(angle_range)):
             if slopes[i] == 0:
-                wh = np.where(
-                    (angles >= angle_range[i, 0]) & (angles <= angle_range[i, 1])
-                )
-                kernel[wh] = np.sqrt(
+                distances[wh] = np.sqrt(
                     y_int[i] * y_int[i] / (1 - np.cos(angles[wh]) * np.cos(angles[wh]))
                 )
             elif slopes[i] == np.inf or y_int[i] == np.inf:
-                if i != len(angle_range) - 1:
-                    wh = np.where(
-                        (angles >= angle_range[i, 0]) & (angles <= angle_range[i, 1])
-                    )
-                    x_int = p1[i, 0]
-                    kernel[wh] = np.sqrt(
-                        x_int * x_int / (1 - np.sin(angles[wh]) * np.sin(angles[wh]))
-                    )
-                else:
-                    x_int = p1[i, 0]
-                    wh = np.where(
-                        ((angles >= angle_range[i, 0]) & (angles <= angle_range[i, 1]))
-                        | ((angles >= 0) & (angles <= angle_range[0, 0]))
-                    )
-                    kernel[wh] = np.sqrt(
-                        x_int * x_int / (1 - np.sin(angles[wh]) * np.sin(angles[wh]))
-                    )
+                x_int = p1[i, 0]
+                distances[wh] = np.sqrt(
+                    x_int * x_int / (1 - np.sin(angles[wh]) * np.sin(angles[wh]))
+                )
             else:
-                if i != len(angle_range) - 1:
-                    wh = np.where(
-                        (angles >= angle_range[i, 0]) & (angles <= angle_range[i, 1])
-                    )
-                else:
-                    wh = np.where(
-                        ((angles >= angle_range[i, 0]) & (angles <= angle_range[i, 1]))
-                        | ((angles >= 0) & (angles <= angle_range[0, 0]))
-                    )
                 sl_k = np.tan(angles[wh])
                 x = y_int[i] / (sl_k - slopes[i])
                 y = sl_k * x
-                kernel[wh] = np.sqrt(x * x + y * y)
+                distances[wh] = np.sqrt(x * x + y * y)
 
-        return kernel
+        return distances
