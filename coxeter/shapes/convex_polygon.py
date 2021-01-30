@@ -127,56 +127,6 @@ class ConvexPolygon(Polygon):
         radius = np.min(distances)
         return Circle(radius, self.center)
 
-    def distance_to_surface2(self, angles):
-        """Distance to the surface of the shape.
-
-        For more generic information about this calculation, see
-        `Shape.distance_to_surface`.
-        """
-        # Get the angles associated with each vertex in [0, 2*pi).
-        # TODO: This code has precision problems for near 0 values.
-        verts = (_align_points_by_normal(self.normal, self.vertices) - self.center)[
-            :, :2
-        ]
-        verts = self.vertices[:, :2]
-        angles_to_vertices = np.mod(
-            np.arctan2(
-                # TODO: This mod will fail due to precision issues right around 2 * pi.
-                verts[:, 1],
-                verts[:, 0],
-            ),
-            2 * np.pi,
-        )
-
-        # For each angle find the edge of intersection as the first angle
-        # larger than the provided angle.
-        p2_index = np.less(
-            angles[:, np.newaxis], angles_to_vertices[np.newaxis, :]
-        ).argmax(axis=-1)
-        p1_index = np.mod(p2_index - 1, len(angles_to_vertices))
-
-        angle_unit_vectors = np.vstack((np.cos(angles), np.sin(angles))).T
-
-        # Solve for intersection using homogeneous coordinates.
-        projective_plane_z = np.ones((len(p1_index), 1))
-        e00s = np.hstack((verts[p1_index], projective_plane_z))
-        e01s = np.hstack((verts[p2_index], projective_plane_z))
-        e10s = np.hstack((np.zeros_like(angle_unit_vectors), projective_plane_z))
-        e11s = np.hstack((angle_unit_vectors, projective_plane_z))
-
-        e0_planes = np.cross(e00s, e01s)
-        e1_planes = np.cross(e10s, e11s)
-        homogeneous_intersections = np.cross(e0_planes, e1_planes)
-
-        # If we find any parallel lines then something is wrong because every
-        # ray from the centroid has to intersect some edge of the polygon.
-        assert not np.any(homogeneous_intersections[:, 2] == 0)
-
-        x = homogeneous_intersections[:, 0] / homogeneous_intersections[:, 2]
-        y = homogeneous_intersections[:, 1] / homogeneous_intersections[:, 2]
-        intersections = np.vstack((x, y)).T
-        return np.linalg.norm(intersections, axis=-1)
-
     def distance_to_surface(self, angles):
         """Distance to the surface of the shape.
 
