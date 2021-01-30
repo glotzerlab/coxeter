@@ -167,13 +167,19 @@ class ConvexPolygon(Polygon):
         # Make the distances:
         distances = np.zeros_like(angles)
 
+        inside_range = np.logical_and(
+            np.greater_equal(angles[:, np.newaxis], angles_to_vertices[np.newaxis, :]),
+            np.less(
+                angles[:, np.newaxis],
+                np.roll(angles_to_vertices, shift=-1)[np.newaxis, :],
+            ),
+        )
+        inside_range[:, num_verts - 1] |= (angles >= 0) & (
+            angles <= angles_to_vertices[0]
+        )
+
         for i in range(num_verts):
-            inside_range = (angles >= angles_to_vertices[i]) & (
-                angles <= angles_to_vertices[np.mod(i + 1, num_verts)]
-            )
-            if i == num_verts - 1:
-                inside_range |= (angles >= 0) & (angles <= angles_to_vertices[0])
-            wh = np.where(inside_range)
+            wh = np.where(inside_range[:, i])
 
             if slopes[i] == 0:
                 distances[wh] = np.sqrt(
