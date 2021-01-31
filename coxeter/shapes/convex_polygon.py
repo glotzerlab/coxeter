@@ -135,27 +135,9 @@ class ConvexPolygon(Polygon):
         For more generic information about this calculation, see
         `Shape.distance_to_surface`.
         """
-
-        def shift_back(x, neg_shift):
-            """Perform a np.roll with a single neg_shift along axis 0.
-
-            np.roll is slow due to its use of advanced indexing. Since all
-            rolls in this method are just a simple neg_shift along axis 0, this
-            function does a roll manually. Calling this function is equivalent
-            to ``np.roll(x, shift=-neg_shift, axis=0)``, except that if
-            ``neg_shift == 0`` a reference is returned instead of a copy.
-            """
-            if not neg_shift:
-                return x
-
-            new = np.empty_like(x)
-            new[:-neg_shift, ...] = x[neg_shift:, ...]
-            new[-neg_shift:, ...] = x[:neg_shift, ...]
-            return new
-
         # Bring the angles into the range for testing (also handles an
         # np.asarray for us).
-        angles = np.mod(angles, 2 * np.pi)
+        # angles = np.mod(angles, 2 * np.pi)
         num_verts = len(self.vertices)
 
         # Rearrange the verts so that we start with the lowest angle
@@ -165,12 +147,12 @@ class ConvexPolygon(Polygon):
 
         # find and reorganize to start with smallest angle
         shift = np.argmin(angles_to_vertices)
-        verts = shift_back(verts, shift)
-        angles_to_vertices = shift_back(angles_to_vertices, shift)
+        verts = np.roll(verts, shift=-shift, axis=0)
+        angles_to_vertices = np.roll(angles_to_vertices, shift=-shift, axis=0)
 
         # Pair vertices with numpy roll
         p1 = verts
-        p2 = shift_back(p1, 1)
+        p2 = np.roll(p1, shift=-1, axis=0)
 
         # get the slopes
         slopes = np.ones(num_verts) * np.inf
@@ -188,7 +170,7 @@ class ConvexPolygon(Polygon):
         # Partition all angles into the angle ranges defined by the edges. For
         # the edge verts[-1]->verts[0] need to agument the final value so that
         # values > angles_to_vertices[-1] will work.
-        angles_shifted = shift_back(angles_to_vertices, 1)
+        angles_shifted = np.roll(angles_to_vertices, shift=-1, axis=0)
         eps = 1e-6  # Need angles_shifted[-1] > 2*pi so that 2*pi is in range.
         angles_shifted[-1] = 2 * np.pi + eps
 
