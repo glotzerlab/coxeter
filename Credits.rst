@@ -29,6 +29,11 @@ Vyas Ramasubramani - **Creator and lead developer**
 * Defined base classes for all shapes.
 * Standardize usage of Sphere/Circle classes for circum, in, and bounding sphere/circle calculations.
 * Moved form factor amplitude calculations from legacy ft module to shape classes, cleaned and added more tests.
+* Added point-in-shape checks for circles and ellipses.
+* Added generic inertia tensors for 2D shapes.
+* Added minimal bounding sphere for all shapes.
+* Added minimal centered bounding sphere calculations for all shapes except general polygons and polyhedra.
+* Enabled getting and setting the circumsphere or bounding sphere radius of a polyhedron (for both types of bounding sphere).
 
 Bryan VanSaders - **Original maintainer of legacy euclid package**
 

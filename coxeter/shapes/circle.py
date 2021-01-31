@@ -152,6 +152,36 @@ class Circle(Shape2D):
         i_xy += area * self.center[0] * self.center[1]
         return i_x, i_y, i_xy
 
+    def is_inside(self, points):
+        """Determine whether a set of points are contained in this circle.
+
+        .. note::
+
+            Points on the boundary of the shape will return :code:`True`.
+
+        Args:
+            points (:math:`(N, 3)` :class:`numpy.ndarray`):
+                The points to test.
+
+        Returns:
+            :math:`(N, )` :class:`numpy.ndarray`:
+                Boolean array indicating which points are contained in the
+                circle.
+
+        Example:
+            >>> circle = coxeter.shapes.Circle(1.0)
+            >>> circle.is_inside([[0, 0, 0], [20, 20, 20]])
+            array([ True, False])
+
+        """
+        points = np.atleast_2d(points) - self.center
+        return np.logical_and(
+            np.linalg.norm(points, axis=-1) <= self.radius,
+            # At present circles are not orientable, so the z position must
+            # match exactly.
+            np.isclose(points[:, 2], 0),
+        )
+
     @property
     def iq(self):
         """float: The isoperimetric quotient.
@@ -163,3 +193,13 @@ class Circle(Shape2D):
     def distance_to_surface(self, angles):  # noqa: D102
         # use parent docstring
         return np.ones_like(angles) * self.radius
+
+    @property
+    def minimal_centered_bounding_circle(self):
+        """:class:`~.Circle`: Get the smallest bounding concentric circle."""
+        return Circle(self.radius, self.center)
+
+    @property
+    def minimal_bounding_circle(self):
+        """:class:`~.Circle`: Get the smallest bounding circle."""
+        return Circle(self.radius, self.center)

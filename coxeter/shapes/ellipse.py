@@ -3,7 +3,7 @@
 import numpy as np
 from scipy.special import ellipe
 
-from .base_classes import Shape2D
+from . import Circle, Shape2D
 
 
 class Ellipse(Shape2D):
@@ -208,3 +208,44 @@ class Ellipse(Shape2D):
     def iq(self):
         """float: The isoperimetric quotient."""
         return np.min([4 * np.pi * self.area / (self.perimeter ** 2), 1])
+
+    @property
+    def minimal_centered_bounding_circle(self):
+        """:class:`~.Circle`: Get the smallest bounding concentric circle."""
+        return Circle(max(self.a, self.b), self.center)
+
+    @property
+    def minimal_bounding_circle(self):
+        """:class:`~.Circle`: Get the smallest bounding circle."""
+        return Circle(max(self.a, self.b), self.center)
+
+    def is_inside(self, points):
+        """Determine whether a set of points are contained in this ellipse.
+
+        .. note::
+
+            Points on the boundary of the shape will return :code:`True`.
+
+        Args:
+            points (:math:`(N, 3)` :class:`numpy.ndarray`):
+                The points to test.
+
+        Returns:
+            :math:`(N, )` :class:`numpy.ndarray`:
+                Boolean array indicating which points are contained in the
+                ellipsoid.
+
+        Example:
+            >>> ellipse = coxeter.shapes.Ellipse(1.0, 2.0)
+            >>> ellipse.is_inside([[0, 0, 0], [100, 1, 1]])
+            array([ True, False])
+
+        """
+        points = np.atleast_2d(points) - self.center
+        scale = np.array([self.a, self.b, np.inf])
+        return np.logical_and(
+            np.all(points / scale <= 1, axis=-1),
+            # At present ellipsoids are not orientable, so the z position must
+            # match exactly.
+            np.isclose(points[:, 2], 0),
+        )

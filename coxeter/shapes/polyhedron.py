@@ -1,5 +1,7 @@
 """Defines a polyhedron."""
 
+import warnings
+
 import numpy as np
 import rowan
 from scipy.sparse.csgraph import connected_components
@@ -67,7 +69,7 @@ class Polyhedron(Shape3D):
         ...    [-1, 1, 1], [-1, -1, 1], [-1, 1, -1], [-1, -1, -1]])
         >>> cube = coxeter.shapes.Polyhedron(
         ...   vertices=cube.vertices, faces=cube.faces)
-        >>> bounding_sphere = cube.bounding_sphere
+        >>> bounding_sphere = cube.minimal_bounding_sphere
         >>> import numpy as np
         >>> assert np.isclose(bounding_sphere.radius, np.sqrt(3))
         >>> cube.center
@@ -501,6 +503,17 @@ class Polyhedron(Shape3D):
     @property
     def bounding_sphere(self):
         """:class:`~.Sphere`: Get the polyhedron's bounding sphere."""
+        warnings.warn(
+            "The bounding_sphere property is deprecated, use "
+            "minimal_bounding_sphere instead",
+            DeprecationWarning,
+        )
+
+        return self.minimal_bounding_sphere
+
+    @property
+    def minimal_bounding_sphere(self):
+        """:class:`~.Sphere`: Get the polyhedron's bounding sphere."""
         if not MINIBALL:
             raise ImportError(
                 "The miniball module must be installed. It can "
@@ -542,6 +555,15 @@ class Polyhedron(Shape3D):
             raise RuntimeError("No circumsphere for this polyhedron.")
 
         return Sphere(np.linalg.norm(x), x + self.vertices[0])
+
+    @property
+    def circumsphere_radius(self):
+        """float: Get the radius of the polygon's circumsphere."""
+        return self.circumsphere.radius
+
+    @circumsphere_radius.setter
+    def circumsphere_radius(self, value):
+        self._rescale(value / self.circumsphere_radius)
 
     def get_dihedral(self, a, b):
         """Get the dihedral angle between a pair of faces.

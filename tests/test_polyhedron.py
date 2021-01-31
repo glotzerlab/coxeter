@@ -11,8 +11,11 @@ from scipy.spatial import ConvexHull
 
 from conftest import (
     EllipsoidSurfaceStrategy,
+    _test_get_set_minimal_bounding_sphere_radius,
     get_oriented_cube_faces,
     get_oriented_cube_normals,
+    platonic_solids,
+    sphere_isclose,
 )
 from coxeter.families import DOI_SHAPE_REPOSITORIES, PlatonicFamily
 from coxeter.shapes.convex_polyhedron import ConvexPolyhedron
@@ -28,11 +31,6 @@ def damasceno_shapes():
     family = DOI_SHAPE_REPOSITORIES["10.1126/science.1220869"][0]
     for shape_data in family.data.values():
         yield shape_data
-
-
-def platonic_solids():
-    for shape_name in PlatonicFamily.data:
-        yield PlatonicFamily.get_shape(shape_name)
 
 
 def test_normal_detection(convex_cube):
@@ -282,7 +280,18 @@ def test_circumsphere_platonic(poly):
     assert np.allclose(r2, circumsphere.radius ** 2)
 
 
-def test_circumsphere_from_center():
+@pytest.mark.parametrize("poly", platonic_solids())
+def test_circumsphere_radius_platonic(poly):
+    # Ensure polyhedron is centered, then compute distances.
+    poly.center = [0, 0, 0]
+    r2 = np.sum(poly.vertices ** 2, axis=1)
+
+    assert np.allclose(r2, poly.circumsphere_radius ** 2)
+    poly.circumsphere_radius *= 2
+    assert np.allclose(r2 * 4, poly.circumsphere_radius ** 2)
+
+
+def test_minimal_centered_bounding_circle():
     """Validate circumsphere by testing the polyhedron.
 
     This checks that all points outside this circumsphere are also outside the
@@ -323,13 +332,16 @@ def test_circumsphere_from_center():
         poly = shapes[shape_index]
         poly.center = center
 
-        sphere = poly.circumsphere_from_center
+        sphere = poly.minimal_centered_bounding_sphere
         scaled_points = points * sphere.radius + sphere.center
         points_outside = np.logical_not(sphere.is_inside(scaled_points))
 
         # Verify that all points outside the circumsphere are also outside the
         # polyhedron.
         assert not np.any(np.logical_and(points_outside, poly.is_inside(scaled_points)))
+
+        with pytest.deprecated_call():
+            assert sphere_isclose(sphere, poly.circumsphere_from_center)
 
     testfun()
 
@@ -340,7 +352,11 @@ def test_bounding_sphere_platonic(poly):
     poly.center = [0, 0, 0]
     r2 = np.sum(poly.vertices ** 2, axis=1)
 
-    assert np.allclose(r2, poly.bounding_sphere.radius ** 2, rtol=1e-4)
+    bounding_sphere = poly.minimal_bounding_sphere
+    assert np.allclose(r2, bounding_sphere.radius ** 2, rtol=1e-4)
+
+    with pytest.deprecated_call():
+        assert sphere_isclose(bounding_sphere, poly.bounding_sphere)
 
 
 def test_inside_boundaries(convex_cube):
@@ -521,3 +537,13 @@ def test_form_factor(cube):
         ],
         atol=1e-7,
     )
+
+
+def test_get_set_minimal_bounding_sphere_radius():
+    for poly in platonic_solids():
+        _test_get_set_minimal_bounding_sphere_radius(poly)
+
+
+def test_get_set_minimal_centered_bounding_sphere_radius():
+    for poly in platonic_solids():
+        _test_get_set_minimal_bounding_sphere_radius(poly, True)

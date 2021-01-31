@@ -1,5 +1,7 @@
 """Defines a polygon."""
 
+import warnings
+
 import numpy as np
 import rowan
 
@@ -96,7 +98,7 @@ class Polygon(Shape2D):
         >>> triangle = coxeter.shapes.Polygon([[-1, 0], [0, 1], [1, 0]])
         >>> import numpy as np
         >>> assert np.isclose(triangle.area, 1.0)
-        >>> bounding_circle = triangle.bounding_circle
+        >>> bounding_circle = triangle.minimal_bounding_circle
         >>> assert np.isclose(bounding_circle.radius, 1.0)
         >>> assert np.allclose(triangle.center, [0., 1. / 3., 0.])
         >>> circumcircle = triangle.circumcircle
@@ -489,6 +491,17 @@ class Polygon(Shape2D):
     @property
     def bounding_circle(self):
         """:class:`~.Circle`: Get the minimal bounding circle."""
+        warnings.warn(
+            "The bounding_circle property is deprecated, use "
+            "minimal_bounding_circle instead",
+            DeprecationWarning,
+        )
+
+        return self.minimal_bounding_circle
+
+    @property
+    def minimal_bounding_circle(self):
+        """:class:`~.Circle`: Get the minimal bounding circle."""
         if not MINIBALL:
             raise ImportError(
                 "The miniball module must be installed. It can "
@@ -548,6 +561,15 @@ class Polygon(Shape2D):
             raise RuntimeError("No circumcircle for this polygon.")
 
         return Circle(np.linalg.norm(x), x + self.vertices[0])
+
+    @property
+    def circumcircle_radius(self):
+        """float: Get the radius of the polygon's circumcircle."""
+        return self.circumcircle.radius
+
+    @circumcircle_radius.setter
+    def circumcircle_radius(self, value):
+        self._rescale(value / self.circumcircle_radius)
 
     def compute_form_factor_amplitude(self, q, density=1.0):  # noqa: D102
         """Calculate the form factor intensity.

@@ -8,7 +8,11 @@ from hypothesis.strategies import floats, integers, tuples
 from pytest import approx
 from scipy.spatial import ConvexHull
 
-from conftest import EllipseSurfaceStrategy, assert_distance_to_surface_2d
+from conftest import (
+    EllipseSurfaceStrategy,
+    _test_get_set_minimal_bounding_sphere_radius,
+    assert_distance_to_surface_2d,
+)
 from coxeter.families import RegularNGonFamily
 from coxeter.shapes import ConvexSpheropolygon
 
@@ -242,3 +246,50 @@ def test_distance_to_surface_regular_ngons(num_sides, rounding_radius, vertex_sh
     shape = ConvexSpheropolygon(verts, rounding_radius)
     distance = shape.distance_to_surface(theta)
     assert_distance_to_surface_2d(shape, theta, distance)
+
+
+@given(floats(0.1, 1000))
+def test_minimal_bounding_circle_regular_polygon(radius):
+    family = RegularNGonFamily()
+    for i in range(3, 10):
+        vertices = family.make_vertices(i)
+        rmax = np.max(np.linalg.norm(vertices, axis=-1)) + radius
+
+        poly = ConvexSpheropolygon(vertices, radius)
+        circle = poly.minimal_bounding_circle
+
+        assert np.isclose(rmax, circle.radius)
+        assert np.allclose(circle.center, 0)
+
+
+@given(floats(0.1, 1000))
+def test_minimal_centered_bounding_circle_regular_polygon(radius):
+    family = RegularNGonFamily()
+    for i in range(3, 10):
+        vertices = family.make_vertices(i)
+        rmax = np.max(np.linalg.norm(vertices, axis=-1)) + radius
+
+        poly = ConvexSpheropolygon(vertices, radius)
+        circle = poly.minimal_centered_bounding_circle
+
+        assert np.isclose(rmax, circle.radius)
+        assert np.allclose(circle.center, 0)
+
+
+@given(floats(0.1, 1000))
+def test_get_set_minimal_bounding_circle_radius(r):
+    family = RegularNGonFamily()
+    for i in range(3, 10):
+        _test_get_set_minimal_bounding_sphere_radius(
+            ConvexSpheropolygon(family.make_vertices(i), r)
+        )
+
+
+def test_inertia(unit_rounded_square):
+    """None of the inertia calculations are implemented for this class."""
+    with pytest.raises(NotImplementedError):
+        unit_rounded_square.planar_moments_inertia
+    with pytest.raises(NotImplementedError):
+        unit_rounded_square.polar_moment_inertia
+    with pytest.raises(NotImplementedError):
+        unit_rounded_square.inertia_tensor

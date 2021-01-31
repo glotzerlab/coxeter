@@ -5,7 +5,8 @@ from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats
 from pytest import approx
 
-from coxeter.shapes.sphere import Sphere
+from conftest import _test_get_set_minimal_bounding_sphere_radius, sphere_isclose
+from coxeter.shapes import Sphere
 from coxeter.shapes.utils import translate_inertia_tensor
 
 
@@ -99,9 +100,9 @@ def test_inertia_tensor(r, center):
     floats(0.1, 10),
     arrays(np.float64, (3,), elements=floats(-10, 10, width=64), unique=True),
 )
-def test_is_inside(radius, center):
+def test_is_inside(x, center):
     sphere = Sphere(1, center)
-    assert sphere.is_inside([radius, 0, 0] + center).squeeze() == (radius <= 1)
+    assert sphere.is_inside([x, 0, 0] + center).squeeze() == (x <= 1)
 
 
 def test_center():
@@ -165,3 +166,39 @@ def test_form_factor():
         ],
         atol=1e-7,
     )
+
+
+@given(
+    floats(0.1, 1000),
+    arrays(np.float64, (3,), elements=floats(-10, 10, width=64), unique=True),
+)
+def test_minimal_bounding_sphere(r, center):
+    sphere = Sphere(r, center)
+    bounding_sphere = sphere.minimal_bounding_sphere
+    assert sphere_isclose(bounding_sphere, Sphere(r, center))
+
+
+@given(
+    floats(0.1, 1000),
+    arrays(np.float64, (3,), elements=floats(-10, 10, width=64), unique=True),
+)
+def test_minimal_centered_bounding_sphere(r, center):
+    sphere = Sphere(r, center)
+    bounding_sphere = sphere.minimal_centered_bounding_sphere
+    assert sphere_isclose(bounding_sphere, Sphere(r, center))
+
+
+@given(
+    floats(0.1, 1000),
+    arrays(np.float64, (3,), elements=floats(-10, 10, width=64), unique=True),
+)
+def test_get_set_minimal_bounding_circle_radius(r, center):
+    _test_get_set_minimal_bounding_sphere_radius(Sphere(r, center))
+
+
+@given(
+    floats(0.1, 1000),
+    arrays(np.float64, (3,), elements=floats(-10, 10, width=64), unique=True),
+)
+def test_get_set_minimal_centered_bounding_circle_radius(r, center):
+    _test_get_set_minimal_bounding_sphere_radius(Sphere(r, center), True)
