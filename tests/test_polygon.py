@@ -427,6 +427,51 @@ def test_convex_polygon_distance_to_surface_unit_area_ngon_non_first_quadrant(
     assert_distance_to_surface_2d(shape, theta, distance)
 
 
+@pytest.mark.parametrize("num_sides", range(3, 10))
+def test_convex_polygon_distance_to_surface_unit_area_ngon_rotated(
+    num_sides,
+):
+    """Check shape distance consistency with the final edge wraparound."""
+    theta = np.linspace(0, 2 * np.pi, 1000000)
+    shape = RegularNGonFamily.get_shape(num_sides)
+
+    # Try a positive rotation.
+    verts = rowan.rotate(rowan.from_axis_angle([0, 0, 1], 0.1), shape.vertices)
+    shape = ConvexPolygon(verts)
+    distance = shape.distance_to_surface(theta)
+    assert_distance_to_surface_2d(shape, theta, distance)
+
+    # Now try a negative rotation.
+    verts = rowan.rotate(rowan.from_axis_angle([0, 0, 1], -0.2), shape.vertices)
+    shape = ConvexPolygon(verts)
+    distance = shape.distance_to_surface(theta)
+    assert_distance_to_surface_2d(shape, theta, distance)
+
+
+@pytest.mark.parametrize("num_sides", range(3, 10))
+def test_distance_to_surface_unit_area_ngon_vertex_distance(
+    num_sides,
+):
+    """Check that the actual distances are computed correctly."""
+    shape = RegularNGonFamily.get_shape(num_sides)
+
+    distances = np.linalg.norm(shape.vertices - shape.center, axis=-1)
+    theta = np.linspace(0, 2 * np.pi, num_sides + 1)
+    assert np.allclose(shape.distance_to_surface(theta)[:-1], distances)
+
+    # Try a positive rotation.
+    verts = rowan.rotate(rowan.from_axis_angle([0, 0, 1], 0.1), shape.vertices)
+    shape = ConvexPolygon(verts)
+    distances = np.linalg.norm(shape.vertices - shape.center, axis=-1)
+    assert np.allclose(shape.distance_to_surface(theta + 0.1)[:-1], distances)
+
+    # Now try a negative rotation.
+    verts = rowan.rotate(rowan.from_axis_angle([0, 0, 1], -0.2), shape.vertices)
+    shape = ConvexPolygon(verts)
+    distances = np.linalg.norm(shape.vertices - shape.center, axis=-1)
+    assert np.allclose(shape.distance_to_surface(theta - 0.1)[:-1], distances)
+
+
 def test_distance_values_for_square():
     """Check shape distance of a square with infinite slopes."""
     verts = np.array([[1, 1], [-1, 1], [-1, -1], [1, -1]])
