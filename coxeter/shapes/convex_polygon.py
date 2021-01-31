@@ -141,7 +141,9 @@ class ConvexPolygon(Polygon):
 
             np.roll is slow due to its use of advanced indexing. Since all
             rolls in this method are just a simple neg_shift along axis 0, this
-            function does a roll manually.
+            function does a roll manually. Calling this function is equivalent
+            to ``np.roll(x, shift=-neg_shift, axis=0)``, except that if
+            ``neg_shift == 0`` a reference is returned instead of a copy.
             """
             if not neg_shift:
                 return x
@@ -172,7 +174,7 @@ class ConvexPolygon(Polygon):
 
         # get the slopes
         slopes = np.ones(num_verts) * np.inf
-        finite_slopes = p1[:, 0] - p2[:, 0] != 0.0
+        finite_slopes = (p1[:, 0] - p2[:, 0]) != 0.0
         slopes[finite_slopes] = (p1[finite_slopes, 1] - p2[finite_slopes, 1]) / (
             p1[finite_slopes, 0] - p2[finite_slopes, 0]
         )
@@ -187,8 +189,8 @@ class ConvexPolygon(Polygon):
         # the edge verts[-1]->verts[0] need to agument the final value so that
         # values > angles_to_vertices[-1] will work.
         angles_shifted = shift_back(angles_to_vertices, 1)
-        # TODO: Verify that 2 pi + eps will work for any eps.
-        angles_shifted[-1] = 2 * np.pi + 0.0001
+        eps = 1e-6  # Need angles_shifted[-1] > 2*pi so that 2*pi is in range.
+        angles_shifted[-1] = 2 * np.pi + eps
         inside_range = np.logical_and(
             np.greater_equal(angles[:, np.newaxis], angles_to_vertices[np.newaxis, :]),
             np.less(
@@ -202,8 +204,6 @@ class ConvexPolygon(Polygon):
             (angles >= (angles_to_vertices[-1] - 2 * np.pi)),
             (angles < angles_to_vertices[0]),
         )
-
-        assert np.all(np.sum(inside_range, axis=-1) == 1)
 
         # Make the distances:
         distances = np.empty_like(angles)
