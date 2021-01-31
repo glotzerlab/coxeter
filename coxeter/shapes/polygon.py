@@ -621,3 +621,9 @@ class Polygon(Shape2D):
         )
         form_factor *= density
         return form_factor
+
+    def __repr__(self):
+        return (
+            f"coxeter.shapes.Polygon(vertices={self.vertices.tolist()}, "
+            f"normal={self.normal.tolist()})"
+        )

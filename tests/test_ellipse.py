@@ -207,3 +207,8 @@ def test_is_inside(x, y, center):
     assert ellipse.is_inside([x, y, 0] + center).squeeze() == np.all(
         np.array([x / a, y / b]) <= 1
     )
+
+
+def test_repr():
+    ellipse = Ellipse(1, 2, [1, 2, 0])
+    assert str(ellipse), str(eval(repr(ellipse)))

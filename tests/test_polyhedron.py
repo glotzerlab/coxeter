@@ -547,3 +547,11 @@ def test_get_set_minimal_bounding_sphere_radius():
 def test_get_set_minimal_centered_bounding_sphere_radius():
     for poly in platonic_solids():
         _test_get_set_minimal_bounding_sphere_radius(poly, True)
+
+
+def test_repr_nonconvex(oriented_cube):
+    assert str(oriented_cube), str(eval(repr(oriented_cube)))
+
+
+def test_repr_convex(convex_cube):
+    assert str(convex_cube), str(eval(repr(convex_cube)))

@@ -232,3 +232,9 @@ class Ellipse(Shape2D):
             # match exactly.
             np.isclose(points[:, 2], 0),
         )
+
+    def __repr__(self):
+        return (
+            f"coxeter.shapes.Ellipse(a={self.a}, b={self.b}, "
+            f"center={self.center.tolist()})"
+        )

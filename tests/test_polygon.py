@@ -430,3 +430,11 @@ def test_minimal_centered_bounding_circle():
             poly.minimal_centered_bounding_circle,
             Circle(np.linalg.norm(poly.vertices, axis=-1).max()),
         )
+
+
+def test_repr_nonconvex(square):
+    assert str(square), str(eval(repr(square)))
+
+
+def test_repr_convex(convex_square):
+    assert str(convex_square), str(eval(repr(convex_square)))
