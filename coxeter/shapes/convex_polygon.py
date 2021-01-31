@@ -135,27 +135,44 @@ class ConvexPolygon(Polygon):
         For more generic information about this calculation, see
         `Shape.distance_to_surface`.
         """
-        # Bring the angles into the range for testing.
+
+        def shift_back(x, neg_shift):
+            """Perform a np.roll with a single neg_shift along axis 0.
+
+            np.roll is slow due to its use of advanced indexing. Since all
+            rolls in this method are just a simple neg_shift along axis 0, this
+            function does a roll manually.
+            """
+            if not neg_shift:
+                return x
+
+            new = np.empty_like(x)
+            new[:-neg_shift, ...] = x[neg_shift:, ...]
+            new[-neg_shift:, ...] = x[:neg_shift, ...]
+            return new
+
+        # Bring the angles into the range for testing (also handles an
+        # np.asarray for us).
         angles = np.mod(angles, 2 * np.pi)
         num_verts = len(self.vertices)
 
         # Rearrange the verts so that we start with the lowest angle
-        verts = (self.vertices - self.center)[:, :2]
+        verts = self.vertices - self.center
         angles_to_vertices = np.arctan2(verts[:, 1], verts[:, 0])
         np.mod(angles_to_vertices, 2 * np.pi, out=angles_to_vertices)
 
         # find and reorganize to start with smallest angle
-        shift = -np.argmin(angles_to_vertices)
-        verts = np.roll(verts, shift=shift, axis=0)
-        angles_to_vertices = np.roll(angles_to_vertices, shift, axis=0)
+        shift = np.argmin(angles_to_vertices)
+        verts = shift_back(verts, shift)
+        angles_to_vertices = shift_back(angles_to_vertices, shift)
 
         # Pair vertices with numpy roll
         p1 = verts
-        p2 = np.roll(verts, shift=-1, axis=0)
+        p2 = shift_back(p1, 1)
 
         # get the slopes
         slopes = np.ones(num_verts) * np.inf
-        finite_slopes = np.where((p1[:, 0] - p2[:, 0] != 0.0))
+        finite_slopes = p1[:, 0] - p2[:, 0] != 0.0
         slopes[finite_slopes] = (p1[finite_slopes, 1] - p2[finite_slopes, 1]) / (
             p1[finite_slopes, 0] - p2[finite_slopes, 0]
         )
@@ -169,7 +186,7 @@ class ConvexPolygon(Polygon):
         # Partition all angles into the angle ranges defined by the edges. For
         # the edge verts[-1]->verts[0] need to agument the final value so that
         # values > angles_to_vertices[-1] will work.
-        angles_shifted = np.roll(angles_to_vertices, shift=-1)
+        angles_shifted = shift_back(angles_to_vertices, 1)
         # TODO: Verify that 2 pi + eps will work for any eps.
         angles_shifted[-1] = 2 * np.pi + 0.0001
         inside_range = np.logical_and(
@@ -181,11 +198,9 @@ class ConvexPolygon(Polygon):
         )
 
         # Handle angles that fall between the last and the first vertex.
-        inside_range[:, num_verts - 1] |= (angles >= 0) & (
-            (
-                (angles >= (angles_to_vertices[-1] - 2 * np.pi))
-                & (angles < angles_to_vertices[0])
-            )
+        inside_range[:, num_verts - 1] |= np.logical_and(
+            (angles >= (angles_to_vertices[-1] - 2 * np.pi)),
+            (angles < angles_to_vertices[0]),
         )
 
         assert np.all(np.sum(inside_range, axis=-1) == 1)
