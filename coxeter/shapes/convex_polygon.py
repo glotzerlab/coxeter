@@ -137,7 +137,7 @@ class ConvexPolygon(Polygon):
         """
         # Bring the angles into the range for testing (also handles an
         # np.asarray for us).
-        # angles = np.mod(angles, 2 * np.pi)
+        angles = np.mod(angles, 2 * np.pi)
         num_verts = len(self.vertices)
 
         # Rearrange the verts so that we start with the lowest angle
