@@ -482,13 +482,11 @@ def test_distance_to_surface_unit_area_ngon_vertex_distance(
     # Try a positive rotation.
     verts = rowan.rotate(rowan.from_axis_angle([0, 0, 1], 0.1), shape.vertices)
     shape = ConvexPolygon(verts)
-    distances = np.linalg.norm(shape.vertices - shape.center, axis=-1)
     assert np.allclose(shape.distance_to_surface(theta + 0.1)[:-1], distances)
 
     # Now try a negative rotation.
     verts = rowan.rotate(rowan.from_axis_angle([0, 0, 1], -0.2), shape.vertices)
     shape = ConvexPolygon(verts)
-    distances = np.linalg.norm(shape.vertices - shape.center, axis=-1)
     assert np.allclose(shape.distance_to_surface(theta - 0.1)[:-1], distances)
 
 

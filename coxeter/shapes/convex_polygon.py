@@ -141,7 +141,7 @@ class ConvexPolygon(Polygon):
         num_verts = len(self.vertices)
 
         # Rearrange the verts so that we start with the lowest angle
-        verts = self.vertices - self.center
+        verts = _align_points_by_normal(self.normal, self.vertices - self.center)
         angles_to_vertices = np.arctan2(verts[:, 1], verts[:, 0])
         np.mod(angles_to_vertices, 2 * np.pi, out=angles_to_vertices)
 
