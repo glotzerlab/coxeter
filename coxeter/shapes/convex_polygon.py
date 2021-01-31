@@ -191,36 +191,30 @@ class ConvexPolygon(Polygon):
         angles_shifted = shift_back(angles_to_vertices, 1)
         eps = 1e-6  # Need angles_shifted[-1] > 2*pi so that 2*pi is in range.
         angles_shifted[-1] = 2 * np.pi + eps
-        inside_range = np.logical_and(
-            np.greater_equal(angles[:, np.newaxis], angles_to_vertices[np.newaxis, :]),
-            np.less(
-                angles[:, np.newaxis],
-                angles_shifted[np.newaxis, :],
-            ),
-        )
-
-        # Handle angles that fall between the last and the first vertex.
-        inside_range[:, num_verts - 1] |= np.logical_and(
-            (angles >= (angles_to_vertices[-1] - 2 * np.pi)),
-            (angles < angles_to_vertices[0]),
-        )
 
         # Make the distances:
         distances = np.empty_like(angles)
 
         for i in range(num_verts):
-            wh = inside_range[:, i]
+            inside_range = (angles >= angles_to_vertices[i]) & (
+                angles < angles_shifted[i]
+            )
+            if i == num_verts - 1:
+                inside_range |= np.logical_and(
+                    angles >= (angles_to_vertices[-1] - 2 * np.pi),
+                    angles < angles_to_vertices[0],
+                )
 
             if slopes[i] == 0:
-                cos = np.cos(angles[wh])
-                distances[wh] = np.sqrt(y_int[i] * y_int[i] / (1 - cos * cos))
+                cos = np.cos(angles[inside_range])
+                distances[inside_range] = np.sqrt(y_int[i] * y_int[i] / (1 - cos * cos))
             elif slopes[i] == np.inf or y_int[i] == np.inf:
-                sin = np.sin(angles[wh])
-                distances[wh] = np.sqrt(p1[i, 0] * p1[i, 0] / (1 - sin * sin))
+                sin = np.sin(angles[inside_range])
+                distances[inside_range] = np.sqrt(p1[i, 0] * p1[i, 0] / (1 - sin * sin))
             else:
-                sl_k = np.tan(angles[wh])
+                sl_k = np.tan(angles[inside_range])
                 x = y_int[i] / (sl_k - slopes[i])
                 y = sl_k * x
-                distances[wh] = np.sqrt(x * x + y * y)
+                distances[inside_range] = np.sqrt(x * x + y * y)
 
         return distances
