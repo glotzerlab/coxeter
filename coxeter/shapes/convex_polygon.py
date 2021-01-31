@@ -135,6 +135,8 @@ class ConvexPolygon(Polygon):
         For more generic information about this calculation, see
         `Shape.distance_to_surface`.
         """
+        # Bring the angles into the range for testing.
+        angles = np.mod(angles, 2 * np.pi)
         num_verts = len(self.vertices)
 
         # Rearrange the verts so that we start with the lowest angle
@@ -164,32 +166,42 @@ class ConvexPolygon(Polygon):
             p1[finite_slopes, 1] - slopes[finite_slopes] * p1[finite_slopes, 0]
         )
 
-        # Make the distances:
-        distances = np.zeros_like(angles)
-
+        # Partition all angles into the angle ranges defined by the edges. For
+        # the edge verts[-1]->verts[0] need to agument the final value so that
+        # values > angles_to_vertices[-1] will work.
+        angles_shifted = np.roll(angles_to_vertices, shift=-1)
+        # TODO: Verify that 2 pi + eps will work for any eps.
+        angles_shifted[-1] = 2 * np.pi + 0.0001
         inside_range = np.logical_and(
             np.greater_equal(angles[:, np.newaxis], angles_to_vertices[np.newaxis, :]),
             np.less(
                 angles[:, np.newaxis],
-                np.roll(angles_to_vertices, shift=-1)[np.newaxis, :],
+                angles_shifted[np.newaxis, :],
             ),
         )
+
+        # Handle angles that fall between the last and the first vertex.
         inside_range[:, num_verts - 1] |= (angles >= 0) & (
-            angles <= angles_to_vertices[0]
+            (
+                (angles >= (angles_to_vertices[-1] - 2 * np.pi))
+                & (angles < angles_to_vertices[0])
+            )
         )
 
+        assert np.all(np.sum(inside_range, axis=-1) == 1)
+
+        # Make the distances:
+        distances = np.empty_like(angles)
+
         for i in range(num_verts):
-            wh = np.where(inside_range[:, i])
+            wh = inside_range[:, i]
 
             if slopes[i] == 0:
-                distances[wh] = np.sqrt(
-                    y_int[i] * y_int[i] / (1 - np.cos(angles[wh]) * np.cos(angles[wh]))
-                )
+                cos = np.cos(angles[wh])
+                distances[wh] = np.sqrt(y_int[i] * y_int[i] / (1 - cos * cos))
             elif slopes[i] == np.inf or y_int[i] == np.inf:
-                x_int = p1[i, 0]
-                distances[wh] = np.sqrt(
-                    x_int * x_int / (1 - np.sin(angles[wh]) * np.sin(angles[wh]))
-                )
+                sin = np.sin(angles[wh])
+                distances[wh] = np.sqrt(p1[i, 0] * p1[i, 0] / (1 - sin * sin))
             else:
                 sl_k = np.tan(angles[wh])
                 x = y_int[i] / (sl_k - slopes[i])
