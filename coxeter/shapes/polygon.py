@@ -643,7 +643,7 @@ class Polygon(Shape2D):
         verts, rotation = _align_points_by_normal(self.normal, self.vertices)
         points_in_plane = np.dot(points, rotation.T)
 
-        winding_number_calc = PolyInside(verts)
+        winding_number_calculator = PolyInside(verts)
 
         def _check_inside(p):
             """Check if point is inside, including boundary points.
@@ -652,7 +652,7 @@ class Polygon(Shape2D):
             boundary, which we want to be inside.
             """
             try:
-                return winding_number_calc.winding_number(p) != 0
+                return winding_number_calculator.winding_number(p) != 0
             except ValueError as e:
                 if str(e) in (
                     "vertex coincides with origin",
