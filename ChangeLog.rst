@@ -16,6 +16,10 @@ Added
 - Enable getting and setting the circumsphere or bounding sphere radius of a polyhedron (for both types of bounding sphere).
 - Point in polygon checks for general (nonconvex) polygons.
 - Point in polyhedron checks for general (nonconvex) polyhedrons.
+- Minimal bounding sphere for all shapes.
+- Minimal centered bounding sphere calculations for all shapes except general polygons and polyhedra.
+- Getters and setters for the circumsphere or bounding sphere radius of a polyhedron (for both types of bounding sphere).
+- A repr for all shapes.
 
 Changed
 ~~~~~~~

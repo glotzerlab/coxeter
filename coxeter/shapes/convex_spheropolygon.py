@@ -38,8 +38,6 @@ class ConvexSpheropolygon(Shape2D):
         >>> rounded_tri.gsd_shape_spec
         {'type': 'Polygon', 'vertices': [[-1.0, 0.0, 0.0],
         [0.0, 1.0, 0.0], [1.0, 0.0, 0.0]], 'rounding_radius': 0.1}
-        >>> rounded_tri.polygon
-        <coxeter.shapes.convex_polygon.ConvexPolygon object at 0x...>
         >>> rounded_tri.radius
         0.1
         >>> rounded_tri.signed_area
@@ -200,3 +198,9 @@ class ConvexSpheropolygon(Shape2D):
         """:class:`~.Circle`: Get the minimal concentric bounding circle."""
         polygon_circle = self.polygon.minimal_centered_bounding_circle
         return Circle(polygon_circle.radius + self.radius, polygon_circle.center)
+
+    def __repr__(self):
+        return (
+            f"coxeter.shapes.ConvexSpheropolygon(vertices={self.vertices.tolist()}, "
+            f"radius={self.radius}, normal={self.polygon.normal.tolist()})"
+        )

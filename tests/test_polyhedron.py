@@ -560,3 +560,11 @@ def test_is_inside(cube):
         assert cube.is_inside([[x, y, z]])
 
     testfun()
+
+
+def test_repr_nonconvex(oriented_cube):
+    assert str(oriented_cube), str(eval(repr(oriented_cube)))
+
+
+def test_repr_convex(convex_cube):
+    assert str(convex_cube), str(eval(repr(convex_cube)))

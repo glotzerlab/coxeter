@@ -443,3 +443,11 @@ def test_is_inside(convex_square):
         assert rotated_square.is_inside([[x, y, 0]])
 
     testfun()
+
+
+def test_repr_nonconvex(square):
+    assert str(square), str(eval(repr(square)))
+
+
+def test_repr_convex(convex_square):
+    assert str(convex_square), str(eval(repr(convex_square)))

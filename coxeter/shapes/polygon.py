@@ -663,3 +663,9 @@ class Polygon(Shape2D):
                     raise
 
         return np.array([_check_inside(p) for p in np.atleast_2d(points_in_plane)])
+
+    def __repr__(self):
+        return (
+            f"coxeter.shapes.Polygon(vertices={self.vertices.tolist()}, "
+            f"normal={self.normal.tolist()})"
+        )

@@ -362,3 +362,9 @@ class ConvexSpheropolyhedron(Shape3D):
         """:class:`~.Sphere`: Get the minimal concentric bounding sphere."""
         polyhedron_sphere = self.polyhedron.minimal_centered_bounding_sphere
         return Sphere(polyhedron_sphere.radius + self.radius, polyhedron_sphere.center)
+
+    def __repr__(self):
+        return (
+            f"coxeter.shapes.ConvexSpheropolyhedron(vertices={self.vertices.tolist()}, "
+            f"radius={self.radius})"
+        )

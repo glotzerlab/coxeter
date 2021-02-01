@@ -75,8 +75,6 @@ class Polyhedron(Shape3D):
         >>> assert np.isclose(bounding_sphere.radius, np.sqrt(3))
         >>> cube.center
         array([0., 0., 0.])
-        >>> cube.circumsphere
-        <coxeter.shapes.sphere.Sphere object at 0x...>
         >>> cube.faces
         [array([4, 5, 1, 0], dtype=int32), array([0, 2, 6, 4], dtype=int32),
         array([6, 7, 5, 4], dtype=int32), array([0, 1, 3, 2], dtype=int32),
@@ -763,3 +761,9 @@ class Polyhedron(Shape3D):
                     raise
 
         return np.array([_check_inside(p) for p in np.atleast_2d(points)])
+
+    def __repr__(self):
+        return (
+            f"coxeter.shapes.Polyhedron(vertices={self.vertices.tolist()}, "
+            f"faces={np.asarray(self.faces).tolist()})"
+        )

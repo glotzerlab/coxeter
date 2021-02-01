@@ -36,6 +36,7 @@ Vyas Ramasubramani - **Creator and lead developer**
 * Enabled getting and setting the circumsphere or bounding sphere radius of a polyhedron (for both types of bounding sphere).
 * Added point in polygon checks.
 * Added point in polyhedron checks.
+* Added repr for all shapes.
 
 Bryan VanSaders - **Original maintainer of legacy euclid package**
 
