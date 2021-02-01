@@ -4,8 +4,7 @@ include = '\.pyi?$'
 exclude = '''
 (
   /(
-    | coxeter/polytri/*
-    | coxeter/bentley_ottmann/*
+    | coxeter/extern/*
   )/
 )
 '''

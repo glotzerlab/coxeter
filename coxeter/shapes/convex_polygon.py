@@ -26,7 +26,7 @@ def _is_convex(vertices, normal):
     """
     # TODO: Add a tolerance check in case a user provides collinear vertices on
     # the boundary of a convex hull.
-    verts_2d = _align_points_by_normal(normal, vertices)
+    verts_2d, _ = _align_points_by_normal(normal, vertices)
     hull = ConvexHull(verts_2d[:, :2])
     return len(hull.vertices) == len(vertices)
 

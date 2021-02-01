@@ -549,6 +549,19 @@ def test_get_set_minimal_centered_bounding_sphere_radius():
         _test_get_set_minimal_bounding_sphere_radius(poly, True)
 
 
+@pytest.mark.parametrize(
+    "cube", ["convex_cube", "oriented_cube", "unoriented_cube"], indirect=True
+)
+def test_is_inside(cube):
+    assert cube.is_inside(cube.center)
+
+    @given(floats(0, 1), floats(0, 1), floats(0, 1))
+    def testfun(x, y, z):
+        assert cube.is_inside([[x, y, z]])
+
+    testfun()
+
+
 def test_repr_nonconvex(oriented_cube):
     assert str(oriented_cube), str(eval(repr(oriented_cube)))
 
