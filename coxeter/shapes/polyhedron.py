@@ -492,12 +492,11 @@ class Polyhedron(Shape3D):
     @property
     def center(self):
         """:math:`(3, )` :class:`numpy.ndarray` of float: Get or set the centroid of the shape."""  # noqa: E501
-        return np.mean(self.vertices, axis=0)
+        return self.centroid
 
     @center.setter
     def center(self, value):
-        self._vertices += np.asarray(value) - self.center
-        self._find_equations()
+        self.centroid = value
 
     @property
     def centroid(self):
@@ -506,6 +505,8 @@ class Polyhedron(Shape3D):
         The centroid is computed using the algorithm described in
         :cite:`Eberly2002`.
         """  # noqa: E501
+        # We could call self.volume, but this algorithm gets it for free as
+        # part of the centroid integral so we might as well use it.
         volume = 0
         center = np.zeros(3)
         for triangle in self._surface_triangulation():
@@ -522,6 +523,11 @@ class Polyhedron(Shape3D):
             center += normal * f2
 
         return np.array(center) / volume / 4
+
+    @centroid.setter
+    def centroid(self, value):
+        self._vertices += np.asarray(value) - self.centroid
+        self._find_equations()
 
     @property
     def bounding_sphere(self):
