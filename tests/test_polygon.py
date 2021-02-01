@@ -430,3 +430,13 @@ def test_minimal_centered_bounding_circle():
             poly.minimal_centered_bounding_circle,
             Circle(np.linalg.norm(poly.vertices, axis=-1).max()),
         )
+
+
+def test_is_inside(convex_square):
+    assert convex_square.is_inside(convex_square.center)
+
+    @given(floats(0.01, 0.99), floats(0.01, 0.99))
+    def testfun(x, y):
+        assert convex_square.is_inside([[x, y, 0]])
+
+    testfun()
