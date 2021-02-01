@@ -381,11 +381,40 @@ class Polygon(Shape2D):
     @property
     def center(self):
         """:math:`(3, )` :class:`numpy.ndarray` of float: Get or set the centroid of the shape."""  # noqa: E501
-        return np.mean(self.vertices, axis=0)
+        # return np.mean(self.vertices, axis=0)
+        return self.centroid
 
     @center.setter
     def center(self, value):
-        self._vertices += np.asarray(value) - self.center
+        self.centroid = value
+        # self._vertices += np.asarray(value) - self.centroid
+
+    @property
+    def centroid(self):
+        """:math:`(3, )` :class:`numpy.ndarray` of float: Get or set the centroid of the shape."""  # noqa: E501
+        verts, rotation = _align_points_by_normal(self.normal, self.vertices)
+        verts_shifted = np.roll(verts, shift=-1, axis=0)
+
+        delta_term = (
+            verts[:, 0] * verts_shifted[:, 1] - verts_shifted[:, 0] * verts[:, 1]
+        )
+        c_x = np.sum((verts[:, 0] + verts_shifted[:, 0]) * delta_term)
+        c_y = np.sum((verts[:, 1] + verts_shifted[:, 1]) * delta_term)
+
+        in_plane_centroid = np.array([c_x, c_y, 0]) / (6 * self.area)
+
+        # We've rotated into the plane, so the z position of all vertices
+        # should be equal. We take the average to improve numerical stablity.
+        in_plane_centroid[2] = np.mean(verts[:, 2])
+
+        # Revert the rotation into the plane.
+        centroid = rotation.T.dot(in_plane_centroid)
+
+        return centroid
+
+    @centroid.setter
+    def centroid(self, value):
+        self._vertices += np.asarray(value) - self.centroid
 
     def _triangulation(self):
         """Generate a triangulation of the polygon.

@@ -139,7 +139,12 @@ class ConvexPolygon(Polygon):
                 (Default value: True).
 
         """
-        verts, _ = _align_points_by_normal(self._normal, self._vertices - self.center)
+        # The centroid cannot be computed until vertices are ordered, but for
+        # convex polygons the mean of the vertices will be contained within the
+        # shape so we can sort relative to that.
+        verts, _ = _align_points_by_normal(
+            self._normal, self._vertices - np.mean(self.vertices, axis=0)
+        )
 
         # Compute the angle of each vertex, shift so that the chosen
         # reference_index has a value of zero, then move into the [0, 2pi]

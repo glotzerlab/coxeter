@@ -97,14 +97,16 @@ def test_set_area(square):
 def test_center(square, square_points):
     """Test centering the polygon."""
     assert np.all(square.center == np.mean(square_points, axis=0))
+    assert np.all(square.centroid == np.mean(square_points, axis=0))
     square.center = [0, 0, 0]
     assert np.all(square.center == [0, 0, 0])
+    assert np.all(square.centroid == [0, 0, 0])
 
 
 def test_moment_inertia(square):
     """Test moment of inertia calculation."""
     # First test the default values.
-    square.center = (0, 0, 0)
+    square.centroid = (0, 0, 0)
     assert np.allclose(square.planar_moments_inertia, (1 / 12, 1 / 12, 0))
     assert np.isclose(square.polar_moment_inertia, 1 / 6)
 
@@ -235,7 +237,7 @@ def test_bounding_circle_radius_random_hull(points):
     circle = poly.minimal_bounding_circle
     assert circle.radius <= rmax + 1e-6
 
-    poly.center = [0, 0, 0]
+    poly.centroid = [0, 0, 0]
     circle = poly.minimal_bounding_circle
     assert circle.radius <= rmax + 1e-6
 
