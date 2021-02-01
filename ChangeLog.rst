@@ -8,12 +8,14 @@ Added
 ~~~~~
 
 - Ellipse area setter and Ellipsoid volume setter.
-- Point-in-shape checks for circles.
-- Point-in-shape checks for ellipses.
+- Point in circle checks.
+- Point in ellipse checks.
 - Inertia tensors for 2D shapes that implement moments of inertia.
 - Add minimal bounding sphere for all shapes.
 - Add minimal centered bounding sphere calculations for all shapes except general polygons and polyhedra.
 - Enable getting and setting the circumsphere or bounding sphere radius of a polyhedron (for both types of bounding sphere).
+- Point in polygon checks for general (nonconvex) polygons.
+- Point in polyhedron checks for general (nonconvex) polyhedrons.
 
 Changed
 ~~~~~~~
