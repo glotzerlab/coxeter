@@ -389,7 +389,11 @@ class Polygon(Shape2D):
 
     @property
     def centroid(self):
-        """:math:`(3, )` :class:`numpy.ndarray` of float: Get or set the centroid of the shape."""  # noqa: E501
+        """:math:`(3, )` :class:`numpy.ndarray` of float: Get or set the centroid of the shape.
+
+        The centroid of a polygon is calculated according to
+        `this formula <https://en.wikipedia.org/wiki/Centroid#Of_a_polygon>`__.
+        """  # noqa: E501
         verts, rotation = _align_points_by_normal(self.normal, self.vertices)
         verts_shifted = np.roll(verts, shift=-1, axis=0)
 
