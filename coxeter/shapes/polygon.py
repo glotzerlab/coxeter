@@ -380,14 +380,12 @@ class Polygon(Shape2D):
 
     @property
     def center(self):
-        """:math:`(3, )` :class:`numpy.ndarray` of float: Get or set the centroid of the shape."""  # noqa: E501
-        # return np.mean(self.vertices, axis=0)
+        """:math:`(3, )` :class:`numpy.ndarray` of float: Alias for :attr:`~.centroid`."""  # noqa: E501
         return self.centroid
 
     @center.setter
     def center(self, value):
         self.centroid = value
-        # self._vertices += np.asarray(value) - self.centroid
 
     @property
     def centroid(self):
