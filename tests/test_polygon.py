@@ -1,5 +1,4 @@
 import numpy as np
-import numpy.testing as npt
 import pytest
 import rowan
 from hypothesis import assume, example, given, settings
@@ -80,37 +79,12 @@ def test_identical_points(ones):
         Polygon(ones)
 
 
-def test_reordering(square_points, square):
-    """Test that vertices can be reordered appropriately."""
-    npt.assert_equal(square.vertices, square_points)
-
-    square.reorder_verts(True)
-    # We need the roll because the algorithm attempts to minimize unexpected
-    # vertex shuffling by keeping the original 0 vertex in place.
-    reordered_points = np.roll(np.flip(square_points, axis=0), shift=1, axis=0)
-    npt.assert_equal(square.vertices, reordered_points)
-
-    # Original vertices are clockwise, so they'll be flipped on construction if
-    # we specify the normal. Note that we MUST use the Convexpolygon class,
-    # since Polygon will not sort by default.
-    square = ConvexPolygon(square_points, normal=[0, 0, 1])
-    npt.assert_equal(square.vertices, reordered_points)
-
-    square.reorder_verts(True)
-    npt.assert_equal(square.vertices, square_points)
-
-
 def test_area(square_points):
     """Test area calculation."""
     # Shift to ensure that the negative areas are subtracted as needed.
     points = np.asarray(square_points) + 2
     square = Polygon(points)
     assert square.signed_area == 1
-    assert square.area == 1
-
-    # Ensure that area is signed.
-    square.reorder_verts(True)
-    assert square.signed_area == -1
     assert square.area == 1
 
 
@@ -199,17 +173,6 @@ def test_nonplanar(square_points):
 @settings(deadline=500)
 @given(EllipseSurfaceStrategy)
 @example(np.array([[1, 1], [1, 1.00041707], [2.78722762, 1], [2.72755193, 1.32128906]]))
-def test_reordering_convex(points):
-    """Test that vertices can be reordered appropriately."""
-    hull = ConvexHull(points)
-    verts = points[hull.vertices]
-    poly = polygon_from_hull(points[hull.vertices])
-    assert np.all(poly.vertices[:, :2] == verts)
-
-
-@settings(deadline=500)
-@given(EllipseSurfaceStrategy)
-@example(np.array([[1, 1], [1, 1.00041707], [2.78722762, 1], [2.72755193, 1.32128906]]))
 def test_convex_area(points):
     """Check the areas of various convex sets."""
     hull = ConvexHull(points)
@@ -225,9 +188,6 @@ def test_rotation_signed_area(random_quat):
     rotated_points = rowan.rotate(random_quat, get_square_points())
     poly = Polygon(rotated_points)
     assert np.isclose(poly.signed_area, 1)
-
-    poly.reorder_verts(clockwise=True)
-    assert np.isclose(poly.signed_area, -1)
 
 
 @settings(deadline=500)
