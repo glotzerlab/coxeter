@@ -441,3 +441,24 @@ def test_minimal_centered_bounding_circle(poly):
         poly.minimal_centered_bounding_circle,
         Circle(np.linalg.norm(poly.vertices, axis=-1).max()),
     )
+
+
+def test_is_inside(convex_square):
+    rotated_square = ConvexPolygon(convex_square.vertices[::-1, :])
+    assert convex_square.is_inside(convex_square.center)
+    assert rotated_square.is_inside(rotated_square.center)
+
+    @given(floats(0, 1), floats(0, 1))
+    def testfun(x, y):
+        assert convex_square.is_inside([[x, y, 0]])
+        assert rotated_square.is_inside([[x, y, 0]])
+
+    testfun()
+
+
+def test_repr_nonconvex(square):
+    assert str(square), str(eval(repr(square)))
+
+
+def test_repr_convex(convex_square):
+    assert str(convex_square), str(eval(repr(convex_square)))

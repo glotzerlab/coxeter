@@ -179,3 +179,8 @@ def test_inertia_tensor():
     circle.center = (0, 0, 0)
     assert np.sum(circle.inertia_tensor > 1e-6) == 1
     assert circle.inertia_tensor[2, 2] == np.pi / 2
+
+
+def test_repr():
+    circle = Circle(1, [1, 2, 0])
+    assert str(circle), str(eval(repr(circle)))

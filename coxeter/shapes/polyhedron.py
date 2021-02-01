@@ -6,6 +6,7 @@ import numpy as np
 import rowan
 from scipy.sparse.csgraph import connected_components
 
+from ..extern.polyhedron.polyhedron import Polyhedron as PolyInside
 from .base_classes import Shape3D
 from .convex_polygon import ConvexPolygon, _is_convex
 from .polygon import Polygon, _is_simple
@@ -74,8 +75,6 @@ class Polyhedron(Shape3D):
         >>> assert np.isclose(bounding_sphere.radius, np.sqrt(3))
         >>> cube.center
         array([0., 0., 0.])
-        >>> cube.circumsphere
-        <coxeter.shapes.sphere.Sphere object at 0x...>
         >>> cube.faces
         [array([4, 5, 1, 0], dtype=int32), array([0, 2, 6, 4], dtype=int32),
         array([6, 7, 5, 4], dtype=int32), array([0, 1, 3, 2], dtype=int32),
@@ -770,3 +769,57 @@ class Polyhedron(Shape3D):
             ) / q_sqs[~zero_q]
 
         return form_factor
+
+    def is_inside(self, points):
+        """Determine whether points are contained in this polyhedron.
+
+        .. note::
+
+            Points on the boundary of the shape will return :code:`True`.
+
+        Args:
+            points (:math:`(N, 3)` :class:`numpy.ndarray`):
+                The points to test.
+
+        Returns:
+            :math:`(N, )` :class:`numpy.ndarray`:
+                Boolean array indicating which points are contained in the
+                polyhedron.
+        """
+        # polytri generates a triangulation directly from the vertices. We need
+        # to map this back to index positions to feed to the polyhedron winding
+        # number calculation.
+        vertex_to_index = {tuple(v): i for i, v in enumerate(self.vertices)}
+
+        triangles = [
+            [vertex_to_index[tuple(v)] for v in triangle]
+            for triangle in self._surface_triangulation()
+        ]
+
+        winding_number_calculator = PolyInside(triangles, self.vertices)
+
+        def _check_inside(p):
+            """Check if point is inside, including boundary points.
+
+            The polyhedron check will will raise a ValueError for points on the
+            boundary, which we want to be inside.
+            """
+            try:
+                return winding_number_calculator.winding_number(p) != 0
+            except ValueError as e:
+                if str(e) in (
+                    "vertex coincides with origin",
+                    "vertices collinear with origin",
+                    "vertices coplanar with origin",
+                ):
+                    return True
+                else:
+                    raise
+
+        return np.array([_check_inside(p) for p in np.atleast_2d(points)])
+
+    def __repr__(self):
+        return (
+            f"coxeter.shapes.Polyhedron(vertices={self.vertices.tolist()}, "
+            f"faces={np.asarray(self.faces).tolist()})"
+        )

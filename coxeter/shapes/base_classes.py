@@ -96,6 +96,9 @@ class Shape(ABC):
         """Plot the shape."""
         raise NotImplementedError("Plotting is not implemented for this shape.")
 
+    def __str__(self):
+        return repr(self)
+
 
 class Shape2D(Shape):
     """An abstract representation of a shape in 2 dimensions."""
