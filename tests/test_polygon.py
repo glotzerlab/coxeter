@@ -435,7 +435,7 @@ def test_minimal_centered_bounding_circle():
 def test_is_inside(convex_square):
     assert convex_square.is_inside(convex_square.center)
 
-    @given(floats(0.01, 0.99), floats(0.01, 0.99))
+    @given(floats(0, 1), floats(0, 1))
     def testfun(x, y):
         assert convex_square.is_inside([[x, y, 0]])
 

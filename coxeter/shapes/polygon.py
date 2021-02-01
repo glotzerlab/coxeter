@@ -6,6 +6,7 @@ import numpy as np
 import rowan
 
 from ..extern.bentley_ottmann import poly_point_isect
+from ..extern.polyhedron.polygon import Polygon as PolyInside
 from ..extern.polytri import polytri
 from .base_classes import Shape2D
 from .circle import Circle
@@ -621,3 +622,25 @@ class Polygon(Shape2D):
         )
         form_factor *= density
         return form_factor
+
+    def is_inside(self, points):
+        winding_number_calc = PolyInside(self.vertices)
+
+        def _check_inside(p):
+            """Check if point is inside, including boundary points.
+
+            The polyhedron check will will raise a ValueError for points on the
+            boundary, which we want to be inside.
+            """
+            try:
+                return winding_number_calc.winding_number(p) != 0
+            except ValueError as e:
+                if str(e) in (
+                    "vertex coincides with origin",
+                    "vertices collinear with origin",
+                ):
+                    return True
+                else:
+                    raise
+
+        return np.array([_check_inside(p) for p in np.atleast_2d(points)])
