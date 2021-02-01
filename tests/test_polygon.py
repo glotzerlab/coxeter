@@ -433,10 +433,13 @@ def test_minimal_centered_bounding_circle():
 
 
 def test_is_inside(convex_square):
+    rotated_square = ConvexPolygon(convex_square.vertices[::-1, :])
     assert convex_square.is_inside(convex_square.center)
+    assert rotated_square.is_inside(rotated_square.center)
 
     @given(floats(0, 1), floats(0, 1))
     def testfun(x, y):
         assert convex_square.is_inside([[x, y, 0]])
+        assert rotated_square.is_inside([[x, y, 0]])
 
     testfun()

@@ -44,7 +44,7 @@ def _align_points_by_normal(normal, points):
     # translation we need to consider mapping both the vector and its opposite
     # (which defines an oriented coordinate system).
     rotation, _ = rowan.mapping.kabsch([normal, -normal], [[0, 0, 1], [0, 0, -1]])
-    return np.dot(points, rotation.T)
+    return np.dot(points, rotation.T), rotation
 
 
 def _is_simple(vertices):
@@ -169,7 +169,7 @@ class Polygon(Shape2D):
                 raise ValueError("Not all vertices are coplanar.")
 
         if test_simple:
-            planar_vertices = _align_points_by_normal(self._normal, self._vertices)
+            planar_vertices, _ = _align_points_by_normal(self._normal, self._vertices)
             if not _is_simple(planar_vertices):
                 raise ValueError(
                     "The vertices must be passed in counterclockwise order. "
@@ -222,7 +222,7 @@ class Polygon(Shape2D):
              [ 1. -1.  0.]]
 
         """
-        verts = _align_points_by_normal(self._normal, self._vertices - self.center)
+        verts, _ = _align_points_by_normal(self._normal, self._vertices - self.center)
 
         # Compute the angle of each vertex, shift so that the chosen
         # reference_index has a value of zero, then move into the [0, 2pi]
@@ -366,7 +366,7 @@ class Polygon(Shape2D):
         :math:`y` position) should not be relied upon.
         """  # noqa: E501
         # Rotate shape so that normal vector coincides with z-axis.
-        verts = _align_points_by_normal(self._normal, self._vertices)
+        verts, _ = _align_points_by_normal(self._normal, self._vertices)
 
         shifted_verts = np.roll(verts, shift=-1, axis=0)
 
@@ -475,7 +475,7 @@ class Polygon(Shape2D):
         """
         ax = _generate_ax(ax)
         verts = self._vertices - self.center if center else self._vertices
-        verts = _align_points_by_normal(self._normal, verts)
+        verts, _ = _align_points_by_normal(self._normal, verts)
         verts = np.concatenate((verts, verts[[0]]))
         x = verts[:, 0]
         y = verts[:, 1]
@@ -624,7 +624,26 @@ class Polygon(Shape2D):
         return form_factor
 
     def is_inside(self, points):
-        winding_number_calc = PolyInside(self.vertices)
+        """Determine whether points are contained in this polygon.
+
+        .. note::
+
+            Points on the boundary of the shape will return :code:`True`.
+
+        Args:
+            points (:math:`(N, 3)` :class:`numpy.ndarray`):
+                The points to test.
+
+        Returns:
+            :math:`(N, )` :class:`numpy.ndarray`:
+                Boolean array indicating which points are contained in the
+                polyhedron.
+        """
+        # Rotate both the vertices and the points into the plane.
+        verts, rotation = _align_points_by_normal(self.normal, self.vertices)
+        points_in_plane = np.dot(points, rotation.T)
+
+        winding_number_calc = PolyInside(verts)
 
         def _check_inside(p):
             """Check if point is inside, including boundary points.
@@ -643,4 +662,4 @@ class Polygon(Shape2D):
                 else:
                     raise
 
-        return np.array([_check_inside(p) for p in np.atleast_2d(points)])
+        return np.array([_check_inside(p) for p in np.atleast_2d(points_in_plane)])
