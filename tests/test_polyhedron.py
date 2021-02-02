@@ -181,13 +181,14 @@ def test_moment_inertia_damasceno_shapes(shape):
 
     np.random.seed(0)
     poly = ConvexPolyhedron(shape["vertices"])
+    coxeter_result = poly.inertia_tensor
+    volume = poly.volume
     num_samples = 1000
     accept = False
     # Loop over different sampling rates to minimize the test runtime.
     while num_samples < 1e8:
         try:
-            coxeter_result = poly.inertia_tensor
-            mc_result = compute_inertia_mc(shape["vertices"], num_samples)
+            mc_result = compute_inertia_mc(poly.vertices, volume, num_samples)
             assert np.allclose(coxeter_result, mc_result, atol=1e-1)
             accept = True
             break
@@ -457,7 +458,9 @@ def test_translate_inertia(translation):
     translated_inertia = translate_inertia_tensor(
         translation, shape.inertia_tensor, shape.volume
     )
-    mc_tensor = compute_inertia_mc(translated_shape.vertices, 1e4)
+    mc_tensor = compute_inertia_mc(
+        translated_shape.vertices, translated_shape.volume, 1e4
+    )
 
     assert np.allclose(
         translated_inertia,

@@ -1,10 +1,8 @@
 import numpy as np
 from scipy.spatial import Delaunay
 
-from coxeter.shapes import ConvexPolyhedron
 
-
-def compute_inertia_mc(vertices, num_samples=1e6):
+def compute_inertia_mc(vertices, volume, num_samples=1e6):
     """Compute inertia tensor via Monte Carlo integration.
 
     Using Monte Carlo integration provides a means to test the results of an
@@ -31,11 +29,8 @@ def compute_inertia_mc(vertices, num_samples=1e6):
     i_xz = np.mean(-points[inside][:, 0] * points[inside][:, 2])
     i_yz = np.mean(-points[inside][:, 1] * points[inside][:, 2])
 
-    poly = ConvexPolyhedron(vertices)
-
     inertia_tensor = (
-        np.array([[i_xx, i_xy, i_xz], [i_xy, i_yy, i_yz], [i_xz, i_yz, i_zz]])
-        * poly.volume
+        np.array([[i_xx, i_xy, i_xz], [i_xy, i_yy, i_yz], [i_xz, i_yz, i_zz]]) * volume
     )
 
     return inertia_tensor
