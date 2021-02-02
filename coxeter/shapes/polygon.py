@@ -699,6 +699,7 @@ class Polygon(Shape2D):
                 Boolean array indicating which points are contained in the
                 polyhedron.
         """
+        self._require_xy_plane()
         # Rotate both the vertices and the points into the plane.
         verts, rotation = _align_points_by_normal(self.normal, self.vertices)
         points_in_plane = np.dot(points, rotation.T)
