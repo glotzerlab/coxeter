@@ -3,7 +3,7 @@ import os
 import numpy as np
 import pytest
 import rowan
-from hypothesis import example, given, settings
+from hypothesis import assume, example, given, settings
 from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats, integers
 from pytest import approx
@@ -381,7 +381,13 @@ def test_inside(convex_cube):
     arrays(np.float64, (100, 3), elements=floats(0, 1, width=64), unique=True),
 )
 def test_maximal_centered_bounded_sphere_convex_hulls(points, test_points):
-    hull = ConvexHull(points)
+    try:
+        hull = ConvexHull(points)
+    except ValueError as e:
+        # Ignore cases where triangulation fails, we're not interested in
+        # trying to get polytri to work for nearly degenerate cases.
+        if str(e) == "Triangulation failed":
+            assume(False)
     poly = ConvexPolyhedron(points[hull.vertices])
     insphere = poly.maximal_centered_bounded_sphere
     assert poly.is_inside(insphere.center)
