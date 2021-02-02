@@ -97,12 +97,21 @@ class ConvexSpheropolyhedron(Shape3D):
 
     @property
     def center(self):
-        """:math:`(3, )` :class:`numpy.ndarray` of float: Get or set the centroid of the shape."""  # noqa: E501
-        return self.polyhedron.center
+        """:math:`(3, )` :class:`numpy.ndarray` of float: Alias for :attr:`~.centroid`."""  # noqa: E501
+        return self.centroid
 
     @center.setter
     def center(self, value):
-        self.polyhedron.center = value
+        self.centroid = value
+
+    @property
+    def centroid(self):
+        """:math:`(3, )` :class:`numpy.ndarray` of float: Get or set the centroid of the shape."""  # noqa: E501
+        return self.polyhedron.centroid
+
+    @centroid.setter
+    def centroid(self, value):
+        self.polyhedron.centroid = value
 
     def _rescale(self, scale):
         """Multiply length scale.

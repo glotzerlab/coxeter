@@ -15,26 +15,14 @@ from conftest import (
     _test_get_set_minimal_bounding_sphere_radius,
     get_oriented_cube_faces,
     get_oriented_cube_normals,
+    named_damasceno_shapes_mark,
     named_platonic_mark,
     sphere_isclose,
 )
 from coxeter.families import DOI_SHAPE_REPOSITORIES, PlatonicFamily
-from coxeter.shapes.convex_polyhedron import ConvexPolyhedron
+from coxeter.shapes import ConvexPolyhedron
 from coxeter.shapes.utils import rotate_order2_tensor, translate_inertia_tensor
 from utils import compute_centroid_mc, compute_inertia_mc
-
-# Generate the shapes from :cite:`Damasceno2012a`. Use the raw shape dicts to
-# allow excluding subsets for different tests.
-_damasceno_data = DOI_SHAPE_REPOSITORIES["10.1126/science.1220869"][0].data
-_damasceno_shape_names = _damasceno_data.keys()
-named_damasceno_shapes_mark = pytest.mark.parametrize(
-    argnames="shape",
-    argvalues=[_damasceno_data[shape_id] for shape_id in _damasceno_shape_names],
-    ids=[
-        f"{shape_id}: {_damasceno_data[shape_id]['name']}"
-        for shape_id in _damasceno_shape_names
-    ],
-)
 
 
 def test_normal_detection(convex_cube):
@@ -600,11 +588,11 @@ def test_repr_convex(convex_cube):
 @named_damasceno_shapes_mark
 def test_center(shape):
     poly = ConvexPolyhedron(shape["vertices"])
+    coxeter_result = poly.center
     num_samples = 1000
     accept = False
     while num_samples < 1e8:
         try:
-            coxeter_result = poly.center
             mc_result = compute_centroid_mc(shape["vertices"], num_samples)
             assert np.allclose(coxeter_result, mc_result, atol=1e-1)
             accept = True

@@ -7,9 +7,11 @@ from pytest import approx
 from conftest import (
     _test_get_set_minimal_bounding_sphere_radius,
     make_sphero_cube,
+    named_damasceno_shapes_mark,
     platonic_solids,
 )
 from coxeter.shapes import ConvexSpheropolyhedron
+from utils import compute_centroid_mc
 
 
 @given(radius=floats(0.1, 1))
@@ -171,3 +173,28 @@ def test_get_set_minimal_bounding_sphere_radius(poly):
 def test_repr():
     sphero_cube = make_sphero_cube(radius=1)
     assert str(sphero_cube), str(eval(repr(sphero_cube)))
+
+
+@named_damasceno_shapes_mark
+def test_center(shape):
+    for radius in [0.1, 1, 2]:
+        spoly = ConvexSpheropolyhedron(shape["vertices"], radius)
+        coxeter_result = spoly.center
+        num_samples = 1000
+        accept = False
+        while num_samples < 1e8:
+            try:
+                mc_result = compute_centroid_mc(shape["vertices"], num_samples)
+                assert np.allclose(coxeter_result, mc_result, atol=1e-1)
+                accept = True
+                break
+            except AssertionError:
+                num_samples *= 10
+                continue
+        if not accept:
+            raise AssertionError(
+                "The test failed for shape {}.\nMC Result: "
+                "\n{}\ncoxeter result: \n{}".format(
+                    shape["name"], mc_result, coxeter_result
+                )
+            )

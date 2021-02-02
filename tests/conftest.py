@@ -3,7 +3,7 @@ import pytest
 import rowan
 from hypothesis.strategies import builds, floats, integers
 
-from coxeter.families import PlatonicFamily, RegularNGonFamily
+from coxeter.families import DOI_SHAPE_REPOSITORIES, PlatonicFamily, RegularNGonFamily
 from coxeter.shapes import ConvexPolyhedron, ConvexSpheropolyhedron, Polyhedron, Shape2D
 
 
@@ -197,3 +197,17 @@ def _test_get_set_minimal_bounding_sphere_radius(shape, centered=False):
     assert np.isclose(bounding_sphere_radius, bounding_sphere.radius)
     setattr(shape, attr + "_radius", bounding_sphere_radius * 2)
     assert np.isclose(getattr(shape, attr).radius, bounding_sphere_radius * 2)
+
+
+# Generate the shapes from :cite:`Damasceno2012a`. Use the raw shape dicts to
+# allow excluding subsets for different tests.
+_damasceno_data = DOI_SHAPE_REPOSITORIES["10.1126/science.1220869"][0].data
+_damasceno_shape_names = _damasceno_data.keys()
+named_damasceno_shapes_mark = pytest.mark.parametrize(
+    argnames="shape",
+    argvalues=[_damasceno_data[shape_id] for shape_id in _damasceno_shape_names],
+    ids=[
+        f"{shape_id}: {_damasceno_data[shape_id]['name']}"
+        for shape_id in _damasceno_shape_names
+    ],
+)
