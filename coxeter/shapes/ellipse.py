@@ -17,7 +17,7 @@ class Ellipse(Shape2D):
             Principal axis b of the ellipse (radius in the :math:`y`
             direction).
         center (Sequence[float]):
-            The coordinates of the center of the ellipse (Default
+            The coordinates of the centroid of the ellipse (Default
             value: (0, 0, 0)).
 
     Example:
@@ -28,7 +28,7 @@ class Ellipse(Shape2D):
         2.0
         >>> ellipse.area
         6.28318...
-        >>> ellipse.center
+        >>> ellipse.centroid
         array([0, 0, 0])
         >>> ellipse.circumference
         9.68844...
@@ -48,7 +48,7 @@ class Ellipse(Shape2D):
     def __init__(self, a, b, center=(0, 0, 0)):
         self.a = a
         self.b = b
-        self.center = center
+        self.centroid = center
 
     @property
     def gsd_shape_spec(self):
@@ -56,14 +56,14 @@ class Ellipse(Shape2D):
         return {"type": "Ellipsoid", "a": self.a, "b": self.b}
 
     @property
-    def center(self):
+    def centroid(self):
         """:math:`(3, )` :class:`numpy.ndarray` of float: Get or set the centroid of the shape."""  # noqa: E501
-        return self._center
+        return self._centroid
 
-    @center.setter
-    def center(self, value):
+    @centroid.setter
+    def centroid(self, value):
         """:math:`(3, )` :class:`numpy.ndarray` of float: Get or set the centroid of the shape."""  # noqa: E501
-        self._center = np.asarray(value)
+        self._centroid = np.asarray(value)
 
     @property
     def a(self):
@@ -181,10 +181,10 @@ class Ellipse(Shape2D):
         i_y = area / 4 * self.a ** 2
         i_xy = 0
 
-        # Apply parallel axis theorem from the center
-        i_x += area * self.center[0] ** 2
-        i_y += area * self.center[1] ** 2
-        i_xy += area * self.center[0] * self.center[1]
+        # Apply parallel axis theorem from the centroid
+        i_x += area * self.centroid[0] ** 2
+        i_y += area * self.centroid[1] ** 2
+        i_xy += area * self.centroid[0] * self.centroid[1]
         return i_x, i_y, i_xy
 
     @property
@@ -195,22 +195,22 @@ class Ellipse(Shape2D):
     @property
     def minimal_centered_bounding_circle(self):
         """:class:`~.Circle`: Get the smallest bounding concentric circle."""
-        return Circle(max(self.a, self.b), self.center)
+        return Circle(max(self.a, self.b), self.centroid)
 
     @property
     def minimal_bounding_circle(self):
         """:class:`~.Circle`: Get the smallest bounding circle."""
-        return Circle(max(self.a, self.b), self.center)
+        return Circle(max(self.a, self.b), self.centroid)
 
     @property
     def maximal_centered_bounded_circle(self):
         """:class:`~.Circle`: Get the largest bounded concentric circle."""
-        return Circle(min(self.a, self.b), self.center)
+        return Circle(min(self.a, self.b), self.centroid)
 
     @property
     def maximal_bounded_circle(self):
         """:class:`~.Circle`: Get the largest bounded circle."""
-        return Circle(min(self.a, self.b), self.center)
+        return Circle(min(self.a, self.b), self.centroid)
 
     def is_inside(self, points):
         """Determine whether a set of points are contained in this ellipse.
@@ -234,7 +234,7 @@ class Ellipse(Shape2D):
             array([ True, False])
 
         """
-        points = np.atleast_2d(points) - self.center
+        points = np.atleast_2d(points) - self.centroid
         scale = np.array([self.a, self.b, np.inf])
         return np.logical_and(
             np.all(points / scale <= 1, axis=-1),
@@ -246,5 +246,5 @@ class Ellipse(Shape2D):
     def __repr__(self):
         return (
             f"coxeter.shapes.Ellipse(a={self.a}, b={self.b}, "
-            f"center={self.center.tolist()})"
+            f"center={self.centroid.tolist()})"
         )

@@ -22,7 +22,7 @@ class Ellipsoid(Shape3D):
             Length of the principal semi-axis of the ellipsoid in the :math:`z`
             direction.
         center (Sequence[float]):
-            The coordinates of the center of the ellipsoid (Default
+            The coordinates of the centroid of the ellipsoid (Default
             value: (0, 0, 0)).
 
     Example:
@@ -33,7 +33,7 @@ class Ellipsoid(Shape3D):
         3.0
         >>> ellipsoid.c
         2.0
-        >>> ellipsoid.center
+        >>> ellipsoid.centroid
         array([0, 0, 0])
         >>> ellipsoid.gsd_shape_spec
         {'type': 'Ellipsoid', 'a': 1.0, 'b': 3.0, 'c': 2.0}
@@ -54,7 +54,7 @@ class Ellipsoid(Shape3D):
         self.a = a
         self.b = b
         self.c = c
-        self.center = center
+        self.centroid = center
 
     @property
     def gsd_shape_spec(self):
@@ -62,13 +62,13 @@ class Ellipsoid(Shape3D):
         return {"type": "Ellipsoid", "a": self.a, "b": self.b, "c": self.c}
 
     @property
-    def center(self):
+    def centroid(self):
         """:math:`(3, )` :class:`numpy.ndarray` of float: Get or set the centroid of the shape."""  # noqa: E501
-        return self._center
+        return self._centroid
 
-    @center.setter
-    def center(self, value):
-        self._center = np.asarray(value)
+    @centroid.setter
+    def centroid(self, value):
+        self._centroid = np.asarray(value)
 
     @property
     def a(self):
@@ -168,7 +168,7 @@ class Ellipsoid(Shape3D):
         i_yy = vol / 5 * (self.a ** 2 + self.c ** 2)
         i_zz = vol / 5 * (self.a ** 2 + self.b ** 2)
         inertia_tensor = np.diag([i_xx, i_yy, i_zz])
-        return translate_inertia_tensor(self.center, inertia_tensor, vol)
+        return translate_inertia_tensor(self.centroid, inertia_tensor, vol)
 
     def is_inside(self, points):
         """Determine whether a set of points are contained in this ellipsoid.
@@ -192,32 +192,32 @@ class Ellipsoid(Shape3D):
             array([ True, False])
 
         """
-        points = np.atleast_2d(points) - self.center
+        points = np.atleast_2d(points) - self.centroid
         scale = np.array([self.a, self.b, self.c])
         return np.linalg.norm(points / scale, axis=-1) <= 1
 
     @property
     def minimal_centered_bounding_sphere(self):
         """:class:`~.Sphere`: Get the smallest bounding concentric sphere."""
-        return Sphere(max(self.a, self.b, self.c), self.center)
+        return Sphere(max(self.a, self.b, self.c), self.centroid)
 
     @property
     def minimal_bounding_sphere(self):
         """:class:`~.Sphere`: Get the smallest bounding sphere."""
-        return Sphere(max(self.a, self.b, self.c), self.center)
+        return Sphere(max(self.a, self.b, self.c), self.centroid)
 
     @property
     def maximal_centered_bounded_sphere(self):
         """:class:`~.Sphere`: Get the largest bounded concentric sphere."""
-        return Sphere(min(self.a, self.b, self.c), self.center)
+        return Sphere(min(self.a, self.b, self.c), self.centroid)
 
     @property
     def maximal_bounded_sphere(self):
         """:class:`~.Sphere`: Get the largest bounded sphere."""
-        return Sphere(min(self.a, self.b, self.c), self.center)
+        return Sphere(min(self.a, self.b, self.c), self.centroid)
 
     def __repr__(self):
         return (
             f"coxeter.shapes.Ellipsoid(a={self.a}, b={self.b}, c={self.c}, "
-            f"center={self.center.tolist()})"
+            f"center={self.centroid.tolist()})"
         )

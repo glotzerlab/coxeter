@@ -15,10 +15,18 @@ class Shape(ABC):
     """An abstract representation of a shape in N dimensions."""
 
     @property
-    @abstractmethod
     def center(self):
+        """:math:`(3, )` :class:`numpy.ndarray` of float: Alias for :attr:`~.centroid`."""  # noqa: E501
+        return self.centroid
+
+    @center.setter
+    def center(self, value):
+        self.centroid = value
+
+    @property
+    def centroid(self):
         """:math:`(3, )` :class:`numpy.ndarray` of float: Get or set the centroid of the shape."""  # noqa: E501
-        pass
+        raise NotImplementedError
 
     @abstractmethod
     def _rescale(self, scale):

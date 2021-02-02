@@ -4,13 +4,10 @@ A convex spheropolyhedron is defined by the Minkowski sum of a convex
 polyhedron and a sphere of some radius.
 """
 
-import warnings
-
 import numpy as np
 
 from .base_classes import Shape3D
 from .convex_polyhedron import ConvexPolyhedron
-from .sphere import Sphere
 
 
 class ConvexSpheropolyhedron(Shape3D):
@@ -32,18 +29,10 @@ class ConvexSpheropolyhedron(Shape3D):
         ...   [[1, 1, 1], [1, -1, 1], [1, 1, -1], [1, -1, -1],
         ...    [-1, 1, 1], [-1, -1, 1], [-1, 1, -1], [-1, -1, -1]],
         ...   radius=0.5)
-        >>> spherocube.center
-        array([0., 0., 0.])
-        >>> sphere = spherocube.minimal_centered_bounding_sphere
-        >>> sphere.radius
-        2.2320...
         >>> spherocube.gsd_shape_spec
         {'type': 'ConvexPolyhedron', 'vertices': [[1.0, 1.0, 1.0], [1.0, -1.0, 1.0],
         [1.0, 1.0, -1.0], [1.0, -1.0, -1.0], [-1.0, 1.0, 1.0], [-1.0, -1.0, 1.0],
         [-1.0, 1.0, -1.0], [-1.0, -1.0, -1.0]], 'rounding_radius': 0.5}
-        >>> sphere = spherocube.maximal_centered_bounded_sphere
-        >>> sphere.radius
-        1.5
         >>> cube = spherocube.polyhedron
         >>> cube.vertices
         array([[ 1.,  1.,  1.],
@@ -94,24 +83,6 @@ class ConvexSpheropolyhedron(Shape3D):
     def vertices(self):
         """Get the vertices of the spheropolyhedron."""
         return self.polyhedron.vertices
-
-    @property
-    def center(self):
-        """:math:`(3, )` :class:`numpy.ndarray` of float: Alias for :attr:`~.centroid`."""  # noqa: E501
-        return self.centroid
-
-    @center.setter
-    def center(self, value):
-        self.centroid = value
-
-    @property
-    def centroid(self):
-        """:math:`(3, )` :class:`numpy.ndarray` of float: Get or set the centroid of the shape."""  # noqa: E501
-        return self.polyhedron.centroid
-
-    @centroid.setter
-    def centroid(self, value):
-        self.polyhedron.centroid = value
 
     def _rescale(self, scale):
         """Multiply length scale.
@@ -314,72 +285,6 @@ class ConvexSpheropolyhedron(Shape3D):
                 in_sphero_shape[point_id] = check_face(point_id, face_id)
 
         return in_polyhedron | in_sphero_shape
-
-    @property
-    def circumsphere_from_center(self):
-        """:class:`~.Sphere`: Get the smallest circumscribed sphere centered at the centroid.
-
-        The requirement that the sphere be centered at the centroid of the
-        shape distinguishes this sphere from most typical circumsphere
-        calculations.
-        """  # noqa: E501
-        warnings.warn(
-            "The circumsphere_from_center property is deprecated, use "
-            "minimal_centered_bounding_sphere instead",
-            DeprecationWarning,
-        )
-        return self.minimal_centered_bounding_sphere
-
-    @property
-    def insphere_from_center(self):
-        """:class:`~.Sphere`: Get the largest inscribed sphere centered at the centroid.
-
-        The requirement that the sphere be centered at the centroid of the
-        shape distinguishes this sphere from most typical insphere
-        calculations.
-
-        """
-        warnings.warn(
-            "The insphere_from_center property is deprecated, use "
-            "maximal_centered_bounded_sphere instead",
-            DeprecationWarning,
-        )
-        return self.maximal_centered_bounded_sphere
-
-    @property
-    def minimal_bounding_sphere(self):
-        """:class:`~.Sphere`: Get the minimal bounding sphere."""
-        polyhedron_sphere = self.polyhedron.minimal_bounding_sphere
-        return Sphere(polyhedron_sphere.radius + self.radius, polyhedron_sphere.center)
-
-    @property
-    def minimal_centered_bounding_sphere(self):
-        """:class:`~.Sphere`: Get the minimal concentric bounding sphere."""
-        polyhedron_sphere = self.polyhedron.minimal_centered_bounding_sphere
-        return Sphere(polyhedron_sphere.radius + self.radius, polyhedron_sphere.center)
-
-    @property
-    def maximal_bounded_sphere(self):
-        """:class:`~.Sphere`: Get the maximal bounded sphere."""
-        polyhedron_sphere = self.polyhedron.maximal_bounded_sphere
-        return Sphere(polyhedron_sphere.radius + self.radius, polyhedron_sphere.center)
-
-    @property
-    def maximal_centered_bounded_sphere(self):
-        """:class:`~.Sphere`: Get the maximal concentric bounded sphere.
-
-        Example:
-            >>> sphero = coxeter.shapes.ConvexSpheropolyhedron(
-            ...   [[1, 1, 1], [1, -1, 1], [1, 1, -1], [1, -1, -1],
-            ...    [-1, 1, 1], [-1, -1, 1], [-1, 1, -1], [-1, -1, -1]],
-            ...   radius=0.5)
-            >>> sphere = sphero.maximal_centered_bounded_sphere
-            >>> import numpy as np
-            >>> assert np.isclose(sphere.radius, 1.5)
-
-        """
-        polyhedron_sphere = self.polyhedron.maximal_centered_bounded_sphere
-        return Sphere(polyhedron_sphere.radius + self.radius, polyhedron_sphere.center)
 
     def __repr__(self):
         return (
