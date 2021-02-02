@@ -16,6 +16,11 @@ class Shape(ABC):
 
     @property
     def center(self):
+        """:math:`(3, )` :class:`numpy.ndarray` of float: Alias for :attr:`~.centroid`."""  # noqa: E501
+        return self.centroid
+
+    @property
+    def centroid(self):
         """:math:`(3, )` :class:`numpy.ndarray` of float: Get or set the centroid of the shape."""  # noqa: E501
         raise NotImplementedError
 
