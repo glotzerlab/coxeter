@@ -219,6 +219,16 @@ class Ellipse(Shape2D):
         """:class:`~.Circle`: Get the smallest bounding circle."""
         return Circle(max(self.a, self.b), self.center)
 
+    @property
+    def maximal_centered_bounded_circle(self):
+        """:class:`~.Circle`: Get the largest bounded concentric circle."""
+        return Circle(min(self.a, self.b), self.center)
+
+    @property
+    def maximal_bounded_circle(self):
+        """:class:`~.Circle`: Get the largest bounded circle."""
+        return Circle(min(self.a, self.b), self.center)
+
     def is_inside(self, points):
         """Determine whether a set of points are contained in this ellipse.
 
@@ -248,4 +258,10 @@ class Ellipse(Shape2D):
             # At present ellipsoids are not orientable, so the z position must
             # match exactly.
             np.isclose(points[:, 2], 0),
+        )
+
+    def __repr__(self):
+        return (
+            f"coxeter.shapes.Ellipse(a={self.a}, b={self.b}, "
+            f"center={self.center.tolist()})"
         )

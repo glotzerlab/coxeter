@@ -160,6 +160,24 @@ def test_get_set_minimal_centered_bounding_circle_radius(r, center):
 
 
 @given(
+    floats(0.1, 1000),
+    arrays(np.float64, (3,), elements=floats(-10, 10, width=64), unique=True),
+)
+def test_maximal_bounded_circle(r, center):
+    circ = Circle(r, center)
+    assert sphere_isclose(circ.maximal_centered_bounded_circle, circ)
+
+
+@given(
+    floats(0.1, 1000),
+    arrays(np.float64, (3,), elements=floats(-10, 10, width=64), unique=True),
+)
+def test_maximal_centered_bounded_circle(r, center):
+    circ = Circle(r, center)
+    assert sphere_isclose(circ.maximal_centered_bounded_circle, circ)
+
+
+@given(
     floats(0.1, 10),
     arrays(np.float64, (3,), elements=floats(-10, 10, width=64), unique=True),
 )
@@ -174,3 +192,8 @@ def test_inertia_tensor():
     circle.center = (0, 0, 0)
     assert np.sum(circle.inertia_tensor > 1e-6) == 1
     assert circle.inertia_tensor[2, 2] == np.pi / 2
+
+
+def test_repr():
+    circle = Circle(1, [1, 2, 0])
+    assert str(circle), str(eval(repr(circle)))

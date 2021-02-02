@@ -8,12 +8,21 @@ Added
 ~~~~~
 
 - Ellipse area setter and Ellipsoid volume setter.
-- Point-in-shape checks for circles.
-- Point-in-shape checks for ellipses.
+- Point in circle checks.
+- Point in ellipse checks.
 - Inertia tensors for 2D shapes that implement moments of inertia.
 - Add minimal bounding sphere for all shapes.
 - Add minimal centered bounding sphere calculations for all shapes except general polygons and polyhedra.
 - Enable getting and setting the circumsphere or bounding sphere radius of a polyhedron (for both types of bounding sphere).
+- Add maximal bounded sphere for all shapes.
+- Add maximal centered bounded sphere calculations for all shapes except general polygons and polyhedra.
+- Enable getting and setting the insphere or bounded sphere radius of a polyhedron (for both types of bounding sphere).
+- Point in polygon checks for general (nonconvex) polygons.
+- Point in polyhedron checks for general (nonconvex) polyhedrons.
+- Minimal bounding sphere for all shapes.
+- Minimal centered bounding sphere calculations for all shapes except general polygons and polyhedra.
+- Getters and setters for the circumsphere or bounding sphere radius of a polyhedron (for both types of bounding sphere).
+- A repr for all shapes.
 
 Changed
 ~~~~~~~
@@ -21,11 +30,16 @@ Changed
 - Ensure that hypothesis-based tests don't implicitly reuse pytest fixtures.
 
 Deprecated
-~~~~~~~
+~~~~~~~~~~
 
 - The circumsphere from center calculations (replaced by minimal centered bounding sphere).
 - The bounding_sphere property is deprecated in favor of minimal_bounding_sphere.
+- The insphere from center calculations (replaced by maximal centered bounded sphere).
 
+Fixed
+~~~~~
+
+- Centroid calculations for polygon and polyhedron use the full integrals rather than simple averages of vertices.
 
 v0.4.0 - 2020-10-14
 -------------------

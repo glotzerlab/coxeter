@@ -175,3 +175,19 @@ class Sphere(Shape3D):
     def minimal_bounding_sphere(self):
         """:class:`~.Sphere`: Get the smallest bounding sphere."""
         return Sphere(self.radius, self.center)
+
+    @property
+    def maximal_centered_bounded_sphere(self):
+        """:class:`~.Sphere`: Get the largest bounded concentric sphere."""
+        return Sphere(self.radius, self.center)
+
+    @property
+    def maximal_bounded_sphere(self):
+        """:class:`~.Sphere`: Get the largest bounded sphere."""
+        return Sphere(self.radius, self.center)
+
+    def __repr__(self):
+        return (
+            f"coxeter.shapes.Sphere(radius={self.radius}, "
+            f"center={self.center.tolist()})"
+        )

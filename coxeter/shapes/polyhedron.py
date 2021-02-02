@@ -6,6 +6,8 @@ import numpy as np
 import rowan
 from scipy.sparse.csgraph import connected_components
 
+from ..extern.polyhedron.polyhedron import Polyhedron as PolyInside
+from ..extern.polytri import polytri
 from .base_classes import Shape3D
 from .convex_polygon import ConvexPolygon, _is_convex
 from .polygon import Polygon, _is_simple
@@ -74,8 +76,6 @@ class Polyhedron(Shape3D):
         >>> assert np.isclose(bounding_sphere.radius, np.sqrt(3))
         >>> cube.center
         array([0., 0., 0.])
-        >>> cube.circumsphere
-        <coxeter.shapes.sphere.Sphere object at 0x...>
         >>> cube.faces
         [array([4, 5, 1, 0], dtype=int32), array([0, 2, 6, 4], dtype=int32),
         array([6, 7, 5, 4], dtype=int32), array([0, 1, 3, 2], dtype=int32),
@@ -424,8 +424,7 @@ class Polyhedron(Shape3D):
         triangulates each of these to provide a total triangulation.
         """
         for face in self.faces:
-            poly = Polygon(self.vertices[face], planar_tolerance=1e-4)
-            yield from poly._triangulation()
+            yield from polytri.triangulate(self.vertices[face])
 
     def _point_plane_distances(self, points):
         """Compute the distances from a set of points to each plane.
@@ -492,12 +491,53 @@ class Polyhedron(Shape3D):
 
     @property
     def center(self):
-        """:math:`(3, )` :class:`numpy.ndarray` of float: Get or set the centroid of the shape."""  # noqa: E501
-        return np.mean(self.vertices, axis=0)
+        """:math:`(3, )` :class:`numpy.ndarray` of float: Alias for :attr:`~.centroid`."""  # noqa: E501
+        return self.centroid
 
     @center.setter
     def center(self, value):
-        self._vertices += np.asarray(value) - self.center
+        self.centroid = value
+
+    @property
+    def centroid(self):
+        """:math:`(3, )` :class:`numpy.ndarray` of float: Get or set the centroid of the shape.
+
+        The centroid is computed using the algorithm described in
+        :cite:`Eberly2002`.
+        """  # noqa: E501
+        # We could call self.volume, but this algorithm gets it for free as
+        # part of the centroid integral so we might as well use it.
+        volume = 0
+        center = np.zeros(3)
+
+        # >90% of the time is spent in generating the surface triangulation, so
+        # there's not much to be gained by vectorizing the loop.
+        for triangle in self._surface_triangulation():
+            v0, v1, v2 = triangle
+            v01 = v1 - v0
+            v02 = v2 - v0
+            # numpy.cross is relatively slow for a single vector cross product.
+            normal = [
+                v01[1] * v02[2] - v01[2] * v02[1],
+                v01[2] * v02[0] - v01[0] * v02[2],
+                v01[0] * v02[1] - v01[1] * v02[0],
+            ]
+
+            t0 = v0 + v1
+            f1 = t0 + v2
+            t1 = v0 * v0
+            t2 = t1 + v1 * t0
+            f2 = t2 + v2 * f1
+
+            # This could equivalently use the y or z components.
+            volume += normal[0] * f1[0]
+            center += normal * f2
+
+        return np.array(center) / volume / 4
+
+    @centroid.setter
+    def centroid(self, value):
+        self._vertices += np.asarray(value) - self.centroid
         self._find_equations()
 
     @property
@@ -547,7 +587,26 @@ class Polyhedron(Shape3D):
 
     @property
     def circumsphere(self):
-        """:class:`~.Sphere`: Get the polyhedron's circumsphere."""
+        """:class:`~.Sphere`: Get the polyhedron's circumsphere.
+
+        A `circumsphere
+        <https://en.wikipedia.org/wiki/Circumscribed_sphere>`__ must touch
+        all the points of the polyhedron. A circumsphere exists if and only if
+        there is a point equidistant from all the vertices. The circumsphere is
+        found by finding the least squares solution of the overdetermined system
+        of linear equations defined by this constraint, and the circumsphere
+        only exists if the resulting solution has no residual.
+
+        Raises:
+            RuntimeError: If no circumsphere exists for this polyhedron.
+        """
+        # The circumsphere is defined by center C and radius r. For vertex i
+        # with position r_i, dot(r_i - C, r_i - C) = r^2, which is equivalent
+        # to dot(r_i, r_i) - 2 dot(C, r_i) + dot(C, C) = r^2, a system of
+        # quadratic equations. If we choose r_0 as the origin, then dot(C, C) =
+        # r^2 and we instead have the linear equations dot(p_i, p_i) / 2 =
+        # dot(C, p_i) where p_i = r_i - r_0. This is the set of equations that
+        # we solve.
         points = self.vertices[1:] - self.vertices[0]
         half_point_lengths = np.sum(points * points, axis=1) / 2
         x, resids, _, _ = np.linalg.lstsq(points, half_point_lengths, None)
@@ -564,6 +623,43 @@ class Polyhedron(Shape3D):
     @circumsphere_radius.setter
     def circumsphere_radius(self, value):
         self._rescale(value / self.circumsphere_radius)
+
+    @property
+    def insphere(self):
+        """:class:`~.Sphere`: Get the polyhedron's insphere.
+
+        Note:
+            The insphere of a polyhedron is defined as the sphere contained within
+            the polyhedron that is tangent to all its faces. This condition
+            uniquely defines the sphere, if it exists. The set of equations
+            defined by this equation is solved using a least squares approach,
+            with the magnitude of the residual used to determine whether or not
+            the insphere exists.
+
+        """
+        # The insphere is defined by center C and radius r. For face i
+        # defined by its unit normal n_i and any point in the plane (choose a
+        # vertex v_i for convenience), we must have dot(C + r n_i - v_i, n_i) = 0.
+        # Defining the vector Cr = (C_x, C_y, C_z, r), and the augmented
+        # normals m = (n_x, n_y, n_z, 1), rearranging gives the equations that
+        # we solve: dot(m_i, cr) = dot(n_i, v_i).
+        first_vertices = np.array([verts[0] for verts in self.faces])
+        b = np.sum(self.normals * self.vertices[first_vertices], axis=-1)
+        a = np.hstack((self.normals, np.ones((self.num_faces, 1))))
+        x, resids, _, _ = np.linalg.lstsq(a, b, None)
+        if len(self.vertices) > 4 and not np.isclose(resids, 0):
+            raise RuntimeError("No insphere for this polyhedron.")
+
+        return Sphere(x[3], x[:3])
+
+    @property
+    def insphere_radius(self):
+        """float: Get the radius of the polygon's insphere."""
+        return self.insphere.radius
+
+    @insphere_radius.setter
+    def insphere_radius(self, value):
+        self._rescale(value / self.insphere_radius)
 
     def get_dihedral(self, a, b):
         """Get the dihedral angle between a pair of faces.
@@ -714,3 +810,57 @@ class Polyhedron(Shape3D):
             ) / q_sqs[~zero_q]
 
         return form_factor
+
+    def is_inside(self, points):
+        """Determine whether points are contained in this polyhedron.
+
+        .. note::
+
+            Points on the boundary of the shape will return :code:`True`.
+
+        Args:
+            points (:math:`(N, 3)` :class:`numpy.ndarray`):
+                The points to test.
+
+        Returns:
+            :math:`(N, )` :class:`numpy.ndarray`:
+                Boolean array indicating which points are contained in the
+                polyhedron.
+        """
+        # polytri generates a triangulation directly from the vertices. We need
+        # to map this back to index positions to feed to the polyhedron winding
+        # number calculation.
+        vertex_to_index = {tuple(v): i for i, v in enumerate(self.vertices)}
+
+        triangles = [
+            [vertex_to_index[tuple(v)] for v in triangle]
+            for triangle in self._surface_triangulation()
+        ]
+
+        winding_number_calculator = PolyInside(triangles, self.vertices)
+
+        def _check_inside(p):
+            """Check if point is inside, including boundary points.
+
+            The polyhedron check will will raise a ValueError for points on the
+            boundary, which we want to be inside.
+            """
+            try:
+                return winding_number_calculator.winding_number(p) != 0
+            except ValueError as e:
+                if str(e) in (
+                    "vertex coincides with origin",
+                    "vertices collinear with origin",
+                    "vertices coplanar with origin",
+                ):
+                    return True
+                else:
+                    raise
+
+        return np.array([_check_inside(p) for p in np.atleast_2d(points)])
+
+    def __repr__(self):
+        return (
+            f"coxeter.shapes.Polyhedron(vertices={self.vertices.tolist()}, "
+            f"faces={np.asarray(self.faces).tolist()})"
+        )

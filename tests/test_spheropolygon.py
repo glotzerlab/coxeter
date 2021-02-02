@@ -1,5 +1,4 @@
 import numpy as np
-import numpy.testing as npt
 import pytest
 import rowan
 from hypothesis import assume, example, given, settings
@@ -94,35 +93,11 @@ def test_identical_points(ones):
         ConvexSpheropolygon(ones, 1)
 
 
-def test_reordering(square_points, unit_rounded_square):
-    """Test that vertices can be reordered appropriately."""
-    npt.assert_equal(unit_rounded_square.vertices, square_points)
-
-    unit_rounded_square.reorder_verts(True)
-    # We need the roll because the algorithm attempts to minimize unexpected
-    # vertex shuffling by keeping the original 0 vertex in place.
-    reordered_points = np.roll(np.flip(square_points, axis=0), shift=1, axis=0)
-    npt.assert_equal(unit_rounded_square.vertices, reordered_points)
-
-    # Original vertices are clockwise, so they'll be flipped on construction if
-    # we specify the normal.
-    new_square = ConvexSpheropolygon(square_points, 1, normal=[0, 0, 1])
-    npt.assert_equal(new_square.vertices, reordered_points)
-
-    new_square.reorder_verts(True)
-    npt.assert_equal(new_square.vertices, square_points)
-
-
 def test_area(unit_rounded_square):
     """Test area calculation."""
     shape = unit_rounded_square
     area = 1 + 4 + np.pi
     assert shape.signed_area == area
-    assert shape.area == area
-
-    # Ensure that area is signed.
-    shape.reorder_verts(True)
-    assert shape.signed_area == -area
     assert shape.area == area
 
 
@@ -157,16 +132,6 @@ def test_nonplanar(square_points):
     with pytest.raises(ValueError):
         square_points[0, 2] += 1
         ConvexSpheropolygon(square_points, 1)
-
-
-@settings(deadline=500)
-@given(EllipseSurfaceStrategy)
-def test_reordering_convex(points):
-    """Test that vertices can be reordered appropriately."""
-    hull = ConvexHull(points)
-    verts = points[hull.vertices]
-    poly = ConvexSpheropolygon(verts, radius=1)
-    assert np.all(poly.vertices[:, :2] == verts)
 
 
 @settings(deadline=500)
@@ -207,9 +172,6 @@ def test_convex_signed_area(square_points):
         )
         sphero_area = cap_area + edge_area
         assert np.isclose(poly.signed_area, hull.volume + sphero_area)
-
-        poly.reorder_verts(clockwise=True)
-        assert np.isclose(poly.signed_area, -hull.volume - sphero_area)
 
     testfun()
 
@@ -293,3 +255,7 @@ def test_inertia(unit_rounded_square):
         unit_rounded_square.polar_moment_inertia
     with pytest.raises(NotImplementedError):
         unit_rounded_square.inertia_tensor
+
+
+def test_repr(unit_rounded_square):
+    assert str(unit_rounded_square), str(eval(repr(unit_rounded_square)))

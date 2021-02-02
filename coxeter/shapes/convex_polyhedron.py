@@ -45,7 +45,7 @@ class ConvexPolyhedron(Polyhedron):
         >>> assert np.allclose(
         ...   cube.inertia_tensor,
         ...   np.diag([16. / 3., 16. / 3., 16. / 3.]))
-        >>> sphere = cube.insphere_from_center
+        >>> sphere = cube.maximal_centered_bounded_sphere
         >>> sphere.radius
         1.0
         >>> assert np.isclose(cube.iq, np.pi / 6.)
@@ -139,25 +139,17 @@ class ConvexPolyhedron(Polyhedron):
                 Boolean array indicating which points are contained in the
                 polyhedron.
         """
-        return np.logical_not(np.any(self._point_plane_distances(points) > 0, axis=1))
+        return np.all(self._point_plane_distances(points) <= 0, axis=1)
 
     @property
     def insphere_from_center(self):
-        """:class:`~.Sphere`: Get the largest inscribed sphere centered at the centroid.
-
-        The requirement that the sphere be centered at the centroid of the
-        shape distinguishes this sphere from most typical insphere
-        calculations.
-        """
-        center = self.center
-        distances = self._point_plane_distances(center).squeeze()
-        if any(distances > 0):
-            raise ValueError(
-                "The centroid is not contained in the shape. The "
-                "insphere from center is not defined."
-            )
-        min_distance = -np.max(distances)
-        return Sphere(min_distance, center)
+        """:class:`~.Sphere`: Get the largest concentric inscribed sphere."""
+        warnings.warn(
+            "The insphere_from_center property is deprecated, use "
+            "maximal_centered_bounded_sphere instead",
+            DeprecationWarning,
+        )
+        return self.maximal_centered_bounded_sphere
 
     @property
     def circumsphere_from_center(self):
@@ -181,3 +173,17 @@ class ConvexPolyhedron(Polyhedron):
         return Sphere(
             np.linalg.norm(self.vertices - self.center, axis=-1).max(), self.center
         )
+
+    @property
+    def maximal_centered_bounded_sphere(self):
+        """:class:`~.Sphere`: Get the largest bounded concentric sphere."""
+        # The radius is determined by the furthest vertex from the center.
+        center = self.center
+        distances = self._point_plane_distances(center).squeeze()
+        if any(distances > 0):
+            raise ValueError(
+                "The centroid is not contained in the shape. The "
+                "insphere from center is not defined."
+            )
+        min_distance = -np.max(distances)
+        return Sphere(min_distance, center)

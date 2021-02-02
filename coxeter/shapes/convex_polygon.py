@@ -1,5 +1,7 @@
 """Defines a convex polygon."""
 
+import warnings
+
 import numpy as np
 from scipy.spatial import ConvexHull
 
@@ -26,7 +28,7 @@ def _is_convex(vertices, normal):
     """
     # TODO: Add a tolerance check in case a user provides collinear vertices on
     # the boundary of a convex hull.
-    verts_2d = _align_points_by_normal(normal, vertices)
+    verts_2d, _ = _align_points_by_normal(normal, vertices)
     hull = ConvexHull(verts_2d[:, :2])
     return len(hull.vertices) == len(vertices)
 
@@ -74,7 +76,7 @@ class ConvexPolygon(Polygon):
         >>> square.gsd_shape_spec
         {'type': 'Polygon', 'vertices': [[1.0, 1.0, 0.0], [-1.0, 1.0, 0.0],
         [-1.0, -1.0, 0.0], [1.0, -1.0, 0.0]]}
-        >>> assert np.isclose(square.incircle_from_center.radius, 1.0)
+        >>> assert np.isclose(square.maximal_centered_bounded_circle.radius, 1.0)
         >>> assert np.allclose(
         ...   square.inertia_tensor,
         ...   [[0., 0., 0.],
@@ -101,21 +103,83 @@ class ConvexPolygon(Polygon):
             # If points form a convex set, then we can order the vertices. We
             # cannot directly use the output of scipy's convex hull because our
             # polygon may be embedded in 3D, so we sort ourselves.
-            self.reorder_verts()
+            self._reorder_verts()
         else:
             # If the shape is nonconvex, the user must provide ordered vertices
             # to uniquely identify the polygon. We must check if there are any
             # intersections to avoid complex (self-intersecting) polygons.
             raise ValueError("The provided vertices do not form a convex polygon.")
 
+    def _reorder_verts(self, clockwise=False, ref_index=0, increasing_length=True):
+        """Sort the vertices.
+
+        Sorting is done with respect to the direction of the normal vector. The
+        default ordering is counterclockwise and preserves the vertex in the
+        0th position. A different ordering may be requested; however, note that
+        clockwise ordering will result in a negative signed area of the
+        polygon.
+
+        The reordering is performed by rotating the polygon onto the :math:`xy`
+        plane, then computing the angles of all vertices. The vertices are then
+        sorted by this angle.  Note that if two points are at the same angle,
+        the ordering is arbitrary and determined by the output of
+        :func:`numpy.argsort`, which uses an unstable quicksort algorithm by
+        default.
+
+        Args:
+            clockwise (bool):
+                If True, sort in clockwise order (Default value: False).
+            ref_index (int):
+                Index indicating which vertex should be placed first in the
+                sorted list (Default value: 0).
+            increasing_length (bool):
+                If two vertices are at the same angle relative to the
+                center, when this flag is True the point closer to the center
+                comes first, otherwise the point further away comes first
+                (Default value: True).
+
+        """
+        # The centroid cannot be computed until vertices are ordered, but for
+        # convex polygons the mean of the vertices will be contained within the
+        # shape so we can sort relative to that.
+        verts, _ = _align_points_by_normal(
+            self._normal, self._vertices - np.mean(self.vertices, axis=0)
+        )
+
+        # Compute the angle of each vertex, shift so that the chosen
+        # reference_index has a value of zero, then move into the [0, 2pi]
+        # range. The secondary sorting level is in terms of distance from the
+        # origin.
+        angles = np.arctan2(verts[:, 1], verts[:, 0])
+        angles = np.mod(angles - angles[ref_index], 2 * np.pi)
+        distances = np.linalg.norm(verts, axis=1)
+        if not increasing_length:
+            distances *= -1
+        vert_order = np.lexsort((distances, angles))
+        self._vertices = self._vertices[vert_order, :]
+
     @property
     def incircle_from_center(self):
-        """:class:`~.Circle`: Get the largest concentric inscribed circle.
+        """:class:`~.Circle`: Get the largest concentric inscribed circle."""
+        warnings.warn(
+            "The incircle_from_center property is deprecated, use "
+            "maximal_centered_bounded_circle instead.",
+            DeprecationWarning,
+        )
+        return self.maximal_centered_bounded_circle
 
-        The requirement that the circle be centered at the centroid of the
-        shape distinguishes this circle from most typical incircle
-        calculations.
-        """
+    @property
+    def minimal_centered_bounding_circle(self):
+        """:class:`~.Circle`: Get the smallest bounding concentric circle."""
+        # The radius is determined by the furthest vertex from the center.
+        return Circle(
+            np.linalg.norm(self.vertices - self.center, axis=-1).max(), self.center
+        )
+
+    @property
+    def maximal_centered_bounded_circle(self):
+        """:class:`~.Circle`: Get the largest bounded concentric circle."""
+        # The radius is determined by the furthest vertex from the center.
         v1s = self.vertices
         v2s = np.roll(self.vertices, shift=1, axis=0)
         deltas = v1s - v2s
@@ -200,11 +264,3 @@ class ConvexPolygon(Polygon):
                 distances[inside_range] = np.sqrt(x * x + y * y)
 
         return distances
-
-    @property
-    def minimal_centered_bounding_circle(self):
-        """:class:`~.Circle`: Get the smallest bounding concentric circle."""
-        # The radius is determined by the furthest vertex from the center.
-        return Circle(
-            np.linalg.norm(self.vertices - self.center, axis=-1).max(), self.center
-        )

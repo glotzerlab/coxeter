@@ -208,6 +208,30 @@ def test_minimal_centered_bounding_sphere(a, b, c, center):
     floats(0.1, 1000),
     arrays(np.float64, (3,), elements=floats(-10, 10, width=64), unique=True),
 )
+def test_maximal_bounded_sphere(a, b, c, center):
+    ellipsoid = Ellipsoid(a, b, c, center)
+    bounded_sphere = ellipsoid.maximal_bounded_sphere
+    sphere_isclose(bounded_sphere, Sphere(min(a, b, c), center))
+
+
+@given(
+    floats(0.1, 1000),
+    floats(0.1, 1000),
+    floats(0.1, 1000),
+    arrays(np.float64, (3,), elements=floats(-10, 10, width=64), unique=True),
+)
+def test_maximal_centered_bounded_sphere(a, b, c, center):
+    ellipsoid = Ellipsoid(a, b, c, center)
+    bounded_sphere = ellipsoid.maximal_centered_bounded_sphere
+    sphere_isclose(bounded_sphere, Sphere(min(a, b, c), center))
+
+
+@given(
+    floats(0.1, 1000),
+    floats(0.1, 1000),
+    floats(0.1, 1000),
+    arrays(np.float64, (3,), elements=floats(-10, 10, width=64), unique=True),
+)
 def test_get_set_minimal_bounding_circle_radius(a, b, c, center):
     _test_get_set_minimal_bounding_sphere_radius(Ellipsoid(a, b, c, center))
 
@@ -220,3 +244,8 @@ def test_get_set_minimal_bounding_circle_radius(a, b, c, center):
 )
 def test_get_set_minimal_centered_bounding_circle_radius(a, b, c, center):
     _test_get_set_minimal_bounding_sphere_radius(Ellipsoid(a, b, c, center), True)
+
+
+def test_repr():
+    ellipsoid = Ellipsoid(1, 2, 3, [1, 2, 3])
+    assert str(ellipsoid), str(eval(repr(ellipsoid)))
