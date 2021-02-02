@@ -1,6 +1,7 @@
 import numpy as np
 
 from coxeter import from_gsd_type_shapes
+from coxeter.shapes import Shape2D
 
 
 def test_gsd_shape_getter():
@@ -10,12 +11,12 @@ def test_gsd_shape_getter():
         {"type": "Ellipsoid", "a": 1, "b": 2, "c": 2},
         {
             "type": "Polygon",
-            "vertices": [[0, 0, 0], [1, 0, 0], [1, 1, 0], [0.5, 0.5, 0], [0, 1, 0]],
+            "vertices": [[0, 0], [1, 0], [1, 1], [0.5, 0.5], [0, 1]],
         },
-        {"type": "Polygon", "vertices": [[0, 0, 0], [0, 1, 0], [1, 1, 0], [1, 0, 0]]},
+        {"type": "Polygon", "vertices": [[0, 0], [1, 0], [1, 1], [0, 1]]},
         {
             "type": "Polygon",
-            "vertices": [[0, 0, 0], [1, 0, 0], [1, 1, 0], [0, 1, 0]],
+            "vertices": [[0, 0], [1, 0], [1, 1], [0, 1]],
             "rounding_radius": 1,
         },
         {
@@ -79,14 +80,18 @@ def test_gsd_shape_getter():
                 assert shape.radius == value
             elif param != "type":
                 try:
-                    assert getattr(shape, param) == value
+                    if param == "vertices" and isinstance(shape, Shape2D):
+                        check_value = getattr(shape, param)[:, :2]
+                    else:
+                        check_value = getattr(shape, param)
+                    assert check_value == value
                 except ValueError as e:
                     if str(e) == (
                         "The truth value of an array with more than "
                         "one element is ambiguous. Use a.any() or "
                         "a.all()"
                     ):
-                        np.testing.assert_allclose(getattr(shape, param), value)
+                        np.testing.assert_allclose(check_value, value)
 
         # Now convert back and make sure the conversion is lossless.
         assert shape.gsd_shape_spec == shape_spec

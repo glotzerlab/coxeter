@@ -96,7 +96,7 @@ class Polygon(Shape2D):
             ``False`` with care.
 
     Example:
-        >>> triangle = coxeter.shapes.Polygon([[-1, 0], [0, 1], [1, 0]])
+        >>> triangle = coxeter.shapes.Polygon([[1, 0], [0, 1], [-1, 0]])
         >>> import numpy as np
         >>> assert np.isclose(triangle.area, 1.0)
         >>> bounding_circle = triangle.minimal_bounding_circle
@@ -105,13 +105,12 @@ class Polygon(Shape2D):
         >>> circumcircle = triangle.circumcircle
         >>> assert np.isclose(circumcircle.radius, 1.0)
         >>> triangle.gsd_shape_spec
-        {'type': 'Polygon', 'vertices': [[-1.0, 0.0, 0.0], [0.0, 1.0, 0.0],
-        [1.0, 0.0, 0.0]]}
+        {'type': 'Polygon', 'vertices': [[1.0, 0.0], [0.0, 1.0], [-1.0, 0.0]]}
         >>> assert np.allclose(
         ...   triangle.inertia_tensor,
         ...   np.diag([1. / 9., 0., 1. / 3.]))
         >>> triangle.normal
-        array([ 0., -0., -1.])
+        array([0., 0., 1.])
         >>> assert np.allclose(
         ...   triangle.planar_moments_inertia,
         ...   (1. / 6., 1. / 6., 0.))
@@ -193,7 +192,8 @@ class Polygon(Shape2D):
     @property
     def gsd_shape_spec(self):
         """dict: Get a :ref:`complete GSD specification <shapes>`."""  # noqa: D401
-        return {"type": "Polygon", "vertices": self.vertices.tolist()}
+        self._require_xy_plane()
+        return {"type": "Polygon", "vertices": self.vertices[:, :2].tolist()}
 
     @property
     def normal(self):

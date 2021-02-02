@@ -29,20 +29,20 @@ class ConvexSpheropolygon(Shape2D):
 
     Example:
         >>> rounded_tri = coxeter.shapes.ConvexSpheropolygon(
-        ...   [[-1, 0], [0, 1], [1, 0]], radius=.1)
+        ...   [[1, 0], [0, 1], [-1, 0]], radius=.1)
         >>> rounded_tri.area
         1.5142...
         >>> rounded_tri.gsd_shape_spec
-        {'type': 'Polygon', 'vertices': [[-1.0, 0.0, 0.0],
-        [0.0, 1.0, 0.0], [1.0, 0.0, 0.0]], 'rounding_radius': 0.1}
+        {'type': 'Polygon', 'vertices': [[1.0, 0.0], [0.0, 1.0], [-1.0, 0.0]],
+        'rounding_radius': 0.1}
         >>> rounded_tri.radius
         0.1
         >>> rounded_tri.signed_area
         1.5142...
         >>> rounded_tri.vertices
-        array([[-1.,  0.,  0.],
+        array([[ 1.,  0.,  0.],
                [ 0.,  1.,  0.],
-               [ 1.,  0.,  0.]])
+               [-1.,  0.,  0.]])
 
     """
 
@@ -53,7 +53,7 @@ class ConvexSpheropolygon(Shape2D):
             raise ValueError("The vertices do not define a convex polygon.")
 
     def _require_xy_plane(self, allow_negative_z=False):
-        normal = self.normal
+        normal = self.polygon.normal
         if allow_negative_z:
             normal = np.abs(normal)
         if not np.array_equal(normal, np.array([0, 0, 1])):
@@ -61,7 +61,8 @@ class ConvexSpheropolygon(Shape2D):
             raise ValueError(
                 f"This method requires the {class_name} to be embedded in the xy "
                 "plane with a normal vector pointing along the positive z "
-                f"direction. The normal of this {class_name} is {self.normal}."
+                f"direction. The normal of this {class_name} is "
+                f"{self.polygon.normal}."
             )
 
     @property
@@ -72,9 +73,10 @@ class ConvexSpheropolygon(Shape2D):
     @property
     def gsd_shape_spec(self):
         """dict: Get a :ref:`complete GSD specification <shapes>`."""  # noqa: D401
+        self._require_xy_plane()
         return {
             "type": "Polygon",
-            "vertices": self.polygon.vertices.tolist(),
+            "vertices": self.polygon.vertices[:, :2].tolist(),
             "rounding_radius": self.radius,
         }
 
