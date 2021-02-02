@@ -4,14 +4,7 @@ from hypothesis import given
 from hypothesis.strategies import floats
 from pytest import approx
 
-from conftest import (
-    _test_get_set_minimal_bounding_sphere_radius,
-    make_sphero_cube,
-    named_damasceno_shapes_mark,
-    platonic_solids,
-)
-from coxeter.shapes import ConvexSpheropolyhedron
-from utils import compute_centroid_mc
+from conftest import make_sphero_cube
 
 
 @given(radius=floats(0.1, 1))
@@ -80,15 +73,6 @@ def test_invalid_radius_setter(r):
         sphero_cube.radius = r
 
 
-def test_center_getter_setter():
-    """Test center getter and setter."""
-    r = 1.0
-    sphero_cube = make_sphero_cube(radius=r)
-    assert all(sphero_cube.center == (0.5, 0.5, 0.5))
-    sphero_cube.center = (1, 1, 1)
-    assert all(sphero_cube.center == (1, 1, 1))
-
-
 def test_inside_boundaries():
     sphero_cube = make_sphero_cube(radius=1)
 
@@ -128,73 +112,6 @@ def test_inside_boundaries():
     assert np.all(~sphero_cube.is_inside(verts * (1 + 2 * np.sqrt(1 / 3) + 1e-6)))
 
 
-@pytest.mark.parametrize("poly", platonic_solids())
-def test_minimal_bounding_sphere_platonic(poly):
-    @given(floats(0.1, 1000))
-    def testfun(radius):
-        # Ensure polyhedron is centered, then compute distances.
-        spheropoly = ConvexSpheropolyhedron(poly.vertices, radius)
-        spheropoly.center = [0, 0, 0]
-        rmax_sq = np.sum(spheropoly.vertices ** 2, axis=1) + radius * radius
-
-        bounding_sphere = spheropoly.minimal_bounding_sphere
-        assert np.allclose(rmax_sq, bounding_sphere.radius ** 2, rtol=1e-4)
-
-
-@pytest.mark.parametrize("poly", platonic_solids())
-def test_minimal_centered_bounding_sphere_platonic(poly):
-    @given(floats(0.1, 1000))
-    def testfun(radius):
-        # Ensure polyhedron is centered, then compute distances.
-        spheropoly = ConvexSpheropolyhedron(poly.vertices, radius)
-        spheropoly.center = [0, 0, 0]
-        rmax_sq = np.sum(spheropoly.vertices ** 2, axis=1) + radius * radius
-
-        bounding_sphere = spheropoly.minimal_centered_bounding_sphere
-        assert np.allclose(rmax_sq, bounding_sphere.radius ** 2, rtol=1e-4)
-
-
-@pytest.mark.parametrize("poly", platonic_solids())
-def test_get_set_minimal_bounding_sphere_radius(poly):
-    # This test is slow because miniball is slow. To speed it up to the extent
-    # possible, it only generates each platonic solid once rather than once for
-    # each rounding radius tested, and the spheropolyhedron is constructed
-    # outside the inner test function and only the radius is updated inside.
-    spoly = ConvexSpheropolyhedron(poly.vertices, 0)
-
-    @given(floats(0.1, 1))
-    def testfun(r):
-        spoly.radius = r
-        _test_get_set_minimal_bounding_sphere_radius(spoly)
-
-    testfun()
-
-
 def test_repr():
     sphero_cube = make_sphero_cube(radius=1)
     assert str(sphero_cube), str(eval(repr(sphero_cube)))
-
-
-@named_damasceno_shapes_mark
-def test_center(shape):
-    for radius in [0.1, 1, 2]:
-        spoly = ConvexSpheropolyhedron(shape["vertices"], radius)
-        coxeter_result = spoly.center
-        num_samples = 1000
-        accept = False
-        while num_samples < 1e8:
-            try:
-                mc_result = compute_centroid_mc(shape["vertices"], num_samples)
-                assert np.allclose(coxeter_result, mc_result, atol=1e-1)
-                accept = True
-                break
-            except AssertionError:
-                num_samples *= 10
-                continue
-        if not accept:
-            raise AssertionError(
-                "The test failed for shape {}.\nMC Result: "
-                "\n{}\ncoxeter result: \n{}".format(
-                    shape["name"], mc_result, coxeter_result
-                )
-            )

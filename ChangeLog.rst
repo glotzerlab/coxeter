@@ -12,15 +12,15 @@ Added
 - Point in ellipse checks.
 - Inertia tensors for 2D shapes that implement moments of inertia.
 - Add minimal bounding sphere for all shapes.
-- Add minimal centered bounding sphere calculations for all shapes except general polygons and polyhedra.
+- Add minimal centered bounding sphere calculations for all shapes except general polygons, general polyhedra, spheropolygons, and spheropolyhedra.
 - Enable getting and setting the circumsphere or bounding sphere radius of a polyhedron (for both types of bounding sphere).
 - Add maximal bounded sphere for all shapes.
-- Add maximal centered bounded sphere calculations for all shapes except general polygons and polyhedra.
+- Add maximal centered bounded sphere calculations for all shapes except general polygons, general polyhedra, spheropolygons, and spheropolyhedra.
 - Enable getting and setting the insphere or bounded sphere radius of a polyhedron (for both types of bounding sphere).
 - Point in polygon checks for general (nonconvex) polygons.
 - Point in polyhedron checks for general (nonconvex) polyhedrons.
-- Minimal bounding sphere for all shapes.
-- Minimal centered bounding sphere calculations for all shapes except general polygons and polyhedra.
+- Minimal bounding sphere for all shapes except spheropolygons and spheropolyhedra.
+- Add minimal centered bounding sphere calculations for all shapes except general polygons, general polyhedra, spheropolygons, and spheropolyhedra.
 - Getters and setters for the circumsphere or bounding sphere radius of a polyhedron (for both types of bounding sphere).
 - A repr for all shapes.
 
