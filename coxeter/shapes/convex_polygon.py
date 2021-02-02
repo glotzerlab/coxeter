@@ -161,6 +161,7 @@ class ConvexPolygon(Polygon):
     @property
     def incircle_from_center(self):
         """:class:`~.Circle`: Get the largest concentric inscribed circle."""
+        self._require_xy_plane()
         warnings.warn(
             "The incircle_from_center property is deprecated, use "
             "maximal_centered_bounded_circle instead.",
@@ -171,6 +172,7 @@ class ConvexPolygon(Polygon):
     @property
     def minimal_centered_bounding_circle(self):
         """:class:`~.Circle`: Get the smallest bounding concentric circle."""
+        self._require_xy_plane()
         # The radius is determined by the furthest vertex from the center.
         return Circle(
             np.linalg.norm(self.vertices - self.center, axis=-1).max(), self.center
@@ -179,6 +181,7 @@ class ConvexPolygon(Polygon):
     @property
     def maximal_centered_bounded_circle(self):
         """:class:`~.Circle`: Get the largest bounded concentric circle."""
+        self._require_xy_plane()
         # The radius is determined by the furthest vertex from the center.
         v1s = self.vertices
         v2s = np.roll(self.vertices, shift=1, axis=0)

@@ -52,6 +52,18 @@ class ConvexSpheropolygon(Shape2D):
         if not _is_convex(self.vertices, self._polygon.normal):
             raise ValueError("The vertices do not define a convex polygon.")
 
+    def _require_xy_plane(self, allow_negative_z=False):
+        normal = self.normal
+        if allow_negative_z:
+            normal = np.abs(normal)
+        if not np.array_equal(normal, np.array([0, 0, 1])):
+            class_name = type(self).__name__
+            raise ValueError(
+                f"This method requires the {class_name} to be embedded in the xy "
+                "plane with a normal vector pointing along the positive z "
+                f"direction. The normal of this {class_name} is {self.normal}."
+            )
+
     @property
     def polygon(self):
         """:class:`~coxeter.shapes.ConvexPolygon`: The underlying polygon."""
