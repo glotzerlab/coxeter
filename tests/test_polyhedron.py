@@ -518,7 +518,7 @@ def test_form_factor(cube):
             [1, 2, 3],
             [-2, 4, -5.2],
         ],
-        dtype=np.float,
+        dtype=float,
     )
     np.testing.assert_allclose(
         cube.compute_form_factor_amplitude(ks),

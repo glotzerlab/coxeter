@@ -132,7 +132,7 @@ def test_form_factor():
             [1, 2, 3],
             [-2, 4, -5.2],
         ],
-        dtype=np.float,
+        dtype=float,
     )
 
     sphere = Sphere(0.5)

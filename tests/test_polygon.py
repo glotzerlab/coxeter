@@ -327,7 +327,7 @@ def test_form_factor(square):
             [1, 2, 3],
             [-2, 4, -5.2],
         ],
-        dtype=np.float,
+        dtype=float,
     )
 
     ampl = [
