@@ -13,13 +13,13 @@ class Sphere(Shape3D):
         radius (float):
             Radius of the sphere.
         center (Sequence[float]):
-            The coordinates of the center of the sphere (Default
+            The coordinates of the centroid of the sphere (Default
             value: (0, 0, 0)).
 
     Example:
         >>> sphere = coxeter.shapes.Sphere(1.0)
         >>> assert np.isclose(sphere.radius, 1.0)
-        >>> assert np.allclose(sphere.center, [0., 0., 0.])
+        >>> assert np.allclose(sphere.centroid, [0., 0., 0.])
         >>> sphere.gsd_shape_spec
         {'type': 'Sphere', 'diameter': 2.0}
         >>> assert np.allclose(
@@ -36,7 +36,7 @@ class Sphere(Shape3D):
 
     def __init__(self, radius, center=(0, 0, 0)):
         self.radius = radius
-        self.center = center
+        self.centroid = center
 
     @property
     def gsd_shape_spec(self):
@@ -44,14 +44,14 @@ class Sphere(Shape3D):
         return {"type": "Sphere", "diameter": 2 * self.radius}
 
     @property
-    def center(self):
+    def centroid(self):
         """:math:`(3, )` :class:`numpy.ndarray` of float: Get or set the centroid of the shape."""  # noqa: E501
-        return self._center
+        return self._centroid
 
-    @center.setter
-    def center(self, value):
+    @centroid.setter
+    def centroid(self, value):
         """:math:`(3, )` :class:`numpy.ndarray` of float: Get or set the centroid of the shape."""  # noqa: E501
-        self._center = np.asarray(value)
+        self._centroid = np.asarray(value)
 
     @property
     def radius(self):
@@ -107,7 +107,7 @@ class Sphere(Shape3D):
         vol = self.volume
         i_xx = vol * 2 / 5 * self.radius ** 2
         inertia_tensor = np.diag([i_xx, i_xx, i_xx])
-        return translate_inertia_tensor(self.center, inertia_tensor, vol)
+        return translate_inertia_tensor(self.centroid, inertia_tensor, vol)
 
     @property
     def iq(self):
@@ -139,7 +139,7 @@ class Sphere(Shape3D):
             array([ True, False])
 
         """
-        points = np.atleast_2d(points) - self.center
+        points = np.atleast_2d(points) - self.centroid
         return np.linalg.norm(points, axis=-1) <= self.radius
 
     def compute_form_factor_amplitude(self, q, density=1.0):  # noqa: D102
@@ -163,31 +163,31 @@ class Sphere(Shape3D):
         ) / q_sqs[~zero_q]
 
         # Shift the form factor to the particle's position and scale by density.
-        form_factor *= density * np.exp(-1j * np.dot(q, self.center))
+        form_factor *= density * np.exp(-1j * np.dot(q, self.centroid))
         return form_factor
 
     @property
     def minimal_centered_bounding_sphere(self):
         """:class:`~.Sphere`: Get the smallest bounding concentric sphere."""
-        return Sphere(self.radius, self.center)
+        return Sphere(self.radius, self.centroid)
 
     @property
     def minimal_bounding_sphere(self):
         """:class:`~.Sphere`: Get the smallest bounding sphere."""
-        return Sphere(self.radius, self.center)
+        return Sphere(self.radius, self.centroid)
 
     @property
     def maximal_centered_bounded_sphere(self):
         """:class:`~.Sphere`: Get the largest bounded concentric sphere."""
-        return Sphere(self.radius, self.center)
+        return Sphere(self.radius, self.centroid)
 
     @property
     def maximal_bounded_sphere(self):
         """:class:`~.Sphere`: Get the largest bounded sphere."""
-        return Sphere(self.radius, self.center)
+        return Sphere(self.radius, self.centroid)
 
     def __repr__(self):
         return (
             f"coxeter.shapes.Sphere(radius={self.radius}, "
-            f"center={self.center.tolist()})"
+            f"center={self.centroid.tolist()})"
         )
