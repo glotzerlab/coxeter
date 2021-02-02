@@ -30,7 +30,7 @@ Changed
 - Ensure that hypothesis-based tests don't implicitly reuse pytest fixtures.
 
 Deprecated
-~~~~~~~
+~~~~~~~~~~
 
 - The circumsphere from center calculations (replaced by minimal centered bounding sphere).
 - The bounding_sphere property is deprecated in favor of minimal_bounding_sphere.
