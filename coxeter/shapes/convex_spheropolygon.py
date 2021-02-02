@@ -134,12 +134,21 @@ class ConvexSpheropolygon(Shape2D):
 
     @property
     def center(self):
-        """:math:`(3, )` :class:`numpy.ndarray` of float: Get or set the centroid of the shape."""  # noqa: E501
-        return self.polygon.center
+        """:math:`(3, )` :class:`numpy.ndarray` of float: Alias for :attr:`~.centroid`."""  # noqa: E501
+        return self.centroid
 
     @center.setter
     def center(self, value):
-        self.polygon.center = value
+        self.centroid = value
+
+    @property
+    def centroid(self):
+        """:math:`(3, )` :class:`numpy.ndarray` of float: Get or set the centroid of the shape."""  # noqa: E501
+        return self.polygon.centroid
+
+    @centroid.setter
+    def centroid(self, value):
+        self.polygon.centroid = value
 
     @property
     def perimeter(self):
