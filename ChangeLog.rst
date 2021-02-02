@@ -28,6 +28,7 @@ Changed
 ~~~~~~~
 
 - Ensure that hypothesis-based tests don't implicitly reuse pytest fixtures.
+- Some properties of Polygon and ConvexSpheropolygon require the shape to be in the xy plane.
 
 Deprecated
 ~~~~~~~~~~
