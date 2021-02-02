@@ -14,6 +14,9 @@ Added
 - Add minimal bounding sphere for all shapes.
 - Add minimal centered bounding sphere calculations for all shapes except general polygons and polyhedra.
 - Enable getting and setting the circumsphere or bounding sphere radius of a polyhedron (for both types of bounding sphere).
+- Add maximal bounded sphere for all shapes.
+- Add maximal centered bounded sphere calculations for all shapes except general polygons and polyhedra.
+- Enable getting and setting the insphere or bounded sphere radius of a polyhedron (for both types of bounding sphere).
 - Point in polygon checks for general (nonconvex) polygons.
 - Point in polyhedron checks for general (nonconvex) polyhedrons.
 - Minimal bounding sphere for all shapes.
@@ -31,6 +34,7 @@ Deprecated
 
 - The circumsphere from center calculations (replaced by minimal centered bounding sphere).
 - The bounding_sphere property is deprecated in favor of minimal_bounding_sphere.
+- The insphere from center calculations (replaced by maximal centered bounded sphere).
 
 
 v0.4.0 - 2020-10-14

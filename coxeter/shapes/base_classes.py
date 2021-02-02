@@ -52,6 +52,10 @@ class Shape(ABC):
         """
         raise NotImplementedError
 
+    def inertia_tensor(self):
+        """:math:`(3, 3)` :class:`numpy.ndarray`: Get the inertia tensor."""
+        raise NotImplementedError
+
     def compute_form_factor_amplitude(self, q):
         r"""Calculate the form factor intensity.
 
@@ -169,25 +173,8 @@ class Shape2D(Shape):
         return 4 * np.pi * self.area / (self.perimeter ** 2)
 
     @property
-    def minimal_centered_bounding_circle(self):
-        """:class:`~.Circle`: Get the smallest bounding concentric circle.
-
-        This property gives the smallest
-        `bounding circle <https://en.wikipedia.org/wiki/Bounding_sphere>`__
-        whose center coincides with the center of the shape.
-        """
-        # TODO: The definition of center in coxeter is currently under
-        # discussion and implementations of this property may have to be
-        # adapted accordingly, see
-        # https://github.com/glotzerlab/coxeter/issues/129
-        raise NotImplementedError(
-            "The minimal centered bounding circle calculation is not implemented "
-            "for this shape."
-        )
-
-    @property
     def minimal_bounding_circle(self):
-        """:class:`~.Circle`: Get the smallset bounding circle.
+        """:class:`~.Circle`: Get the smallest bounding circle.
 
         A `bounding circle <https://en.wikipedia.org/wiki/Bounding_sphere>`__
         in two dimensions is a circle containing all of the points. There are
@@ -214,6 +201,23 @@ class Shape2D(Shape):
         self._rescale(value / self.minimal_bounding_circle_radius)
 
     @property
+    def minimal_centered_bounding_circle(self):
+        """:class:`~.Circle`: Get the smallest bounding concentric circle.
+
+        This property gives the smallest
+        `bounding circle <https://en.wikipedia.org/wiki/Bounding_sphere>`__
+        whose center coincides with the center of the shape.
+        """
+        # TODO: The definition of center in coxeter is currently under
+        # discussion and implementations of this property may have to be
+        # adapted accordingly, see
+        # https://github.com/glotzerlab/coxeter/issues/129
+        raise NotImplementedError(
+            "The minimal centered bounding circle calculation is not implemented "
+            "for this shape."
+        )
+
+    @property
     def minimal_centered_bounding_circle_radius(self):
         """float: Get or set the radius of the minimal centered bounding circle.
 
@@ -224,6 +228,57 @@ class Shape2D(Shape):
     @minimal_centered_bounding_circle_radius.setter
     def minimal_centered_bounding_circle_radius(self, value):
         self._rescale(value / self.minimal_centered_bounding_circle_radius)
+
+    @property
+    def maximal_bounded_circle(self):
+        """:class:`~.Circle`: Get the largest bounded circle.
+
+        The largest circle contained in a shape is referred to by a range of
+        ambiguous names. To avoid conflicts with the most common naming choices
+        of other properties in the literature (particularly the
+        :attr:`~coxeter.shapes.Polygon.incircle` of a polygon), this property is
+        named as an explicit analog to :attr:`~.minimal_bounding_circle`.
+        """
+        raise NotImplementedError(
+            "The maximal bounded circle calculation is not implemented for "
+            "this shape."
+        )
+
+    @property
+    def maximal_bounded_circle_radius(self):
+        """float: Get or set the radius of the maximal bounded circle.
+
+        See :meth:`~.maximal_bounded_circle` for more information.
+        """
+        return self.maximal_bounded_circle.radius
+
+    @maximal_bounded_circle_radius.setter
+    def maximal_bounded_circle_radius(self, value):
+        self._rescale(value / self.maximal_bounded_circle_radius)
+
+    @property
+    def maximal_centered_bounded_circle(self):
+        """:class:`~.Circle`: Get the largest concentric bounded circle.
+
+        This property gives the largest circle that fits in the shape whose
+        center also coincides with the center of the shape.
+        """
+        raise NotImplementedError(
+            "The maximal centered bounded circle calculation is not implemented "
+            "for this shape."
+        )
+
+    @property
+    def maximal_centered_bounded_circle_radius(self):
+        """float: Get or set the radius of the maximal centered bounded circle.
+
+        See :meth:`~.maximal_centered_bounded_circle` for more information.
+        """
+        return self.maximal_centered_bounded_circle.radius
+
+    @maximal_centered_bounded_circle_radius.setter
+    def maximal_centered_bounded_circle_radius(self, value):
+        self._rescale(value / self.maximal_centered_bounded_circle_radius)
 
 
 class Shape3D(Shape):
@@ -240,10 +295,6 @@ class Shape3D(Shape):
     def surface_area(self):
         """float: Get or set the surface area of the shape."""
         pass
-
-    def inertia_tensor(self):
-        """:math:`(3, 3)` :class:`numpy.ndarray`: Get the inertia tensor."""
-        raise NotImplementedError
 
     @property
     def iq(self):
@@ -272,27 +323,6 @@ class Shape3D(Shape):
             \end{align}
         """  # noqa: E501
         return np.pi * 36 * self.volume ** 2 / (self.surface_area ** 3)
-
-    @property
-    def minimal_centered_bounding_sphere(self):
-        """:class:`~.Sphere`: Get a bounding sphere sharing the center of this shape.
-
-        A `bounding sphere <https://en.wikipedia.org/wiki/Polar_moment_of_inertia>`__
-        of a collection of points in is a sphere containing all of the points.
-        There are an infinite set of possible bounding spheres for a shape
-        (since any sphere that entirely contains a bounding sphere is also a
-        bounding sphere), so additional constraints must be imposed to define a
-        unique sphere. This property provides the smallest bounding sphere of a
-        shape whose center coincides with the center of the shape.
-        """
-        # TODO: The definition of center in coxeter is currently under
-        # discussion and implementations of this property may have to be
-        # adapted accordingly, see
-        # https://github.com/glotzerlab/coxeter/issues/129
-        raise NotImplementedError(
-            "The minimal centered bounding sphere calculation is not implemented "
-            "for this shape."
-        )
 
     @property
     def minimal_bounding_sphere(self):
@@ -324,6 +354,27 @@ class Shape3D(Shape):
         self._rescale(value / self.minimal_bounding_sphere_radius)
 
     @property
+    def minimal_centered_bounding_sphere(self):
+        """:class:`~.Sphere`: Get a bounding sphere sharing the center of this shape.
+
+        A `bounding sphere <https://en.wikipedia.org/wiki/Polar_moment_of_inertia>`__
+        of a collection of points in is a sphere containing all of the points.
+        There are an infinite set of possible bounding spheres for a shape
+        (since any sphere that entirely contains a bounding sphere is also a
+        bounding sphere), so additional constraints must be imposed to define a
+        unique sphere. This property provides the smallest bounding sphere of a
+        shape whose center coincides with the center of the shape.
+        """
+        # TODO: The definition of center in coxeter is currently under
+        # discussion and implementations of this property may have to be
+        # adapted accordingly, see
+        # https://github.com/glotzerlab/coxeter/issues/129
+        raise NotImplementedError(
+            "The minimal centered bounding sphere calculation is not implemented "
+            "for this shape."
+        )
+
+    @property
     def minimal_centered_bounding_sphere_radius(self):
         """float: Get or set the radius of the minimal concentric bounding sphere.
 
@@ -334,3 +385,54 @@ class Shape3D(Shape):
     @minimal_centered_bounding_sphere_radius.setter
     def minimal_centered_bounding_sphere_radius(self, value):
         self._rescale(value / self.minimal_centered_bounding_sphere_radius)
+
+    @property
+    def maximal_bounded_sphere(self):
+        """:class:`~.Sphere`: Get the largest bounded sphere.
+
+        The largest sphere contained in a shape is referred to by a range of
+        ambiguous names. To avoid conflicts with the most common naming choices
+        of other properties in the literature (particularly the
+        :attr:`~coxeter.shapes.Polygon.insphere` of a polyhedron), this property is
+        named as an explicit analog to :attr:`~.minimal_bounding_sphere`.
+        """
+        raise NotImplementedError(
+            "The maximal bounded sphere calculation is not implemented for "
+            "this shape."
+        )
+
+    @property
+    def maximal_bounded_sphere_radius(self):
+        """float: Get or set the radius of the maximal bounded sphere.
+
+        See :meth:`~.maximal_bounded_sphere` for more information.
+        """
+        return self.maximal_bounded_sphere.radius
+
+    @maximal_bounded_sphere_radius.setter
+    def maximal_bounded_sphere_radius(self, value):
+        self._rescale(value / self.maximal_bounded_sphere_radius)
+
+    @property
+    def maximal_centered_bounded_sphere(self):
+        """:class:`~.Sphere`: Get the largest concentric bounded sphere.
+
+        This property gives the largest sphere that fits in the shape whose
+        center also coincides with the center of the shape.
+        """
+        raise NotImplementedError(
+            "The maximal centered bounded sphere calculation is not implemented "
+            "for this shape."
+        )
+
+    @property
+    def maximal_centered_bounded_sphere_radius(self):
+        """float: Get or set the radius of the maximal centered bounded sphere.
+
+        See :meth:`~.maximal_centered_bounded_sphere` for more information.
+        """
+        return self.maximal_centered_bounded_sphere.radius
+
+    @maximal_centered_bounded_sphere_radius.setter
+    def maximal_centered_bounded_sphere_radius(self, value):
+        self._rescale(value / self.maximal_centered_bounded_sphere_radius)

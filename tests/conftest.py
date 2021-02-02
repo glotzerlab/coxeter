@@ -1,8 +1,9 @@
 import numpy as np
 import pytest
+import rowan
 from hypothesis.strategies import builds, floats, integers
 
-from coxeter.families import PlatonicFamily
+from coxeter.families import PlatonicFamily, RegularNGonFamily
 from coxeter.shapes import ConvexPolyhedron, ConvexSpheropolyhedron, Polyhedron, Shape2D
 
 
@@ -121,6 +122,32 @@ EllipseSurfaceStrategy = builds(
 )
 
 
+def quaternion_from_axis_angle(x, y, z, theta):
+    """Generate a quaternion from axis [x, y, z] and angle theta."""
+    if x == y == z == 0:
+        return np.array([1, 0, 0, 0])
+    axis = np.array([x, y, z])
+    axis /= np.linalg.norm(axis)
+    return rowan.from_axis_angle(axis, theta)
+
+
+Random3DRotationStrategy = builds(
+    quaternion_from_axis_angle,
+    floats(-1, 1, allow_nan=False),
+    floats(-1, 1, allow_nan=False),
+    floats(-1, 1, allow_nan=False),
+    floats(0, 2 * np.pi, allow_nan=False),
+).filter(lambda quat: not np.isnan(quat).any())
+
+Random2DRotationStrategy = builds(
+    quaternion_from_axis_angle,
+    floats(0, 0, allow_nan=False),
+    floats(0, 0, allow_nan=False),
+    floats(-1, 1, allow_nan=False),
+    floats(0, 2 * np.pi, allow_nan=False),
+).filter(lambda quat: not np.isnan(quat).any())
+
+
 def sphere_isclose(c1, c2, *args, **kwargs):
     """Check if two spheres are almost equal.
 
@@ -136,6 +163,22 @@ def platonic_solids():
     """Generate platonic solids."""
     for shape_name in PlatonicFamily.data:
         yield PlatonicFamily.get_shape(shape_name)
+
+
+# A convenient mark decorator that also includes names for the polyhedra.
+# Assumes that the argument name is "poly".
+_platonic_shape_names = PlatonicFamily.data.keys()
+named_platonic_mark = pytest.mark.parametrize(
+    argnames="poly",
+    argvalues=[PlatonicFamily.get_shape(name) for name in _platonic_shape_names],
+    ids=_platonic_shape_names,
+)
+
+
+def regular_polygons(n=10):
+    """Generate regular polygons."""
+    for i in range(3, n + 1):
+        yield RegularNGonFamily.get_shape(i)
 
 
 def _test_get_set_minimal_bounding_sphere_radius(shape, centered=False):

@@ -147,6 +147,24 @@ def test_get_set_minimal_centered_bounding_circle_radius(r, center):
 
 
 @given(
+    floats(0.1, 1000),
+    arrays(np.float64, (3,), elements=floats(-10, 10, width=64), unique=True),
+)
+def test_maximal_bounded_circle(r, center):
+    circ = Circle(r, center)
+    assert sphere_isclose(circ.maximal_centered_bounded_circle, circ)
+
+
+@given(
+    floats(0.1, 1000),
+    arrays(np.float64, (3,), elements=floats(-10, 10, width=64), unique=True),
+)
+def test_maximal_centered_bounded_circle(r, center):
+    circ = Circle(r, center)
+    assert sphere_isclose(circ.maximal_centered_bounded_circle, circ)
+
+
+@given(
     floats(0.1, 10),
     arrays(np.float64, (3,), elements=floats(-10, 10, width=64), unique=True),
 )

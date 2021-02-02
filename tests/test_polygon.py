@@ -10,10 +10,12 @@ from scipy.spatial import ConvexHull
 
 from conftest import (
     EllipseSurfaceStrategy,
+    Random2DRotationStrategy,
+    Random3DRotationStrategy,
     _test_get_set_minimal_bounding_sphere_radius,
+    regular_polygons,
     sphere_isclose,
 )
-from coxeter.families import RegularNGonFamily
 from coxeter.shapes import Circle, ConvexPolygon, Polygon
 
 
@@ -249,20 +251,16 @@ def test_triangulate(square):
     assert not np.all(np.asarray(triangles[0]) == np.asarray(triangles[1]))
 
 
-def test_minimal_bounding_circle_radius_regular_polygon():
-    family = RegularNGonFamily()
-    for i in range(3, 10):
-        vertices = family.make_vertices(i)
-        rmax = np.max(np.linalg.norm(vertices, axis=-1))
+@pytest.mark.parametrize("poly", regular_polygons())
+def test_minimal_bounding_circle_radius_regular_polygon(poly):
+    rmax = np.max(np.linalg.norm(poly.vertices, axis=-1))
+    circle = poly.minimal_bounding_circle
 
-        poly = Polygon(vertices)
-        circle = poly.minimal_bounding_circle
+    assert np.isclose(rmax, circle.radius)
+    assert np.allclose(circle.center, 0)
 
-        assert np.isclose(rmax, circle.radius)
-        assert np.allclose(circle.center, 0)
-
-        with pytest.deprecated_call():
-            assert sphere_isclose(circle, poly.bounding_circle)
+    with pytest.deprecated_call():
+        assert sphere_isclose(circle, poly.bounding_circle)
 
 
 @given(EllipseSurfaceStrategy)
@@ -303,36 +301,49 @@ def test_bounding_circle_radius_random_hull_rotation(points, rotation):
     assert np.isclose(circle.radius, rotated_circle.radius)
 
 
-def test_circumcircle():
-    family = RegularNGonFamily()
-    for i in range(3, 10):
-        vertices = family.make_vertices(i)
-        rmax = np.max(np.linalg.norm(vertices, axis=-1))
+@pytest.mark.parametrize("poly", regular_polygons())
+def test_circumcircle(poly):
+    rmax = np.max(np.linalg.norm(poly.vertices, axis=-1))
+    circle = poly.circumcircle
 
-        poly = Polygon(vertices)
-        circle = poly.circumcircle
-
-        assert np.isclose(rmax, circle.radius)
-        assert np.allclose(circle.center, 0)
+    assert np.isclose(rmax, circle.radius)
+    assert np.allclose(circle.center, 0)
 
 
-def test_circumcircle_radius():
-    family = RegularNGonFamily()
-    for i in range(3, 10):
-        vertices = family.make_vertices(i)
-        rmax = np.max(np.linalg.norm(vertices, axis=-1))
-
-        poly = Polygon(vertices)
-
-        assert np.isclose(rmax, poly.circumcircle_radius)
-        poly.circumcircle_radius *= 2
-        assert np.isclose(poly.circumcircle.radius, rmax * 2)
+@pytest.mark.parametrize("poly", regular_polygons())
+def test_circumcircle_radius(poly):
+    rmax = np.max(np.linalg.norm(poly.vertices, axis=-1))
+    assert np.isclose(rmax, poly.circumcircle_radius)
+    poly.circumcircle_radius *= 2
+    assert np.isclose(poly.circumcircle.radius, rmax * 2)
 
 
-def test_incircle_from_center(convex_square):
-    circle = convex_square.incircle_from_center
+def test_maximal_centered_bounded_circle(convex_square):
+    circle = convex_square.maximal_centered_bounded_circle
     assert np.all(circle.center == convex_square.center)
     assert circle.radius == 0.5
+
+    with pytest.deprecated_call():
+        assert sphere_isclose(convex_square.incircle_from_center, circle)
+
+
+@pytest.mark.parametrize("poly", regular_polygons())
+def test_incircle(poly):
+    # The incircle should be centered for regular polygons.
+    assert sphere_isclose(poly.incircle, poly.maximal_centered_bounded_circle)
+
+    def check_rotation_invariance(quat):
+        rotated_poly = ConvexPolygon(rowan.rotate(quat, poly.vertices))
+        assert sphere_isclose(poly.incircle, rotated_poly.incircle)
+
+    # The incircle of a regular polygon should be rotation invariant.
+    given(Random2DRotationStrategy)(check_rotation_invariance)()
+
+    # The calculation should also be robust to out-of-plane rotations. Note
+    # that currently this test relies on the fact that circles are not
+    # orientable, otherwise they would need to be rotated back into the plane
+    # for the comparison.
+    given(Random3DRotationStrategy)(check_rotation_invariance)()
 
 
 def test_form_factor(square):
@@ -379,8 +390,8 @@ def test_form_factor(square):
     np.testing.assert_allclose(new_square.compute_form_factor_amplitude(ks), ampl)
 
 
-@pytest.mark.parametrize("num_sides", range(3, 6))
-def test_perimeter(num_sides):
+@pytest.mark.parametrize("poly", regular_polygons(6))
+def test_perimeter(poly):
     """Test the polygon perimeter calculation."""
 
     def unit_area_regular_n_gon_side_length(n):
@@ -392,44 +403,44 @@ def test_perimeter(num_sides):
         """
         return np.sqrt((4 * np.tan(np.pi / n)) / n)
 
-    poly = RegularNGonFamily.get_shape(num_sides)
     assert np.isclose(
-        num_sides * unit_area_regular_n_gon_side_length(num_sides), poly.perimeter
+        poly.num_vertices * unit_area_regular_n_gon_side_length(poly.num_vertices),
+        poly.perimeter,
     )
 
 
-@given(floats(0.1, 1000))
-def test_set_perimeter(value):
+def test_set_perimeter(square_points):
     """Test the perimeter and circumference setter."""
-    square = RegularNGonFamily.get_shape(4)
-    square.perimeter = value
-    assert square.perimeter == approx(value)
-    assert square.vertices == approx(
-        RegularNGonFamily.get_shape(4).vertices
-        * (value / RegularNGonFamily.get_shape(4).perimeter)
-    )
+    original_square = ConvexPolygon(square_points)
+    square = ConvexPolygon(square_points)
 
-
-def test_get_set_minimal_bounding_circle_radius():
-    family = RegularNGonFamily()
-    for i in range(3, 10):
-        _test_get_set_minimal_bounding_sphere_radius(family.get_shape(i))
-
-
-def test_get_set_minimal_centered_bounding_circle_radius():
-    family = RegularNGonFamily()
-    for i in range(3, 10):
-        _test_get_set_minimal_bounding_sphere_radius(family.get_shape(i), True)
-
-
-def test_minimal_centered_bounding_circle():
-    family = RegularNGonFamily()
-    for i in range(3, 10):
-        poly = family.get_shape(i)
-        assert sphere_isclose(
-            poly.minimal_centered_bounding_circle,
-            Circle(np.linalg.norm(poly.vertices, axis=-1).max()),
+    @given(floats(0.1, 1000))
+    def testfun(value):
+        square.perimeter = value
+        assert square.perimeter == approx(value)
+        assert square.vertices == approx(
+            original_square.vertices * (value / original_square.perimeter)
         )
+
+    testfun()
+
+
+@pytest.mark.parametrize("poly", regular_polygons())
+def test_get_set_minimal_bounding_circle_radius(poly):
+    _test_get_set_minimal_bounding_sphere_radius(poly)
+
+
+@pytest.mark.parametrize("poly", regular_polygons())
+def test_get_set_minimal_centered_bounding_circle_radius(poly):
+    _test_get_set_minimal_bounding_sphere_radius(poly, True)
+
+
+@pytest.mark.parametrize("poly", regular_polygons())
+def test_minimal_centered_bounding_circle(poly):
+    assert sphere_isclose(
+        poly.minimal_centered_bounding_circle,
+        Circle(np.linalg.norm(poly.vertices, axis=-1).max()),
+    )
 
 
 def test_is_inside(convex_square):

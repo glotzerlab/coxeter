@@ -1,5 +1,7 @@
 """Defines a convex polygon."""
 
+import warnings
+
 import numpy as np
 from scipy.spatial import ConvexHull
 
@@ -110,12 +112,26 @@ class ConvexPolygon(Polygon):
 
     @property
     def incircle_from_center(self):
-        """:class:`~.Circle`: Get the largest concentric inscribed circle.
+        """:class:`~.Circle`: Get the largest concentric inscribed circle."""
+        warnings.warn(
+            "The incircle_from_center property is deprecated, use "
+            "maximal_centered_bounded_circle instead.",
+            DeprecationWarning,
+        )
+        return self.maximal_centered_bounded_circle
 
-        The requirement that the circle be centered at the centroid of the
-        shape distinguishes this circle from most typical incircle
-        calculations.
-        """
+    @property
+    def minimal_centered_bounding_circle(self):
+        """:class:`~.Circle`: Get the smallest bounding concentric circle."""
+        # The radius is determined by the furthest vertex from the center.
+        return Circle(
+            np.linalg.norm(self.vertices - self.center, axis=-1).max(), self.center
+        )
+
+    @property
+    def maximal_centered_bounded_circle(self):
+        """:class:`~.Circle`: Get the largest bounded concentric circle."""
+        # The radius is determined by the furthest vertex from the center.
         v1s = self.vertices
         v2s = np.roll(self.vertices, shift=1, axis=0)
         deltas = v1s - v2s
@@ -126,11 +142,3 @@ class ConvexPolygon(Polygon):
 
         radius = np.min(distances)
         return Circle(radius, self.center)
-
-    @property
-    def minimal_centered_bounding_circle(self):
-        """:class:`~.Circle`: Get the smallest bounding concentric circle."""
-        # The radius is determined by the furthest vertex from the center.
-        return Circle(
-            np.linalg.norm(self.vertices - self.center, axis=-1).max(), self.center
-        )

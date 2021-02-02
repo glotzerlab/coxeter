@@ -546,7 +546,26 @@ class Polyhedron(Shape3D):
 
     @property
     def circumsphere(self):
-        """:class:`~.Sphere`: Get the polyhedron's circumsphere."""
+        """:class:`~.Sphere`: Get the polyhedron's circumsphere.
+
+        A `circumsphere
+        <https://en.wikipedia.org/wiki/Circumscribed_sphere>`__ must touch
+        all the points of the polyhedron. A circumsphere exists if and only if
+        there is a point equidistant from all the vertices. The circumsphere is
+        found by finding the least squares solution of the overdetermined system
+        of linear equations defined by this constraint, and the circumsphere
+        only exists if the resulting solution has no residual.
+
+        Raises:
+            RuntimeError: If no circumsphere exists for this polyhedron.
+        """
+        # The circumsphere is defined by center C and radius r. For vertex i
+        # with position r_i, dot(r_i - C, r_i - C) = r^2, which is equivalent
+        # to dot(r_i, r_i) - 2 dot(C, r_i) + dot(C, C) = r^2, a system of
+        # quadratic equations. If we choose r_0 as the origin, then dot(C, C) =
+        # r^2 and we instead have the linear equations dot(p_i, p_i) / 2 =
+        # dot(C, p_i) where p_i = r_i - r_0. This is the set of equations that
+        # we solve.
         points = self.vertices[1:] - self.vertices[0]
         half_point_lengths = np.sum(points * points, axis=1) / 2
         x, resids, _, _ = np.linalg.lstsq(points, half_point_lengths, None)
@@ -563,6 +582,43 @@ class Polyhedron(Shape3D):
     @circumsphere_radius.setter
     def circumsphere_radius(self, value):
         self._rescale(value / self.circumsphere_radius)
+
+    @property
+    def insphere(self):
+        """:class:`~.Sphere`: Get the polyhedron's insphere.
+
+        Note:
+            The insphere of a polyhedron is defined as the sphere contained within
+            the polyhedron that is tangent to all its faces. This condition
+            uniquely defines the sphere, if it exists. The set of equations
+            defined by this equation is solved using a least squares approach,
+            with the magnitude of the residual used to determine whether or not
+            the insphere exists.
+
+        """
+        # The insphere is defined by center C and radius r. For face i
+        # defined by its unit normal n_i and any point in the plane (choose a
+        # vertex v_i for convenience), we must have dot(C + r n_i - v_i, n_i) = 0.
+        # Defining the vector Cr = (C_x, C_y, C_z, r), and the augmented
+        # normals m = (n_x, n_y, n_z, 1), rearranging gives the equations that
+        # we solve: dot(m_i, cr) = dot(n_i, v_i).
+        first_vertices = np.array([verts[0] for verts in self.faces])
+        b = np.sum(self.normals * self.vertices[first_vertices], axis=-1)
+        a = np.hstack((self.normals, np.ones((self.num_faces, 1))))
+        x, resids, _, _ = np.linalg.lstsq(a, b, None)
+        if len(self.vertices) > 4 and not np.isclose(resids, 0):
+            raise RuntimeError("No insphere for this polyhedron.")
+
+        return Sphere(x[3], x[:3])
+
+    @property
+    def insphere_radius(self):
+        """float: Get the radius of the polygon's insphere."""
+        return self.insphere.radius
+
+    @insphere_radius.setter
+    def insphere_radius(self, value):
+        self._rescale(value / self.insphere_radius)
 
     def get_dihedral(self, a, b):
         """Get the dihedral angle between a pair of faces.

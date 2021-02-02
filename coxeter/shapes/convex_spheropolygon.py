@@ -199,6 +199,12 @@ class ConvexSpheropolygon(Shape2D):
         polygon_circle = self.polygon.minimal_centered_bounding_circle
         return Circle(polygon_circle.radius + self.radius, polygon_circle.center)
 
+    @property
+    def maximal_centered_bounded_circle(self):
+        """:class:`~.Circle`: Get the maximal concentric bounded circle."""
+        polygon_circle = self.polygon.maximal_centered_bounded_circle
+        return Circle(polygon_circle.radius + self.radius, polygon_circle.center)
+
     def __repr__(self):
         return (
             f"coxeter.shapes.ConvexSpheropolygon(vertices={self.vertices.tolist()}, "
