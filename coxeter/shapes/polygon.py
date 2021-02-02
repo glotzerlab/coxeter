@@ -178,6 +178,17 @@ class Polygon(Shape2D):
                     "permitted."
                 )
 
+    def _require_xy_plane(self, allow_negative_z=False):
+        normal = self.normal
+        if allow_negative_z:
+            normal = np.abs(normal)
+        if not np.array_equal(normal, np.array([0, 0, 1])):
+            raise ValueError(
+                "This method requires the Polygon to be embedded in the xy "
+                "plane with a normal vector pointing along the positive z "
+                f"direction. The normal of this Polygon is {self.normal}."
+            )
+
     @property
     def gsd_shape_spec(self):
         """dict: Get a :ref:`complete GSD specification <shapes>`."""  # noqa: D401
@@ -310,6 +321,7 @@ class Polygon(Shape2D):
         rotation used for this computation (i.e. changes in the :math:`x` and
         :math:`y` position) should not be relied upon.
         """  # noqa: E501
+        self._require_xy_plane()
         # Rotate shape so that normal vector coincides with z-axis.
         verts, _ = _align_points_by_normal(self._normal, self._vertices)
 
@@ -440,6 +452,7 @@ class Polygon(Shape2D):
                 If True, vertex indices will be added next to the vertices
                 (Default value: False).
         """
+        self._require_xy_plane()
         ax = _generate_ax(ax)
         verts = self._vertices - self.center if center else self._vertices
         verts, _ = _align_points_by_normal(self._normal, verts)
@@ -459,6 +472,7 @@ class Polygon(Shape2D):
     @property
     def bounding_circle(self):
         """:class:`~.Circle`: Get the minimal bounding circle."""
+        self._require_xy_plane()
         warnings.warn(
             "The bounding_circle property is deprecated, use "
             "minimal_bounding_circle instead",
@@ -470,6 +484,7 @@ class Polygon(Shape2D):
     @property
     def minimal_bounding_circle(self):
         """:class:`~.Circle`: Get the minimal bounding circle."""
+        self._require_xy_plane()
         if not MINIBALL:
             raise ImportError(
                 "The miniball module must be installed. It can "
@@ -517,6 +532,7 @@ class Polygon(Shape2D):
         Raises:
             RuntimeError: If no circumcircle exists for this polygon.
         """
+        self._require_xy_plane()
         # The circumsphere is defined by center C and radius r. For vertex i
         # with position r_i, dot(r_i - C, r_i - C) = r^2, which is equivalent
         # to dot(r_i, r_i) - 2 dot(C, r_i) + dot(C, C) = r^2, a system of
@@ -541,15 +557,17 @@ class Polygon(Shape2D):
     @property
     def circumcircle_radius(self):
         """float: Get the radius of the polygon's circumcircle."""
+        self._require_xy_plane()
         return self.circumcircle.radius
 
     @circumcircle_radius.setter
     def circumcircle_radius(self, value):
+        self._require_xy_plane()
         self._rescale(value / self.circumcircle_radius)
 
     @property
     def incircle(self):
-        """:class:`~.Sphere`: Get the polygon's incircle.
+        """:class:`~.Circle`: Get the polygon's incircle.
 
         Note:
             The incircle of a polygon is defined as the circle contained within
@@ -560,6 +578,7 @@ class Polygon(Shape2D):
             the incircle exists.
 
         """
+        self._require_xy_plane()
         # The incircle is defined by center C and radius r. For face i
         # defined by its unit normal n_i and any point in the plane (choose a
         # vertex v_i for convenience), we must have dot(C + r n_i - v_i, n_i) = 0.
@@ -604,10 +623,12 @@ class Polygon(Shape2D):
     @property
     def incircle_radius(self):
         """float: Get the radius of the polygon's incircle."""
+        self._require_xy_plane()
         return self.incircle.radius
 
     @incircle_radius.setter
     def incircle_radius(self, value):
+        self._require_xy_plane()
         self._rescale(value / self.incircle_radius)
 
     def compute_form_factor_amplitude(self, q, density=1.0):  # noqa: D102

@@ -10,7 +10,6 @@ from scipy.spatial import ConvexHull
 from conftest import (
     EllipseSurfaceStrategy,
     Random2DRotationStrategy,
-    Random3DRotationStrategy,
     _test_get_set_minimal_bounding_sphere_radius,
     regular_polygons,
     sphere_isclose,
@@ -37,7 +36,7 @@ def polygon_from_hull(verts):
 # Need to declare this outside the fixture so that it can be used in multiple
 # fixtures (pytest does not allow fixtures to be called).
 def get_square_points():
-    return np.asarray([[0, 0, 0], [0, 1, 0], [1, 1, 0], [1, 0, 0]])
+    return np.asarray([[0, 0, 0], [1, 0, 0], [1, 1, 0], [0, 1, 0]])
 
 
 @pytest.fixture
@@ -242,27 +241,6 @@ def test_bounding_circle_radius_random_hull(points):
     assert circle.radius <= rmax + 1e-6
 
 
-@settings(deadline=500)
-@given(
-    points=EllipseSurfaceStrategy,
-    rotation=arrays(np.float64, (4,), elements=floats(-1, 1, width=64)),
-)
-def test_bounding_circle_radius_random_hull_rotation(points, rotation):
-    """Test that rotating vertices does not change the bounding radius."""
-    assume(not np.all(rotation == 0))
-
-    hull = ConvexHull(points)
-    poly = Polygon(points[hull.vertices])
-
-    rotation = rowan.normalize(rotation)
-    rotated_vertices = rowan.rotate(rotation, poly.vertices)
-    poly_rotated = Polygon(rotated_vertices)
-
-    circle = poly.minimal_bounding_circle
-    rotated_circle = poly_rotated.minimal_bounding_circle
-    assert np.isclose(circle.radius, rotated_circle.radius)
-
-
 @pytest.mark.parametrize("poly", regular_polygons())
 def test_circumcircle(poly):
     rmax = np.max(np.linalg.norm(poly.vertices, axis=-1))
@@ -300,12 +278,6 @@ def test_incircle(poly):
 
     # The incircle of a regular polygon should be rotation invariant.
     given(Random2DRotationStrategy)(check_rotation_invariance)()
-
-    # The calculation should also be robust to out-of-plane rotations. Note
-    # that currently this test relies on the fact that circles are not
-    # orientable, otherwise they would need to be rotated back into the plane
-    # for the comparison.
-    given(Random3DRotationStrategy)(check_rotation_invariance)()
 
 
 def test_form_factor(square):
