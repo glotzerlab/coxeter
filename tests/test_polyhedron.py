@@ -3,7 +3,7 @@ import os
 import numpy as np
 import pytest
 import rowan
-from hypothesis import example, given, settings
+from hypothesis import assume, example, given, settings
 from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats, integers
 from pytest import approx
@@ -15,26 +15,14 @@ from conftest import (
     _test_get_set_minimal_bounding_sphere_radius,
     get_oriented_cube_faces,
     get_oriented_cube_normals,
+    named_damasceno_shapes_mark,
     named_platonic_mark,
     sphere_isclose,
 )
 from coxeter.families import DOI_SHAPE_REPOSITORIES, PlatonicFamily
-from coxeter.shapes.convex_polyhedron import ConvexPolyhedron
+from coxeter.shapes import ConvexPolyhedron
 from coxeter.shapes.utils import rotate_order2_tensor, translate_inertia_tensor
-from utils import compute_inertia_mc
-
-# Generate the shapes from :cite:`Damasceno2012a`. Use the raw shape dicts to
-# allow excluding subsets for different tests.
-_damasceno_data = DOI_SHAPE_REPOSITORIES["10.1126/science.1220869"][0].data
-_damasceno_shape_names = _damasceno_data.keys()
-named_damasceno_shapes_mark = pytest.mark.parametrize(
-    argnames="shape",
-    argvalues=[_damasceno_data[shape_id] for shape_id in _damasceno_shape_names],
-    ids=[
-        f"{shape_id}: {_damasceno_data[shape_id]['name']}"
-        for shape_id in _damasceno_shape_names
-    ],
-)
+from utils import compute_centroid_mc, compute_inertia_mc
 
 
 def test_normal_detection(convex_cube):
@@ -181,13 +169,14 @@ def test_moment_inertia_damasceno_shapes(shape):
 
     np.random.seed(0)
     poly = ConvexPolyhedron(shape["vertices"])
+    coxeter_result = poly.inertia_tensor
+    volume = poly.volume
     num_samples = 1000
     accept = False
     # Loop over different sampling rates to minimize the test runtime.
     while num_samples < 1e8:
         try:
-            coxeter_result = poly.inertia_tensor
-            mc_result = compute_inertia_mc(shape["vertices"], num_samples)
+            mc_result = compute_inertia_mc(poly.vertices, volume, num_samples)
             assert np.allclose(coxeter_result, mc_result, atol=1e-1)
             accept = True
             break
@@ -295,7 +284,7 @@ def test_circumsphere_radius_platonic(poly):
     assert np.allclose(r2 * 4, poly.circumsphere_radius ** 2)
 
 
-def test_minimal_centered_bounding_circle():
+def test_minimal_centered_bounding_sphere():
     """Validate circumsphere by testing the polyhedron.
 
     This checks that all points outside this circumsphere are also outside the
@@ -323,6 +312,7 @@ def test_minimal_centered_bounding_circle():
     # time, which is not destructive since it can be overwritten in subsequent
     # calls.
     # See https://github.com/HypothesisWorks/hypothesis/issues/377
+    @settings(deadline=500)
     @given(
         center=arrays(
             np.float64, (3,), elements=floats(-10, 10, width=64), unique=True
@@ -391,7 +381,13 @@ def test_inside(convex_cube):
     arrays(np.float64, (100, 3), elements=floats(0, 1, width=64), unique=True),
 )
 def test_maximal_centered_bounded_sphere_convex_hulls(points, test_points):
-    hull = ConvexHull(points)
+    try:
+        hull = ConvexHull(points)
+    except ValueError as e:
+        # Ignore cases where triangulation fails, we're not interested in
+        # trying to get polytri to work for nearly degenerate cases.
+        if str(e) == "Triangulation failed":
+            assume(False)
     poly = ConvexPolyhedron(points[hull.vertices])
     insphere = poly.maximal_centered_bounded_sphere
     assert poly.is_inside(insphere.center)
@@ -456,7 +452,9 @@ def test_translate_inertia(translation):
     translated_inertia = translate_inertia_tensor(
         translation, shape.inertia_tensor, shape.volume
     )
-    mc_tensor = compute_inertia_mc(translated_shape.vertices, 1e4)
+    mc_tensor = compute_inertia_mc(
+        translated_shape.vertices, translated_shape.volume, 1e4
+    )
 
     assert np.allclose(
         translated_inertia,
@@ -526,7 +524,7 @@ def test_form_factor(cube):
             [1, 2, 3],
             [-2, 4, -5.2],
         ],
-        dtype=np.float,
+        dtype=float,
     )
     np.testing.assert_allclose(
         cube.compute_form_factor_amplitude(ks),
@@ -591,3 +589,27 @@ def test_repr_nonconvex(oriented_cube):
 
 def test_repr_convex(convex_cube):
     assert str(convex_cube), str(eval(repr(convex_cube)))
+
+
+@named_damasceno_shapes_mark
+def test_center(shape):
+    poly = ConvexPolyhedron(shape["vertices"])
+    coxeter_result = poly.center
+    num_samples = 1000
+    accept = False
+    while num_samples < 1e8:
+        try:
+            mc_result = compute_centroid_mc(shape["vertices"], num_samples)
+            assert np.allclose(coxeter_result, mc_result, atol=1e-1)
+            accept = True
+            break
+        except AssertionError:
+            num_samples *= 10
+            continue
+    if not accept:
+        raise AssertionError(
+            "The test failed for shape {}.\nMC Result: "
+            "\n{}\ncoxeter result: \n{}".format(
+                shape["name"], mc_result, coxeter_result
+            )
+        )

@@ -45,7 +45,7 @@ class ConvexPolyhedron(Polyhedron):
         >>> assert np.allclose(
         ...   cube.inertia_tensor,
         ...   np.diag([16. / 3., 16. / 3., 16. / 3.]))
-        >>> sphere = cube.insphere_from_center
+        >>> sphere = cube.maximal_centered_bounded_sphere
         >>> sphere.radius
         1.0
         >>> assert np.isclose(cube.iq, np.pi / 6.)
@@ -139,7 +139,7 @@ class ConvexPolyhedron(Polyhedron):
                 Boolean array indicating which points are contained in the
                 polyhedron.
         """
-        return np.logical_not(np.any(self._point_plane_distances(points) > 0, axis=1))
+        return np.all(self._point_plane_distances(points) <= 0, axis=1)
 
     @property
     def insphere_from_center(self):

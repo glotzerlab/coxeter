@@ -30,12 +30,16 @@ Changed
 - Ensure that hypothesis-based tests don't implicitly reuse pytest fixtures.
 
 Deprecated
-~~~~~~~
+~~~~~~~~~~
 
 - The circumsphere from center calculations (replaced by minimal centered bounding sphere).
 - The bounding_sphere property is deprecated in favor of minimal_bounding_sphere.
 - The insphere from center calculations (replaced by maximal centered bounded sphere).
 
+Fixed
+~~~~~
+
+- Centroid calculations for polygon and polyhedron use the full integrals rather than simple averages of vertices.
 
 v0.4.0 - 2020-10-14
 -------------------

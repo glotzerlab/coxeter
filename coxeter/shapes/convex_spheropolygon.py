@@ -55,39 +55,6 @@ class ConvexSpheropolygon(Shape2D):
         if not _is_convex(self.vertices, self._polygon.normal):
             raise ValueError("The vertices do not define a convex polygon.")
 
-    def reorder_verts(self, clockwise=False, ref_index=0, increasing_length=True):
-        """Sort the vertices.
-
-        For more information see `Polygon.reorder_verts`.
-
-        Args:
-            clockwise (bool):
-                If True, sort in clockwise order (Default value: False).
-            ref_index (int):
-                Index indicating which vertex should be placed first in the
-                sorted list (Default value: 0).
-            increasing_length (bool):
-                If two vertices are at the same angle relative to the
-                center, when this flag is True the point closer to the center
-                comes first, otherwise the point further away comes first
-                (Default value: True).
-
-        Example:
-            >>> rounded_tri = coxeter.shapes.ConvexSpheropolygon(
-            ...   [[-1, 0], [0, 1], [1, 0]], radius=0.1)
-            >>> rounded_tri.vertices
-            array([[-1.,  0.,  0.],
-                   [ 0.,  1.,  0.],
-                   [ 1.,  0.,  0.]])
-            >>> rounded_tri.reorder_verts(clockwise=True)
-            >>> rounded_tri.vertices
-            array([[-1.,  0.,  0.],
-                   [ 1.,  0.,  0.],
-                   [ 0.,  1.,  0.]])
-
-        """
-        self.polygon.reorder_verts(clockwise, ref_index, increasing_length)
-
     @property
     def polygon(self):
         """:class:`~coxeter.shapes.ConvexPolygon`: The underlying polygon."""
@@ -167,12 +134,21 @@ class ConvexSpheropolygon(Shape2D):
 
     @property
     def center(self):
-        """:math:`(3, )` :class:`numpy.ndarray` of float: Get or set the centroid of the shape."""  # noqa: E501
-        return self.polygon.center
+        """:math:`(3, )` :class:`numpy.ndarray` of float: Alias for :attr:`~.centroid`."""  # noqa: E501
+        return self.centroid
 
     @center.setter
     def center(self, value):
-        self.polygon.center = value
+        self.centroid = value
+
+    @property
+    def centroid(self):
+        """:math:`(3, )` :class:`numpy.ndarray` of float: Get or set the centroid of the shape."""  # noqa: E501
+        return self.polygon.centroid
+
+    @centroid.setter
+    def centroid(self, value):
+        self.polygon.centroid = value
 
     @property
     def perimeter(self):

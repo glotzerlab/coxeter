@@ -178,66 +178,6 @@ class Polygon(Shape2D):
                     "permitted."
                 )
 
-    def reorder_verts(self, clockwise=False, ref_index=0, increasing_length=True):
-        """Sort the vertices.
-
-        Sorting is done with respect to the direction of the normal vector. The
-        default ordering is counterclockwise and preserves the vertex in the
-        0th position. A different ordering may be requested; however, note that
-        clockwise ordering will result in a negative signed area of the
-        polygon.
-
-        The reordering is performed by rotating the polygon onto the :math:`xy`
-        plane, then computing the angles of all vertices. The vertices are then
-        sorted by this angle.  Note that if two points are at the same angle,
-        the ordering is arbitrary and determined by the output of
-        :func:`numpy.argsort`, which uses an unstable quicksort algorithm by
-        default.
-
-        Args:
-            clockwise (bool):
-                If True, sort in clockwise order (Default value: False).
-            ref_index (int):
-                Index indicating which vertex should be placed first in the
-                sorted list (Default value: 0).
-            increasing_length (bool):
-                If two vertices are at the same angle relative to the
-                center, when this flag is True the point closer to the center
-                comes first, otherwise the point further away comes first
-                (Default value: True).
-
-        Example:
-            >>> square = coxeter.shapes.ConvexPolygon(
-            ...   [[-1, -1], [1, -1], [-1, 1], [1, 1]])
-            >>> print(square.vertices)
-            [[-1. -1.  0.]
-             [ 1. -1.  0.]
-             [ 1.  1.  0.]
-             [-1.  1.  0.]]
-            >>> square.reorder_verts(clockwise=True)
-            >>> print(square.vertices)
-            [[-1. -1.  0.]
-             [-1.  1.  0.]
-             [ 1.  1.  0.]
-             [ 1. -1.  0.]]
-
-        """
-        verts, _ = _align_points_by_normal(self._normal, self._vertices - self.center)
-
-        # Compute the angle of each vertex, shift so that the chosen
-        # reference_index has a value of zero, then move into the [0, 2pi]
-        # range. The secondary sorting level is in terms of distance from the
-        # origin.
-        angles = np.arctan2(verts[:, 1], verts[:, 0])
-        angles = np.mod(angles - angles[ref_index], 2 * np.pi)
-        distances = np.linalg.norm(verts, axis=1)
-        if not increasing_length:
-            distances *= -1
-        if clockwise:
-            angles = np.mod(2 * np.pi - angles, 2 * np.pi)
-        vert_order = np.lexsort((distances, angles))
-        self._vertices = self._vertices[vert_order, :]
-
     @property
     def gsd_shape_spec(self):
         """dict: Get a :ref:`complete GSD specification <shapes>`."""  # noqa: D401
@@ -440,12 +380,43 @@ class Polygon(Shape2D):
 
     @property
     def center(self):
-        """:math:`(3, )` :class:`numpy.ndarray` of float: Get or set the centroid of the shape."""  # noqa: E501
-        return np.mean(self.vertices, axis=0)
+        """:math:`(3, )` :class:`numpy.ndarray` of float: Alias for :attr:`~.centroid`."""  # noqa: E501
+        return self.centroid
 
     @center.setter
     def center(self, value):
-        self._vertices += np.asarray(value) - self.center
+        self.centroid = value
+
+    @property
+    def centroid(self):
+        """:math:`(3, )` :class:`numpy.ndarray` of float: Get or set the centroid of the shape.
+
+        The centroid of a polygon is calculated according to
+        `this formula <https://en.wikipedia.org/wiki/Centroid#Of_a_polygon>`__.
+        """  # noqa: E501
+        verts, rotation = _align_points_by_normal(self.normal, self.vertices)
+        verts_shifted = np.roll(verts, shift=-1, axis=0)
+
+        delta_term = (
+            verts[:, 0] * verts_shifted[:, 1] - verts_shifted[:, 0] * verts[:, 1]
+        )
+        c_x = np.sum((verts[:, 0] + verts_shifted[:, 0]) * delta_term)
+        c_y = np.sum((verts[:, 1] + verts_shifted[:, 1]) * delta_term)
+
+        in_plane_centroid = np.array([c_x, c_y, 0]) / (6 * self.area)
+
+        # We've rotated into the plane, so the z position of all vertices
+        # should be equal. We take the average to improve numerical stablity.
+        in_plane_centroid[2] = np.mean(verts[:, 2])
+
+        # Revert the rotation into the plane.
+        centroid = rotation.T.dot(in_plane_centroid)
+
+        return centroid
+
+    @centroid.setter
+    def centroid(self, value):
+        self._vertices += np.asarray(value) - self.centroid
 
     def _triangulation(self):
         """Generate a triangulation of the polygon.

@@ -7,6 +7,7 @@ import rowan
 from scipy.sparse.csgraph import connected_components
 
 from ..extern.polyhedron.polyhedron import Polyhedron as PolyInside
+from ..extern.polytri import polytri
 from .base_classes import Shape3D
 from .convex_polygon import ConvexPolygon, _is_convex
 from .polygon import Polygon, _is_simple
@@ -423,8 +424,7 @@ class Polyhedron(Shape3D):
         triangulates each of these to provide a total triangulation.
         """
         for face in self.faces:
-            poly = Polygon(self.vertices[face], planar_tolerance=1e-4)
-            yield from poly._triangulation()
+            yield from polytri.triangulate(self.vertices[face])
 
     def _point_plane_distances(self, points):
         """Compute the distances from a set of points to each plane.
@@ -491,12 +491,53 @@ class Polyhedron(Shape3D):
 
     @property
     def center(self):
-        """:math:`(3, )` :class:`numpy.ndarray` of float: Get or set the centroid of the shape."""  # noqa: E501
-        return np.mean(self.vertices, axis=0)
+        """:math:`(3, )` :class:`numpy.ndarray` of float: Alias for :attr:`~.centroid`."""  # noqa: E501
+        return self.centroid
 
     @center.setter
     def center(self, value):
-        self._vertices += np.asarray(value) - self.center
+        self.centroid = value
+
+    @property
+    def centroid(self):
+        """:math:`(3, )` :class:`numpy.ndarray` of float: Get or set the centroid of the shape.
+
+        The centroid is computed using the algorithm described in
+        :cite:`Eberly2002`.
+        """  # noqa: E501
+        # We could call self.volume, but this algorithm gets it for free as
+        # part of the centroid integral so we might as well use it.
+        volume = 0
+        center = np.zeros(3)
+
+        # >90% of the time is spent in generating the surface triangulation, so
+        # there's not much to be gained by vectorizing the loop.
+        for triangle in self._surface_triangulation():
+            v0, v1, v2 = triangle
+            v01 = v1 - v0
+            v02 = v2 - v0
+            # numpy.cross is relatively slow for a single vector cross product.
+            normal = [
+                v01[1] * v02[2] - v01[2] * v02[1],
+                v01[2] * v02[0] - v01[0] * v02[2],
+                v01[0] * v02[1] - v01[1] * v02[0],
+            ]
+
+            t0 = v0 + v1
+            f1 = t0 + v2
+            t1 = v0 * v0
+            t2 = t1 + v1 * t0
+            f2 = t2 + v2 * f1
+
+            # This could equivalently use the y or z components.
+            volume += normal[0] * f1[0]
+            center += normal * f2
+
+        return np.array(center) / volume / 4
+
+    @centroid.setter
+    def centroid(self, value):
+        self._vertices += np.asarray(value) - self.centroid
         self._find_equations()
 
     @property
