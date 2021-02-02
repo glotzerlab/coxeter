@@ -686,7 +686,7 @@ class Polygon(Shape2D):
         def _check_inside(p):
             """Check if point is inside, including boundary points.
 
-            The polyhedron check will will raise a ValueError for points on the
+            The polygon check will raise a ValueError for points on the
             boundary, which we want to be inside.
             """
             try:
