@@ -76,7 +76,7 @@ class ConvexPolygon(Polygon):
         >>> square.gsd_shape_spec
         {'type': 'Polygon', 'vertices': [[1.0, 1.0, 0.0], [-1.0, 1.0, 0.0],
         [-1.0, -1.0, 0.0], [1.0, -1.0, 0.0]]}
-        >>> assert np.isclose(square.incircle_from_center.radius, 1.0)
+        >>> assert np.isclose(square.maximal_centered_bounded_circle.radius, 1.0)
         >>> assert np.allclose(
         ...   square.inertia_tensor,
         ...   [[0., 0., 0.],
