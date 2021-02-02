@@ -7,6 +7,7 @@ import rowan
 from scipy.sparse.csgraph import connected_components
 
 from ..extern.polyhedron.polyhedron import Polyhedron as PolyInside
+from ..extern.polytri import polytri
 from .base_classes import Shape3D
 from .convex_polygon import ConvexPolygon, _is_convex
 from .polygon import Polygon, _is_simple
@@ -423,8 +424,7 @@ class Polyhedron(Shape3D):
         triangulates each of these to provide a total triangulation.
         """
         for face in self.faces:
-            poly = Polygon(self.vertices[face], planar_tolerance=1e-4)
-            yield from poly._triangulation()
+            yield from polytri.triangulate(self.vertices[face])
 
     def _point_plane_distances(self, points):
         """Compute the distances from a set of points to each plane.
@@ -509,9 +509,19 @@ class Polyhedron(Shape3D):
         # part of the centroid integral so we might as well use it.
         volume = 0
         center = np.zeros(3)
+
+        # >90% of the time is spent in generating the surface triangulation, so
+        # there's not much to be gained by vectorizing the loop.
         for triangle in self._surface_triangulation():
             v0, v1, v2 = triangle
-            normal = np.cross(v1 - v0, v2 - v0)
+            v01 = v1 - v0
+            v02 = v2 - v0
+            # numpy.cross is relatively slow for a single vector cross product.
+            normal = [
+                v01[1] * v02[2] - v01[2] * v02[1],
+                v01[2] * v02[0] - v01[0] * v02[2],
+                v01[0] * v02[1] - v01[1] * v02[0],
+            ]
 
             t0 = v0 + v1
             f1 = t0 + v2
@@ -519,6 +529,7 @@ class Polyhedron(Shape3D):
             t2 = t1 + v1 * t0
             f2 = t2 + v2 * f1
 
+            # This could equivalently use the y or z components.
             volume += normal[0] * f1[0]
             center += normal * f2
 
