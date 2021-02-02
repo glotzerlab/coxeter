@@ -21,7 +21,7 @@ from conftest import (
 from coxeter.families import DOI_SHAPE_REPOSITORIES, PlatonicFamily
 from coxeter.shapes.convex_polyhedron import ConvexPolyhedron
 from coxeter.shapes.utils import rotate_order2_tensor, translate_inertia_tensor
-from utils import compute_inertia_mc
+from utils import compute_centroid_mc, compute_inertia_mc
 
 # Generate the shapes from :cite:`Damasceno2012a`. Use the raw shape dicts to
 # allow excluding subsets for different tests.
@@ -592,3 +592,27 @@ def test_repr_nonconvex(oriented_cube):
 
 def test_repr_convex(convex_cube):
     assert str(convex_cube), str(eval(repr(convex_cube)))
+
+
+@named_damasceno_shapes_mark
+def test_center(shape):
+    poly = ConvexPolyhedron(shape["vertices"])
+    num_samples = 1000
+    accept = False
+    while num_samples < 1e8:
+        try:
+            coxeter_result = poly.center
+            mc_result = compute_centroid_mc(shape["vertices"], num_samples)
+            assert np.allclose(coxeter_result, mc_result, atol=1e-1)
+            accept = True
+            break
+        except AssertionError:
+            num_samples *= 10
+            continue
+    if not accept:
+        raise AssertionError(
+            "The test failed for shape {}.\nMC Result: "
+            "\n{}\ncoxeter result: \n{}".format(
+                shape["name"], mc_result, coxeter_result
+            )
+        )
