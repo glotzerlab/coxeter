@@ -12,7 +12,7 @@ from coxeter.shapes import ConvexSpheropolygon
 
 
 def get_square_points():
-    return np.asarray([[0, 0, 0], [0, 1, 0], [1, 1, 0], [1, 0, 0]])
+    return np.asarray([[0, 0, 0], [1, 0, 0], [1, 1, 0], [0, 1, 0]])
 
 
 @pytest.fixture
@@ -193,6 +193,48 @@ def test_inertia(unit_rounded_square):
         unit_rounded_square.polar_moment_inertia
     with pytest.raises(NotImplementedError):
         unit_rounded_square.inertia_tensor
+
+
+def test_is_inside(unit_rounded_square):
+    points_inside = [
+        [0, 0],
+        [1, 1],
+        [-0.01, -0.01],
+        [2, 0.5],
+        [2, 1],
+        [0.5, -0.7],
+        [-0.57, -0.57],
+    ]
+    points_outside = [
+        [-0.99, -0.99],
+        [-1.01, -1.01],
+        [2.01, 0.5],
+        [2.01, 1],
+        [0.5, -1.01],
+        [2, -0.7],
+    ]
+    assert np.all(unit_rounded_square.is_inside(points_inside))
+    assert np.all(~unit_rounded_square.is_inside(points_outside))
+    points_inside_3d = np.hstack((points_inside, np.zeros((len(points_inside), 1))))
+    points_outside_3d = np.hstack((points_outside, np.zeros((len(points_outside), 1))))
+    assert np.all(unit_rounded_square.is_inside(points_inside_3d))
+    assert np.all(~unit_rounded_square.is_inside(points_outside_3d))
+
+    assert np.all(unit_rounded_square.is_inside(unit_rounded_square.polygon.vertices))
+    unit_rounded_square.polygon.center = [0, 0, 0]
+    verts = unit_rounded_square.polygon.vertices
+    # Points are inside the convex hull
+    assert np.all(unit_rounded_square.is_inside(verts * 0.99))
+    # Points are outside the convex hull but inside the circular caps
+    assert np.all(unit_rounded_square.is_inside(verts * 1.01))
+    # Points are outside the circular caps
+    assert np.all(~unit_rounded_square.is_inside(verts * 3))
+    # Points are on the very corners of the circular caps
+    assert np.all(unit_rounded_square.is_inside(verts * (1 + 1 / np.sqrt(1 / 2))))
+    # Points are just outside the very corners of the circular caps
+    assert np.all(
+        ~unit_rounded_square.is_inside(verts * (1 + 1 / np.sqrt(1 / 2) + 1e-6))
+    )
 
 
 def test_repr(unit_rounded_square):
