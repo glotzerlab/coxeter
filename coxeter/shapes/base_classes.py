@@ -136,8 +136,8 @@ class Shape(ABC):
     def _plato_primitive(self, backend, **kwargs):
         raise NotImplementedError("This shape does not have a plato primitive.")
 
-    def to_plato_scene(self, backend=None, scene=None):
-        """Add this shape to a new or existing :class:`plato.draw.Scene`.
+    def to_plato_scene(self, backend=None, scene=None, **scene_kwargs):
+        r"""Add this shape to a new or existing :class:`plato.draw.Scene`.
 
         Args:
             backend (str):
@@ -147,6 +147,9 @@ class Shape(ABC):
             scene (:class:`plato.draw.Scene`):
                 Scene object to render into. If not provided or None, a new
                 scene is created.
+            **scene_kwargs:
+                Keyword arguments forwarded to the :class:`plato.draw.Scene`.
+                Only used if ``scene`` is not provided or None.
 
         Returns:
             :class:`plato.draw.Scene`:
@@ -167,7 +170,7 @@ class Shape(ABC):
         prim = self._plato_primitive(backend)
 
         if scene is None:
-            scene = backend.Scene([prim])
+            scene = backend.Scene([prim], **scene_kwargs)
         else:
             scene.add_primitive(prim)
         return scene
