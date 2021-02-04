@@ -147,7 +147,7 @@ class Shape(ABC):
             scene (:class:`plato.draw.Scene`):
                 Scene object to render into. If not provided or None, a new
                 scene is created.
-            **scene_kwargs:
+            \*\*scene_kwargs:
                 Keyword arguments forwarded to the :class:`plato.draw.Scene`.
                 Only used if ``scene`` is not provided or None.
 
