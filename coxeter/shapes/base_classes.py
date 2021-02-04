@@ -111,6 +111,15 @@ class Shape(ABC):
 class Shape2D(Shape):
     """An abstract representation of a shape in 2 dimensions."""
 
+    def _require_xy_plane(self):
+        """Enforce that the shape is embedded in the :math:`xy` plane."""
+        if not np.isclose(self.centroid[2], 0):
+            class_name = type(self).__name__
+            raise ValueError(
+                f"This method requires the {class_name} to be embedded in the xy "
+                f"plane. The centroid of this {class_name} is {self.centroid}."
+            )
+
     @property
     @abstractmethod
     def area(self):

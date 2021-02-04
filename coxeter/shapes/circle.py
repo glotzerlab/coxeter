@@ -174,13 +174,17 @@ class Circle(Shape2D):
             array([ True, False])
 
         """
-        points = np.atleast_2d(points) - self.centroid
-        return np.logical_and(
-            np.linalg.norm(points, axis=-1) <= self.radius,
-            # At present circles are not orientable, so the z position must
-            # match exactly.
-            np.isclose(points[:, 2], 0),
-        )
+        self._require_xy_plane()
+        points = np.atleast_2d(points)
+        # For convenience, we support providing points without z components
+        if points.shape[1] == 2:
+            points = np.hstack((points, np.zeros((points.shape[0], 1))))
+        if not np.all(points[:, 2] == 0):
+            raise ValueError(
+                "All provided points must be in the xy plane (points[:, 2] == 0)."
+            )
+
+        return np.linalg.norm(points, axis=-1) <= self.radius
 
     @property
     def iq(self):
