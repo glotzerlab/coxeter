@@ -75,6 +75,11 @@ class ConvexSpheropolygon(Shape2D):
         return self.polygon.vertices
 
     @property
+    def num_vertices(self):
+        """int: Get the number of vertices."""
+        return self.polygon.num_vertices
+
+    @property
     def radius(self):
         """float: Get or set the rounding radius."""
         return self._radius
@@ -210,7 +215,7 @@ class ConvexSpheropolygon(Shape2D):
         For more general information about this calculation, see
         `Shape.distance_to_surface`.
         """
-        num_verts = len(self._polygon.vertices)
+        num_verts = self.num_vertices
         verts = self._polygon.vertices[:, :2]
         verts -= np.average(verts, axis=0)
         # intermediate data
