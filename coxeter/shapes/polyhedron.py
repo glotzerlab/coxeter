@@ -490,15 +490,6 @@ class Polyhedron(Shape3D):
         return np.array([[i_xx, i_xy, i_xz], [i_xy, i_yy, i_yz], [i_xz, i_yz, i_zz]])
 
     @property
-    def center(self):
-        """:math:`(3, )` :class:`numpy.ndarray` of float: Alias for :attr:`~.centroid`."""  # noqa: E501
-        return self.centroid
-
-    @center.setter
-    def center(self, value):
-        self.centroid = value
-
-    @property
     def centroid(self):
         """:math:`(3, )` :class:`numpy.ndarray` of float: Get or set the centroid of the shape.
 

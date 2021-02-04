@@ -12,14 +12,14 @@ class Circle(Shape2D):
         radius (float):
             Radius of the circle.
         center (Sequence[float]):
-            The coordinates of the center of the circle (Default
+            The coordinates of the centroid of the circle (Default
             value: (0, 0, 0)).
 
     Example:
         >>> circle = coxeter.shapes.circle.Circle(radius=1.0, center=(1, 1, 1))
         >>> import numpy as np
         >>> assert np.isclose(circle.area, np.pi)
-        >>> circle.center
+        >>> circle.centroid
         array([1, 1, 1])
         >>> assert np.isclose(circle.circumference, 2 * np.pi)
         >>> circle.eccentricity
@@ -40,7 +40,7 @@ class Circle(Shape2D):
 
     def __init__(self, radius, center=(0, 0, 0)):
         self.radius = radius
-        self.center = center
+        self.centroid = center
 
     @property
     def gsd_shape_spec(self):
@@ -48,13 +48,13 @@ class Circle(Shape2D):
         return {"type": "Sphere", "diameter": 2 * self.radius}
 
     @property
-    def center(self):
+    def centroid(self):
         """:math:`(3, )` :class:`numpy.ndarray` of float: Get or set the centroid of the shape."""  # noqa: E501
-        return self._center
+        return self._centroid
 
-    @center.setter
-    def center(self, value):
-        self._center = np.asarray(value)
+    @centroid.setter
+    def centroid(self, value):
+        self._centroid = np.asarray(value)
 
     @property
     def radius(self):
@@ -146,10 +146,10 @@ class Circle(Shape2D):
         i_x = i_y = area / 4 * self.radius ** 2
         i_xy = 0
 
-        # Apply parallel axis theorem from the center
-        i_x += area * self.center[0] ** 2
-        i_y += area * self.center[1] ** 2
-        i_xy += area * self.center[0] * self.center[1]
+        # Apply parallel axis theorem from the centroid
+        i_x += area * self.centroid[0] ** 2
+        i_y += area * self.centroid[1] ** 2
+        i_xy += area * self.centroid[0] * self.centroid[1]
         return i_x, i_y, i_xy
 
     def is_inside(self, points):
@@ -174,7 +174,7 @@ class Circle(Shape2D):
             array([ True, False])
 
         """
-        points = np.atleast_2d(points) - self.center
+        points = np.atleast_2d(points) - self.centroid
         return np.logical_and(
             np.linalg.norm(points, axis=-1) <= self.radius,
             # At present circles are not orientable, so the z position must
@@ -197,25 +197,25 @@ class Circle(Shape2D):
     @property
     def minimal_bounding_circle(self):
         """:class:`~.Circle`: Get the smallest bounding circle."""
-        return Circle(self.radius, self.center)
+        return Circle(self.radius, self.centroid)
 
     @property
     def minimal_centered_bounding_circle(self):
         """:class:`~.Circle`: Get the smallest bounding concentric circle."""
-        return Circle(self.radius, self.center)
+        return Circle(self.radius, self.centroid)
 
     @property
     def maximal_bounding_circle(self):
         """:class:`~.Circle`: Get the largest bounded circle."""
-        return Circle(self.radius, self.center)
+        return Circle(self.radius, self.centroid)
 
     @property
     def maximal_centered_bounded_circle(self):
         """:class:`~.Circle`: Get the largest bounded concentric circle."""
-        return Circle(self.radius, self.center)
+        return Circle(self.radius, self.centroid)
 
     def __repr__(self):
         return (
             f"coxeter.shapes.Circle(radius={self.radius}, "
-            f"center={self.center.tolist()})"
+            f"center={self.centroid.tolist()})"
         )

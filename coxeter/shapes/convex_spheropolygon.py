@@ -7,7 +7,6 @@ a circle of some radius.
 import numpy as np
 
 from .base_classes import Shape2D
-from .circle import Circle
 from .convex_polygon import ConvexPolygon, _is_convex
 
 
@@ -33,8 +32,6 @@ class ConvexSpheropolygon(Shape2D):
         ...   [[-1, 0], [0, 1], [1, 0]], radius=.1)
         >>> rounded_tri.area
         1.5142...
-        >>> rounded_tri.center
-        array([0.        , 0.333..., 0.        ])
         >>> rounded_tri.gsd_shape_spec
         {'type': 'Polygon', 'vertices': [[-1.0, 0.0, 0.0],
         [0.0, 1.0, 0.0], [1.0, 0.0, 0.0]], 'rounding_radius': 0.1}
@@ -136,24 +133,6 @@ class ConvexSpheropolygon(Shape2D):
             self._rescale(scale)
         else:
             raise ValueError("Area must be greater than zero.")
-
-    @property
-    def center(self):
-        """:math:`(3, )` :class:`numpy.ndarray` of float: Alias for :attr:`~.centroid`."""  # noqa: E501
-        return self.centroid
-
-    @center.setter
-    def center(self, value):
-        self.centroid = value
-
-    @property
-    def centroid(self):
-        """:math:`(3, )` :class:`numpy.ndarray` of float: Get or set the centroid of the shape."""  # noqa: E501
-        return self.polygon.centroid
-
-    @centroid.setter
-    def centroid(self, value):
-        self.polygon.centroid = value
 
     @property
     def perimeter(self):
@@ -271,24 +250,6 @@ class ConvexSpheropolygon(Shape2D):
             kernel[indices] = (-b + np.sqrt(b ** 2 - 4 * a * c)) / (2 * a)
 
         return kernel
-
-    @property
-    def minimal_bounding_circle(self):
-        """:class:`~.Circle`: Get the minimal bounding circle."""
-        polygon_circle = self.polygon.minimal_bounding_circle
-        return Circle(polygon_circle.radius + self.radius, polygon_circle.center)
-
-    @property
-    def minimal_centered_bounding_circle(self):
-        """:class:`~.Circle`: Get the minimal concentric bounding circle."""
-        polygon_circle = self.polygon.minimal_centered_bounding_circle
-        return Circle(polygon_circle.radius + self.radius, polygon_circle.center)
-
-    @property
-    def maximal_centered_bounded_circle(self):
-        """:class:`~.Circle`: Get the maximal concentric bounded circle."""
-        polygon_circle = self.polygon.maximal_centered_bounded_circle
-        return Circle(polygon_circle.radius + self.radius, polygon_circle.center)
 
     def __repr__(self):
         return (

@@ -120,14 +120,6 @@ def test_area_getter_setter(unit_rounded_square):
     testfun()
 
 
-def test_center(square_points, unit_rounded_square):
-    """Test centering the polygon."""
-    square = unit_rounded_square
-    assert np.all(square.center == np.mean(square_points, axis=0))
-    square.center = [0, 0, 0]
-    assert np.all(square.center == [0, 0, 0])
-
-
 def test_nonplanar(square_points):
     """Ensure that nonplanar vertices raise an error."""
     with pytest.raises(ValueError):
