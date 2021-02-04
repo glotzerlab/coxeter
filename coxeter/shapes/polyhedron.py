@@ -42,13 +42,11 @@ def _face_to_edges(face, reverse=False):
 class Polyhedron(Shape3D):
     """A three-dimensional polytope.
 
-    A polyhedron is defined by a set of vertices and a set of faces
-    composed of the vertices. On construction, the faces are reordered
-    counterclockwise with respect to an outward normal. The polyhedron
-    provides various standard geometric calculations, such as volume and
-    surface area. Most features of the polyhedron can be accessed via
-    properties, including the plane equations defining the faces and the
-    neighbors of each face.
+    A polyhedron is defined by a set of vertices and a set of faces composed
+    of the vertices. The polyhedron provides various standard geometric
+    calculations, such as volume and surface area. Most features of the
+    polyhedron can be accessed via properties, including the plane equations
+    defining the faces and the neighbors of each face.
 
     .. note::
 
