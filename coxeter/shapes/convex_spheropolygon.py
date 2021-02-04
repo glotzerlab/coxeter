@@ -171,7 +171,7 @@ class ConvexSpheropolygon(Shape2D):
     def _get_outward_unit_normal(self, vector, point):
         """Get the outward unit normal vector to the given vector going through point."""  # noqa: E501
         # get an outward unit normal for all kinds of slopes
-        if vector[0] == 0:  # infinte slope
+        if vector[0] == 0:  # infinite slope
             xint = point[0]
             nvecu = np.array([np.sign(xint) * 1, 0])
             return nvecu
@@ -180,7 +180,7 @@ class ConvexSpheropolygon(Shape2D):
         yint = point[1] - slope * point[0]
         if slope == 0:
             nvecu = np.array([0, np.sign(yint) * 1])
-        else:  # now do the math for non-weird slopes
+        else:
             normal_vector = np.array([-slope, 1])
             nvecu = normal_vector / np.linalg.norm(normal_vector)
             # make sure unit normal is OUTWARD
@@ -218,9 +218,6 @@ class ConvexSpheropolygon(Shape2D):
         num_verts = self.num_vertices
         verts = self._polygon.vertices[:, :2]
         verts -= np.average(verts, axis=0)
-        # intermediate data
-        new_verts = np.zeros_like(verts)  # expanded vertices
-        angle_ranges = []  # angle ranges where we need to round
 
         # compute intermediates
         v1 = np.roll(verts, 1, axis=0)
@@ -228,8 +225,8 @@ class ConvexSpheropolygon(Shape2D):
         v3 = np.roll(verts, -1, axis=0)
         v12 = v1 - v2
         v32 = v3 - v2
-        v12n = np.zeros_like(v12)
-        v32n = np.zeros_like(v32)
+        v12n = np.empty_like(v12)
+        v32n = np.empty_like(v32)
         for i in range(num_verts):
             v12n[i] = self._get_outward_unit_normal(v12[i], v2[i])
             v32n[i] = self._get_outward_unit_normal(v32[i], v2[i])
@@ -241,15 +238,18 @@ class ConvexSpheropolygon(Shape2D):
         phi = np.arccos(dot / (v32norm * v12norm))
         uvec = v12n + v32n
         uvec /= np.linalg.norm(uvec, axis=1)[:, None]
+
+        # expanded vertices
         new_verts = v2 + uvec * self.radius / (np.sin(phi / 2)[:, None])
 
         # define the angle range for rounding
         pt1 = v2 + v12n * self.radius
         pt3 = v2 + v32n * self.radius
-        for i in range(num_verts):
-            angle_ranges.append(
-                (self._get_polar_angle(pt1[i]), self._get_polar_angle(pt3[i]))
-            )
+
+        angle_ranges = [
+            (self._get_polar_angle(pt1[i]), self._get_polar_angle(pt3[i]))
+            for i in range(num_verts)
+        ]
 
         # compute shape kernel for the new set of vertices
         kernel = ConvexPolygon(new_verts).distance_to_surface(angles)

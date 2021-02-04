@@ -3,7 +3,7 @@ import pytest
 import rowan
 from hypothesis import assume, example, given, settings
 from hypothesis.extra.numpy import arrays
-from hypothesis.strategies import floats, integers, tuples
+from hypothesis.strategies import floats, tuples
 from pytest import approx
 from scipy.spatial import ConvexHull
 
@@ -11,6 +11,7 @@ from conftest import (
     EllipseSurfaceStrategy,
     _test_get_set_minimal_bounding_sphere_radius,
     assert_distance_to_surface_2d,
+    regular_polygons,
 )
 from coxeter.families import RegularNGonFamily
 from coxeter.shapes import ConvexSpheropolygon
@@ -198,16 +199,19 @@ def test_perimeter_setter(unit_rounded_square):
     testfun()
 
 
-@given(integers(3, 10), floats(0.1, 10), tuples(floats(-1.0, 1.0), floats(-1.0, 1.0)))
-def test_distance_to_surface_regular_ngons(num_sides, rounding_radius, vertex_shift):
+@pytest.mark.parametrize("shape", regular_polygons())
+def test_distance_to_surface_regular_ngons(shape):
     """Make sure shape distance works for regular ngons."""
-    theta = np.linspace(0, 2 * np.pi, 10000)
-    shape = RegularNGonFamily.get_shape(num_sides)
     verts = shape.vertices[:, :2]
-    verts += np.asarray(vertex_shift)
-    shape = ConvexSpheropolygon(verts, rounding_radius)
-    distance = shape.distance_to_surface(theta)
-    assert_distance_to_surface_2d(shape, theta, distance)
+
+    @given(floats(0.1, 10), tuples(floats(-1.0, 1.0), floats(-1.0, 1.0)))
+    def testfun(rounding_radius, vertex_shift):
+        theta = np.linspace(0, 2 * np.pi, 10000)
+        shape = ConvexSpheropolygon(verts + np.asarray(vertex_shift), rounding_radius)
+        distance = shape.distance_to_surface(theta)
+        assert_distance_to_surface_2d(shape, theta, distance)
+
+    testfun()
 
 
 @given(floats(0.1, 1000))
