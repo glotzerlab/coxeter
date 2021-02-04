@@ -9,11 +9,9 @@ from scipy.spatial import ConvexHull
 
 from conftest import (
     EllipseSurfaceStrategy,
-    _test_get_set_minimal_bounding_sphere_radius,
     assert_distance_to_surface_2d,
     regular_polygons,
 )
-from coxeter.families import RegularNGonFamily
 from coxeter.shapes import ConvexSpheropolygon
 
 
@@ -204,43 +202,6 @@ def test_distance_to_surface_regular_ngons(shape):
         assert_distance_to_surface_2d(shape, theta, distance)
 
     testfun()
-
-
-@given(floats(0.1, 1000))
-def test_minimal_bounding_circle_regular_polygon(radius):
-    family = RegularNGonFamily()
-    for i in range(3, 10):
-        vertices = family.make_vertices(i)
-        rmax = np.max(np.linalg.norm(vertices, axis=-1)) + radius
-
-        poly = ConvexSpheropolygon(vertices, radius)
-        circle = poly.minimal_bounding_circle
-
-        assert np.isclose(rmax, circle.radius)
-        assert np.allclose(circle.center, 0)
-
-
-@given(floats(0.1, 1000))
-def test_minimal_centered_bounding_circle_regular_polygon(radius):
-    family = RegularNGonFamily()
-    for i in range(3, 10):
-        vertices = family.make_vertices(i)
-        rmax = np.max(np.linalg.norm(vertices, axis=-1)) + radius
-
-        poly = ConvexSpheropolygon(vertices, radius)
-        circle = poly.minimal_centered_bounding_circle
-
-        assert np.isclose(rmax, circle.radius)
-        assert np.allclose(circle.center, 0)
-
-
-@given(floats(0.1, 1000))
-def test_get_set_minimal_bounding_circle_radius(r):
-    family = RegularNGonFamily()
-    for i in range(3, 10):
-        _test_get_set_minimal_bounding_sphere_radius(
-            ConvexSpheropolygon(family.make_vertices(i), r)
-        )
 
 
 def test_inertia(unit_rounded_square):
