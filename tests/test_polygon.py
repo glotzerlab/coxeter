@@ -406,20 +406,18 @@ def test_minimal_centered_bounding_circle(poly):
     )
 
 
-@pytest.mark.parametrize("num_sides", range(3, 10))
-def test_convex_polygon_distance_to_surface_unit_area_ngon(num_sides):
+@pytest.mark.parametrize("shape", regular_polygons())
+def test_convex_polygon_distance_to_surface_unit_area_ngon(shape):
     """Check shape distance consistency with perimeter and area."""
     theta = np.linspace(0, 2 * np.pi, 1000000)
-    shape = RegularNGonFamily.get_shape(num_sides)
     distance = shape.distance_to_surface(theta)
     assert_distance_to_surface_2d(shape, theta, distance)
 
 
-@pytest.mark.parametrize("num_sides", range(3, 10))
-def test_nonregular_convex_polygon_distance_to_surface_unit_area_ngon(num_sides):
+@pytest.mark.parametrize("shape", regular_polygons())
+def test_nonregular_convex_polygon_distance_to_surface_unit_area_ngon(shape):
     """Check shape distance consistency with perimeter and area."""
     theta = np.linspace(0, 2 * np.pi, 1000000)
-    shape = RegularNGonFamily.get_shape(num_sides)
     verts = shape.vertices[:, :2]
     # shift making shape a nonregular polygon
     verts[0, 1] = verts[0, 1] + 0.2
@@ -428,13 +426,12 @@ def test_nonregular_convex_polygon_distance_to_surface_unit_area_ngon(num_sides)
     assert_distance_to_surface_2d(shape, theta, distance)
 
 
-@pytest.mark.parametrize("num_sides", range(3, 10))
+@pytest.mark.parametrize("shape", regular_polygons())
 def test_convex_polygon_distance_to_surface_unit_area_ngon_non_first_quadrant(
-    num_sides,
+    shape,
 ):
     """Check shape distance consistency with the relaxation of first quadrant vertex."""
     theta = np.linspace(0, 2 * np.pi, 1000000)
-    shape = RegularNGonFamily.get_shape(num_sides)
     # Roll the verts so we don't start in first quadrant
     verts = np.roll(shape.vertices, 1, axis=0)
     shape = ConvexPolygon(verts)
@@ -442,13 +439,12 @@ def test_convex_polygon_distance_to_surface_unit_area_ngon_non_first_quadrant(
     assert_distance_to_surface_2d(shape, theta, distance)
 
 
-@pytest.mark.parametrize("num_sides", range(3, 10))
+@pytest.mark.parametrize("shape", regular_polygons())
 def test_convex_polygon_distance_to_surface_unit_area_ngon_rotated(
-    num_sides,
+    shape,
 ):
     """Check shape distance consistency with the final edge wraparound."""
     theta = np.linspace(0, 2 * np.pi, 1000000)
-    shape = RegularNGonFamily.get_shape(num_sides)
 
     # Try a positive rotation.
     verts = rowan.rotate(rowan.from_axis_angle([0, 0, 1], 0.1), shape.vertices)
@@ -463,15 +459,13 @@ def test_convex_polygon_distance_to_surface_unit_area_ngon_rotated(
     assert_distance_to_surface_2d(shape, theta, distance)
 
 
-@pytest.mark.parametrize("num_sides", range(3, 10))
+@pytest.mark.parametrize("shape", regular_polygons())
 def test_distance_to_surface_unit_area_ngon_vertex_distance(
-    num_sides,
+    shape,
 ):
     """Check that the actual distances are computed correctly."""
-    shape = RegularNGonFamily.get_shape(num_sides)
-
     distances = np.linalg.norm(shape.vertices - shape.center, axis=-1)
-    theta = np.linspace(0, 2 * np.pi, num_sides + 1)
+    theta = np.linspace(0, 2 * np.pi, shape.num_vertices + 1)
     assert np.allclose(shape.distance_to_surface(theta)[:-1], distances)
 
     # Try a positive rotation.
@@ -503,12 +497,6 @@ def test_distance_values_for_square_triangle():
     assert_distance_to_surface_2d(shape, theta, distance)
 
 
-def test_get_set_minimal_bounding_circle_radius():
-    family = RegularNGonFamily()
-    for i in range(3, 10):
-        _test_get_set_minimal_bounding_sphere_radius(family.get_shape(i))
-
-        
 def test_is_inside(convex_square):
     rotated_square = ConvexPolygon(convex_square.vertices[::-1, :])
     assert convex_square.is_inside(convex_square.center)
