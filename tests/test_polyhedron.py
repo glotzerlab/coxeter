@@ -381,15 +381,15 @@ def test_inside(convex_cube):
     arrays(np.float64, (100, 3), elements=floats(0, 1, width=64), unique=True),
 )
 def test_maximal_centered_bounded_sphere_convex_hulls(points, test_points):
+    hull = ConvexHull(points)
+    poly = ConvexPolyhedron(points[hull.vertices])
     try:
-        hull = ConvexHull(points)
+        insphere = poly.maximal_centered_bounded_sphere
     except ValueError as e:
         # Ignore cases where triangulation fails, we're not interested in
         # trying to get polytri to work for nearly degenerate cases.
         if str(e) == "Triangulation failed":
             assume(False)
-    poly = ConvexPolyhedron(points[hull.vertices])
-    insphere = poly.maximal_centered_bounded_sphere
     assert poly.is_inside(insphere.center)
 
     test_points *= insphere.radius * 3
