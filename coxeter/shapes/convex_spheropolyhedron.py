@@ -297,7 +297,7 @@ class ConvexSpheropolyhedron(Shape3D):
 
     def _plato_primitive(self, backend):
         return backend.ConvexSpheropolyhedra(
-            positions=np.array([self.center]),
+            positions=np.array([self.polyhedron.center]),
             orientations=np.array([[1.0, 0.0, 0.0, 0.0]]),
             colors=np.array([[0.5, 0.5, 0.5, 1]]),
             vertices=self.vertices,
