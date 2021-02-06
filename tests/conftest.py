@@ -79,6 +79,13 @@ def cube(request):
     return request.getfixturevalue(request.param)
 
 
+@pytest.fixture
+def tetrahedron():
+    tet = PlatonicFamily.get_shape("Tetrahedron")
+    tet.volume = 1
+    return tet
+
+
 def points_from_ellipsoid_surface(a, b, c=0, n=10):
     """Sample points on an ellipsoid.
 

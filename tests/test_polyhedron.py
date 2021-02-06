@@ -3,7 +3,7 @@ import os
 import numpy as np
 import pytest
 import rowan
-from hypothesis import assume, example, given, settings
+from hypothesis import assume, given, settings
 from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats, integers
 from pytest import approx
@@ -405,8 +405,9 @@ def test_maximal_centered_bounded_sphere_convex_hulls(points, test_points):
 @named_platonic_mark
 def test_insphere(poly):
     # The insphere should be centered for platonic solids.
+    poly_insphere = poly.insphere
     assert sphere_isclose(
-        poly.insphere, poly.maximal_centered_bounded_sphere, atol=1e-4
+        poly_insphere, poly.maximal_centered_bounded_sphere, atol=1e-4
     )
 
     # The insphere of a platonic solid should be rotation invariant.
@@ -414,93 +415,89 @@ def test_insphere(poly):
     @given(Random3DRotationStrategy)
     def check_rotation_invariance(quat):
         rotated_poly = ConvexPolyhedron(rowan.rotate(quat, poly.vertices))
-        assert sphere_isclose(poly.insphere, rotated_poly.insphere, atol=1e-4)
+        assert sphere_isclose(poly_insphere, rotated_poly.insphere, atol=1e-4)
 
     check_rotation_invariance()
 
 
-@settings(deadline=300)
-@given(arrays(np.float64, (4, 3), elements=floats(-10, 10, width=64), unique=True))
-def test_rotate_inertia(points):
+def test_rotate_inertia(tetrahedron):
     # Use the input as noise rather than the base points to avoid precision and
     # degenerate cases provided by hypothesis.
     tet = PlatonicFamily.get_shape("Tetrahedron")
-    vertices = tet.vertices + points
 
-    rotation = rowan.random.rand()
-    shape = ConvexPolyhedron(vertices)
-    rotated_shape = ConvexPolyhedron(rowan.rotate(rotation, vertices))
+    @given(
+        arrays(np.float64, (4, 3), elements=floats(-10, 10, width=64), unique=True),
+        Random3DRotationStrategy,
+    )
+    def testfun(points, rotation):
+        vertices = tet.vertices + points
+        shape = ConvexPolyhedron(vertices)
+        rotated_shape = ConvexPolyhedron(rowan.rotate(rotation, vertices))
 
-    mat = rowan.to_matrix(rotation)
-    rotated_inertia = rotate_order2_tensor(mat, shape.inertia_tensor)
+        mat = rowan.to_matrix(rotation)
+        rotated_inertia = rotate_order2_tensor(mat, shape.inertia_tensor)
 
-    assert np.allclose(rotated_inertia, rotated_shape.inertia_tensor)
+        assert np.allclose(rotated_inertia, rotated_shape.inertia_tensor)
+
+    testfun()
 
 
 # Use a small range of translations to ensure that the Delaunay triangulation
 # used by the MC calculation will not break.
-@settings(deadline=400)
-@given(arrays(np.float64, (3,), elements=floats(-0.2, 0.2, width=64), unique=True))
-def test_translate_inertia(translation):
-    shape = PlatonicFamily.get_shape("Cube")
+def test_translate_inertia(convex_cube):
     # Choose a volume > 1 to test the volume scaling, but don't choose one
     # that's too large because the uncentered polyhedral calculation has
     # massive error without fixing that.
-    shape.volume = 2
-    shape.center = (0, 0, 0)
+    convex_cube.volume = 2
+    convex_cube.center = (0, 0, 0)
+    convex_cube_inertia_tensor = convex_cube.inertia_tensor
+    convex_cube_volume = convex_cube.volume
 
-    translated_shape = ConvexPolyhedron(shape.vertices + translation)
+    @given(arrays(np.float64, (3,), elements=floats(-0.2, 0.2, width=64), unique=True))
+    def testfun(translation):
+        translated_convex_cube = ConvexPolyhedron(convex_cube.vertices + translation)
 
-    translated_inertia = translate_inertia_tensor(
-        translation, shape.inertia_tensor, shape.volume
-    )
-    mc_tensor = compute_inertia_mc(
-        translated_shape.vertices, translated_shape.volume, 1e4
-    )
+        translated_inertia = translate_inertia_tensor(
+            translation, convex_cube_inertia_tensor, convex_cube_volume
+        )
+        mc_tensor = compute_inertia_mc(
+            translated_convex_cube.vertices, convex_cube_volume, 1e4
+        )
 
-    assert np.allclose(
-        translated_inertia,
-        translated_shape._compute_inertia_tensor(False),
-        atol=2e-1,
-        rtol=2e-1,
-    )
-    assert np.allclose(
-        mc_tensor, translated_shape._compute_inertia_tensor(False), atol=2e-1, rtol=2e-1
-    )
+        uncentered_inertia_tensor = translated_convex_cube._compute_inertia_tensor(
+            False
+        )
+        assert np.allclose(
+            translated_inertia,
+            uncentered_inertia_tensor,
+            atol=2e-1,
+            rtol=2e-1,
+        )
+        assert np.allclose(mc_tensor, uncentered_inertia_tensor, atol=2e-1, rtol=2e-1)
 
-    assert np.allclose(mc_tensor, translated_inertia, atol=1e-2, rtol=1e-2)
-    assert np.allclose(mc_tensor, translated_shape.inertia_tensor, atol=1e-2, rtol=1e-2)
+        assert np.allclose(mc_tensor, translated_inertia, atol=1e-2, rtol=1e-2)
+        assert np.allclose(
+            mc_tensor, translated_convex_cube.inertia_tensor, atol=1e-2, rtol=1e-2
+        )
+
+    testfun()
 
 
 @settings(deadline=500)
 @given(EllipsoidSurfaceStrategy)
-@example(
-    points=np.array(
-        [
-            [0.0823055, 0.04432834, 0.03550779],
-            [0.08996509, -0.03402879, 0.02735551],
-            [0.09065511, -0.00956059, 0.04111261],
-            [0.09732412, 0.01783268, 0.01449179],
-            [0.07794498, 0.00601185, 0.06235734],
-            [-0.05539788, 0.08243681, -0.01162958],
-        ]
-    ),
-)
 def test_diagonalize_inertia(points):
     """Test that we can orient a polyhedron along its principal axes."""
     hull = ConvexHull(points)
     poly = ConvexPolyhedron(points[hull.vertices])
 
     try:
+        poly.diagonalize_inertia()
         it = poly.inertia_tensor
+        assert np.allclose(np.diag(np.diag(it)), it)
     except ValueError:
         # Triangulation can fail, this is a limitation of polytri and not something we
         # can address without implementing a more robust algorithm.
         return
-    if not np.allclose(np.diag(np.diag(it)), it):
-        poly.diagonalize_inertia()
-        it = poly.inertia_tensor
-        assert np.allclose(np.diag(np.diag(it)), it)
 
 
 @pytest.mark.parametrize(
