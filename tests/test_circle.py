@@ -5,7 +5,11 @@ from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats
 from pytest import approx
 
-from conftest import _test_get_set_minimal_bounding_sphere_radius, sphere_isclose
+from conftest import (
+    _test_get_set_minimal_bounding_sphere_radius,
+    assert_distance_to_surface_2d,
+    sphere_isclose,
+)
 from coxeter.shapes import Circle
 
 
@@ -110,6 +114,15 @@ def test_invalid_radius_setter():
     circle = Circle(1)
     with pytest.raises(ValueError):
         circle.radius = -1
+
+
+@given(floats(0.1, 10))
+def test_distance_to_surface(r):
+    """Test calculating the shape distance."""
+    theta = np.linspace(0, 2 * np.pi, 10000)
+    circle = Circle(r)
+    distance = circle.distance_to_surface(theta)
+    assert_distance_to_surface_2d(circle, theta, distance)
 
 
 @given(

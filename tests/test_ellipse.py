@@ -1,11 +1,15 @@
 import numpy as np
 import pytest
-from hypothesis import given
+from hypothesis import given, settings
 from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats
 from pytest import approx
 
-from conftest import _test_get_set_minimal_bounding_sphere_radius, sphere_isclose
+from conftest import (
+    _test_get_set_minimal_bounding_sphere_radius,
+    assert_distance_to_surface_2d,
+    sphere_isclose,
+)
 from coxeter.shapes import Circle, Ellipse
 
 
@@ -146,6 +150,16 @@ def test_center():
     center = (1, 1, 1)
     ellipse.center = center
     assert all(ellipse.center == center)
+
+
+@settings(deadline=500)
+@given(floats(0.1, 10), floats(0.1, 10))
+def test_distance_to_surface(a, b):
+    """Test consistent volume and area for shape distance of an ellipse."""
+    theta = np.linspace(0, 2 * np.pi, 50000)
+    ellipse = Ellipse(a, b)
+    distance = ellipse.distance_to_surface(theta)
+    assert_distance_to_surface_2d(ellipse, theta, distance)
 
 
 @given(

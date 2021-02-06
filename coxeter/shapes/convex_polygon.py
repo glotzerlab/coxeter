@@ -190,3 +190,70 @@ class ConvexPolygon(Polygon):
 
         radius = np.min(distances)
         return Circle(radius, self.center)
+
+    def distance_to_surface(self, angles):  # noqa: D102
+        # Bring the angles into the range for testing (also handles an
+        # np.asarray for us).
+        angles = np.mod(angles, 2 * np.pi)
+        num_verts = len(self.vertices)
+
+        # Rearrange the verts so that we start with the lowest angle
+        verts, _ = _align_points_by_normal(self.normal, self.vertices - self.center)
+        angles_to_vertices = np.arctan2(verts[:, 1], verts[:, 0])
+        np.mod(angles_to_vertices, 2 * np.pi, out=angles_to_vertices)
+
+        # find and reorganize to start with smallest angle
+        shift = np.argmin(angles_to_vertices)
+        verts = np.roll(verts, shift=-shift, axis=0)
+        angles_to_vertices = np.roll(angles_to_vertices, shift=-shift, axis=0)
+
+        # Pair vertices with numpy roll
+        p1 = verts
+        p2 = np.roll(p1, shift=-1, axis=0)
+
+        # get the slopes
+        slopes = np.ones(num_verts) * np.inf
+        finite_slopes = (p1[:, 0] - p2[:, 0]) != 0.0
+        slopes[finite_slopes] = (p1[finite_slopes, 1] - p2[finite_slopes, 1]) / (
+            p1[finite_slopes, 0] - p2[finite_slopes, 0]
+        )
+
+        # Get the y_intercepts
+        y_int = np.ones(num_verts) * np.inf
+        y_int[finite_slopes] = (
+            p1[finite_slopes, 1] - slopes[finite_slopes] * p1[finite_slopes, 0]
+        )
+
+        # Partition all angles into the angle ranges defined by the edges. For
+        # the edge verts[-1]->verts[0] need to agument the final value so that
+        # values > angles_to_vertices[-1] will work.
+        angles_shifted = np.roll(angles_to_vertices, shift=-1, axis=0)
+        eps = 1e-6  # Need angles_shifted[-1] > 2*pi so that 2*pi is in range.
+        angles_shifted[-1] = 2 * np.pi + eps
+
+        # Make the distances:
+        distances = np.empty_like(angles)
+
+        for i in range(num_verts):
+            inside_range = (angles >= angles_to_vertices[i]) & (
+                angles < angles_shifted[i]
+            )
+            if i == num_verts - 1:
+                inside_range |= np.logical_and(
+                    angles >= (angles_to_vertices[-1] - 2 * np.pi),
+                    angles < angles_to_vertices[0],
+                )
+
+            if slopes[i] == 0:
+                cos = np.cos(angles[inside_range])
+                distances[inside_range] = np.sqrt(y_int[i] * y_int[i] / (1 - cos * cos))
+            elif slopes[i] == np.inf or y_int[i] == np.inf:
+                sin = np.sin(angles[inside_range])
+                distances[inside_range] = np.sqrt(p1[i, 0] * p1[i, 0] / (1 - sin * sin))
+            else:
+                sl_k = np.tan(angles[inside_range])
+                x = y_int[i] / (sl_k - slopes[i])
+                y = sl_k * x
+                distances[inside_range] = np.sqrt(x * x + y * y)
+
+        return distances

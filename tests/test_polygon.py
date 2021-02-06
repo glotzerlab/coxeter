@@ -12,6 +12,7 @@ from conftest import (
     Random2DRotationStrategy,
     Random3DRotationStrategy,
     _test_get_set_minimal_bounding_sphere_radius,
+    assert_distance_to_surface_2d,
     regular_polygons,
     sphere_isclose,
 )
@@ -403,6 +404,97 @@ def test_minimal_centered_bounding_circle(poly):
         poly.minimal_centered_bounding_circle,
         Circle(np.linalg.norm(poly.vertices, axis=-1).max()),
     )
+
+
+@pytest.mark.parametrize("shape", regular_polygons())
+def test_convex_polygon_distance_to_surface_unit_area_ngon(shape):
+    """Check shape distance consistency with perimeter and area."""
+    theta = np.linspace(0, 2 * np.pi, 1000000)
+    distance = shape.distance_to_surface(theta)
+    assert_distance_to_surface_2d(shape, theta, distance)
+
+
+@pytest.mark.parametrize("shape", regular_polygons())
+def test_nonregular_convex_polygon_distance_to_surface_unit_area_ngon(shape):
+    """Check shape distance consistency with perimeter and area."""
+    theta = np.linspace(0, 2 * np.pi, 1000000)
+    verts = shape.vertices[:, :2]
+    # shift making shape a nonregular polygon
+    verts[0, 1] = verts[0, 1] + 0.2
+    shape = ConvexPolygon(verts)
+    distance = shape.distance_to_surface(theta)
+    assert_distance_to_surface_2d(shape, theta, distance)
+
+
+@pytest.mark.parametrize("shape", regular_polygons())
+def test_convex_polygon_distance_to_surface_unit_area_ngon_non_first_quadrant(
+    shape,
+):
+    """Check shape distance consistency with the relaxation of first quadrant vertex."""
+    theta = np.linspace(0, 2 * np.pi, 1000000)
+    # Roll the verts so we don't start in first quadrant
+    verts = np.roll(shape.vertices, 1, axis=0)
+    shape = ConvexPolygon(verts)
+    distance = shape.distance_to_surface(theta)
+    assert_distance_to_surface_2d(shape, theta, distance)
+
+
+@pytest.mark.parametrize("shape", regular_polygons())
+def test_convex_polygon_distance_to_surface_unit_area_ngon_rotated(
+    shape,
+):
+    """Check shape distance consistency with the final edge wraparound."""
+    theta = np.linspace(0, 2 * np.pi, 1000000)
+
+    # Try a positive rotation.
+    verts = rowan.rotate(rowan.from_axis_angle([0, 0, 1], 0.1), shape.vertices)
+    shape = ConvexPolygon(verts)
+    distance = shape.distance_to_surface(theta)
+    assert_distance_to_surface_2d(shape, theta, distance)
+
+    # Now try a negative rotation.
+    verts = rowan.rotate(rowan.from_axis_angle([0, 0, 1], -0.2), shape.vertices)
+    shape = ConvexPolygon(verts)
+    distance = shape.distance_to_surface(theta)
+    assert_distance_to_surface_2d(shape, theta, distance)
+
+
+@pytest.mark.parametrize("shape", regular_polygons())
+def test_distance_to_surface_unit_area_ngon_vertex_distance(
+    shape,
+):
+    """Check that the actual distances are computed correctly."""
+    distances = np.linalg.norm(shape.vertices - shape.center, axis=-1)
+    theta = np.linspace(0, 2 * np.pi, shape.num_vertices + 1)
+    assert np.allclose(shape.distance_to_surface(theta)[:-1], distances)
+
+    # Try a positive rotation.
+    verts = rowan.rotate(rowan.from_axis_angle([0, 0, 1], 0.1), shape.vertices)
+    shape = ConvexPolygon(verts)
+    assert np.allclose(shape.distance_to_surface(theta + 0.1)[:-1], distances)
+
+    # Now try a negative rotation.
+    verts = rowan.rotate(rowan.from_axis_angle([0, 0, 1], -0.2), shape.vertices)
+    shape = ConvexPolygon(verts)
+    assert np.allclose(shape.distance_to_surface(theta - 0.1)[:-1], distances)
+
+
+def test_distance_values_for_square():
+    """Check shape distance of a square with infinite slopes."""
+    verts = np.array([[1, 1], [-1, 1], [-1, -1], [1, -1]])
+    theta = np.linspace(0, 2 * np.pi, 1000000)
+    shape = ConvexPolygon(verts)
+    distance = shape.distance_to_surface(theta)
+    assert_distance_to_surface_2d(shape, theta, distance)
+
+
+def test_distance_values_for_square_triangle():
+    """Check shape distance of a triangle with infinite slopes."""
+    verts = np.array([[1, 1], [-1, 0], [1, -1]])
+    theta = np.linspace(0, 2 * np.pi, 1000000)
+    shape = ConvexPolygon(verts)
+    distance = shape.distance_to_surface(theta)
+    assert_distance_to_surface_2d(shape, theta, distance)
 
 
 def test_is_inside(convex_square):

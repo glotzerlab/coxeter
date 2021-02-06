@@ -190,6 +190,9 @@ class Circle(Shape2D):
         """
         return 1
 
+    def distance_to_surface(self, angles):  # noqa: D102
+        return np.ones_like(angles) * self.radius
+
     @property
     def minimal_bounding_circle(self):
         """:class:`~.Circle`: Get the smallest bounding circle."""

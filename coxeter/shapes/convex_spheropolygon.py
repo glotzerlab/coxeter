@@ -72,6 +72,11 @@ class ConvexSpheropolygon(Shape2D):
         return self.polygon.vertices
 
     @property
+    def num_vertices(self):
+        """int: Get the number of vertices."""
+        return self.polygon.num_vertices
+
+    @property
     def radius(self):
         """float: Get or set the rounding radius."""
         return self._radius
@@ -141,6 +146,100 @@ class ConvexSpheropolygon(Shape2D):
             self._rescale(scale)
         else:
             raise ValueError("Perimeter must be greater than zero.")
+
+    def _get_outward_unit_normal(self, vector, point):
+        """Get the outward unit normal vector to the given vector going through point."""  # noqa: E501
+        # get an outward unit normal for all kinds of slopes
+        if vector[0] == 0:  # infinite slope
+            xint = point[0]
+            nvecu = np.array([np.sign(xint) * 1, 0])
+            return nvecu
+
+        slope = vector[1] / vector[0]
+        yint = point[1] - slope * point[0]
+        if slope == 0:
+            nvecu = np.array([0, np.sign(yint) * 1])
+        else:
+            normal_vector = np.array([-slope, 1])
+            nvecu = normal_vector / np.linalg.norm(normal_vector)
+            # make sure unit normal is OUTWARD
+            if slope > 0:
+                if yint > 0 and nvecu[0] > 0:
+                    nvecu *= -1
+                elif yint < 0 and nvecu[0] < 0:
+                    nvecu *= -1
+            else:
+                if yint > 0 and nvecu[0] < 0:
+                    nvecu *= -1
+                elif yint < 0 and nvecu[0] > 0:
+                    nvecu *= -1
+        return nvecu
+
+    def distance_to_surface(self, angles):
+        """Distance to the surface of this shape.
+
+        Since the centroid of a spheropolygon is difficult to compute in general,
+        the distance is calculated relative to the centroid of the core polygon.
+        For more general information about this calculation, see
+        `Shape.distance_to_surface`.
+        """
+        num_verts = self.num_vertices
+        verts = self._polygon.vertices[:, :2] - self._polygon.centroid[:2]
+
+        # compute intermediates
+        v1 = np.roll(verts, 1, axis=0)
+        v2 = verts
+        v3 = np.roll(verts, -1, axis=0)
+        v12 = v1 - v2
+        v32 = v3 - v2
+        v12n = np.empty_like(v12)
+        v32n = np.empty_like(v32)
+        for i in range(num_verts):
+            v12n[i] = self._get_outward_unit_normal(v12[i], v2[i])
+            v32n[i] = self._get_outward_unit_normal(v32[i], v2[i])
+
+        # get the new vertex corresponding to the old one
+        v12norm = np.linalg.norm(v12, axis=1)
+        v32norm = np.linalg.norm(v32, axis=1)
+        dot = np.multiply(v32, v12).sum(1)
+        phi = np.arccos(dot / (v32norm * v12norm))
+        uvec = v12n + v32n
+        uvec /= np.linalg.norm(uvec, axis=1)[:, None]
+
+        # expanded vertices
+        new_verts = v2 + uvec * self.radius / (np.sin(phi / 2)[:, None])
+
+        # define the angle range for rounding
+        pt1 = v2 + v12n * self.radius
+        pt3 = v2 + v32n * self.radius
+
+        angle_ranges = np.empty((num_verts, 2))
+        angle_ranges[:, 0] = np.arctan2(pt1[:, 1], pt1[:, 0])
+        angle_ranges[:, 1] = np.arctan2(pt3[:, 1], pt3[:, 0])
+        angle_ranges[angle_ranges < 0] += 2 * np.pi
+
+        # compute shape kernel for the new set of vertices
+        kernel = ConvexPolygon(new_verts).distance_to_surface(angles)
+
+        # get the shape kernel for this shape by adjusting indices of shape kernel
+        # for the new vertices
+        for i in range(len(angle_ranges)):
+            theta1, theta2 = angle_ranges[i]
+            if theta2 < theta1:  # case the angle range crosses the 2pi boundary
+                indices = np.where((angles >= theta1) | (angles <= theta2))
+            else:
+                indices = np.where((angles >= theta1) & (angles <= theta2))
+            v = verts[i]
+            norm_v = np.linalg.norm(v)
+            phi = np.arctan2(v[1], v[0])
+            if phi < 0:
+                phi += 2 * np.pi
+            a = 1
+            b = -2 * norm_v * np.cos(angles[indices] - phi)
+            c = norm_v ** 2 - self.radius ** 2
+            kernel[indices] = (-b + np.sqrt(b ** 2 - 4 * a * c)) / (2 * a)
+
+        return kernel
 
     def __repr__(self):
         return (

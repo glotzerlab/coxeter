@@ -187,6 +187,22 @@ class Ellipse(Shape2D):
         i_xy += area * self.centroid[0] * self.centroid[1]
         return i_x, i_y, i_xy
 
+    def distance_to_surface(self, angles):  # noqa: D102
+        return np.sqrt(
+            (self.a * self.a + self.b * self.b)
+            / (
+                1
+                + (self.a * self.a)
+                / (self.b * self.b)
+                * np.sin(angles)
+                * np.sin(angles)
+                + (self.b * self.b)
+                / (self.a * self.a)
+                * np.cos(angles)
+                * np.cos(angles)
+            )
+        )
+
     @property
     def iq(self):
         """float: The isoperimetric quotient."""

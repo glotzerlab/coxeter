@@ -100,6 +100,29 @@ class Shape(ABC):
             "The form factor calculation is not implemented for this shape."
         )
 
+    def distance_to_surface(self, angles):
+        r"""Compute the distance to the surface of the shape at the given angles.
+
+        Gets the distance to the surface at each of the angles provided, where
+        the definition of the angles depends on the dimensionality of the shape
+        (a single angle in 2D, or the phi/theta angles in 3D). All angles are
+        relative to the x axis. In general, the distance is computed from the
+        centroid of the shape unless stated otherwise.
+
+        Args:
+            angles (:math:`(N, d-1)` :class:`numpy.ndarray`):
+                Angles between :math:`0` and :math:`2 \pi` over which to
+                calculate the distances. :math:`d` is the number of dimensions.
+
+        Returns:
+            :math:`(N,)` :class:`numpy.ndarray`:
+                An array of distances from the center of the shape to its surface
+                at each of the given angles.
+        """
+        raise NotImplementedError(
+            "The distance to surface calculation is not implemented for this shape."
+        )
+
     def plot(self):
         """Plot the shape."""
         raise NotImplementedError("Plotting is not implemented for this shape.")

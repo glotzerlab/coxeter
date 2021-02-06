@@ -2,6 +2,7 @@ import numpy as np
 import pytest
 import rowan
 from hypothesis.strategies import builds, floats, integers
+from scipy.spatial import ConvexHull
 
 from coxeter.families import DOI_SHAPE_REPOSITORIES, PlatonicFamily, RegularNGonFamily
 from coxeter.shapes import ConvexPolyhedron, ConvexSpheropolyhedron, Polyhedron, Shape2D
@@ -78,6 +79,13 @@ def cube(request):
     return request.getfixturevalue(request.param)
 
 
+@pytest.fixture
+def tetrahedron():
+    tet = PlatonicFamily.get_shape("Tetrahedron")
+    tet.volume = 1
+    return tet
+
+
 def points_from_ellipsoid_surface(a, b, c=0, n=10):
     """Sample points on an ellipsoid.
 
@@ -120,6 +128,21 @@ EllipsoidSurfaceStrategy = builds(
 EllipseSurfaceStrategy = builds(
     points_from_ellipsoid_surface, floats(0.1, 5), floats(0.1, 5), n=integers(5, 15)
 )
+
+
+def assert_distance_to_surface_2d(shape, angles, computed_distance):
+    """Check correctness of 2d shape distance implementations."""
+    xy = np.array(
+        [computed_distance * np.cos(angles), computed_distance * np.sin(angles)]
+    )
+    xy = np.transpose(xy)
+    hull = ConvexHull(xy)
+
+    # Test the area
+    assert np.isclose(shape.area, hull.volume)
+
+    # Test the circumference
+    assert np.isclose(shape.perimeter, hull.area)
 
 
 def quaternion_from_axis_angle(x, y, z, theta):
