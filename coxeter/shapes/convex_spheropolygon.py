@@ -175,17 +175,6 @@ class ConvexSpheropolygon(Shape2D):
                     nvecu *= -1
         return nvecu
 
-    def _get_polar_angle(self, vector):
-        """Get the polar angle for the given vector from 0 to 2pi."""
-        if vector[0] == 0:
-            return (1 - 1 * np.sign(vector[1]) / 2) * np.pi
-        angle = np.arctan(vector[1] / vector[0])
-        if vector[0] < 0:  # 2nd/3rd quadrant
-            angle += np.pi
-        elif vector[0] > 0 and vector[1] < 0:  # 4th quadrant
-            angle += 2 * np.pi
-        return angle
-
     def distance_to_surface(self, angles):
         """Distance to the surface of this shape.
 
@@ -225,10 +214,10 @@ class ConvexSpheropolygon(Shape2D):
         pt1 = v2 + v12n * self.radius
         pt3 = v2 + v32n * self.radius
 
-        angle_ranges = [
-            (self._get_polar_angle(pt1[i]), self._get_polar_angle(pt3[i]))
-            for i in range(num_verts)
-        ]
+        angle_ranges = np.empty((num_verts, 2))
+        angle_ranges[:, 0] = np.arctan2(pt1[:, 1], pt1[:, 0])
+        angle_ranges[:, 1] = np.arctan2(pt3[:, 1], pt3[:, 0])
+        angle_ranges[angle_ranges < 0] += 2 * np.pi
 
         # compute shape kernel for the new set of vertices
         kernel = ConvexPolygon(new_verts).distance_to_surface(angles)
@@ -243,7 +232,9 @@ class ConvexSpheropolygon(Shape2D):
                 indices = np.where((angles >= theta1) & (angles <= theta2))
             v = verts[i]
             norm_v = np.linalg.norm(v)
-            phi = self._get_polar_angle(v)
+            phi = np.arctan2(v[1], v[0])
+            if phi < 0:
+                phi += 2 * np.pi
             a = 1
             b = -2 * norm_v * np.cos(angles[indices] - phi)
             c = norm_v ** 2 - self.radius ** 2
