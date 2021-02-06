@@ -453,6 +453,7 @@ def test_translate_inertia(convex_cube):
     convex_cube_inertia_tensor = convex_cube.inertia_tensor
     convex_cube_volume = convex_cube.volume
 
+    @settings(deadline=400)
     @given(arrays(np.float64, (3,), elements=floats(-0.2, 0.2, width=64), unique=True))
     def testfun(translation):
         translated_convex_cube = ConvexPolyhedron(convex_cube.vertices + translation)
