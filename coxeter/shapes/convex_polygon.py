@@ -191,14 +191,7 @@ class ConvexPolygon(Polygon):
         radius = np.min(distances)
         return Circle(radius, self.center)
 
-    def distance_to_surface(self, angles):
-        """Distance to the surface of the shape.
-
-        This calculation assumes vertices are ordered counterclockwise
-
-        For more generic information about this calculation, see
-        `Shape.distance_to_surface`.
-        """
+    def distance_to_surface(self, angles):  # noqa: D102
         # Bring the angles into the range for testing (also handles an
         # np.asarray for us).
         angles = np.mod(angles, 2 * np.pi)

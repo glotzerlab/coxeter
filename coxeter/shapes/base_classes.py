@@ -103,14 +103,16 @@ class Shape(ABC):
     def distance_to_surface(self, angles):
         r"""Compute the distance to the surface of the shape at the given angles.
 
-        Gets the distance between the center of the shape and its surface at
-        each of the angles provided. For circles, this is always the radius, no
-        matter where the circle is centered.
+        Gets the distance to the surface at each of the angles provided, where
+        the definition of the angles depends on the dimensionality of the shape
+        (a single angle in 2D, or the phi/theta angles in 3D). All angles are
+        relative to the x axis. In general, the distance is computed from the
+        centroid of the shape unless stated otherwise.
 
         Args:
-            angles (:math:`(N,)` :class:`numpy.ndarray`):
+            angles (:math:`(N, d-1)` :class:`numpy.ndarray`):
                 Angles between :math:`0` and :math:`2 \pi` over which to
-                calculate the distances.
+                calculate the distances. :math:`d` is the number of dimensions.
 
         Returns:
             :math:`(N,)` :class:`numpy.ndarray`:

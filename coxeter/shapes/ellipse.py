@@ -188,7 +188,6 @@ class Ellipse(Shape2D):
         return i_x, i_y, i_xy
 
     def distance_to_surface(self, angles):  # noqa: D102
-        # use parent docstring
         return np.sqrt(
             (self.a * self.a + self.b * self.b)
             / (

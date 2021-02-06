@@ -178,14 +178,13 @@ class ConvexSpheropolygon(Shape2D):
     def distance_to_surface(self, angles):
         """Distance to the surface of this shape.
 
-        This algorithm assumes vertices are ordered counterclockwise.
-
+        Since the centroid of a spheropolygon is difficult to compute in general,
+        the distance is calculated relative to the centroid of the core polygon.
         For more general information about this calculation, see
         `Shape.distance_to_surface`.
         """
         num_verts = self.num_vertices
-        verts = self._polygon.vertices[:, :2]
-        verts -= np.average(verts, axis=0)
+        verts = self._polygon.vertices[:, :2] - self._polygon.centroid[:2]
 
         # compute intermediates
         v1 = np.roll(verts, 1, axis=0)
