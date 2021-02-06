@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from hypothesis import given
+from hypothesis import given, settings
 from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats
 from pytest import approx
@@ -152,6 +152,7 @@ def test_center():
     assert all(ellipse.center == center)
 
 
+@settings(deadline=500)
 @given(floats(0.1, 10), floats(0.1, 10))
 def test_distance_to_surface(a, b):
     """Test consistent volume and area for shape distance of an ellipse."""

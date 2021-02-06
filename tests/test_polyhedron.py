@@ -312,7 +312,7 @@ def test_minimal_centered_bounding_sphere():
     # time, which is not destructive since it can be overwritten in subsequent
     # calls.
     # See https://github.com/HypothesisWorks/hypothesis/issues/377
-    @settings(deadline=500)
+    @settings(deadline=800)
     @given(
         center=arrays(
             np.float64, (3,), elements=floats(-10, 10, width=64), unique=True
@@ -410,6 +410,7 @@ def test_insphere(poly):
     )
 
     # The insphere of a platonic solid should be rotation invariant.
+    @settings(deadline=300)
     @given(Random3DRotationStrategy)
     def check_rotation_invariance(quat):
         rotated_poly = ConvexPolyhedron(rowan.rotate(quat, poly.vertices))
@@ -418,6 +419,7 @@ def test_insphere(poly):
     check_rotation_invariance()
 
 
+@settings(deadline=300)
 @given(arrays(np.float64, (4, 3), elements=floats(-10, 10, width=64), unique=True))
 def test_rotate_inertia(points):
     # Use the input as noise rather than the base points to avoid precision and
