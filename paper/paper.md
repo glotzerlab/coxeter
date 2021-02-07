@@ -42,14 +42,15 @@ The package also serves as a repository for specific groups of shapes, exposing 
 
 Considerations of shape are becoming increasingly important in materials science as improved synthetic capabilities have allowed the creation of a wide range of anisotropic particles [@Glotzer2007b].
 Colloidal science in particular has seen immense growth in this area, and numerous studies have shown that particle shape is an important handle for controlling the self-assembly of colloidal crystals [@Damasceno2012d,@Glotzer2007b,@Chen2014].
-Precise modeling of these systems requires reproducible methods for generating shapes and calculating their properties [@Anderson2020,@Allen2006] **Add more citations of real shapes**.
+Precise modeling of these systems requires reproducible methods for generating shapes and calculating their properties [@Anderson2020,@Allen2006].
 An important aspect of achieving this reproducibility is making canonical definitions of shapes used in particular studies readily available to other researchers.
 Furthermore, since these shapes may be used in physics-based simulations, any calculations must be robust enough to handle any numerical issues that may arise across a wide range of different geometries.
+Some of the applications of coxeter to date include: the development of equations of state for polyhedral particles [@Irrgang2017]; the calculation of physical properties for dynamical simulation of anisotropic particles [@Ramasubramani2020b]; and the orientational ordering of ellipsoidal colloids in a magnetic field [@Kao2019].
 
 
 # Summary of Features
 
-## Shape Analysis **better title?**
+## Computing Geometric and Physical Properties
 
 The central elements in coxeter are the shape classes, which encode the features of particular types of shapes.
 In order to enforce a highly uniform API and ensure conceptual clarity, all shape classes inherit from a small set of abstract base classes that encode specific subsets of properties: for instance, the standard properties of all shapes in two dimensions are embedded in the ``Shape2D`` class.
@@ -59,7 +60,7 @@ Working with convex polygons and polyhedra using coxeter is greatly simplified v
 
 The shape classes transparently expose many geometric attributes in the form of settable Python properties, allowing on-the-fly rescaling or transformation of the shape.
 This aspect of coxeter is designed to fill a common gap in most computational geometry libraries, which typically focus on solving more complex problems like finding convex hulls, Voronoi tessellations, and Delaunay triangulations [@cgal]; coxeter aims to provide a standard implementation for simpler calculations such as surface areas and bounding spheres for which formulas are generally well-known but often require careful consideration to calculate robustly and efficiently.
-These properties range from standard calculations like volumes and surface areas to less common metrics like mean curvatures and asphericities that are relevant for specific research avenues [@Irrgang2017].
+These properties range from standard calculations like volumes and surface areas to less common metrics like mean curvatures and asphericities that are relevant for computing equations of state for polyhedral particles [@Irrgang2017].
 The package also provides various types of bounding and bounded spheres of shapes, which are critical measures of the extent of polygons and polyhedra within crystal structures.
 To simplify interoperability with other packages in the scientific computing ecosystem, non-scalar properties are generally provided as NumPy arrays [@Harris2020].
 
@@ -80,9 +81,7 @@ A number of such families are bundled into coxeter, but just as importantly, the
 This dictionary-based definition can be simply converted to JSON, making it trivial to share representations of shapes.
 The library also stores mappings from digital object identifiers (DOIs) to families, so that any user can contribute families associated with published research to make them immediately collectively accessible.
 We anticipate that the set of shape families in coxeter will grow over time as users generate and contribute their shape families to coxeter, with the goal of providing a centralized repository for use in reproducing and extending prior research, particularly in the field of shape-driven nanoparticle self-assembly.
-Currently coxeter primarily supports the schema proposed by the GSD library **should we cite? there's no canonical source other than RTD**, making it directly compatible with the HOOMD-blue molecular simulation tool [@Anderson2020], but other schema can easily be implemented on an as-needed basis.
-
-**Still need to add refs/citations for papers that used coxeter**
+Currently coxeter primarily supports the schema proposed by the GSD library [@GlotzerLabGSD], making it directly compatible with the HOOMD-blue molecular simulation tool [@Anderson2020], but other schema can easily be implemented on an as-needed basis.
 
 # Acknowledgements
 
