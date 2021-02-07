@@ -1,11 +1,21 @@
+import os
+
 import numpy as np
 import pytest
 import rowan
+from hypothesis import settings
 from hypothesis.strategies import builds, floats, integers
 from scipy.spatial import ConvexHull
 
 from coxeter.families import DOI_SHAPE_REPOSITORIES, PlatonicFamily, RegularNGonFamily
 from coxeter.shapes import ConvexPolyhedron, ConvexSpheropolyhedron, Polyhedron, Shape2D
+
+# Avoid deadlines on CI. coxeter prioritizes correctness over speed, and while
+# it may be optimized in the future it is currently much more annoying to have
+# tests fail due to deadline issues
+settings.register_profile("ci", deadline=None)
+if os.getenv("CI", "false") == "true" or os.getenv("CIRCLECI", "false") == "true":
+    settings.load_profile("ci")
 
 
 # Need to declare this outside the fixture so that it can be used in multiple
