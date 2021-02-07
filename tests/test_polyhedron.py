@@ -484,12 +484,13 @@ def test_translate_inertia(convex_cube):
     testfun()
 
 
-@settings(deadline=500)
+@settings(deadline=1000)
 @given(EllipsoidSurfaceStrategy)
 def test_diagonalize_inertia(points):
     """Test that we can orient a polyhedron along its principal axes."""
-    hull = ConvexHull(points)
-    poly = ConvexPolyhedron(points[hull.vertices])
+    # Some of the points might be in the interior of the hull, but the
+    # ConvexPolyhedron is constructed from the hull anyway so that's fine.
+    poly = ConvexPolyhedron(points)
 
     try:
         poly.diagonalize_inertia()
