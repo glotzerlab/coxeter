@@ -484,7 +484,7 @@ def test_translate_inertia(convex_cube):
     testfun()
 
 
-@settings(deadline=500)
+@settings(deadline=None)
 @given(EllipsoidSurfaceStrategy)
 def test_diagonalize_inertia(points):
     """Test that we can orient a polyhedron along its principal axes."""
