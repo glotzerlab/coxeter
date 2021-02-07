@@ -312,7 +312,7 @@ def test_minimal_centered_bounding_sphere():
     # time, which is not destructive since it can be overwritten in subsequent
     # calls.
     # See https://github.com/HypothesisWorks/hypothesis/issues/377
-    @settings(deadline=800)
+    @settings(deadline=2000)
     @given(
         center=arrays(
             np.float64, (3,), elements=floats(-10, 10, width=64), unique=True
