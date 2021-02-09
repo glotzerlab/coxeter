@@ -87,6 +87,8 @@ Currently coxeter primarily supports the schema proposed by the GSD library [@Gl
 
 **Update acknowledgments**
 
+**We should also acknowledge all of the authors of embedded repo**
+
 We would like to acknowledge M. Eric Irrgang for prototype implementations of various parts of this code, as well as Bryan VanSaders and James Proctor for collecting the various early prototypes and relevant methods into a single code base.
 
 # References
