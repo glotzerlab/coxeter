@@ -33,6 +33,8 @@ bibliography: paper.bib
 
 # Package Overview
 
+![The coxeter package supports calculating a wide range of properties on shapes in two and three dimensions. A subset of the shapes coxeter supports are shown in the central bubble, such as including simple polygons in 2D and arbitrary 3D polyhedral meshes. Many properties of shapes can be calculated, ranging from the geometric (like inspheres and circumspheres) to the physical (anisotropic form factors and inertia tensors).](figure1/Figure1.pdf){ width=100% }
+
 The coxeter Python package provides tools to represent, generate, and compute properties of shapes in two and three dimensions.
 The package emphasizes simplicity and flexibility, using a common set of abstractions to present a largely uniform interface across various shapes and allowing easy mutation of almost all of their geometric attributes.
 The package also serves as a repository for specific groups of shapes, exposing an easy-to-use API for shape generation that users can extend to make particular geometric objects collectively accessible.
