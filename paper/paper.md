@@ -43,8 +43,8 @@ The package also serves as a repository for specific groups of shapes, exposing 
 # Statement of Need
 
 Considerations of shape are becoming increasingly important in materials science as improved synthetic capabilities have allowed the creation of a wide range of anisotropic particles [@Glotzer2007b].
-Colloidal science in particular has seen immense growth in this area, and numerous studies have shown that particle shape is an important handle for controlling the self-assembly of colloidal crystals [@Damasceno2012d,@Glotzer2007b,@Chen2014].
-Precise modeling of these systems requires reproducible methods for generating shapes and calculating their properties [@Anderson2020,@Allen2006].
+Colloidal science in particular has seen immense growth in this area, and numerous studies have shown that particle shape is an important handle for controlling the self-assembly of colloidal crystals [@Damasceno2012d; @Glotzer2007b; @Chen2014].
+Precise modeling of these systems requires reproducible methods for generating shapes and calculating their properties [@Anderson2020; @Allen2006].
 An important aspect of achieving this reproducibility is making canonical definitions of shapes used in particular studies readily available to other researchers.
 Furthermore, since these shapes may be used in physics-based simulations, any calculations must be robust enough to handle any numerical issues that may arise across a wide range of different geometries.
 Some of the applications of coxeter to date include: the development of equations of state for polyhedral particles [@Irrgang2017]; the calculation of physical properties for dynamical simulation of anisotropic particles [@Ramasubramani2020b]; and the orientational ordering of ellipsoidal colloids in a magnetic field [@Kao2019].
@@ -89,7 +89,7 @@ Currently coxeter primarily supports the schema proposed by the GSD library [@Gl
 
 This research was supported in part by the National Science Foundation, Division of Materials Research Award No. DMR-1808342.
 V. R. also acknowledges the 2019-2020 J. Robert Beyster Computational Innovation Graduate Fellowship from the College of Engineering, University of Michigan.
-B. D. acknowledges fellowship support from the National Science Foundation under ACI-1547580, S212: Impl: The Molecular Sciences Software Institute [@Wilkins-Diehr2018], [@Krylov2018] and an earlier National Science Foundation Graduate Research Fellowship Grant DGE-1256260 (2016–2019).
+B. D. acknowledges fellowship support from the National Science Foundation under ACI-1547580, S212: Impl: The Molecular Sciences Software Institute [@Wilkins-Diehr2018; @Krylov2018] and an earlier National Science Foundation Graduate Research Fellowship Grant DGE-1256260 (2016–2019).
 T. D. is supported by a National Science Foundation Graduate Research Fellowship Grant DGE-1256260.
 
 We would like to acknowledge M. Eric Irrgang for prototype implementations of various parts of this code, as well as Bryan VanSaders and James Proctor for collecting the various early prototypes and relevant methods into a single code base.
