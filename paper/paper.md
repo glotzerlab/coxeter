@@ -87,10 +87,13 @@ Currently coxeter primarily supports the schema proposed by the GSD library [@Gl
 
 # Acknowledgements
 
-**Update acknowledgments**
-
-**We should also acknowledge all of the authors of embedded repo**
+This research was supported in part by the National Science Foundation, Division of Materials Research Award No. DMR-1808342.
+V. R. also acknowledges the 2019-2020 J. Robert Beyster Computational Innovation Graduate Fellowship from the College of Engineering, University of Michigan.
+B. D. acknowledges fellowship support from the National Science Foundation under ACI-1547580, S212: Impl: The Molecular Sciences Software Institute [@Wilkins-Diehr2018], [@Krylov2018] and an earlier National Science Foundation Graduate Research Fellowship Grant DGE-1256260 (2016–2019).
+T. D. is supported by a National Science Foundation Graduate Research Fellowship Grant DGE-1256260.
 
 We would like to acknowledge M. Eric Irrgang for prototype implementations of various parts of this code, as well as Bryan VanSaders and James Proctor for collecting the various early prototypes and relevant methods into a single code base.
+We additionally thank all code contributors.
+In addition to the authors and aforementioned contributors, the list of code contributors includes Brandon Butler, Thomas Waltmann, Timothy Moore, Corwin Kerr, Eric Harper, Jens Glaser, William Zygmunt, and Mariano Semelman.
 
 # References
