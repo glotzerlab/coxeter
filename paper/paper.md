@@ -11,7 +11,7 @@ authors:
     affiliation: 1
   - name: Bradley Dice
     orcid: 0000-0002-9983-0770
-    affiliation: 3
+    affiliation: 2
   - name: Tobias Dwyer
     orcid: 0000-0001-6443-7744
     affiliation: 1
@@ -21,9 +21,9 @@ authors:
 affiliations:
  - name: Department of Chemical Engineering, University of Michigan
    index: 1
- - name: Department of Materials Science and Engineering, University of Michigan
-   index: 2
  - name: Department of Physics, University of Michigan
+   index: 2
+ - name: Department of Materials Science and Engineering, University of Michigan
    index: 3
  - name: Biointerfaces Institute, University of Michigan
    index: 4
