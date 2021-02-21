@@ -83,7 +83,7 @@ A number of such families are bundled into coxeter, but just as importantly, the
 This dictionary-based definition can be simply converted to JSON, making it trivial to share representations of shapes.
 The library also stores mappings from digital object identifiers (DOIs) to families, so that any user can contribute families associated with published research to make them immediately collectively accessible.
 We anticipate that the set of shape families in coxeter will grow over time as users generate and contribute their shape families to coxeter, with the goal of providing a centralized repository for use in reproducing and extending prior research, particularly in the field of shape-driven nanoparticle self-assembly.
-Currently coxeter primarily supports the schema proposed by the GSD library [@GlotzerLabGSD], making it directly compatible with the HOOMD-blue molecular simulation tool [@Anderson2020], but other schema can easily be implemented on an as-needed basis.
+Currently coxeter primarily supports the schema proposed by the GSD library [@GlotzerLabGSD], making it directly compatible with the HOOMD-blue molecular simulation tool [@Anderson2020], but other schema can be implemented as needed.
 
 # Acknowledgements
 
