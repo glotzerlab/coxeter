@@ -1,3 +1,6 @@
+# Copyright (c) 2021 The Regents of the University of Michigan
+# All rights reserved.
+# This software is licensed under the BSD 3-Clause License.
 """Define tabulated shape families.
 
 Tabulated shape families are defined by a dictionary of data that can be

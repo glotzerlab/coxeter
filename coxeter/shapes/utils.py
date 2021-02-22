@@ -1,3 +1,6 @@
+# Copyright (c) 2021 The Regents of the University of Michigan
+# All rights reserved.
+# This software is licensed under the BSD 3-Clause License.
 """Convenience utilities for shape classes.
 
 This module contains useful functions in the construction and management of

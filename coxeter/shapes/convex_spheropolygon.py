@@ -1,3 +1,6 @@
+# Copyright (c) 2021 The Regents of the University of Michigan
+# All rights reserved.
+# This software is licensed under the BSD 3-Clause License.
 """Defines a convex spheropolygon.
 
 A convex spheropolygon is defined by the Minkowski sum of a convex polygon and

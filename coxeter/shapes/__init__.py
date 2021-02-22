@@ -1,3 +1,6 @@
+# Copyright (c) 2021 The Regents of the University of Michigan
+# All rights reserved.
+# This software is licensed under the BSD 3-Clause License.
 """Define shape classes.
 
 This subpackage is the core of coxeter and defines various shapes in two and

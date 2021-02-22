@@ -1,3 +1,6 @@
+# Copyright (c) 2021 The Regents of the University of Michigan
+# All rights reserved.
+# This software is licensed under the BSD 3-Clause License.
 """Convert Mathematica polyhedron vertices to Python.
 
 The input stream is parsed ta a shape definition file. The script must be
