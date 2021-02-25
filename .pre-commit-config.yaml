@@ -4,7 +4,7 @@ repos:
     hooks:
       - id: end-of-file-fixer
       - id: trailing-whitespace
-        exclude: '(?:setup.cfg*)'
+        exclude: '(?:setup.cfg*|paper/.*)'
       - id: debug-statements
       - id: pretty-format-json
         args:
