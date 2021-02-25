@@ -96,4 +96,10 @@ We would like to acknowledge M. Eric Irrgang for prototype implementations of va
 We additionally thank all code contributors.
 In addition to the authors and aforementioned contributors, the list of code contributors includes Brandon Butler, Thomas Waltmann, Timothy Moore, Corwin Kerr, Eric Harper, Jens Glaser, William Zygmunt, and Mariano Semelman.
 
+Finally, we would like to acknowledge the following authors of external open-source tools that are used in coxeter:
+
+- Mark Dickinson, who wrote the **polyhedron** module used for point-in-polygon and point-in-polyhedron checks in coxeter.
+- David Björkevik, who wrote the **polytri** package used for polygon triangulation in coxeter.
+- Campbell Barton, who wrote the **isect_segments-bentley_ottman** package used to validate that polygons have no crossings (i.e. that polygons are simple) in coxeter.
+
 # References
