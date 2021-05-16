@@ -1,5 +1,5 @@
-coxeter
-=======
+API Reference
+=============
 
 Subpackages
 -----------
