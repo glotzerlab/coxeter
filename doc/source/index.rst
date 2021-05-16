@@ -9,6 +9,7 @@ Table of Contents
    :caption: Contents:
 
    coxeter
+   examples
 
 .. toctree::
    :maxdepth: 1

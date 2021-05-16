@@ -39,6 +39,7 @@ extensions = [
     "sphinx.ext.mathjax",
     "sphinxcontrib.bibtex",
     "autodocsumm",
+    "nbsphinx",
 ]
 
 # For sphincontrib.bibtex (as of v2.0).
