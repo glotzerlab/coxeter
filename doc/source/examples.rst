@@ -6,3 +6,4 @@ Here we include some practical examples of using **coxeter**.
 
 .. toctree::
    examples/PointInShape.ipynb
+   examples/DistanceToSurface.ipynb
