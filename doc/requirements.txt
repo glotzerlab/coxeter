@@ -3,3 +3,5 @@ rowan>=1.2
 scipy
 sphinxcontrib-bibtex>=2.0.0
 autodocsumm
+nbsphinx
+fresnel
