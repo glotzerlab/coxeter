@@ -8,3 +8,4 @@ Here we include some practical examples of using **coxeter**.
    examples/PointInShape.ipynb
    examples/DistanceToSurface.ipynb
    examples/InertiaTensors.ipynb
+   examples/Spheres.ipynb
