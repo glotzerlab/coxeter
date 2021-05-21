@@ -1,9 +1,9 @@
 numpy
 rowan>=1.2
 scipy
+jupyter
 sphinxcontrib-bibtex>=2.0.0
 autodocsumm
 nbsphinx
 fresnel
-jupyter
 matplotlib
