@@ -1,14 +1,14 @@
 name: coxeter-readthedocs
 channels:
-  conda-forge
-  defaults
+  - conda-forge
+  - defaults
 dependencies:
-  numpy
-  rowan>=1.2
-  scipy
-  jupyter
-  sphinxcontrib-bibtex>=2.0.0
-  autodocsumm
-  nbsphinx
-  fresnel
-  matplotlib
+  - numpy
+  - rowan>=1.2
+  - scipy
+  - jupyter
+  - sphinxcontrib-bibtex>=2.0.0
+  - autodocsumm
+  - nbsphinx
+  - fresnel
+  - matplotlib
