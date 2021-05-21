@@ -6,3 +6,4 @@ autodocsumm
 nbsphinx
 fresnel
 jupyter
+matplotlib
