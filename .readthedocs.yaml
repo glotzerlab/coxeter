@@ -1,11 +1,9 @@
 version: 2
 formats: all
-
 conda:
-  environment: doc/environment.yml
-
+    environment: doc/environment.yml
 python:
-   version: 3
-   install:
-       - method: pip
-         path: .
+    version: 3
+    install:
+        - method: pip
+          path: .
