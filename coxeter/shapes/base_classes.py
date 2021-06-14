@@ -175,7 +175,6 @@ class Shape(ABC):
                 If the selected plato backend does not support the primitive for
                 this coxeter shape class.
         """
-
         if scene is None:
             try:
                 import importlib
