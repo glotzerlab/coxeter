@@ -136,25 +136,26 @@ class Shape(ABC):
     def _plato_primitive(self, backend, **kwargs):
         raise NotImplementedError("This shape does not have a plato primitive.")
 
-    def to_plato_scene(self, backend=None, scene=None, **scene_kwargs):
+    def to_plato_scene(self, backend="matplotlib", scene=None, **scene_kwargs):
         r"""Add this shape to a new or existing :class:`plato.draw.Scene`.
 
         The plato visualization package provides support for several backends,
-        including matplotlib, fresnel, povray, pythreejs, and vispy. Each
-        backend supports different primitives (geometry objects) and may not
-        support the primitive corresponding to a specific shape class in
-        coxeter. Please refer to the `plato documentation
+        including matplotlib, fresnel, povray, pythreejs, and vispy. The backend
+        package must be separately installed by the user. Each backend supports
+        different primitives (geometry objects) and may not support the
+        primitive corresponding to a specific shape class in coxeter. Please
+        refer to the `plato documentation
         <https://plato-draw.readthedocs.io/>`__ for more information about
         supported primitives for each backend.
 
         Args:
             backend (str):
                 Name of backend to use from plato. The backend must support the
-                primitive corresponding to this shape. Defaults to None, in
-                which case the ``scene`` argument must be provided.  Supported
-                values include ``"matplotlib"``, ``"fresnel"``, ``"povray"``,
-                ``"pythreejs"``, ``"vispy"``, and ``"zdog"``. See plato
-                documentation for more information.
+                primitive corresponding to this shape. Defaults to
+                ``"matplotlib"``.  Supported values include ``"matplotlib"``,
+                ``"fresnel"``, ``"povray"``, ``"pythreejs"``, ``"vispy"``, and
+                ``"zdog"``. See plato documentation for more information about
+                each backend.
             scene (:class:`plato.draw.Scene`):
                 Scene object to render into. If not provided or None, a new
                 scene is created.
@@ -173,9 +174,6 @@ class Shape(ABC):
                 If the selected plato backend does not support the primitive for
                 this coxeter shape class.
         """
-        if backend is None and scene is None:
-            raise ValueError("Either backend or scene must be specified.")
-
         try:
             import importlib
 
