@@ -139,6 +139,13 @@ class Shape(ABC):
     def to_plato_scene(self, backend=None, scene=None, **scene_kwargs):
         r"""Add this shape to a new or existing :class:`plato.draw.Scene`.
 
+        The plato visualization package provides support for several backends.
+        Each backend supports different primitives (geometry objects) and may
+        not support the primitive corresponding to a specific shape class in
+        coxeter. Please refer to the `plato documentation
+        <https://plato-draw.readthedocs.io/>`__ for more information about
+        supported primitives for each backend.
+
         Args:
             backend (str):
                 Name of backend to use from plato. The backend must support
@@ -154,6 +161,13 @@ class Shape(ABC):
         Returns:
             :class:`plato.draw.Scene`:
                 A scene containing this shape.
+
+        Raises:
+            `NotImplementedError`:
+                If no plato primitive corresponds to this coxeter shape class.
+            `AttributeError`:
+                If the selected plato backend does not support the primitive for
+                this coxeter shape class.
         """
         if backend is None and scene is None:
             raise ValueError("Either backend or scene must be specified.")
