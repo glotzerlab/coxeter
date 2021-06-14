@@ -21,7 +21,7 @@ except ImportError:
 )
 def test_draw_circle():
     circle = coxeter.shapes.Circle(1)
-    scene = circle.to_plato_scene("matplotlib", zoom=10)
+    scene = circle.to_plato_scene("matplotlib", scene_kwargs=dict(zoom=10))
     with tempfile.NamedTemporaryFile(suffix=".png") as tmp:
         scene.save(tmp.name)
 
@@ -32,7 +32,7 @@ def test_draw_circle():
 )
 def test_draw_polygon():
     polygon = coxeter.shapes.Polygon([[0, 0], [1, 0], [0, 1]])
-    scene = polygon.to_plato_scene("matplotlib", zoom=10)
+    scene = polygon.to_plato_scene("matplotlib", scene_kwargs=dict(zoom=10))
     with tempfile.NamedTemporaryFile(suffix=".png") as tmp:
         scene.save(tmp.name)
 
@@ -43,7 +43,7 @@ def test_draw_polygon():
 )
 def test_draw_convex_polygon():
     polygon = coxeter.shapes.ConvexPolygon([[0, 0], [1, 0], [0, 1]])
-    scene = polygon.to_plato_scene("matplotlib", zoom=10)
+    scene = polygon.to_plato_scene("matplotlib", scene_kwargs=dict(zoom=10))
     with tempfile.NamedTemporaryFile(suffix=".png") as tmp:
         scene.save(tmp.name)
 
@@ -54,7 +54,7 @@ def test_draw_convex_polygon():
 )
 def test_draw_spheropolygon():
     spheropolygon = coxeter.shapes.ConvexSpheropolygon([[0, 0], [1, 0], [0, 1]], 0.3)
-    scene = spheropolygon.to_plato_scene("matplotlib", zoom=10)
+    scene = spheropolygon.to_plato_scene("matplotlib", scene_kwargs=dict(zoom=10))
     with tempfile.NamedTemporaryFile(suffix=".png") as tmp:
         scene.save(tmp.name)
 
@@ -65,7 +65,7 @@ def test_draw_spheropolygon():
 )
 def test_draw_sphere():
     sphere = coxeter.shapes.Sphere(1)
-    scene = sphere.to_plato_scene("matplotlib", zoom=10)
+    scene = sphere.to_plato_scene("matplotlib", scene_kwargs=dict(zoom=10))
     with tempfile.NamedTemporaryFile(suffix=".png") as tmp:
         scene.save(tmp.name)
 
@@ -87,6 +87,6 @@ def test_draw_convex_polyhedron():
             [1, 0, 1],
         ]
     )
-    scene = cube.to_plato_scene("matplotlib", zoom=10)
+    scene = cube.to_plato_scene("matplotlib", scene_kwargs=dict(zoom=10))
     with tempfile.NamedTemporaryFile(suffix=".png") as tmp:
         scene.save(tmp.name)

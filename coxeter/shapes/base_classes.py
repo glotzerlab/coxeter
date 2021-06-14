@@ -136,7 +136,7 @@ class Shape(ABC):
     def _plato_primitive(self, backend, **kwargs):
         raise NotImplementedError("This shape does not have a plato primitive.")
 
-    def to_plato_scene(self, backend="matplotlib", scene=None, **scene_kwargs):
+    def to_plato_scene(self, backend="matplotlib", scene=None, scene_kwargs=None):
         r"""Add this shape to a new or existing :class:`plato.draw.Scene`.
 
         The plato visualization package provides support for several backends,
@@ -151,17 +151,18 @@ class Shape(ABC):
         Args:
             backend (str):
                 Name of backend to use from plato. The backend must support the
-                primitive corresponding to this shape. Defaults to
-                ``"matplotlib"``.  Supported values include ``"matplotlib"``,
+                primitive corresponding to this shape (Default value:
+                ``"matplotlib"``). Supported values include ``"matplotlib"``,
                 ``"fresnel"``, ``"povray"``, ``"pythreejs"``, ``"vispy"``, and
                 ``"zdog"``. See plato documentation for more information about
                 each backend.
             scene (:class:`plato.draw.Scene`):
                 Scene object to render into. If not provided or None, a new
-                scene is created.
-            \*\*scene_kwargs:
-                Keyword arguments forwarded to the :class:`plato.draw.Scene`.
-                Only used if ``scene`` is not provided or None.
+                scene is created (Default value: None).
+            scene_kwargs (dict):
+                Keyword arguments forwarded to the :class:`plato.draw.Scene`
+                (Default value: None). Only used if ``scene`` is not provided
+                or None.
 
         Returns:
             :class:`plato.draw.Scene`:
@@ -186,6 +187,8 @@ class Shape(ABC):
         prim = self._plato_primitive(backend)
 
         if scene is None:
+            if scene_kwargs is None:
+                scene_kwargs = {}
             scene = backend.Scene([prim], **scene_kwargs)
         else:
             scene.add_primitive(prim)
