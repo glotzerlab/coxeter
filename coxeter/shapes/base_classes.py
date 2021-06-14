@@ -175,22 +175,22 @@ class Shape(ABC):
                 If the selected plato backend does not support the primitive for
                 this coxeter shape class.
         """
-        try:
-            import importlib
-
-            backend = importlib.import_module("plato.draw.{}".format(backend))
-        except ImportError:
-            raise ImportError(
-                "Backend plato.draw.{} could not be imported.".format(backend)
-            )
-
-        prim = self._plato_primitive(backend)
 
         if scene is None:
+            try:
+                import importlib
+
+                backend = importlib.import_module("plato.draw.{}".format(backend))
+            except ImportError:
+                raise ImportError(
+                    "Backend plato.draw.{} could not be imported.".format(backend)
+                )
             if scene_kwargs is None:
                 scene_kwargs = {}
+            prim = self._plato_primitive(backend)
             scene = backend.Scene([prim], **scene_kwargs)
         else:
+            prim = self._plato_primitive(backend)
             scene.add_primitive(prim)
         return scene
 
