@@ -139,18 +139,22 @@ class Shape(ABC):
     def to_plato_scene(self, backend=None, scene=None, **scene_kwargs):
         r"""Add this shape to a new or existing :class:`plato.draw.Scene`.
 
-        The plato visualization package provides support for several backends.
-        Each backend supports different primitives (geometry objects) and may
-        not support the primitive corresponding to a specific shape class in
+        The plato visualization package provides support for several backends,
+        including matplotlib, fresnel, povray, pythreejs, and vispy. Each
+        backend supports different primitives (geometry objects) and may not
+        support the primitive corresponding to a specific shape class in
         coxeter. Please refer to the `plato documentation
         <https://plato-draw.readthedocs.io/>`__ for more information about
         supported primitives for each backend.
 
         Args:
             backend (str):
-                Name of backend to use from plato. The backend must support
-                the primitive corresponding to this shape. Defaults to None,
-                in which case the ``scene`` argument must be provided.
+                Name of backend to use from plato. The backend must support the
+                primitive corresponding to this shape. Defaults to None, in
+                which case the ``scene`` argument must be provided.  Supported
+                values include ``"matplotlib"``, ``"fresnel"``, ``"povray"``,
+                ``"pythreejs"``, ``"vispy"``, and ``"zdog"``. See plato
+                documentation for more information.
             scene (:class:`plato.draw.Scene`):
                 Scene object to render into. If not provided or None, a new
                 scene is created.
