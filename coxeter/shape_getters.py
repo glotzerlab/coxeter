@@ -24,12 +24,12 @@ from .shapes import (
 def from_gsd_type_shapes(params, dimensions=3):  # noqa: C901
     """Create a :class:`~.Shape` from a dict conforming to the GSD schema.
 
-    See :ref:`here <gsd:shapes>` for the specification of the schema. Note
-    that the schema does not differentiate between 2D and 3D shapes for
-    spheres (vs. circles) and ellipsoids (vs. ellipses) because in context
-    those can be inferred from simulation boxes. To address this ambiguity,
-    this function accepts a dimensions parameter that can be used to
-    disambiguate explicitly between these two cases.
+    See :ref:`here <gsd:shapes>` for the specification of the schema. Note that
+    the schema does not differentiate between 2D and 3D shapes for spheres (vs.
+    circles) and ellipsoids (vs. ellipses) because in context the
+    dimensionality of the shape can be inferred from simulation boxes. To
+    address this ambiguity, this function accepts a dimensions parameter that
+    can be used to disambiguate explicitly between these two cases.
 
     Args:
         params (dict):
