@@ -23,6 +23,7 @@ Added
 - Add minimal centered bounding sphere calculations for all shapes except general polygons, general polyhedra, spheropolygons, and spheropolyhedra.
 - Getters and setters for the circumsphere or bounding sphere radius of a polyhedron (for both types of bounding sphere).
 - A repr for all shapes.
+- Notebooks with example use-cases for the package.
 
 Changed
 ~~~~~~~

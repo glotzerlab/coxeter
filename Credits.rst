@@ -41,6 +41,7 @@ Vyas Ramasubramani - **Creator and lead developer**
 * Added point in polyhedron checks.
 * Added repr for all shapes.
 * Fixed centroid calculations for polygon and polyhedron to use integrals rather than simple averages of vertices.
+* Wrote example notebooks.
 
 Bryan VanSaders - **Original maintainer of legacy euclid package**
 
