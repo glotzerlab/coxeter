@@ -70,7 +70,7 @@ class ConvexSpheropolyhedron(Shape3D):
 
     @property
     def gsd_shape_spec(self):
-        """dict: Get a :ref:`complete GSD specification <shapes>`."""  # noqa: D401
+        """dict: Get a :ref:`complete GSD specification <gsd:shapes>`."""  # noqa: D401
         return {
             "type": "ConvexPolyhedron",
             "vertices": self.polyhedron.vertices.tolist(),
@@ -293,4 +293,13 @@ class ConvexSpheropolyhedron(Shape3D):
         return (
             f"coxeter.shapes.ConvexSpheropolyhedron(vertices={self.vertices.tolist()}, "
             f"radius={self.radius})"
+        )
+
+    def _plato_primitive(self, backend):
+        return backend.ConvexSpheropolyhedra(
+            positions=np.array([self.polyhedron.center]),
+            orientations=np.array([[1.0, 0.0, 0.0, 0.0]]),
+            colors=np.array([[0.5, 0.5, 0.5, 1]]),
+            vertices=self.vertices,
+            radius=self.radius,
         )

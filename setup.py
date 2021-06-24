@@ -21,8 +21,10 @@ version = "0.5.0"
 ################################################
 
 test_deps = [
-    "pytest",
     "hypothesis[numpy]",
+    "matplotlib",
+    "plato-draw",
+    "pytest",
 ]
 
 bounding_deps = [

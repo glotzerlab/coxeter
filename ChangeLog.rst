@@ -55,6 +55,7 @@ Added
 - Plotting polygons or polyhedra can automatically create matplotlib axes.
 - Perimeter calculation for polygons.
 - Area and perimeter setters for spheropolygons.
+- Shapes can be exported to plato scenes.
 
 Changed
 ~~~~~~~

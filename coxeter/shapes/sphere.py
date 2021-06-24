@@ -43,7 +43,7 @@ class Sphere(Shape3D):
 
     @property
     def gsd_shape_spec(self):
-        """dict: Get a :ref:`complete GSD specification <shapes>`."""  # noqa: D401
+        """dict: Get a :ref:`complete GSD specification <gsd:shapes>`."""  # noqa: D401
         return {"type": "Sphere", "diameter": 2 * self.radius}
 
     @property
@@ -193,4 +193,11 @@ class Sphere(Shape3D):
         return (
             f"coxeter.shapes.Sphere(radius={self.radius}, "
             f"center={self.centroid.tolist()})"
+        )
+
+    def _plato_primitive(self, backend):
+        return backend.Spheres(
+            positions=np.array([self.center]),
+            colors=np.array([[0.5, 0.5, 0.5, 1]]),
+            radii=[self.radius],
         )

@@ -4,8 +4,8 @@
 """Define tabulated shape families.
 
 Tabulated shape families are defined by a dictionary of data that can be
-converted into a shape by some well-defined schema. One example is the
-`GSD shape schema <shapes>`, which defines how to translates dictionaries with
+converted into a shape by some well-defined schema. One example is the `GSD
+shape schema <gsd:shapes>`, which defines how to translates dictionaries with
 the appropriate formatting into a shape. These shape families may be
 constructed from a JSON file that can be read into a dictionary with the
 appropriate formatting.
@@ -90,7 +90,7 @@ class TabulatedGSDShapeFamily(TabulatedShapeFamily):
     """A tabulated shape family defined by a GSD shape schema.
 
     The values of the dictionary used to construct this class must adhere to
-    the :ref:`GSD shape spec <shapes>`. Each mapping may contain additional
+    the :ref:`GSD shape spec <gsd:shapes>`. Each mapping may contain additional
     data, which is ignored when the class is called to actually produce
     :class:`~coxeter.shapes.Shape` objects.
 

@@ -107,7 +107,7 @@ class ConvexPolyhedron(Polyhedron):
 
     @property
     def gsd_shape_spec(self):
-        """dict: Get a :ref:`complete GSD specification <shapes>`."""  # noqa: D401
+        """dict: Get a :ref:`complete GSD specification <gsd:shapes>`."""  # noqa: D401
         return {"type": "ConvexPolyhedron", "vertices": self.vertices.tolist()}
 
     @property
@@ -190,3 +190,11 @@ class ConvexPolyhedron(Polyhedron):
             )
         min_distance = -np.max(distances)
         return Sphere(min_distance, center)
+
+    def _plato_primitive(self, backend):
+        return backend.ConvexPolyhedra(
+            positions=np.array([self.center]),
+            orientations=np.array([[1.0, 0.0, 0.0, 0.0]]),
+            colors=np.array([[0.5, 0.5, 0.5, 1]]),
+            vertices=self.vertices,
+        )

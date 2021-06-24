@@ -19,3 +19,4 @@ __pycache__
 .hypothesis
 *.pyc
 doc/source/bibtex.json
+.ipynb_checkpoints

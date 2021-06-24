@@ -11,6 +11,7 @@ import numpy as np
 
 from .base_classes import Shape2D
 from .convex_polygon import ConvexPolygon, _is_convex
+from .polygon import _align_points_by_normal
 
 
 class ConvexSpheropolygon(Shape2D):
@@ -62,12 +63,17 @@ class ConvexSpheropolygon(Shape2D):
 
     @property
     def gsd_shape_spec(self):
-        """dict: Get a :ref:`complete GSD specification <shapes>`."""  # noqa: D401
+        """dict: Get a :ref:`complete GSD specification <gsd:shapes>`."""  # noqa: D401
         return {
             "type": "Polygon",
             "vertices": self.polygon.vertices.tolist(),
             "rounding_radius": self.radius,
         }
+
+    @property
+    def normal(self):
+        """:math:`(3, )` :class:`numpy.ndarray` of float: Get the normal vector."""
+        return self._polygon.normal
 
     @property
     def vertices(self):
@@ -248,4 +254,16 @@ class ConvexSpheropolygon(Shape2D):
         return (
             f"coxeter.shapes.ConvexSpheropolygon(vertices={self.vertices.tolist()}, "
             f"radius={self.radius}, normal={self.polygon.normal.tolist()})"
+        )
+
+    def _plato_primitive(self, backend):
+        verts = _align_points_by_normal(
+            self.normal, self.vertices - self.polygon.center
+        )[0]
+        return backend.Spheropolygons(
+            positions=np.array([[0.0, 0.0]]),
+            orientations=np.array([[1.0, 0.0, 0.0, 0.0]]),
+            colors=np.array([[0.5, 0.5, 0.5, 1]]),
+            vertices=verts[:, :2],
+            radius=self.radius,
         )

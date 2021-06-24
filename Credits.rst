@@ -64,6 +64,7 @@ Bradley Dice
 * Added automatic axis creation for plotting.
 * Added spheropolygon area and perimeter setters.
 * Added ellipse area setter and ellipsoid volume setter.
+* Added plato support.
 
 Brandon Butler
 
