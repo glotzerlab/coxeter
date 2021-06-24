@@ -169,9 +169,9 @@ class Shape(ABC):
                 A scene containing this shape.
 
         Raises:
-            `NotImplementedError`:
+            NotImplementedError:
                 If no plato primitive corresponds to this coxeter shape class.
-            `AttributeError`:
+            AttributeError:
                 If the selected plato backend does not support the primitive for
                 this coxeter shape class.
         """

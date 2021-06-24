@@ -27,9 +27,9 @@ def from_gsd_type_shapes(params, dimensions=3):  # noqa: C901
     See :ref:`here <gsd:shapes>` for the specification of the schema. Note that
     the schema does not differentiate between 2D and 3D shapes for spheres (vs.
     circles) and ellipsoids (vs. ellipses) because in context the
-    dimensionality of the shape can be inferred from simulation boxes. To
-    address this ambiguity, this function accepts a dimensions parameter that
-    can be used to disambiguate explicitly between these two cases.
+    dimensionality of those shapes can be inferred from simulation boxes. To
+    address this ambiguity, this function accepts a ``dimensions`` parameter
+    that can be used to disambiguate explicitly between these two cases.
 
     Args:
         params (dict):
