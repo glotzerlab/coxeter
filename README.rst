@@ -22,6 +22,19 @@ Welcome to the documentation for **coxeter**!
 The **coxeter** Python library provides tools for working with common geometric objects in two and three dimensions.
 Named for the `20th century geometer <https://en.wikipedia.org/wiki/Harold_Scott_MacDonald_Coxeter>`__ best known for his work on polytopes, **coxeter** is especially focused on polygons and polyhedra, but it also support various standard curved shapes such as spheres and ellipsoids.
 
+The package emphasizes working with shapes as mutable objects whose geometric attributes may be accessed using property-based APIs.
+Since **coxeter** originally arose to support representations of anisotropic nanoparticles, many shapes support calculations of physical properties (such as form factors and inerita tensors) in addition to purely geometric ones.
+However, the package is designed with more general audiences in mind as well, and it aims to support precise calculations of a wide range of geometric quantities that are useful in a number of fields.
+
+Some core features of **coxeter** include:
+
+* Libraries of common shapes to support easy construction.
+* Mutable shape objects that can be rescaled in a variety of ways to suit a number of needs.
+* Immediate access to geometric properties of shapes via Python properties of shape objects.
+* Plotting functionality to make it easy to visualize shapes in both two and three dimensions.
+
+More detailed information on **coxeter**'s features and examples of how to use them may be found in the [documentation](http://coxeter.readthedocs.io/en/latest/).
+
 Setup
 -----
 
