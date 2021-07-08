@@ -109,8 +109,8 @@ and then run the packaged unit tests with the coverage module:
 
    pytest --cov=coxeter
 
-Documentation
--------------
+Building Documentation
+----------------------
 
 Documentation for coxeter is written in `reStructuredText <http://docutils.sourceforge.net/rst.html>`__ and compiled using `Sphinx <http://www.sphinx-doc.org/en/master/>`__.
 To build the documentation, first install Sphinx:
