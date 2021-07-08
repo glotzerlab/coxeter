@@ -8,6 +8,7 @@ Table of Contents
    :maxdepth: 2
    :caption: Contents:
 
+   quickstart
    coxeter
    examples
 

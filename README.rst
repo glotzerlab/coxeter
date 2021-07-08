@@ -35,6 +35,8 @@ Some core features of **coxeter** include:
 
 More detailed information on **coxeter**'s features and examples of how to use them may be found in the [documentation](http://coxeter.readthedocs.io/en/latest/).
 
+.. _installing:
+
 Setup
 -----
 
