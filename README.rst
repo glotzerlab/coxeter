@@ -33,7 +33,7 @@ Some core features of **coxeter** include:
 * Immediate access to geometric properties of shapes via Python properties of shape objects.
 * Plotting functionality to make it easy to visualize shapes in both two and three dimensions.
 
-More detailed information on **coxeter**'s features and examples of how to use them may be found in the [documentation](http://coxeter.readthedocs.io/en/latest/).
+More detailed information on **coxeter**'s features and examples of how to use them may be found in the `documentation <http://coxeter.readthedocs.io/en/latest/>`__.
 
 .. _installing:
 
