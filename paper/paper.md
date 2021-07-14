@@ -54,7 +54,7 @@ Some of the applications of coxeter to date include: the development of equation
 
 The central elements in coxeter are the shape classes, which encode the features of particular types of shapes.
 In order to enforce a highly uniform API and ensure conceptual clarity, all shape classes inherit from a small set of abstract base classes that encode specific subsets of properties: for instance, the standard properties of all shapes in two dimensions are embedded in the ``Shape2D`` class.
-In addition to standard types of shapes such as ellipsoids or polygons, coxeter also includes more esoteric shape classes like spheropolyhedra, which are important for modeling the imperfect rounded polyhedra frequently synthesized at the nano- and micron scales [@Zhang2011,@Rossi2015].
+In addition to standard types of shapes such as ellipsoids or polygons, coxeter also includes more esoteric shape classes like spheropolyhedra, which are important for modeling the imperfect rounded polyhedra frequently synthesized at the nano- and micron scales [@Zhang2011; @Rossi2015].
 Even simple properties like surface areas are generally nontrivial to compute for such shapes, but using coxeter spheropolyhedra are no more difficult to work with than any other 3D shape.
 Working with convex polygons and polyhedra using coxeter is greatly simplified via internal use of SciPy's convex hull calculations [@Virtanen2020], allowing the user to simply provide a set of vertices while coxeter performs the appropriate determination of facets and plane equations based on the simplices of the convex hull.
 
