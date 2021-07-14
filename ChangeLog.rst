@@ -1,6 +1,16 @@
 The format is based on `Keep a Changelog <http://keepachangelog.com/en/1.0.0/>`__.
 This project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`__.
 
+v0.6.0 - 2021-07-14
+-------------------
+
+Added
+~~~~~
+
+- Plotting and other graphical rendering of shapes using `plato <https://plato-draw.readthedocs.io/>`__.
+- Notebooks with example use-cases for the package.
+- A quickstart tutorial.
+
 v0.5.0 - 2021-02-23
 -------------------
 
@@ -22,8 +32,7 @@ Added
 - Minimal bounding sphere for all shapes except spheropolygons and spheropolyhedra.
 - Add minimal centered bounding sphere calculations for all shapes except general polygons, general polyhedra, spheropolygons, and spheropolyhedra.
 - Getters and setters for the circumsphere or bounding sphere radius of a polyhedron (for both types of bounding sphere).
-- A repr for all shapes.
-- Notebooks with example use-cases for the package.
+- A ``repr`` for all shapes.
 
 Changed
 ~~~~~~~
@@ -55,7 +64,6 @@ Added
 - Plotting polygons or polyhedra can automatically create matplotlib axes.
 - Perimeter calculation for polygons.
 - Area and perimeter setters for spheropolygons.
-- Shapes can be exported to plato scenes.
 
 Changed
 ~~~~~~~
