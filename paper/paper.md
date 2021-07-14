@@ -9,10 +9,10 @@ authors:
   - name: Vyas Ramasubramani
     orcid: 0000-0001-5181-9532
     affiliation: 1
-  - name: Bradley Dice
+  - name: Bradley D. Dice
     orcid: 0000-0002-9983-0770
     affiliation: 2
-  - name: Tobias Dwyer
+  - name: Tobias T. Dwyer
     orcid: 0000-0001-6443-7744
     affiliation: 1
   - name: Sharon C. Glotzer
