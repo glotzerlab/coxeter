@@ -22,8 +22,8 @@ copyright = "2015-2021, The Regents of the University of Michigan"
 author = "Vyas Ramasubramani"
 
 # The full version, including alpha/beta/rc tags
-version = "0.6.0"
-release = "0.6.0"
+version = "0.6.1"
+release = "0.6.1"
 
 
 # -- General configuration ---------------------------------------------------
