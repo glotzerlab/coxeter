@@ -1,6 +1,14 @@
 The format is based on `Keep a Changelog <http://keepachangelog.com/en/1.0.0/>`__.
 This project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`__.
 
+v0.6.1 - 2021-07-15
+-------------------
+
+Fixed
+~~~~~
+
+- Typos in JOSS paper.
+
 v0.6.0 - 2021-07-14
 -------------------
 
