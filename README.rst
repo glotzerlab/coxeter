@@ -4,11 +4,14 @@ coxeter
 .. contents::
    :local:
 
+|JOSS|
 |ReadTheDocs|
 |CircleCI|
 |PyPI|
 |conda-forge|
 
+.. |JOSS| image:: https://joss.theoj.org/papers/10.21105/joss.03098/status.svg
+   :target: https://doi.org/10.21105/joss.03098
 .. |ReadTheDocs| image:: https://readthedocs.org/projects/coxeter/badge/?version=latest
     :target: http://coxeter.readthedocs.io/en/latest/?badge=latest
 .. |CircleCI| image:: https://circleci.com/gh/glotzerlab/coxeter.svg?style=svg
