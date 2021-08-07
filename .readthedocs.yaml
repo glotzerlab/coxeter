@@ -1,5 +1,6 @@
 version: 2
-formats: all
+formats:
+    - htmlzip
 conda:
     environment: doc/environment.yml
 python:
