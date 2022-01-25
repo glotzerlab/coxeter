@@ -8,6 +8,7 @@ Fixed
 ~~~~~
 
 - Typos in JOSS paper.
+- Numerical precision issues in tests.
 
 v0.6.0 - 2021-07-14
 -------------------
