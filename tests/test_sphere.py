@@ -32,14 +32,14 @@ def test_invalid_radius_setter(r):
 def test_surface_area(r):
     sphere = Sphere(1)
     sphere.radius = r
-    assert sphere.surface_area == 4 * np.pi * r ** 2
+    assert sphere.surface_area == approx(4 * np.pi * r ** 2)
 
 
 @given(floats(0.1, 1000))
 def test_volume(r):
     sphere = Sphere(1)
     sphere.radius = r
-    assert sphere.volume == 4 / 3 * np.pi * r ** 3
+    assert sphere.volume == approx(4 / 3 * np.pi * r ** 3)
 
 
 @given(floats(-1000, -1))
@@ -79,7 +79,7 @@ def test_invalid_area_setter(area):
 @given(floats(0.1, 1000))
 def test_iq(r):
     sphere = Sphere(r)
-    assert sphere.iq == 1
+    assert sphere.iq == approx(1)
 
 
 @given(
@@ -111,11 +111,11 @@ def test_is_inside(x, center):
 def test_center():
     """Test getting and setting the center."""
     sphere = Sphere(1)
-    assert all(sphere.center == (0, 0, 0))
+    np.testing.assert_allclose(sphere.center, (0, 0, 0))
 
     center = (1, 1, 1)
     sphere.center = center
-    assert all(sphere.center == center)
+    np.testing.assert_allclose(sphere.center, center)
 
 
 def test_form_factor():

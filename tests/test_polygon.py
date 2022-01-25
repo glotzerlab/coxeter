@@ -88,8 +88,8 @@ def test_area(square_points):
     # Shift to ensure that the negative areas are subtracted as needed.
     points = np.asarray(square_points) + 2
     square = Polygon(points)
-    assert square.signed_area == 1
-    assert square.area == 1
+    assert square.signed_area == approx(1)
+    assert square.area == approx(1)
 
 
 def test_set_area(square):
@@ -100,11 +100,11 @@ def test_set_area(square):
 
 def test_center(square, square_points):
     """Test centering the polygon."""
-    assert np.all(square.center == np.mean(square_points, axis=0))
-    assert np.all(square.centroid == np.mean(square_points, axis=0))
+    np.testing.assert_allclose(square.center, np.mean(square_points, axis=0))
+    np.testing.assert_allclose(square.centroid, np.mean(square_points, axis=0))
     square.center = [0, 0, 0]
-    assert np.all(square.center == [0, 0, 0])
-    assert np.all(square.centroid == [0, 0, 0])
+    np.testing.assert_allclose(square.center, [0, 0, 0])
+    np.testing.assert_allclose(square.centroid, [0, 0, 0])
 
 
 def test_moment_inertia(square):
@@ -131,22 +131,22 @@ def test_moment_inertia(square):
 def test_inertia_tensor(square):
     """Test the inertia tensor calculation."""
     square.center = (0, 0, 0)
-    assert np.sum(square.inertia_tensor > 1e-6) == 1
-    assert square.inertia_tensor[2, 2] == 1 / 6
+    assert np.sum(square.inertia_tensor > 1e-6) == approx(1)
+    np.testing.assert_allclose(square.inertia_tensor[2, 2], 1 / 6)
 
     # Validate yz plane.
     rotation = rowan.from_axis_angle([0, 1, 0], np.pi / 2)
     rotated_verts = rowan.rotate(rotation, square.vertices)
     rotated_square = ConvexPolygon(rotated_verts)
-    assert np.sum(rotated_square.inertia_tensor > 1e-6) == 1
-    assert rotated_square.inertia_tensor[0, 0] == 1 / 6
+    assert np.sum(rotated_square.inertia_tensor > 1e-6) == approx(1)
+    assert rotated_square.inertia_tensor[0, 0] == approx(1 / 6)
 
     # Validate xz plane.
     rotation = rowan.from_axis_angle([1, 0, 0], np.pi / 2)
     rotated_verts = rowan.rotate(rotation, square.vertices)
     rotated_square = ConvexPolygon(rotated_verts)
-    assert np.sum(rotated_square.inertia_tensor > 1e-6) == 1
-    assert rotated_square.inertia_tensor[1, 1] == 1 / 6
+    assert np.sum(rotated_square.inertia_tensor > 1e-6) == approx(1)
+    assert rotated_square.inertia_tensor[1, 1] == approx(1 / 6)
 
     # Validate translation along each axis.
     delta = 2
@@ -159,7 +159,7 @@ def test_inertia_tensor(square):
         offdiagonal_tensor = translated_square.inertia_tensor.copy()
         diag_indices = np.diag_indices(3)
         offdiagonal_tensor[diag_indices] = 0
-        assert np.sum(offdiagonal_tensor > 1e-6) == 0
+        assert np.sum(offdiagonal_tensor > 1e-6) == approx(0)
         expected_diagonals = [0, 0, 1 / 6]
         for j in range(3):
             if i != j:
@@ -286,8 +286,8 @@ def test_circumcircle_radius(poly):
 
 def test_maximal_centered_bounded_circle(convex_square):
     circle = convex_square.maximal_centered_bounded_circle
-    assert np.all(circle.center == convex_square.center)
-    assert circle.radius == 0.5
+    np.testing.assert_allclose(circle.center, convex_square.center)
+    assert circle.radius == approx(0.5)
 
     with pytest.deprecated_call():
         assert sphere_isclose(convex_square.incircle_from_center, circle)
@@ -384,8 +384,9 @@ def test_set_perimeter(square_points):
     def testfun(value):
         square.perimeter = value
         assert square.perimeter == approx(value)
-        assert square.vertices == approx(
-            original_square.vertices * (value / original_square.perimeter)
+        np.testing.assert_allclose(
+            square.vertices,
+            original_square.vertices * (value / original_square.perimeter),
         )
 
     testfun()

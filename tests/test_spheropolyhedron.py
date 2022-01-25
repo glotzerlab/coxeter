@@ -23,7 +23,7 @@ def test_volume(radius):
 def test_volume_polyhedron(convex_cube, cube_points):
     """Ensure that zero radius gives the same result as a polyhedron."""
     sphero_cube = make_sphero_cube(radius=0)
-    assert sphero_cube.volume == convex_cube.volume
+    assert sphero_cube.volume == approx(convex_cube.volume)
 
 
 @given(value=floats(0.1, 1))
@@ -52,7 +52,7 @@ def test_set_surface_area(value):
 def test_surface_area_polyhedron(convex_cube):
     """Ensure that zero radius gives the same result as a polyhedron."""
     sphero_cube = make_sphero_cube(radius=0)
-    assert sphero_cube.surface_area == convex_cube.surface_area
+    assert sphero_cube.surface_area == approx(convex_cube.surface_area)
 
 
 @given(r=floats(0, 1.0))

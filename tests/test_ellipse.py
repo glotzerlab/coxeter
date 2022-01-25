@@ -24,8 +24,8 @@ def test_a_b_getter_setter(a, b):
     assert ellipse.b == b
     ellipse.a = a + 1
     ellipse.b = b + 1
-    assert ellipse.a == a + 1
-    assert ellipse.b == b + 1
+    assert ellipse.a == approx(a + 1)
+    assert ellipse.b == approx(b + 1)
 
 
 @given(floats(-1000, -1))
@@ -58,8 +58,8 @@ def test_perimeter(a, b):
     b, a = sorted([a, b])
     h = (a - b) ** 2 / (a + b) ** 2
     approx_perimeter = np.pi * (a + b) * (1 + 3 * h / (10 + np.sqrt(4 - 3 * h)))
-    assert ellipse.perimeter == pytest.approx(approx_perimeter, rel=1e-3)
-    assert ellipse.circumference == pytest.approx(approx_perimeter, rel=1e-3)
+    assert ellipse.perimeter == approx(approx_perimeter, rel=1e-3)
+    assert ellipse.circumference == approx(approx_perimeter, rel=1e-3)
 
 
 @given(floats(0.1, 1000))
@@ -84,7 +84,7 @@ def test_area_getter(a, b):
     ellipse = Ellipse(1, 1)
     ellipse.a = a
     ellipse.b = b
-    assert ellipse.area == np.pi * a * b
+    assert ellipse.area == approx(np.pi * a * b)
 
 
 @given(floats(0.1, 1000), floats(0.1, 1000), floats(0.1, 1000))
@@ -120,7 +120,7 @@ def test_eccentricity_ratio(a, k):
     ellipse = Ellipse(a, b)
     b, a = sorted([a, b])
     expected = np.sqrt(1 - b ** 2 / a ** 2)
-    assert ellipse.eccentricity == pytest.approx(expected)
+    assert ellipse.eccentricity == approx(expected)
 
 
 @given(
@@ -142,17 +142,17 @@ def test_moment_inertia(a, b, center):
     expected[2] = area * center[0] * center[1]
     np.testing.assert_allclose(ellipse.planar_moments_inertia[:2], expected[:2])
     np.testing.assert_allclose(ellipse.planar_moments_inertia[2], expected[2])
-    assert ellipse.polar_moment_inertia == pytest.approx(sum(expected[:2]))
+    assert ellipse.polar_moment_inertia == approx(sum(expected[:2]))
 
 
 def test_center():
     """Test getting and setting the center."""
     ellipse = Ellipse(1, 2)
-    assert all(ellipse.center == (0, 0, 0))
+    np.testing.assert_allclose(ellipse.center, (0, 0, 0))
 
     center = (1, 1, 1)
     ellipse.center = center
-    assert all(ellipse.center == center)
+    np.testing.assert_allclose(ellipse.center, center)
 
 
 @settings(deadline=500)
@@ -231,8 +231,8 @@ def test_inertia_tensor():
     """Test the inertia tensor calculation."""
     ellipse = Ellipse(1, 2)
     ellipse.center = (0, 0, 0)
-    assert np.sum(ellipse.inertia_tensor > 1e-6) == 1
-    assert ellipse.inertia_tensor[2, 2] == 5 * np.pi / 2
+    assert np.sum(ellipse.inertia_tensor > 1e-6) == approx(1)
+    assert ellipse.inertia_tensor[2, 2] == approx(5 * np.pi / 2)
 
 
 @given(

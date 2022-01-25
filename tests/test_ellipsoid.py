@@ -65,7 +65,7 @@ def test_surface_area(a, b, c):
     )
 
     ellipsoid = Ellipsoid(a, b, c)
-    assert ellipsoid.surface_area == pytest.approx(approx_surface, rel=0.015)
+    assert ellipsoid.surface_area == approx(approx_surface, rel=0.015)
 
 
 @given(floats(0.1, 1000))
@@ -86,7 +86,7 @@ def test_volume(a, b, c):
     ellipsoid.a = a
     ellipsoid.b = b
     ellipsoid.c = c
-    assert ellipsoid.volume == 4 / 3 * np.pi * a * b * c
+    assert ellipsoid.volume == approx(4 / 3 * np.pi * a * b * c)
 
 
 @given(floats(0.1, 1000), floats(0.1, 1000), floats(0.1, 1000), floats(0.1, 1000))
@@ -114,14 +114,14 @@ def test_earth():
     earth_volume = 1.08e21  # or so, m^3
     earth_surface = 510.1e12  # or so, m^2
     earth = Ellipsoid(a, b, c)
-    assert earth.volume == pytest.approx(earth_volume, rel=1.01)
-    assert earth.surface_area == pytest.approx(earth_surface, rel=1.01)
+    assert earth.volume == approx(earth_volume, rel=1.01)
+    assert earth.surface_area == approx(earth_surface, rel=1.01)
 
 
 @given(floats(0.1, 1000))
 def test_iq(r):
     sphere = Ellipsoid(r, r, r)
-    assert sphere.iq == pytest.approx(1)
+    assert sphere.iq == approx(1)
 
 
 @given(floats(0.1, 1000), floats(0.1, 1000), floats(0.1, 1000))
@@ -129,9 +129,9 @@ def test_iq_symmetry(a, b, c):
     ellipsoid1 = Ellipsoid(a, b, c)
     ellipsoid2 = Ellipsoid(c, a, b)
     ellipsoid3 = Ellipsoid(b, c, a)
-    assert ellipsoid1.iq == pytest.approx(ellipsoid2.iq)
-    assert ellipsoid1.iq == pytest.approx(ellipsoid3.iq)
-    assert ellipsoid2.iq == pytest.approx(ellipsoid3.iq)
+    assert ellipsoid1.iq == approx(ellipsoid2.iq)
+    assert ellipsoid1.iq == approx(ellipsoid3.iq)
+    assert ellipsoid2.iq == approx(ellipsoid3.iq)
 
 
 @given(
@@ -174,11 +174,11 @@ def test_is_inside(a, b, c, center):
 def test_center():
     """Test getting and setting the center."""
     ellipsoid = Ellipsoid(1, 2, 3)
-    assert all(ellipsoid.center == (0, 0, 0))
+    np.testing.assert_allclose(ellipsoid.center, (0, 0, 0))
 
     center = (1, 1, 1)
     ellipsoid.center = center
-    assert all(ellipsoid.center == center)
+    np.testing.assert_allclose(ellipsoid.center, center)
 
 
 @given(

@@ -50,9 +50,9 @@ def test_radius_getter_setter(square_points):
     def testfun(r):
         square_points_2d = square_points[:, :2]
         convexspheropolygon = ConvexSpheropolygon(square_points_2d, r)
-        assert convexspheropolygon.radius == r
+        assert convexspheropolygon.radius == approx(r)
         convexspheropolygon.radius = r + 1
-        assert convexspheropolygon.radius == r + 1
+        assert convexspheropolygon.radius == approx(r + 1)
 
     testfun()
 
@@ -99,8 +99,8 @@ def test_area(unit_rounded_square):
     """Test area calculation."""
     shape = unit_rounded_square
     area = 1 + 4 + np.pi
-    assert shape.signed_area == area
-    assert shape.area == area
+    assert shape.signed_area == approx(area)
+    assert shape.area == approx(area)
 
 
 def test_area_getter_setter(unit_rounded_square):
@@ -172,7 +172,7 @@ def test_convex_signed_area(square_points):
 
 def test_sphero_square_perimeter(unit_rounded_square):
     """Test calculating the perimeter of a spheropolygon."""
-    assert unit_rounded_square.perimeter == 4 + 2 * np.pi
+    assert unit_rounded_square.perimeter == approx(4 + 2 * np.pi)
 
 
 def test_perimeter_setter(unit_rounded_square):

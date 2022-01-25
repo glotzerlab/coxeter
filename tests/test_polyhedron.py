@@ -29,9 +29,12 @@ from utils import compute_centroid_mc, compute_inertia_mc
 
 
 def test_normal_detection(convex_cube):
-    detected_normals = set([tuple(n) for n in convex_cube.normals])
-    expected_normals = set([tuple(n) for n in get_oriented_cube_normals()])
-    assert detected_normals == expected_normals
+    detected_normals = [tuple(n) for n in convex_cube.normals]
+    expected_normals = [tuple(n) for n in get_oriented_cube_normals()]
+    for dn in detected_normals:
+        # Each detected normal should be identical to exactly one expected
+        # normal. No ordering is guaranteed, so we have to check them all.
+        assert sum([np.allclose(dn, en) for en in expected_normals]) == 1
 
 
 @pytest.mark.parametrize(
@@ -39,7 +42,7 @@ def test_normal_detection(convex_cube):
 )
 def test_surface_area(cube):
     """Test surface area calculation."""
-    assert cube.surface_area == 6
+    assert cube.surface_area == approx(6)
 
 
 @pytest.mark.parametrize(
@@ -57,7 +60,7 @@ def test_set_surface_area(cube):
     "cube", ["convex_cube", "oriented_cube", "unoriented_cube"], indirect=True
 )
 def test_volume(cube):
-    assert cube.volume == 1
+    assert cube.volume == approx(1)
 
 
 @pytest.mark.parametrize(
@@ -199,7 +202,7 @@ def test_moment_inertia_damasceno_shapes(shape):
     "cube", ["convex_cube", "oriented_cube", "unoriented_cube"], indirect=True
 )
 def test_iq(cube):
-    assert cube.iq == 36 * np.pi * cube.volume ** 2 / cube.surface_area ** 3
+    assert cube.iq == approx(36 * np.pi * cube.volume ** 2 / cube.surface_area ** 3)
 
 
 def test_dihedrals():
@@ -373,7 +376,7 @@ def test_inside(convex_cube):
     def testfun(test_points):
         expected = np.all(np.logical_and(test_points >= 0, test_points <= 1), axis=1)
         actual = convex_cube.is_inside(test_points)
-        assert np.all(expected == actual)
+        np.testing.assert_allclose(expected, actual)
 
     testfun()
 
