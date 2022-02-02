@@ -16,8 +16,9 @@ jobs:
       - run: &style-check
           name: Style check
           command: |
-            python -m pip install --progress-bar off --user -U flake8 flake8-black flake8-bugbear flake8-docstrings flake8-rst-docstrings pep8-naming flake8-isort
-            python -m flake8 --show-source ./
+            python -m pip install --progress-bar off --user -U pre_commit
+            python -m pre_commit install
+            python -m pre_commit run --all-files
 
 
   test-3.9: &test-template
