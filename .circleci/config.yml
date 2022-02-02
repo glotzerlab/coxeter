@@ -22,7 +22,7 @@ jobs:
 
   test-3.10: &test-template
     docker:
-      - image: circleci/python:3.10
+      - image: cimg/python:3.10
 
     working_directory: ~/repo
 
@@ -46,16 +46,16 @@ jobs:
   test-3.9:
     <<: *test-template
     docker:
-      - image: circleci/python:3.9
+      - image: cimg/python:3.9
 
   test-3.8:
     <<: *test-template
     docker:
-      - image: circleci/python:3.8
+      - image: cimg/python:3.8
 
   pypi_wheels: &pypi_wheels
     docker:
-      - image: circleci/python:3.10
+      - image: cimg/python:3.10
 
     working_directory: ~/repo
 
