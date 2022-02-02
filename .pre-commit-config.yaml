@@ -4,7 +4,7 @@ repos:
     hooks:
       - id: end-of-file-fixer
       - id: trailing-whitespace
-        exclude: '(?:setup.cfg*|paper/.*)'
+        exclude: '(?:setup.cfg.*|paper/.*)'
       - id: debug-statements
       - id: pretty-format-json
         args:
@@ -25,18 +25,20 @@ repos:
     hooks:
       - id: black
         exclude: '(?:extern/.*)'
+  - repo: https://github.com/PyCQA/pydocstyle
+    rev: '6.1.1'
+    hooks:
+      - id: pydocstyle
+        exclude: '(?:extern/.*|tests/.*)'
   - repo: https://gitlab.com/pycqa/flake8
     rev: '4.0.1'
     hooks:
     -   id: flake8
         additional_dependencies: [
             'flake8-bugbear==22.1.11',
-            'flake8-docstrings==1.6.0', # To be replaced with running pydocstyle directly.
             'flake8-rst-docstrings==0.2.5',
             'pep8==1.7.1',
             'pep8-naming==0.12.1',
-            'flake8-black==0.2.4',  # This is redundant with running black
-            'flake8-isort==4.1.1',  # This is redundant with running isort
 			'flake8-comprehensions==3.8.0',
         ]
   - repo: https://github.com/nbQA-dev/nbQA
