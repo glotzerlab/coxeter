@@ -14,8 +14,8 @@ from conftest import make_sphero_cube
 def test_volume(radius):
     sphero_cube = make_sphero_cube(radius=radius)
     v_cube = 1
-    v_sphere = (4 / 3) * np.pi * radius ** 3
-    v_cyl = 12 * (np.pi * radius ** 2) / 4
+    v_sphere = (4 / 3) * np.pi * radius**3
+    v_cyl = 12 * (np.pi * radius**2) / 4
     v_face = sphero_cube.polyhedron.surface_area * radius
     assert np.isclose(sphero_cube.volume, v_cube + v_sphere + v_face + v_cyl)
 
@@ -23,7 +23,7 @@ def test_volume(radius):
 def test_volume_polyhedron(convex_cube, cube_points):
     """Ensure that zero radius gives the same result as a polyhedron."""
     sphero_cube = make_sphero_cube(radius=0)
-    assert sphero_cube.volume == convex_cube.volume
+    assert sphero_cube.volume == approx(convex_cube.volume)
 
 
 @given(value=floats(0.1, 1))
@@ -37,7 +37,7 @@ def test_set_volume(value):
 def test_surface_area(radius):
     sphero_cube = make_sphero_cube(radius=radius)
     sa_cube = 6
-    sa_sphere = 4 * np.pi * radius ** 2
+    sa_sphere = 4 * np.pi * radius**2
     sa_cyl = 12 * (2 * np.pi * radius) / 4
     assert np.isclose(sphero_cube.surface_area, sa_cube + sa_sphere + sa_cyl)
 
@@ -52,7 +52,7 @@ def test_set_surface_area(value):
 def test_surface_area_polyhedron(convex_cube):
     """Ensure that zero radius gives the same result as a polyhedron."""
     sphero_cube = make_sphero_cube(radius=0)
-    assert sphero_cube.surface_area == convex_cube.surface_area
+    assert sphero_cube.surface_area == approx(convex_cube.surface_area)
 
 
 @given(r=floats(0, 1.0))

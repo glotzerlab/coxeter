@@ -80,11 +80,11 @@ def test_shape523():
     family = Family523
     s = family.s
     # Icosidodecahedron
-    assert len(family.get_shape(1, family.S ** 2).vertices) == 30
-    assert len(family.get_shape(1, family.S ** 2).faces) == 32
+    assert len(family.get_shape(1, family.S**2).vertices) == 30
+    assert len(family.get_shape(1, family.S**2).faces) == 32
     # Icosahedron
-    assert len(family.get_shape(1 * s * np.sqrt(5), family.S ** 2).vertices) == 12
-    assert len(family.get_shape(1 * s * np.sqrt(5), family.S ** 2).faces) == 20
+    assert len(family.get_shape(1 * s * np.sqrt(5), family.S**2).vertices) == 12
+    assert len(family.get_shape(1 * s * np.sqrt(5), family.S**2).faces) == 20
     # Dodecahedron
     assert len(family.get_shape(1, 3).vertices) == 20
     assert len(family.get_shape(1, 3).faces) == 12

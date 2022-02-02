@@ -83,7 +83,7 @@ class Circle(Shape2D):
     @property
     def area(self):
         """float: Get the area of the circle."""
-        return np.pi * self.radius ** 2
+        return np.pi * self.radius**2
 
     @area.setter
     def area(self, value):
@@ -146,7 +146,7 @@ class Circle(Shape2D):
         that the product moment is zero by symmetry.
         """  # noqa: E501
         area = self.area
-        i_x = i_y = area / 4 * self.radius ** 2
+        i_x = i_y = area / 4 * self.radius**2
         i_xy = 0
 
         # Apply parallel axis theorem from the centroid

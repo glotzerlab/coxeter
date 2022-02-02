@@ -2,6 +2,7 @@
 # All rights reserved.
 # This software is licensed under the BSD 3-Clause License.
 import numpy as np
+from pytest import approx
 
 from coxeter import from_gsd_type_shapes
 
@@ -77,9 +78,9 @@ def test_gsd_shape_getter():
         shape = from_gsd_type_shapes(shape_spec, dimensions=dimensions)
         for param, value in shape_spec.items():
             if param == "diameter":
-                assert shape.radius == value / 2
+                assert shape.radius == approx(value / 2)
             elif param == "rounding_radius":
-                assert shape.radius == value
+                assert shape.radius == approx(value)
             elif param != "type":
                 try:
                     assert getattr(shape, param) == value

@@ -264,7 +264,7 @@ class Shape2D(Shape):
                    &= \frac{4\pi A}{p^2}
             \end{align}
         """  # noqa: E501
-        return 4 * np.pi * self.area / (self.perimeter ** 2)
+        return 4 * np.pi * self.area / (self.perimeter**2)
 
     @property
     def minimal_bounding_circle(self):
@@ -416,7 +416,7 @@ class Shape3D(Shape):
                    &= \frac{36\pi V^2}{S^3}
             \end{align}
         """  # noqa: E501
-        return np.pi * 36 * self.volume ** 2 / (self.surface_area ** 3)
+        return np.pi * 36 * self.volume**2 / (self.surface_area**3)
 
     @property
     def minimal_bounding_sphere(self):

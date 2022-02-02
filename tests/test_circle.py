@@ -20,8 +20,8 @@ from coxeter.shapes import Circle
 def test_perimeter(r):
     circle = Circle(1)
     circle.radius = r
-    assert circle.perimeter == 2 * np.pi * r
-    assert circle.circumference == 2 * np.pi * r
+    assert circle.perimeter == approx(2 * np.pi * r)
+    assert circle.circumference == approx(2 * np.pi * r)
 
 
 @given(floats(0.1, 1000))
@@ -29,16 +29,16 @@ def test_perimeter_setter(perimeter):
     """Test setting the perimeter."""
     circle = Circle(1)
     circle.perimeter = perimeter
-    assert circle.radius == perimeter / (2 * np.pi)
+    assert circle.radius == approx(perimeter / (2 * np.pi))
     assert circle.perimeter == approx(perimeter)
     circle.perimeter = perimeter + 1
-    assert circle.radius == (perimeter + 1) / (2 * np.pi)
+    assert circle.radius == approx((perimeter + 1) / (2 * np.pi))
     assert circle.perimeter == approx(perimeter + 1)
     circle.circumference = perimeter
-    assert circle.radius == perimeter / (2 * np.pi)
+    assert circle.radius == approx(perimeter / (2 * np.pi))
     assert circle.circumference == approx(perimeter)
     circle.circumference = perimeter + 1
-    assert circle.radius == (perimeter + 1) / (2 * np.pi)
+    assert circle.radius == approx((perimeter + 1) / (2 * np.pi))
     assert circle.circumference == approx(perimeter + 1)
 
 
@@ -46,7 +46,7 @@ def test_perimeter_setter(perimeter):
 def test_area(r):
     circle = Circle(1)
     circle.radius = r
-    assert circle.area == np.pi * r ** 2
+    assert circle.area == approx(np.pi * r**2)
 
 
 @given(floats(0.1, 1000))
@@ -79,8 +79,8 @@ def test_moment_inertia(r, center):
     assert np.all(np.asarray(circle.planar_moments_inertia) >= 0)
 
     circle.center = center
-    area = np.pi * r ** 2
-    expected = [np.pi / 4 * r ** 4] * 3
+    area = np.pi * r**2
+    expected = [np.pi / 4 * r**4] * 3
     expected[0] += area * center[0] ** 2
     expected[1] += area * center[1] ** 2
     expected[2] = area * center[0] * center[1]
@@ -92,20 +92,20 @@ def test_moment_inertia(r, center):
 def test_center():
     """Test getting and setting the center."""
     circle = Circle(1)
-    assert all(circle.center == (0, 0, 0))
+    np.testing.assert_allclose(circle.center, (0, 0, 0))
 
     center = (1, 1, 1)
     circle.center = center
-    assert all(circle.center == center)
+    np.testing.assert_allclose(circle.center, center)
 
 
 @given(floats(0.1, 1000))
 def test_radius_getter_setter(r):
     """Test getting and setting the radius."""
     circle = Circle(r)
-    assert circle.radius == r
+    assert circle.radius == approx(r)
     circle.radius = r + 1
-    assert circle.radius == r + 1
+    assert circle.radius == approx(r + 1)
 
 
 def test_invalid_radius():
@@ -194,7 +194,7 @@ def test_inertia_tensor():
     circle = Circle(1)
     circle.center = (0, 0, 0)
     assert np.sum(circle.inertia_tensor > 1e-6) == 1
-    assert circle.inertia_tensor[2, 2] == np.pi / 2
+    assert circle.inertia_tensor[2, 2] == approx(np.pi / 2)
 
 
 def test_repr():

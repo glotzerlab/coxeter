@@ -80,7 +80,7 @@ class Sphere(Shape3D):
     @property
     def volume(self):
         """float: Get the volume of the sphere."""
-        return (4 / 3) * np.pi * self.radius ** 3
+        return (4 / 3) * np.pi * self.radius**3
 
     @volume.setter
     def volume(self, value):
@@ -92,7 +92,7 @@ class Sphere(Shape3D):
     @property
     def surface_area(self):
         """float: Get the surface area."""
-        return 4 * np.pi * self.radius ** 2
+        return 4 * np.pi * self.radius**2
 
     @surface_area.setter
     def surface_area(self, value):
@@ -108,7 +108,7 @@ class Sphere(Shape3D):
         Assumes a constant density of 1.
         """
         vol = self.volume
-        i_xx = vol * 2 / 5 * self.radius ** 2
+        i_xx = vol * 2 / 5 * self.radius**2
         inertia_tensor = np.diag([i_xx, i_xx, i_xx])
         return translate_inertia_tensor(self.centroid, inertia_tensor, vol)
 

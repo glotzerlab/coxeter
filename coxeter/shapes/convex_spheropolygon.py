@@ -245,8 +245,8 @@ class ConvexSpheropolygon(Shape2D):
                 phi += 2 * np.pi
             a = 1
             b = -2 * norm_v * np.cos(angles[indices] - phi)
-            c = norm_v ** 2 - self.radius ** 2
-            kernel[indices] = (-b + np.sqrt(b ** 2 - 4 * a * c)) / (2 * a)
+            c = norm_v**2 - self.radius**2
+            kernel[indices] = (-b + np.sqrt(b**2 - 4 * a * c)) / (2 * a)
 
         return kernel
 
