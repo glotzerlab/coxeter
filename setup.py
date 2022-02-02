@@ -50,7 +50,7 @@ setup(
     author_email="vramasub@umich.edu",
     packages=find_packages(),
     package_data={"coxeter": DATA},
-    install_requires=["numpy", "rowan>=1.2", "scipy"],
+    install_requires=["numpy>=1.19.0", "rowan>=1.2.0", "scipy>=1.0.0"],
     tests_require=test_deps,
     extras_require=extras,
     zip_safe=False,
