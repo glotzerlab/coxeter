@@ -16,8 +16,7 @@ jobs:
       - run: &style-check
           name: Style check
           command: |
-            python -m pip install --progress-bar off --user -U pre_commit
-            python -m pre_commit install
+            python -m pip install --progress-bar off --user -U pre-commit
             python -m pre_commit run --all-files
 
 
