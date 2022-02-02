@@ -231,7 +231,7 @@ def test_inertia_tensor():
     """Test the inertia tensor calculation."""
     ellipse = Ellipse(1, 2)
     ellipse.center = (0, 0, 0)
-    assert np.sum(ellipse.inertia_tensor > 1e-6) == approx(1)
+    assert np.sum(ellipse.inertia_tensor > 1e-6) == 1
     assert ellipse.inertia_tensor[2, 2] == approx(5 * np.pi / 2)
 
 

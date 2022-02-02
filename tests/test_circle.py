@@ -61,7 +61,7 @@ def test_set_area(area):
 @given(floats(0.1, 1000))
 def test_iq(r):
     circle = Circle(r)
-    assert circle.iq == approx(1)
+    assert circle.iq == 1
 
 
 @given(floats(0.1, 1000))
@@ -193,7 +193,7 @@ def test_inertia_tensor():
     """Test the inertia tensor calculation."""
     circle = Circle(1)
     circle.center = (0, 0, 0)
-    assert np.sum(circle.inertia_tensor > 1e-6) == approx(1)
+    assert np.sum(circle.inertia_tensor > 1e-6) == 1
     assert circle.inertia_tensor[2, 2] == approx(np.pi / 2)
 
 

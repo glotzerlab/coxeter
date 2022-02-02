@@ -79,7 +79,7 @@ def test_invalid_area_setter(area):
 @given(floats(0.1, 1000))
 def test_iq(r):
     sphere = Sphere(r)
-    assert sphere.iq == approx(1)
+    assert sphere.iq == 1
 
 
 @given(

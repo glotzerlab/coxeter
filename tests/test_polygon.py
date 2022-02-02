@@ -131,21 +131,21 @@ def test_moment_inertia(square):
 def test_inertia_tensor(square):
     """Test the inertia tensor calculation."""
     square.center = (0, 0, 0)
-    assert np.sum(square.inertia_tensor > 1e-6) == approx(1)
+    assert np.sum(square.inertia_tensor > 1e-6) == 1
     np.testing.assert_allclose(square.inertia_tensor[2, 2], 1 / 6)
 
     # Validate yz plane.
     rotation = rowan.from_axis_angle([0, 1, 0], np.pi / 2)
     rotated_verts = rowan.rotate(rotation, square.vertices)
     rotated_square = ConvexPolygon(rotated_verts)
-    assert np.sum(rotated_square.inertia_tensor > 1e-6) == approx(1)
+    assert np.sum(rotated_square.inertia_tensor > 1e-6) == 1
     assert rotated_square.inertia_tensor[0, 0] == approx(1 / 6)
 
     # Validate xz plane.
     rotation = rowan.from_axis_angle([1, 0, 0], np.pi / 2)
     rotated_verts = rowan.rotate(rotation, square.vertices)
     rotated_square = ConvexPolygon(rotated_verts)
-    assert np.sum(rotated_square.inertia_tensor > 1e-6) == approx(1)
+    assert np.sum(rotated_square.inertia_tensor > 1e-6) == 1
     assert rotated_square.inertia_tensor[1, 1] == approx(1 / 6)
 
     # Validate translation along each axis.
@@ -159,7 +159,7 @@ def test_inertia_tensor(square):
         offdiagonal_tensor = translated_square.inertia_tensor.copy()
         diag_indices = np.diag_indices(3)
         offdiagonal_tensor[diag_indices] = 0
-        assert np.sum(offdiagonal_tensor > 1e-6) == approx(0)
+        assert not np.any(offdiagonal_tensor > 1e-6)
         expected_diagonals = [0, 0, 1 / 6]
         for j in range(3):
             if i != j:

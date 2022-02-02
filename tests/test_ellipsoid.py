@@ -114,8 +114,8 @@ def test_earth():
     earth_volume = 1.08e21  # or so, m^3
     earth_surface = 510.1e12  # or so, m^2
     earth = Ellipsoid(a, b, c)
-    assert earth.volume == approx(earth_volume, rel=1.01)
-    assert earth.surface_area == approx(earth_surface, rel=1.01)
+    assert earth.volume == approx(earth_volume, rel=0.01)
+    assert earth.surface_area == approx(earth_surface, rel=0.01)
 
 
 @given(floats(0.1, 1000))
