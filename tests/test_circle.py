@@ -46,7 +46,7 @@ def test_perimeter_setter(perimeter):
 def test_area(r):
     circle = Circle(1)
     circle.radius = r
-    assert circle.area == approx(np.pi * r ** 2)
+    assert circle.area == approx(np.pi * r**2)
 
 
 @given(floats(0.1, 1000))
@@ -79,8 +79,8 @@ def test_moment_inertia(r, center):
     assert np.all(np.asarray(circle.planar_moments_inertia) >= 0)
 
     circle.center = center
-    area = np.pi * r ** 2
-    expected = [np.pi / 4 * r ** 4] * 3
+    area = np.pi * r**2
+    expected = [np.pi / 4 * r**4] * 3
     expected[0] += area * center[0] ** 2
     expected[1] += area * center[1] ** 2
     expected[2] = area * center[0] * center[1]

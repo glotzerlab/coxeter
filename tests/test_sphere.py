@@ -32,14 +32,14 @@ def test_invalid_radius_setter(r):
 def test_surface_area(r):
     sphere = Sphere(1)
     sphere.radius = r
-    assert sphere.surface_area == approx(4 * np.pi * r ** 2)
+    assert sphere.surface_area == approx(4 * np.pi * r**2)
 
 
 @given(floats(0.1, 1000))
 def test_volume(r):
     sphere = Sphere(1)
     sphere.radius = r
-    assert sphere.volume == approx(4 / 3 * np.pi * r ** 3)
+    assert sphere.volume == approx(4 / 3 * np.pi * r**3)
 
 
 @given(floats(-1000, -1))
@@ -90,8 +90,8 @@ def test_inertia_tensor(r, center):
     sphere = Sphere(r)
     assert np.all(sphere.inertia_tensor >= 0)
 
-    volume = 4 / 3 * np.pi * r ** 3
-    expected = [2 / 5 * volume * r ** 2] * 3
+    volume = 4 / 3 * np.pi * r**3
+    expected = [2 / 5 * volume * r**2] * 3
     np.testing.assert_allclose(np.diag(sphere.inertia_tensor), expected)
 
     sphere.center = center

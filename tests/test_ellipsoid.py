@@ -61,7 +61,7 @@ def test_surface_area(a, b, c):
     approx_surface = (
         4
         * np.pi
-        * ((a ** p * b ** p + a ** p * c ** p + b ** p * c ** p) / 3) ** (1 / p)
+        * ((a**p * b**p + a**p * c**p + b**p * c**p) / 3) ** (1 / p)
     )
 
     ellipsoid = Ellipsoid(a, b, c)
@@ -146,7 +146,7 @@ def test_inertia_tensor(a, b, c, center):
     assert np.all(ellipsoid.inertia_tensor >= 0)
 
     volume = ellipsoid.volume
-    expected = [2 / 5 * volume * a ** 2] * 3
+    expected = [2 / 5 * volume * a**2] * 3
     np.testing.assert_allclose(np.diag(ellipsoid.inertia_tensor), expected)
 
     ellipsoid.center = center

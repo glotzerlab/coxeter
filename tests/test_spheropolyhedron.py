@@ -14,8 +14,8 @@ from conftest import make_sphero_cube
 def test_volume(radius):
     sphero_cube = make_sphero_cube(radius=radius)
     v_cube = 1
-    v_sphere = (4 / 3) * np.pi * radius ** 3
-    v_cyl = 12 * (np.pi * radius ** 2) / 4
+    v_sphere = (4 / 3) * np.pi * radius**3
+    v_cyl = 12 * (np.pi * radius**2) / 4
     v_face = sphero_cube.polyhedron.surface_area * radius
     assert np.isclose(sphero_cube.volume, v_cube + v_sphere + v_face + v_cyl)
 
@@ -37,7 +37,7 @@ def test_set_volume(value):
 def test_surface_area(radius):
     sphero_cube = make_sphero_cube(radius=radius)
     sa_cube = 6
-    sa_sphere = 4 * np.pi * radius ** 2
+    sa_sphere = 4 * np.pi * radius**2
     sa_cyl = 12 * (2 * np.pi * radius) / 4
     assert np.isclose(sphero_cube.surface_area, sa_cube + sa_sphere + sa_cyl)
 

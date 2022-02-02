@@ -326,8 +326,8 @@ class Polygon(Shape2D):
         # These are the terms in the formulas for Ix and Iy, which are computed
         # simulataneously since they're identical except that they use either
         # the x or y coordinates.
-        sv_sq = shifted_verts ** 2
-        verts_sq = verts ** 2
+        sv_sq = shifted_verts**2
+        verts_sq = verts**2
         prod = verts * shifted_verts
 
         # This accounts for the x_i*y_{i+1} and x_{i+1}*y_i terms in Ixy.

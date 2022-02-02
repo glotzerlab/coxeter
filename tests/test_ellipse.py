@@ -119,7 +119,7 @@ def test_eccentricity_ratio(a, k):
     b = a * k
     ellipse = Ellipse(a, b)
     b, a = sorted([a, b])
-    expected = np.sqrt(1 - b ** 2 / a ** 2)
+    expected = np.sqrt(1 - b**2 / a**2)
     assert ellipse.eccentricity == approx(expected)
 
 
@@ -136,7 +136,7 @@ def test_moment_inertia(a, b, center):
     # calculation is not shifted away from the origin.
     ellipse.center = center
     area = ellipse.area
-    expected = [np.pi / 4 * a * b ** 3, np.pi / 4 * a ** 3 * b, 0]
+    expected = [np.pi / 4 * a * b**3, np.pi / 4 * a**3 * b, 0]
     expected[0] += area * center[0] ** 2
     expected[1] += area * center[1] ** 2
     expected[2] = area * center[0] * center[1]

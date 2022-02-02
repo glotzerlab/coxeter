@@ -142,14 +142,14 @@ class Ellipsoid(Shape3D):
         c, b, a = sorted([self.a, self.b, self.c])
         if a > c:
             phi = np.arccos(c / a)
-            m = (a ** 2 * (b ** 2 - c ** 2)) / (b ** 2 * (a ** 2 - c ** 2))
+            m = (a**2 * (b**2 - c**2)) / (b**2 * (a**2 - c**2))
             elliptic_part = ellipeinc(phi, m) * np.sin(phi) ** 2
             elliptic_part += ellipkinc(phi, m) * np.cos(phi) ** 2
             elliptic_part /= np.sin(phi)
         else:
             elliptic_part = 1
 
-        result = 2 * np.pi * (c ** 2 + a * b * elliptic_part)
+        result = 2 * np.pi * (c**2 + a * b * elliptic_part)
         return result
 
     @surface_area.setter
@@ -167,9 +167,9 @@ class Ellipsoid(Shape3D):
         Assumes a constant density of 1.
         """
         vol = self.volume
-        i_xx = vol / 5 * (self.b ** 2 + self.c ** 2)
-        i_yy = vol / 5 * (self.a ** 2 + self.c ** 2)
-        i_zz = vol / 5 * (self.a ** 2 + self.b ** 2)
+        i_xx = vol / 5 * (self.b**2 + self.c**2)
+        i_yy = vol / 5 * (self.a**2 + self.c**2)
+        i_zz = vol / 5 * (self.a**2 + self.b**2)
         inertia_tensor = np.diag([i_xx, i_yy, i_zz])
         return translate_inertia_tensor(self.centroid, inertia_tensor, vol)
 

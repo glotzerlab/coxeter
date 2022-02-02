@@ -202,7 +202,7 @@ def test_moment_inertia_damasceno_shapes(shape):
     "cube", ["convex_cube", "oriented_cube", "unoriented_cube"], indirect=True
 )
 def test_iq(cube):
-    assert cube.iq == approx(36 * np.pi * cube.volume ** 2 / cube.surface_area ** 3)
+    assert cube.iq == approx(36 * np.pi * cube.volume**2 / cube.surface_area**3)
 
 
 def test_dihedrals():
@@ -274,20 +274,20 @@ def test_circumsphere_platonic(poly):
 
     # Ensure polyhedron is centered, then compute distances.
     poly.center = [0, 0, 0]
-    r2 = np.sum(poly.vertices ** 2, axis=1)
+    r2 = np.sum(poly.vertices**2, axis=1)
 
-    assert np.allclose(r2, circumsphere.radius ** 2)
+    assert np.allclose(r2, circumsphere.radius**2)
 
 
 @named_platonic_mark
 def test_circumsphere_radius_platonic(poly):
     # Ensure polyhedron is centered, then compute distances.
     poly.center = [0, 0, 0]
-    r2 = np.sum(poly.vertices ** 2, axis=1)
+    r2 = np.sum(poly.vertices**2, axis=1)
 
-    assert np.allclose(r2, poly.circumsphere_radius ** 2)
+    assert np.allclose(r2, poly.circumsphere_radius**2)
     poly.circumsphere_radius *= 2
-    assert np.allclose(r2 * 4, poly.circumsphere_radius ** 2)
+    assert np.allclose(r2 * 4, poly.circumsphere_radius**2)
 
 
 def test_minimal_centered_bounding_sphere():
@@ -350,10 +350,10 @@ def test_minimal_centered_bounding_sphere():
 def test_bounding_sphere_platonic(poly):
     # Ensure polyhedron is centered, then compute distances.
     poly.center = [0, 0, 0]
-    r2 = np.sum(poly.vertices ** 2, axis=1)
+    r2 = np.sum(poly.vertices**2, axis=1)
 
     bounding_sphere = poly.minimal_bounding_sphere
-    assert np.allclose(r2, bounding_sphere.radius ** 2, rtol=1e-4)
+    assert np.allclose(r2, bounding_sphere.radius**2, rtol=1e-4)
 
     with pytest.deprecated_call():
         assert sphere_isclose(bounding_sphere, poly.bounding_sphere)

@@ -111,7 +111,7 @@ class ConvexSpheropolyhedron(Shape3D):
         # 4) The volume of the extruded faces, which is the surface area of
         #    each face multiplied by the rounding radius.
         v_poly = self.polyhedron.volume
-        v_sphere = (4 / 3) * np.pi * self.radius ** 3
+        v_sphere = (4 / 3) * np.pi * self.radius**3
         v_cyl = 0
         v_face = self.polyhedron.surface_area * self.radius
 
@@ -123,7 +123,7 @@ class ConvexSpheropolyhedron(Shape3D):
             edge_length = np.linalg.norm(
                 self.polyhedron.vertices[edge[0]] - self.polyhedron.vertices[edge[1]]
             )
-            v_cyl += (np.pi * self.radius ** 2) * (phi / (2 * np.pi)) * edge_length
+            v_cyl += (np.pi * self.radius**2) * (phi / (2 * np.pi)) * edge_length
 
         return v_poly + v_sphere + v_face + v_cyl
 
@@ -156,7 +156,7 @@ class ConvexSpheropolyhedron(Shape3D):
         #    angle of the face to determine what fraction of the cylinder to
         #    include.
         a_poly = self.polyhedron.surface_area
-        a_sphere = 4 * np.pi * self.radius ** 2
+        a_sphere = 4 * np.pi * self.radius**2
         a_cyl = 0
 
         # For every pair of faces, find the dihedral angle, divide by 2*pi to

@@ -310,18 +310,18 @@ class Family523(TruncationPlaneShapeFamily):
             [-S, -S, S],
             [-S, S, -S],
             [-S, -S, -S],
-            [1.0, 0.0, S ** 2],
-            [-1.0, 0.0, -(S ** 2)],
-            [-1.0, 0.0, S ** 2],
-            [1.0, 0.0, -(S ** 2)],
-            [0.0, -(S ** 2), -1.0],
-            [0.0, S ** 2, 1.0],
-            [0.0, -(S ** 2), 1.0],
-            [0.0, S ** 2, -1.0],
-            [-(S ** 2), -1.0, 0.0],
-            [S ** 2, 1.0, 0.0],
-            [S ** 2, -1.0, 0.0],
-            [-(S ** 2), 1.0, 0.0],
+            [1.0, 0.0, S**2],
+            [-1.0, 0.0, -(S**2)],
+            [-1.0, 0.0, S**2],
+            [1.0, 0.0, -(S**2)],
+            [0.0, -(S**2), -1.0],
+            [0.0, S**2, 1.0],
+            [0.0, -(S**2), 1.0],
+            [0.0, S**2, -1.0],
+            [-(S**2), -1.0, 0.0],
+            [S**2, 1.0, 0.0],
+            [S**2, -1.0, 0.0],
+            [-(S**2), 1.0, 0.0],
             [S, -1.0, -s],
             [-S, 1.0, -s],
             [-S, -1.0, s],
@@ -435,7 +435,7 @@ class Family523(TruncationPlaneShapeFamily):
                 "The a parameter must be between 1 and s\u221A5 "
                 "(where s is the inverse of the golden ratio)."
             )
-        if not cls.S ** 2 <= c <= 3:
+        if not cls.S**2 <= c <= 3:
             raise ValueError(
                 "The c parameter must be between S^2 and 3 "
                 "(where S is the golden ratio)."

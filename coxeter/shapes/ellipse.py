@@ -125,7 +125,7 @@ class Ellipse(Shape2D):
         """
         # Requires that a >= b, so we sort the principal axes:
         b, a = sorted([self.a, self.b])
-        e = np.sqrt(1 - b ** 2 / a ** 2)
+        e = np.sqrt(1 - b**2 / a**2)
         return e
 
     @property
@@ -135,7 +135,7 @@ class Ellipse(Shape2D):
         # https://scipython.com/book/chapter-8-scipy/examples/the-circumference-of-an-ellipse/
         # It requires that a >= b, so we sort the principal axes:
         b, a = sorted([self.a, self.b])
-        result = 4 * a * ellipe(self.eccentricity ** 2)
+        result = 4 * a * ellipe(self.eccentricity**2)
         return result
 
     @perimeter.setter
@@ -180,8 +180,8 @@ class Ellipse(Shape2D):
         that the product moment is zero by symmetry.
         """  # noqa: E501
         area = self.area
-        i_x = area / 4 * self.b ** 2
-        i_y = area / 4 * self.a ** 2
+        i_x = area / 4 * self.b**2
+        i_y = area / 4 * self.a**2
         i_xy = 0
 
         # Apply parallel axis theorem from the centroid
@@ -209,7 +209,7 @@ class Ellipse(Shape2D):
     @property
     def iq(self):
         """float: The isoperimetric quotient."""
-        return np.min([4 * np.pi * self.area / (self.perimeter ** 2), 1])
+        return np.min([4 * np.pi * self.area / (self.perimeter**2), 1])
 
     @property
     def minimal_centered_bounding_circle(self):
