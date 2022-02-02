@@ -28,23 +28,21 @@ To provide a reasonable balance between a high level of backwards compatibility 
 
 .. tip::
 
-    During continuous integration, the code is checked automatically with `flake8`_, including a number of plugins that validate parts of the style.
-    To run this locally, you can install and run flake8 locally:
-
-    .. code-block:: bash
-
-        python -m pip install flake8 flake8-black flake8-bugbear flake8-docstrings flake8-rst-docstrings pep8-naming flake8-isort
-        python -m flake8 coxeter tests
-
-    To avoid having commits fail in case you forget to run this, you can set up a git pre-commit hook using `pre-commit`_:
+    During continuous integration, the code is checked automatically with `pre-commit`_.
+    To run these checks locally, you can install and run pre-commit like so:
 
     .. code-block:: bash
 
         python -m pip install pre-commit
+        pre-commit run --all-files
+
+    To avoid having commits fail in case you forget to run this, you can set up a git pre-commit hook using `pre-commit`_:
+
+    .. code-block:: bash
         pre-commit install
 
+
 .. _OneFlow: https://www.endoflineblog.com/oneflow-a-git-branching-model-and-workflow
-.. _flake8: http://flake8.pycqa.org/en/latest/
 .. _pre-commit: https://pre-commit.com/
 .. _NEP 29: https://numpy.org/neps/nep-0029-deprecation_policy.html
 

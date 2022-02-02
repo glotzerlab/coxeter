@@ -1,10 +1,13 @@
+ci:
+  autoupdate_schedule: quarterly
+
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: 'v3.4.0'
+    rev: 'v4.1.0'
     hooks:
       - id: end-of-file-fixer
       - id: trailing-whitespace
-        exclude: '(?:setup.cfg*|paper/.*)'
+        exclude: '(?:setup.cfg.*|paper/.*)'
       - id: debug-statements
       - id: pretty-format-json
         args:
@@ -15,8 +18,15 @@ repos:
       - id: check-executables-have-shebangs
       - id: check-json
       - id: check-yaml
-  - repo: https://github.com/pycqa/isort
-    rev: '5.7.0'
+  - repo: https://github.com/asottile/pyupgrade
+    rev: 'v2.31.0'
+    hooks:
+      - id: pyupgrade
+        args:
+          - --py38-plus
+        exclude: '(?:extern/.*)'
+  - repo: https://github.com/PyCQA/isort
+    rev: '5.10.1'
     hooks:
       - id: isort
         exclude: '(?:extern/.*)'
@@ -25,15 +35,24 @@ repos:
     hooks:
       - id: black
         exclude: '(?:extern/.*)'
-  - repo: local
+  - repo: https://github.com/PyCQA/pydocstyle
+    rev: '6.1.1'
     hooks:
-      - id: flake8
-        name: flake8
-        entry: flake8
-        language: python
-        types: [python]
+      - id: pydocstyle
+        exclude: '(?:extern/.*|tests/.*|setup.py|conf.py)'
+  - repo: https://github.com/PyCQA/flake8
+    rev: '4.0.1'
+    hooks:
+    -   id: flake8
+        additional_dependencies: [
+            'flake8-bugbear==22.1.11',
+            'flake8-rst-docstrings==0.2.5',
+            'pep8==1.7.1',
+            'pep8-naming==0.12.1',
+            'flake8-comprehensions==3.8.0',
+        ]
   - repo: https://github.com/nbQA-dev/nbQA
-    rev: 0.8.1
+    rev: 1.2.3
     hooks:
       - id: nbqa-pyupgrade
         args:

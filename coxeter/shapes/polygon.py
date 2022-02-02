@@ -457,7 +457,7 @@ class Polygon(Shape2D):
             # Typically a good shift for plotting the labels
             shift = (np.max(y) - np.min(y)) * 0.025
             for i, vert in enumerate(verts[:-1]):
-                ax.text(vert[0], vert[1] + shift, "{}".format(i), fontsize=10)
+                ax.text(vert[0], vert[1] + shift, f"{i}", fontsize=10)
 
     @property
     def bounding_circle(self):
