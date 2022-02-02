@@ -29,7 +29,7 @@ repos:
     rev: '6.1.1'
     hooks:
       - id: pydocstyle
-        exclude: '(?:extern/.*|tests/.*)'
+        exclude: '(?:extern/.*|tests/.*|setup.py|conf.py)'
   - repo: https://gitlab.com/pycqa/flake8
     rev: '4.0.1'
     hooks:
