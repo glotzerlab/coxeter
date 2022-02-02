@@ -83,15 +83,15 @@ To install from source, execute:
 Requirements
 ~~~~~~~~~~~~
 
--  Python >= 3.6
--  NumPy >= 1.15
+-  Python >= 3.8
+-  NumPy >= 1.19.0
 -  SciPy >= 1.0.0
--  rowan >= 1.2
+-  rowan >= 1.2.0
 
 Testing
 -------
 
-The package is currently tested for Python >= 3.6 on Unix-like systems.
+The package is currently tested for Python >= 3.8 on Unix-like systems.
 Continuous integrated testing is performed using CircleCI on these Python versions.
 
 To run the packaged unit tests, execute the following line from the root of the repository:

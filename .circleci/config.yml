@@ -7,7 +7,7 @@ version: 2
 jobs:
   style-check:
     docker:
-      - image: circleci/python:3.9
+      - image: circleci/python:3.10
 
     working_directory: ~/repo
 
@@ -21,9 +21,9 @@ jobs:
             python -m pre_commit run --all-files
 
 
-  test-3.9: &test-template
+  test-3.10: &test-template
     docker:
-      - image: circleci/python:3.9
+      - image: circleci/python:3.10
 
     working_directory: ~/repo
 
@@ -44,24 +44,19 @@ jobs:
             python -c "import scipy; print('scipy', scipy.__version__)"
             python -m pytest
 
+  test-3.9:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.9
+
   test-3.8:
     <<: *test-template
     docker:
       - image: circleci/python:3.8
 
-  test-3.7:
-    <<: *test-template
-    docker:
-      - image: circleci/python:3.7
-
-  test-3.6:
-    <<: *test-template
-    docker:
-      - image: circleci/python:3.6
-
   pypi_wheels: &pypi_wheels
     docker:
-      - image: circleci/python:3.9
+      - image: circleci/python:3.10
 
     working_directory: ~/repo
 
@@ -99,9 +94,9 @@ workflows:
   version: 2
   test:
     jobs:
+      - test-3.10
       - test-3.9
       - test-3.8
-      - test-3.7
   deploy:
     jobs:
       - pypi_wheels:
