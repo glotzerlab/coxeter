@@ -715,7 +715,7 @@ class Polyhedron(Shape3D):
             # Typically a good shift for plotting the labels
             shift = (np.max(self.vertices[:, 2]) - np.min(self.vertices[:, 2])) * 0.025
             for i, vert in enumerate(self.vertices):
-                ax.text(vert[0], vert[1], vert[2] + shift, "{}".format(i), fontsize=10)
+                ax.text(vert[0], vert[1], vert[2] + shift, f"{i}", fontsize=10)
         _set_3d_axes_equal(ax)
 
     def diagonalize_inertia(self):

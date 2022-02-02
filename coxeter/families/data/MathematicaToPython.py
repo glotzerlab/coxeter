@@ -38,7 +38,7 @@ def main():
     # Example:
     """
 
-    example = "# from coxeter.common_shapes.{0} import shape\n".format(name)
+    example = f"# from coxeter.common_shapes.{name} import shape\n"
 
     footer = """         ]
 
@@ -62,7 +62,7 @@ def main():
         line = line.replace("^", "**")
         # get string values of x,y,z
         x, y, z = line.split(", ")
-        pstring = "          ({x}, {y}, {z}),\n".format(x=x, y=y, z=z)
+        pstring = f"          ({x}, {y}, {z}),\n"
         pstrings.append(pstring)
 
     # Write the output

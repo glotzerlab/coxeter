@@ -85,7 +85,7 @@ class ConvexPolyhedron(Polyhedron):
 
     def __init__(self, vertices):
         hull = ConvexHull(vertices)
-        super(ConvexPolyhedron, self).__init__(vertices, hull.simplices, True)
+        super().__init__(vertices, hull.simplices, True)
         self.merge_faces()
 
     @property

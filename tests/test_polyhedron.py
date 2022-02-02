@@ -34,7 +34,7 @@ def test_normal_detection(convex_cube):
     for dn in detected_normals:
         # Each detected normal should be identical to exactly one expected
         # normal. No ordering is guaranteed, so we have to check them all.
-        assert sum([np.allclose(dn, en) for en in expected_normals]) == 1
+        assert sum(np.allclose(dn, en) for en in expected_normals) == 1
 
 
 @pytest.mark.parametrize(
