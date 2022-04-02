@@ -5,21 +5,6 @@
 version: 2
 
 jobs:
-  style-check:
-    docker:
-      - image: circleci/python:3.10
-
-    working_directory: ~/repo
-
-    steps:
-      - checkout
-      - run: &style-check
-          name: Style check
-          command: |
-            python -m pip install --progress-bar off --user -U pre-commit
-            python -m pre_commit run --all-files
-
-
   test-3.10: &test-template
     docker:
       - image: cimg/python:3.10
@@ -61,9 +46,6 @@ jobs:
 
     steps:
       - checkout
-
-      - run:
-          <<: *style-check
 
       - run:
           name: Create source distribution and wheels
