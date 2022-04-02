@@ -25,6 +25,7 @@ test_deps = [
     "matplotlib",
     "plato-draw",
     "pytest",
+    "pytest-cov",
 ]
 
 bounding_deps = [
