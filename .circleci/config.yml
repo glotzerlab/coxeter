@@ -2,10 +2,13 @@
 #
 # Check https://circleci.com/docs/2.0/language-python/ for more details
 #
-version: 2
+version: 2.1
+
+orbs:
+  codecov: codecov/codecov@3.2.2
 
 jobs:
-  test-3.10: &test-template
+  test-310: &test-template
     docker:
       - image: cimg/python:3.10
 
@@ -26,14 +29,14 @@ jobs:
             python --version
             python -c "import numpy; print('numpy', numpy.__version__)"
             python -c "import scipy; print('scipy', scipy.__version__)"
-            python -m pytest
+            python -m pytest -v --cov=coxeter/ --cov-report=xml
 
-  test-3.9:
+  test-39:
     <<: *test-template
     docker:
       - image: cimg/python:3.9
 
-  test-3.8:
+  test-38:
     <<: *test-template
     docker:
       - image: cimg/python:3.8
@@ -75,9 +78,11 @@ workflows:
   version: 2
   test:
     jobs:
-      - test-3.10
-      - test-3.9
-      - test-3.8
+      - test-310:
+          post-steps:
+            - codecov/upload
+      - test-39
+      - test-38
   deploy:
     jobs:
       - pypi_wheels:
