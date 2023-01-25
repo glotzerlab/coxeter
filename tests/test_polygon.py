@@ -189,7 +189,7 @@ def test_convex_area(points):
 @given(random_quat=arrays(np.float64, (4,), elements=floats(-1, 1, width=64)))
 def test_rotation_signed_area(random_quat):
     """Ensure that rotating does not change the signed area."""
-    assume(not np.all(random_quat == 0))
+    assume(not np.allclose(random_quat, 0))
     random_quat = rowan.normalize(random_quat)
     rotated_points = rowan.rotate(random_quat, get_square_points())
     poly = Polygon(rotated_points)
@@ -253,7 +253,7 @@ def test_bounding_circle_radius_random_hull(points):
 )
 def test_bounding_circle_radius_random_hull_rotation(points, rotation):
     """Test that rotating vertices does not change the bounding radius."""
-    assume(not np.all(rotation == 0))
+    assume(not np.allclose(rotation, 0))
 
     hull = ConvexHull(points)
     poly = Polygon(points[hull.vertices])
