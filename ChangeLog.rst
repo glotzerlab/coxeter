@@ -1,6 +1,14 @@
 The format is based on `Keep a Changelog <http://keepachangelog.com/en/1.0.0/>`__.
 This project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`__.
 
+v0.6.3 - 2023-01-27
+-------------------
+
+Added
+~~~~~~~
+
+- Add function to find edges of a polyhedron in vertex index and vector forms
+
 v0.6.2 - 202x-xx-xx
 -------------------
 

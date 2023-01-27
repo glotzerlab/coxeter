@@ -104,6 +104,10 @@ Tobias Dwyer
 * Added getter and setter tests to some of the shape classes.
 * Added examples for the shape classes.
 
+Jen Bradley
+
+* Added classes to return the edges of polyhedra.
+
 
 Source code
 -----------

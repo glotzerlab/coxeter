@@ -356,8 +356,35 @@ class Polyhedron(Shape3D):
 
     @property
     def faces(self):
-        """list(:class:`numpy.ndarray`): Get the polyhedron's faces."""
+        """list(:class:`numpy.ndarray`): Get the polyhedron's faces.
+
+        Results returned as vertex index lists.
+        """
         return self._faces
+
+    @property
+    def edges(self):
+        """list(:class:`numpy.ndarray`): Get the polyhedron's edges.
+
+        Results returned as vertex index pairs.
+        """
+        edges = []
+        for face in self.faces:
+            [
+                edges.append((i, j))
+                for i, j in zip(np.append(face, face[0]), np.append(face[1:], face[0]))
+                if (j, i) not in edges
+            ]
+        return edges
+
+    @property
+    def get_edge_vectors(self):
+        """list(:class:`numpy.ndarray`): Get the polyhedron's edges as vectors."""
+        vecs = []
+        vertices = self.vertices
+        for edge in self.edges:
+            vecs.append(vertices[edge[1]] - vertices[edge[0]])
+        return vecs
 
     @property
     def volume(self):
