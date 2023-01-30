@@ -1,6 +1,28 @@
 The format is based on `Keep a Changelog <http://keepachangelog.com/en/1.0.0/>`__.
 This project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`__.
 
+v0.7.0 - 2023-02-01
+-------------------
+
+Added
+~~~~~~~
+
+- Shape families and stored data for Archimedean, Catalan, and Johnson solids.
+- Shape family and stored data for n-gonal prisms and antiprisms up to n=10.
+- Shape family and stored data for equilateral pyramids and dipyramids.
+- All new solids are normalized to an edge length of one.
+
+Changed
+~~~~~~~
+
+- Increased precision of stored data for PlatonicFamily solids.
+- PlatonicFamily solids are now normalized to an edge length of one.
+
+Fixed
+~~~~~~~
+
+- Issue with certain polyhedra requiring merge_faces() to be represented accurately.
+
 v0.6.3 - 2023-01-27
 -------------------
 

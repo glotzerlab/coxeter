@@ -106,6 +106,10 @@ Tobias Dwyer
 
 Jen Bradley
 
+* Increased accuracy of stored data for PlatonicFamily solids
+* Added shape families for Archimedean, Catalan, and Johnson solids.
+* Added shape family for prisms and antiprisms.
+* Added shape family for equilateral pyramids and dipyramids.
 * Added classes to return the edges of polyhedra.
 
 
