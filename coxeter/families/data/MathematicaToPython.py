@@ -62,6 +62,7 @@ def main():
         line = line.replace("^", "**")
         # get string values of x,y,z
         x, y, z = line.split(", ")
+        print(x, y, z)
         pstring = f"          ({x}, {y}, {z}),\n"
         pstrings.append(pstring)
 
