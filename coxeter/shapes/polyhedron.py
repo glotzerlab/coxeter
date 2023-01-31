@@ -184,7 +184,7 @@ class Polyhedron(Shape3D):
         return {
             "type": "Mesh",
             "vertices": self.vertices.tolist(),
-            "faces": self.faces,
+            "indices": self.faces,
         }
 
     def _rescale(self, scale):
@@ -883,7 +883,7 @@ class Polyhedron(Shape3D):
     def __repr__(self):
         return (
             f"coxeter.shapes.Polyhedron(vertices={self.vertices.tolist()}, "
-            f"faces={np.asarray(self.faces).tolist()})"
+            f"faces={self.faces})"
         )
 
     def _plato_primitive(self, backend):

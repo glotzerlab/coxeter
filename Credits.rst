@@ -111,7 +111,7 @@ Jen Bradley
 * Added shape family for prisms and antiprisms.
 * Added shape family for equilateral pyramids and dipyramids.
 * Added classes to return the edges of polyhedra.
-
+* Bug fixes for ``repr`` and ``gsd_shape_spec``.
 
 Source code
 -----------

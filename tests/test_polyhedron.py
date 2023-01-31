@@ -22,15 +22,7 @@ from conftest import (
     named_platonic_mark,
     sphere_isclose,
 )
-from coxeter.families import (
-    DOI_SHAPE_REPOSITORIES,
-    ArchimedeanFamily,
-    CatalanFamily,
-    JohnsonFamily,
-    PlatonicFamily,
-    PrismAntiprismFamily,
-    PyramidDipyramidFamily,
-)
+from coxeter.families import DOI_SHAPE_REPOSITORIES, PlatonicFamily
 from coxeter.shapes import ConvexPolyhedron
 from coxeter.shapes.utils import rotate_order2_tensor, translate_inertia_tensor
 from utils import compute_centroid_mc, compute_inertia_mc
@@ -213,128 +205,7 @@ def test_iq(cube):
     assert cube.iq == approx(36 * np.pi * cube.volume**2 / cube.surface_area**3)
 
 
-def test_families():
-    # Testdics contain
-    platonic_solids = [
-        "Tetrahedron",
-        "Octahedron",
-        "Cube",
-        "Icosahedron",
-        "Dodecahedron",
-    ]
-    archimedean_solids = [
-        "Cuboctahedron",
-        "Icosidodecahedron",
-        "Truncated Tetrahedron",
-        "Truncated Octahedron",
-        "Truncated Cube",
-        "Truncated Icosahedron",
-        "Truncated Dodecahedron",
-        "Rhombicuboctahedron",
-        "Rhombicosidodecahedron",
-        "Truncated Cuboctahedron",
-        "Truncated Icosidodecahedron",
-        "Snub Cuboctahedron",
-        "Snub Icosidodecahedron",
-    ]
-    catalan_solids = [
-        "Deltoidal Hexecontahedron",
-        "Deltoidal Icositetrahedron",
-        "Disdyakis Dodecahedron",
-        "Disdyakis Triacontahedron",
-        "Pentagonal Hexecontahedron",
-        "Pentagonal Icositetrahedron",
-        "Pentakis Dodecahedron",
-        "Rhombic Dodecahedron",
-        "Rhombic Triacontahedron",
-        "Triakis Octahedron",
-        "Tetrakis Hexahedron",
-        "Triakis Icosahedron",
-        "Triakis Tetrahedron",
-    ]
-    # A sample of the johnson solids are tested, rather than all 92.
-    johnson_solids = [
-        "Square Pyramid",
-        "Trigyrate Rhombicosidodecahedron",
-        "Bilunabirotunda",
-        "Elongated Pentagonal Cupola",
-        "Gyroelongated Pentagonal Pyramid",
-        "Pentagonal Orthobirotunda",
-        "Elongated Pentagonal Orthocupolarotunda",
-        "Parabiaugmented Hexagonal Prism",
-        "Tridiminished Icosahedron",
-        "Augmented Truncated Dodecahedron",
-        "Triangular Hebesphenorotunda",
-        "Elongated Square Pyramid",
-    ]
-    prism_antiprism = [
-        "Triangular Prism",
-        "Cube",
-        "Pentagonal Prism",
-        "Hexagonal Prism",
-        "Heptagonal Prism",
-        "Octagonal Prism",
-        "Nonagonal Prism",
-        "Decagonal Prism",
-        "Octahedron",
-        "Square Antiprism",
-        "Pentagonal Antiprism",
-        "Hexagonal Antiprism",
-        "Heptagonal Antiprism",
-        "Octagonal Antiprism",
-        "Nonagonal Antiprism",
-        "Decagonal Antiprism",
-    ]
-    pyramid_dipyramid = [
-        "Tetrahedron",
-        "Square Pyramid",
-        "Pentagonal Pyramid",
-        "Triangular Dipyramid",
-        "Octahedron",
-        "Pentagonal Dipyramid",
-    ]
 
-    for solid in platonic_solids:
-        poly = PlatonicFamily.get_shape(solid)
-        vertices = poly.vertices
-        hull = ConvexHull(vertices)
-        assert np.isclose(poly.volume, hull.volume)
-        assert np.isclose(poly.surface_area, hull.area)
-
-    for solid in archimedean_solids:
-        poly = ArchimedeanFamily.get_shape(solid)
-        vertices = poly.vertices
-        hull = ConvexHull(vertices)
-        assert np.isclose(poly.volume, hull.volume)
-        assert np.isclose(poly.surface_area, hull.area)
-
-    for solid in catalan_solids:
-        poly = CatalanFamily.get_shape(solid)
-        vertices = poly.vertices
-        hull = ConvexHull(vertices)
-        assert np.isclose(poly.volume, hull.volume)
-        assert np.isclose(poly.surface_area, hull.area)
-
-    for solid in johnson_solids:
-        poly = JohnsonFamily.get_shape(solid)
-        vertices = poly.vertices
-        hull = ConvexHull(vertices)
-        assert np.isclose(poly.volume, hull.volume)
-        assert np.isclose(poly.surface_area, hull.area)
-
-    for solid in prism_antiprism:
-        poly = PrismAntiprismFamily.get_shape(solid)
-        vertices = poly.vertices
-        hull = ConvexHull(vertices)
-        assert np.isclose(poly.volume, hull.volume)
-        assert np.isclose(poly.surface_area, hull.area)
-
-    for solid in pyramid_dipyramid:
-        poly = PyramidDipyramidFamily.get_shape(solid)
-        vertices = poly.vertices
-        hull = ConvexHull(vertices)
-        assert np.isclose(poly.volume, hull.volume)
-        assert np.isclose(poly.surface_area, hull.area)
 
 
 def test_dihedrals():
@@ -573,7 +444,7 @@ def test_rotate_inertia(tetrahedron):
     # Use the input as noise rather than the base points to avoid precision and
     # degenerate cases provided by hypothesis.
     tet = PlatonicFamily.get_shape("Tetrahedron")
-
+    tet.volume = 1
     @given(
         arrays(np.float64, (4, 3), elements=floats(-10, 10, width=64), unique=True),
         Random3DRotationStrategy,

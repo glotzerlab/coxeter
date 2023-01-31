@@ -18,10 +18,13 @@ Changed
 - Increased precision of stored data for PlatonicFamily solids.
 - PlatonicFamily solids are now normalized to an edge length of one.
 
+
 Fixed
 ~~~~~~~
 
 - Issue with certain polyhedra requiring merge_faces() to be represented accurately.
+- Issue where ``repr`` would fail for solids with more than one face type.
+- ``gsd_shape_spec`` property of the Polyhedron class now returns a correctly keyed GSD dict.
 
 v0.6.3 - 2023-01-27
 -------------------
