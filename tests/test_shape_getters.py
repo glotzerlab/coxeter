@@ -3,17 +3,18 @@
 # This software is licensed under the BSD 3-Clause License.
 import numpy as np
 from pytest import approx
-
 from scipy.spatial import ConvexHull
+
 from coxeter import from_gsd_type_shapes
-from coxeter.families import( 
+from coxeter.families import (
     ArchimedeanFamily,
     CatalanFamily,
     JohnsonFamily,
     PlatonicFamily,
     PrismAntiprismFamily,
-    PyramidDipyramidFamily
+    PyramidDipyramidFamily,
 )
+
 
 def test_shape_families():
     # Testdics contain
@@ -137,6 +138,7 @@ def test_shape_families():
         hull = ConvexHull(vertices)
         assert np.isclose(poly.volume, hull.volume)
         assert np.isclose(poly.surface_area, hull.area)
+
 
 def test_gsd_shape_getter():
     test_specs = [
