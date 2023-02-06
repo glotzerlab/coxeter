@@ -104,6 +104,8 @@ Tobias Dwyer
 * Added getter and setter tests to some of the shape classes.
 * Added examples for the shape classes.
 
+Jen Bradley
+* Bug fixes for ``gsd_shape_spec`` to correctly compy with GSD specifications.
 
 Source code
 -----------
