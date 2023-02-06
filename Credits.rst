@@ -104,6 +104,8 @@ Tobias Dwyer
 * Added getter and setter tests to some of the shape classes.
 * Added examples for the shape classes.
 
+Jen Bradley
+* Fixed error where ``__repr__`` would fail for polyhedra with multiple face types.
 
 Source code
 -----------
