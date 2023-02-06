@@ -23,7 +23,7 @@ from conftest import (
     sphere_isclose,
 )
 from coxeter.families import DOI_SHAPE_REPOSITORIES, PlatonicFamily
-from coxeter.shapes import ConvexPolyhedron
+from coxeter.shapes import ConvexPolyhedron, Polyhedron
 from coxeter.shapes.utils import rotate_order2_tensor, translate_inertia_tensor
 from utils import compute_centroid_mc, compute_inertia_mc
 
@@ -235,6 +235,8 @@ def test___repr__():
     ]
     for name in test_platonic_shapes:
         poly = PlatonicFamily.get_shape(name)
+        # repr() does not return faces for ConvexPolyhedron
+        poly = Polyhedron(poly.vertices, poly.faces)
         # Try to run repr() for each shape
         repr(poly)
     cuboctahedron_vertices = [
@@ -285,8 +287,10 @@ def test___repr__():
     ]
     # Now, test repr() for a few irregular polyhedra
     cuboctahedron = ConvexPolyhedron(cuboctahedron_vertices)
+    cuboctahedron = Polyhedron(cuboctahedron.vertices, cuboctahedron.faces)
     repr(cuboctahedron)
     icosidodecahedron = ConvexPolyhedron(icosidodecahedron_vertices)
+    icosidodecahedron = Polyhedron(icosidodecahedron.vertices, icosidodecahedron.faces)
     repr(icosidodecahedron)
 
 
