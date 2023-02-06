@@ -1,6 +1,6 @@
 *~
 *.swp
-
+.DS_Store
 # Packages
 *.egg
 *.egg-info*
@@ -17,6 +17,7 @@ lib
 lib64
 __pycache__
 .hypothesis
+.coverage
 *.pyc
 doc/source/bibtex.json
 .ipynb_checkpoints
