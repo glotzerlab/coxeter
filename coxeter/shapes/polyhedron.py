@@ -184,7 +184,7 @@ class Polyhedron(Shape3D):
         return {
             "type": "Mesh",
             "vertices": self.vertices.tolist(),
-            "faces": self.faces,
+            "indices": self.faces,
         }
 
     def _rescale(self, scale):

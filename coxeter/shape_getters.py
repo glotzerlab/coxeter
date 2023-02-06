@@ -77,6 +77,6 @@ def from_gsd_type_shapes(params, dimensions=3):  # noqa: C901
         else:
             return ConvexPolyhedron(params["vertices"])
     elif params["type"] == "Mesh":
-        return Polyhedron(params["vertices"], params["faces"])
+        return Polyhedron(params["vertices"], params["indices"])
     else:
         raise ValueError("Unsupported shape type.")
