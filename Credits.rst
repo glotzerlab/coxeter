@@ -105,7 +105,7 @@ Tobias Dwyer
 * Added examples for the shape classes.
 
 Jen Bradley
-* Bug fixes for ``gsd_shape_spec`` to correctly compy with GSD specifications.
+* Bug fixes for ``gsd_shape_spec`` to correctly comply with GSD specifications.
 
 Source code
 -----------
