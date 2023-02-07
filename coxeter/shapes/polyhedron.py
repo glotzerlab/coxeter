@@ -384,6 +384,7 @@ class Polyhedron(Shape3D):
         vertices = self.vertices
         for edge in self.edges:
             vecs.append(vertices[edge[1]] - vertices[edge[0]])
+        return vecs
 
     @property
     def volume(self):
