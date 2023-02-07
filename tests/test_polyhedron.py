@@ -100,6 +100,7 @@ def test_convex_surface_area(points):
 )
 def test_volume_center_shift(cube):
     """Make sure that moving the center doesn't affect the volume."""
+
     # Use a nested function to avoid warnings from hypothesis. In this case, it
     # is safe to reuse the cube fixture.
     # See https://github.com/HypothesisWorks/hypothesis/issues/377
