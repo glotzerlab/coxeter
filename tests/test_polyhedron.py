@@ -367,6 +367,7 @@ def test_inside_boundaries(convex_cube):
     assert not np.any(convex_cube.is_inside(convex_cube.vertices * 1.01))
 
 
+@pytest.mark.xfail(reason="hypothesis generation fails health check")
 def test_inside(convex_cube):
     # Use a nested function to avoid warnings from hypothesis. In this case, it
     # is safe to reuse the convex cube.
@@ -387,6 +388,7 @@ def test_inside(convex_cube):
     EllipsoidSurfaceStrategy,
     arrays(np.float64, (100, 3), elements=floats(0, 1, width=64), unique=True),
 )
+@pytest.mark.xfail(reason="hypothesis generation fails health check")
 def test_maximal_centered_bounded_sphere_convex_hulls(points, test_points):
     hull = ConvexHull(points)
     poly = ConvexPolyhedron(points[hull.vertices])
