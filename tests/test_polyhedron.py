@@ -380,12 +380,11 @@ def test_inside(convex_cube):
     testfun()
 
 
-@settings(deadline=500)
+@settings(max_examples=10)
 @given(
     EllipsoidSurfaceStrategy,
-    arrays(np.float64, (100, 3), elements=floats(0, 1, width=64), unique=True),
+    arrays(np.float64, (100, 3), elements=floats(0, 1, width=64)),
 )
-@pytest.mark.xfail(reason="hypothesis generation fails health check")
 def test_maximal_centered_bounded_sphere_convex_hulls(points, test_points):
     hull = ConvexHull(points)
     poly = ConvexPolyhedron(points[hull.vertices])
