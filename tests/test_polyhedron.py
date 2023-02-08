@@ -367,14 +367,11 @@ def test_inside_boundaries(convex_cube):
     assert not np.any(convex_cube.is_inside(convex_cube.vertices * 1.01))
 
 
-@pytest.mark.xfail(reason="hypothesis generation fails health check")
 def test_inside(convex_cube):
     # Use a nested function to avoid warnings from hypothesis. In this case, it
     # is safe to reuse the convex cube.
     # See https://github.com/HypothesisWorks/hypothesis/issues/377
-    @given(
-        arrays(np.float64, (100, 3), elements=floats(-10, 10, width=64), unique=True)
-    )
+    @given(arrays(np.float64, (100, 3), elements=floats(-10, 10, width=64)))
     def testfun(test_points):
         expected = np.all(np.logical_and(test_points >= 0, test_points <= 1), axis=1)
         actual = convex_cube.is_inside(test_points)
