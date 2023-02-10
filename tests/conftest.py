@@ -280,6 +280,20 @@ named_johnson_mark = pytest.mark.parametrize(
     ids=_johnson_shape_names,
 )
 
+_prismantiprism_shape_names = PrismAntiprismFamily.data.keys()
+named_prismantiprism_mark = pytest.mark.parametrize(
+    argnames="poly",
+    argvalues=[PrismAntiprismFamily.get_shape(name) for name in _prismantiprism_shape_names],
+    ids=_prismantiprism_shape_names,
+)
+
+_pyramiddipyramid_shape_names = PrismAntiprismFamily.data.keys()
+named_pyramiddipyramid_mark = pytest.mark.parametrize(
+    argnames="poly",
+    argvalues=[PyramidDipyramidFamily.get_shape(name) for name in _pyramiddipyramid_shape_names],
+    ids=_pyramiddipyramid_shape_names,
+)
+
 
 def regular_polygons(n=10):
     """Generate regular polygons."""
