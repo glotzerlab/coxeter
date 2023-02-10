@@ -163,13 +163,13 @@ def test_surface_area_damasceno_shapes(shape):
     assert np.isclose(poly.surface_area, hull.area)
 
 
-@combine_marks(named_platonic_mark,named_archimedean_mark,named_catalan_mark,named_johnson_mark)
+@combine_marks(named_platonic_mark,named_archimedean_mark,named_catalan_mark,named_johnson_mark,named_prismantiprism_mark,named_pyramiddipyramid_mark)
 def test_volume_shapes(poly):
     vertices = poly.vertices
     hull = ConvexHull(vertices)
     assert np.isclose(poly.volume, hull.volume)
 
-@combine_marks(named_platonic_mark,named_archimedean_mark,named_catalan_mark,named_johnson_mark)
+@combine_marks(named_platonic_mark,named_archimedean_mark,named_catalan_mark,named_johnson_mark,named_prismantiprism_mark,named_pyramiddipyramid_mark)
 def test_surface_area_shapes(poly):
     vertices = poly.vertices
     hull = ConvexHull(vertices)

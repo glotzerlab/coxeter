@@ -287,7 +287,7 @@ named_prismantiprism_mark = pytest.mark.parametrize(
     ids=_prismantiprism_shape_names,
 )
 
-_pyramiddipyramid_shape_names = PrismAntiprismFamily.data.keys()
+_pyramiddipyramid_shape_names = PyramidDipyramidFamily.data.keys()
 named_pyramiddipyramid_mark = pytest.mark.parametrize(
     argnames="poly",
     argvalues=[PyramidDipyramidFamily.get_shape(name) for name in _pyramiddipyramid_shape_names],
