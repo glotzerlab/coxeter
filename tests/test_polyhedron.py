@@ -225,7 +225,6 @@ def test_dihedrals():
 
 
 def test_edges():
-    # The shapes in the PlatonicFamily are normalized to unit volume
     known_shapes = {
         "Tetrahedron": np.sqrt(2) * np.cbrt(3),
         "Cube": 1,
@@ -235,8 +234,8 @@ def test_edges():
     }
     for name, edgelength in known_shapes.items():
         poly = PlatonicFamily.get_shape(name)
-        if name == "Dodecahedron":
-            poly.merge_faces(rtol=1)
+        # Normalize volume to ensure known_shape data is accurate
+        poly.volume = 1
         for edge in poly.get_edge_vectors:
             # rtol must be lowered to accomodate small inaccuracies in vertex locations
             assert np.isclose(np.linalg.norm(edge), edgelength, rtol=1e-4)
@@ -255,8 +254,8 @@ def test_curvature():
 
     for name, curvature in known_shapes.items():
         poly = PlatonicFamily.get_shape(name)
-        if name == "Dodecahedron":
-            poly.merge_faces(rtol=1)
+        # Normalize volume to ensure known_shape data is accurate
+        poly.volume = 1
         assert np.isclose(poly.mean_curvature, curvature)
 
 
@@ -448,6 +447,7 @@ def test_rotate_inertia(tetrahedron):
     # Use the input as noise rather than the base points to avoid precision and
     # degenerate cases provided by hypothesis.
     tet = PlatonicFamily.get_shape("Tetrahedron")
+    tet.volume = 1
 
     @given(
         arrays(np.float64, (4, 3), elements=floats(-10, 10, width=64), unique=True),

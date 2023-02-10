@@ -104,6 +104,11 @@ Tobias Dwyer
 * Added getter and setter tests to some of the shape classes.
 * Added examples for the shape classes.
 
+Jen Bradley
+* Increased accuracy of stored data for PlatonicFamily solids
+* Added shape families for Archimedean, Catalan, and Johnson solids.
+* Added shape family for prisms and antiprisms.
+* Added shape family for equilateral pyramids and dipyramids.
 
 Source code
 -----------

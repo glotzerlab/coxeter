@@ -17,7 +17,15 @@ associated with different scientific publications. This dataset is useful for
 reproducing the exact set of shapes from publications.
 """
 
-from .common import PlatonicFamily, RegularNGonFamily
+from .common import (
+    ArchimedeanFamily,
+    CatalanFamily,
+    JohnsonFamily,
+    PlatonicFamily,
+    PrismAntiprismFamily,
+    PyramidDipyramidFamily,
+    RegularNGonFamily,
+)
 from .doi_data_repositories import _doi_shape_collection_factory, _KeyedDefaultDict
 from .plane_shape_families import (
     Family323Plus,
@@ -53,6 +61,11 @@ __all__ = [
     "Family423",
     "Family523",
     "PlatonicFamily",
+    "ArchimedeanFamily",
+    "CatalanFamily",
+    "JohnsonFamily",
+    "PrismAntiprismFamily",
+    "PyramidDipyramidFamily",
     "RegularNGonFamily",
     "ShapeFamily",
     "TabulatedShapeFamily",
