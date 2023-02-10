@@ -20,7 +20,11 @@ from conftest import (
     get_oriented_cube_normals,
     named_damasceno_shapes_mark,
     named_platonic_mark,
+    named_archimedean_mark,
+    named_catalan_mark,
+    named_johnson_mark,
     sphere_isclose,
+    combine_marks,
 )
 from coxeter.families import DOI_SHAPE_REPOSITORIES, PlatonicFamily
 from coxeter.shapes import ConvexPolyhedron
@@ -146,6 +150,28 @@ def test_volume_damasceno_shapes(shape):
     poly = ConvexPolyhedron(vertices)
     hull = ConvexHull(vertices)
     assert np.isclose(poly.volume, hull.volume)
+
+@named_damasceno_shapes_mark
+def test_surface_area_damasceno_shapes(shape):
+    if shape["name"] in ("RESERVED", "Sphere"):
+        return
+    vertices = shape["vertices"]
+    poly = ConvexPolyhedron(vertices)
+    hull = ConvexHull(vertices)
+    assert np.isclose(poly.surface_area, hull.area)
+
+
+@combine_marks(named_platonic_mark,named_archimedean_mark,named_catalan_mark,named_johnson_mark)
+def test_volume_shapes(poly):
+    vertices = poly.vertices
+    hull = ConvexHull(vertices)
+    assert np.isclose(poly.volume, hull.volume)
+
+@combine_marks(named_platonic_mark,named_archimedean_mark,named_catalan_mark,named_johnson_mark)
+def test_surface_area_shapes(poly):
+    vertices = poly.vertices
+    hull = ConvexHull(vertices)
+    assert np.isclose(poly.surface_area, hull.area)
 
 
 # This test is a bit slow (a couple of minutes), so skip running it locally.
@@ -284,9 +310,9 @@ def test_tau():
 def test_asphericity():
     pass
 
-
-@named_platonic_mark
-def test_circumsphere_platonic(poly):
+# Circumspheres cannot be generated for some Johnson and Catalan solids
+@combine_marks(named_platonic_mark,named_archimedean_mark)
+def test_circumsphere(poly):
     circumsphere = poly.circumsphere
 
     # Ensure polyhedron is centered, then compute distances.
@@ -296,8 +322,8 @@ def test_circumsphere_platonic(poly):
     assert np.allclose(r2, circumsphere.radius**2)
 
 
-@named_platonic_mark
-def test_circumsphere_radius_platonic(poly):
+@combine_marks(named_platonic_mark,named_archimedean_mark)
+def test_circumsphere_radius(poly):
     # Ensure polyhedron is centered, then compute distances.
     poly.center = [0, 0, 0]
     r2 = np.sum(poly.vertices**2, axis=1)
@@ -424,8 +450,8 @@ def test_maximal_centered_bounded_sphere_convex_hulls(points, test_points):
     with pytest.deprecated_call():
         assert sphere_isclose(insphere, poly.insphere_from_center)
 
-
-@named_platonic_mark
+#Platonic and Catalan shapes have a centered insphere, but Archimedean and Johnson do not
+@combine_marks(named_platonic_mark,named_catalan_mark)
 def test_insphere(poly):
     # The insphere should be centered for platonic solids.
     poly_insphere = poly.insphere
@@ -433,7 +459,7 @@ def test_insphere(poly):
         poly_insphere, poly.maximal_centered_bounded_sphere, atol=1e-4
     )
 
-    # The insphere of a platonic solid should be rotation invariant.
+    # The insphere of a platonic or catalan solid should be rotation invariant.
     @settings(deadline=300)
     @given(Random3DRotationStrategy)
     def check_rotation_invariance(quat):
