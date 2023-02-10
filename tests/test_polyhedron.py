@@ -397,7 +397,7 @@ def test_bounding_sphere(poly):
     r2 = np.sum(poly.vertices**2, axis=1)
 
     bounding_sphere = poly.minimal_bounding_sphere
-    assert np.allclose(r2, bounding_sphere.radius**2, rtol=1e-4)
+    assert np.allclose(r2, bounding_sphere.radius**2, rtol=1e-5)
 
     with pytest.deprecated_call():
         assert sphere_isclose(bounding_sphere, poly.bounding_sphere)
