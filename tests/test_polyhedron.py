@@ -388,9 +388,10 @@ def test_minimal_centered_bounding_sphere():
 
     testfun()
 
-
-@named_platonic_mark
-def test_bounding_sphere_platonic(poly):
+# Shapes where |aspect ratio - 1| >> 0 cannot pass this test: this includes many 
+# Johnson solids. Shapes with large numbers of vertices also tend to fail
+@combine_marks(named_platonic_mark,named_archimedean_mark)
+def test_bounding_sphere(poly):
     # Ensure polyhedron is centered, then compute distances.
     poly.center = [0, 0, 0]
     r2 = np.sum(poly.vertices**2, axis=1)
