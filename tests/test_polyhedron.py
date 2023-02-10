@@ -23,6 +23,8 @@ from conftest import (
     named_archimedean_mark,
     named_catalan_mark,
     named_johnson_mark,
+    named_prismantiprism_mark,
+    named_pyramiddipyramid_mark,
     sphere_isclose,
     combine_marks,
 )
@@ -612,12 +614,12 @@ def test_form_factor(cube):
     )
 
 
-@named_platonic_mark
+@combine_marks(named_platonic_mark,named_archimedean_mark,named_catalan_mark,named_johnson_mark,named_prismantiprism_mark,named_pyramiddipyramid_mark)
 def test_get_set_minimal_bounding_sphere_radius(poly):
     _test_get_set_minimal_bounding_sphere_radius(poly)
 
 
-@named_platonic_mark
+@combine_marks(named_platonic_mark,named_archimedean_mark,named_catalan_mark,named_johnson_mark,named_prismantiprism_mark,named_pyramiddipyramid_mark)
 def test_get_set_minimal_centered_bounding_sphere_radius(poly):
     _test_get_set_minimal_bounding_sphere_radius(poly, True)
 
