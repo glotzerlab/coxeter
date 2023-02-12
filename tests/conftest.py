@@ -7,7 +7,6 @@ import rowan
 from hypothesis.strategies import builds, floats, integers
 from scipy.spatial import ConvexHull
 
-from coxeter.families import DOI_SHAPE_REPOSITORIES, PlatonicFamily, RegularNGonFamily
 from coxeter.families import (
     DOI_SHAPE_REPOSITORIES,
     ArchimedeanFamily,
@@ -20,12 +19,13 @@ from coxeter.families import (
 )
 from coxeter.shapes import ConvexPolyhedron, ConvexSpheropolyhedron, Polyhedron, Shape2D
 
+
 # Define a function to combine marks in order to more compactly test shape families
 def combine_marks(*marks):
     combinedargvalues = []
     combinedids = []
     for mark in marks:
-        argvalues, ids = mark.kwargs['argvalues'], mark.kwargs['ids']
+        argvalues, ids = mark.kwargs["argvalues"], mark.kwargs["ids"]
         combinedargvalues.extend(argvalues)
         combinedids.extend(ids)
     print(combinedids)
@@ -36,14 +36,6 @@ def combine_marks(*marks):
     )
 
     return combined_mark
-
-    #return func
-#### RMOVE
-#amed_platonic_mark = pytest.mark.parametrize(
-#    argnames="poly",
-#    argvalues=[PlatonicFamily.get_shape(name) for name in _platonic_shape_names],
-#    ids=_platonic_shape_names,
-#)
 
 
 # Need to declare this outside the fixture so that it can be used in multiple
@@ -235,6 +227,7 @@ named_platonic_mark = pytest.mark.parametrize(
     ids=_platonic_shape_names,
 )
 
+
 def archimedean_solids():
     """Generate archimedean solids."""
     for shape_name in ArchimedeanFamily.data:
@@ -250,6 +243,7 @@ named_archimedean_mark = pytest.mark.parametrize(
     ids=_archimedean_shape_names,
 )
 
+
 def catalan_solids():
     """Generate catalan solids."""
     for shape_name in CatalanFamily.data:
@@ -264,6 +258,7 @@ named_catalan_mark = pytest.mark.parametrize(
     argvalues=[CatalanFamily.get_shape(name) for name in _catalan_shape_names],
     ids=_catalan_shape_names,
 )
+
 
 def johnson_solids():
     """Generate johnson solids."""
@@ -283,14 +278,18 @@ named_johnson_mark = pytest.mark.parametrize(
 _prismantiprism_shape_names = PrismAntiprismFamily.data.keys()
 named_prismantiprism_mark = pytest.mark.parametrize(
     argnames="poly",
-    argvalues=[PrismAntiprismFamily.get_shape(name) for name in _prismantiprism_shape_names],
+    argvalues=[
+        PrismAntiprismFamily.get_shape(name) for name in _prismantiprism_shape_names
+    ],
     ids=_prismantiprism_shape_names,
 )
 
 _pyramiddipyramid_shape_names = PyramidDipyramidFamily.data.keys()
 named_pyramiddipyramid_mark = pytest.mark.parametrize(
     argnames="poly",
-    argvalues=[PyramidDipyramidFamily.get_shape(name) for name in _pyramiddipyramid_shape_names],
+    argvalues=[
+        PyramidDipyramidFamily.get_shape(name) for name in _pyramiddipyramid_shape_names
+    ],
     ids=_pyramiddipyramid_shape_names,
 )
 
