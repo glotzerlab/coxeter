@@ -456,17 +456,35 @@ def test_maximal_centered_bounded_sphere_convex_hulls(points, test_points):
 
 
 # Platonic and Catalan shapes have a centered insphere, but Archimedean
-# and Johnson solids do not
-@combine_marks(named_platonic_mark, named_catalan_mark)
-def test_insphere(poly):
-    # The insphere should be centered for platonic or catalan solids.
+# and Johnson solids do not.
+@named_platonic_mark
+def test_insphere_platonic(poly):
+    # The insphere should be centered for platonic solids.
     poly_insphere = poly.insphere
     assert sphere_isclose(
         poly_insphere, poly.maximal_centered_bounded_sphere, atol=1e-5
     )
 
-    # The insphere of a platonic or catalan solid should be rotation invariant.
+    # The insphere of a platonic solid should be rotation invariant.
     @settings(deadline=500)
+    @given(Random3DRotationStrategy)
+    def check_rotation_invariance(quat):
+        rotated_poly = ConvexPolyhedron(rowan.rotate(quat, poly.vertices))
+        assert sphere_isclose(poly_insphere, rotated_poly.insphere, atol=1e-5)
+
+    check_rotation_invariance()
+
+
+@named_catalan_mark
+def test_insphere_catalan(poly):
+    # The insphere should be centered for catalan solids.
+    poly_insphere = poly.insphere
+    assert sphere_isclose(
+        poly_insphere, poly.maximal_centered_bounded_sphere, atol=1e-5
+    )
+
+    # The insphere of a catalan solid should be rotation invariant.
+    @settings(deadline=1200)
     @given(Random3DRotationStrategy)
     def check_rotation_invariance(quat):
         rotated_poly = ConvexPolyhedron(rowan.rotate(quat, poly.vertices))
