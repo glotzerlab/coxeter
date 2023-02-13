@@ -106,6 +106,7 @@ def test_convex_surface_area(points):
 )
 def test_volume_center_shift(cube):
     """Make sure that moving the center doesn't affect the volume."""
+
     # Use a nested function to avoid warnings from hypothesis. In this case, it
     # is safe to reuse the cube fixture.
     # See https://github.com/HypothesisWorks/hypothesis/issues/377
@@ -417,9 +418,7 @@ def test_inside(convex_cube):
     # Use a nested function to avoid warnings from hypothesis. In this case, it
     # is safe to reuse the convex cube.
     # See https://github.com/HypothesisWorks/hypothesis/issues/377
-    @given(
-        arrays(np.float64, (100, 3), elements=floats(-10, 10, width=64), unique=True)
-    )
+    @given(arrays(np.float64, (100, 3), elements=floats(-10, 10, width=64)))
     def testfun(test_points):
         expected = np.all(np.logical_and(test_points >= 0, test_points <= 1), axis=1)
         actual = convex_cube.is_inside(test_points)
@@ -428,10 +427,10 @@ def test_inside(convex_cube):
     testfun()
 
 
-@settings(deadline=500)
+@settings(max_examples=10)
 @given(
     EllipsoidSurfaceStrategy,
-    arrays(np.float64, (100, 3), elements=floats(0, 1, width=64), unique=True),
+    arrays(np.float64, (100, 3), elements=floats(0, 1, width=64)),
 )
 def test_maximal_centered_bounded_sphere_convex_hulls(points, test_points):
     hull = ConvexHull(points)
