@@ -81,6 +81,8 @@ def test_gsd_shape_getter():
                 assert shape.radius == approx(value / 2)
             elif param == "rounding_radius":
                 assert shape.radius == approx(value)
+            elif param == "indices":
+                assert shape.faces == value
             elif param != "type":
                 try:
                     assert getattr(shape, param) == value
