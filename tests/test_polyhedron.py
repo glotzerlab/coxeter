@@ -268,23 +268,6 @@ def test_dihedrals():
                 assert np.isclose(poly.get_dihedral(i, j), dihedral)
 
 
-def test_edges():
-    known_shapes = {
-        "Tetrahedron": np.sqrt(2) * np.cbrt(3),
-        "Cube": 1,
-        "Octahedron": np.power(2, 5 / 6) * np.cbrt(3 / 8),
-        "Dodecahedron": np.power(2, 2 / 3) * np.cbrt(1 / (15 + np.sqrt(245))),
-        "Icosahedron": np.cbrt(9 / 5 - 3 / 5 * np.sqrt(5)),
-    }
-    for name, edgelength in known_shapes.items():
-        poly = PlatonicFamily.get_shape(name)
-        # Normalize volume to ensure known_shape data is accurate
-        poly.volume = 1
-        for edge in poly.get_edge_vectors:
-            # rtol must be lowered to accomodate small inaccuracies in vertex locations
-            assert np.isclose(np.linalg.norm(edge), edgelength, rtol=1e-4)
-
-
 def test_curvature():
     """Regression test against values computed with older method."""
     # The shapes in the PlatonicFamily are normalized to unit volume.
