@@ -556,10 +556,15 @@ class Polyhedron(Shape3D):
                 'directly from PyPI using "pip install miniball".'
             )
 
+        # Define a check function to ensure points lie within a sphere
+        def points_within_sphere(points, center, radius):
+            return np.linalg.norm(points - center, axis=1) <= radius
+
         # The algorithm in miniball involves solving a linear system and
         # can therefore occasionally be somewhat unstable. Applying a
-        # random rotation will usually fix the issue.
-        max_attempts = 10
+        # random rotation will usually fix the issue, and checking if
+        # points lie inside will guarantee a correct answer.
+        max_attempts = 20
         attempt = 0
         current_rotation = [1, 0, 0, 0]
         vertices = self.vertices
@@ -567,8 +572,13 @@ class Polyhedron(Shape3D):
             attempt += 1
             try:
                 center, r2 = miniball.get_bounding_ball(vertices)
+                assert np.all(points_within_sphere(vertices, center, np.sqrt(r2)))
                 break
             except np.linalg.LinAlgError:
+                current_rotation = rowan.random.rand(1)
+                vertices = rowan.rotate(current_rotation, vertices)
+            except AssertionError:
+                print("Miniball sphere does not contain vertices. Retesting...")
                 current_rotation = rowan.random.rand(1)
                 vertices = rowan.rotate(current_rotation, vertices)
         else:
