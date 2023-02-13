@@ -101,7 +101,8 @@ The following parameters are required by this class:
 CatalanFamily = TabulatedGSDShapeFamily.from_json_file(
     os.path.join(_DATA_FOLDER, "catalan.json"),
     classname="CatalanFamily",
-    docstring="""The family of Catalan solids, also known as Archimedean duals (13 total).
+    docstring="""The family of Catalan solids, also known as Archimedean duals
+    (13 total).
 The following parameters are required by this class:
     - name: The name of the CatalanFamily solid. Options are "Deltoidal  \
             Hexecontahedron", "DeltoidalIcositetrahedron", "Disdyakis \
