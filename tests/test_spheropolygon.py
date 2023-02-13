@@ -152,7 +152,7 @@ def test_convex_signed_area(square_points):
         )
     )
     def testfun(random_quat):
-        assume(not np.all(random_quat == 0))
+        assume(not np.allclose(random_quat, 0))
         random_quat = rowan.normalize(random_quat)
         rotated_points = rowan.rotate(random_quat, square_points)
         r = 1
