@@ -108,15 +108,12 @@ def points_from_ellipsoid_surface(a, b, c=0, n=10):
     Returns:
         :math:`(N, 3)` or :math:`(N, 2)` :class:`numpy.ndarray`: The points.
     """
-    points = []
-    points = np.zeros((n, 3))
-    points[:, 0] = np.random.normal(0, a, n)
-    points[:, 1] = np.random.normal(0, b, n)
-    if c > 0:
-        points[:, 2] = np.random.normal(0, c, n)
-    ds = np.linalg.norm(points / [a, b, c if c else 1], axis=-1)
+    scale = (a, b, c) if c > 0 else (a, b)
+    size = (n, 3 if c > 0 else 2)
+    points = np.random.normal(0, scale, size)
+    ds = np.linalg.norm(points / ([a, b, c] if c > 0 else [a, b]), axis=-1)
     points /= ds[:, np.newaxis]
-    return points if c else points[:, :2]
+    return points
 
 
 EllipsoidSurfaceStrategy = builds(
