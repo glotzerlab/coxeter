@@ -18,7 +18,7 @@ from .sphere import Sphere
 from .utils import _generate_ax, _set_3d_axes_equal, translate_inertia_tensor
 
 try:
-    import miniball
+    import cyminiball
 
     MINIBALL = True
 except ImportError:
@@ -550,25 +550,38 @@ class Polyhedron(Shape3D):
         """:class:`~.Sphere`: Get the polyhedron's bounding sphere."""
         if not MINIBALL:
             raise ImportError(
-                "The miniball module must be installed. It can "
+                "The cyminiball module must be installed. It can "
                 "be installed as an extra with coxeter (e.g. "
                 'with "pip install coxeter[bounding_sphere]") or '
-                'directly from PyPI using "pip install miniball".'
+                'directly from PyPI using "pip install cyminiball".'
             )
+        # The miniball algorithm (in this case, Gärtner's miniball) can
+        # experience numerical instability of ~10x machine epsilon. If an incorrect
+        # miniball is found, applying random rotations will usually fix the issue.
 
-        # The algorithm in miniball involves solving a linear system and
-        # can therefore occasionally be somewhat unstable. Applying a
-        # random rotation will usually fix the issue.
-        max_attempts = 10
+        # The following subfunction checks if all vertices lie within the
+        # minimal bounding sphere, to a tolerance of 1e-15.
+        def verify_inside(points, center, radius, eps=1e-15):
+            return np.all(np.linalg.norm(points - center, axis=1) <= radius + eps)
+
+        # Simple polyhedra (e.g. dodecahedra) will require far less than 200 attempts
+        # to compute a correct miniball. Polyhedra with augmentations and large numbers
+        # of vertices will take more, but none are likely to exceed 200 attempts. Worst-
+        # case runtime is approximately 0.25s, and occurrs in ~5/1e5 samples.
+        max_attempts = 200
         attempt = 0
         current_rotation = [1, 0, 0, 0]
         vertices = self.vertices
         while attempt < max_attempts:
             attempt += 1
             try:
-                center, r2 = miniball.get_bounding_ball(vertices)
+                center, r2 = cyminiball.compute(vertices)
+                assert verify_inside(vertices, center, np.sqrt(r2))
                 break
             except np.linalg.LinAlgError:
+                current_rotation = rowan.random.rand(1)
+                vertices = rowan.rotate(current_rotation, vertices)
+            except AssertionError:
                 current_rotation = rowan.random.rand(1)
                 vertices = rowan.rotate(current_rotation, vertices)
         else:

@@ -29,7 +29,7 @@ test_deps = [
 ]
 
 bounding_deps = [
-    "miniball",
+    "cyminiball",
 ]
 
 extras = {
