@@ -567,7 +567,7 @@ class Polyhedron(Shape3D):
         # Simple polyhedra (e.g. dodecahedra) will require far less than 200 attempts
         # to compute a correct miniball. Polyhedra with augmentations and large numbers
         # of vertices will take more, but none are likely to exceed 200 attempts. Worst-
-        # case runtime is approximately 0.25s, and occurrs in ~5/1e5 samples.
+        # case runtime is approximately 0.25s, and occurs in ~5/1e5 samples.
         max_attempts = 200
         attempt = 0
         current_rotation = [1, 0, 0, 0]
