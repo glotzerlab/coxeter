@@ -583,7 +583,7 @@ class Polyhedron(Shape3D):
                 vertices = rowan.rotate(current_rotation, vertices)
             except AssertionError:
                 current_rotation = rowan.random.rand(1)
-                vertices = rowan.rotate(current_rotation, vertices)
+                vertices = rowan.rotate(current_rotation, self.vertices)
         else:
             raise RuntimeError("Unable to solve for a bounding sphere.")
 
