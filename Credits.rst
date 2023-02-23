@@ -106,6 +106,7 @@ Tobias Dwyer
 
 Jen Bradley
 * Bug fixes for ``gsd_shape_spec`` to correctly comply with GSD specifications.
+* Fixed error where ``__repr__`` would fail for polyhedra with multiple face types.
 
 Source code
 -----------

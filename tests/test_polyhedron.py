@@ -23,7 +23,7 @@ from conftest import (
     sphere_isclose,
 )
 from coxeter.families import DOI_SHAPE_REPOSITORIES, PlatonicFamily
-from coxeter.shapes import ConvexPolyhedron
+from coxeter.shapes import ConvexPolyhedron, Polyhedron
 from coxeter.shapes.utils import rotate_order2_tensor, translate_inertia_tensor
 from utils import compute_centroid_mc, compute_inertia_mc
 
@@ -223,6 +223,76 @@ def test_dihedrals():
         for i in range(poly.num_faces):
             for j in poly.neighbors[i]:
                 assert np.isclose(poly.get_dihedral(i, j), dihedral)
+
+
+def test___repr__():
+    # Platonic shapes have all congruent faces, so __repr__ should never fail
+    test_platonic_shapes = [
+        "Cube",
+        "Dodecahedron",
+        "Icosahedron",
+        "Octahedron",
+        "Tetrahedron",
+    ]
+    for name in test_platonic_shapes:
+        poly = PlatonicFamily.get_shape(name)
+        # repr() does not return faces for ConvexPolyhedron
+        poly = Polyhedron(poly.vertices, poly.faces)
+        # Try to run repr() for each shape
+        repr(poly)
+    cuboctahedron_vertices = [
+        [-1.0, 0.0, 0.0],
+        [-0.5, -0.5, -0.7071067811865475],
+        [-0.5, -0.5, 0.7071067811865475],
+        [-0.5, 0.5, -0.7071067811865475],
+        [-0.5, 0.5, 0.7071067811865475],
+        [0.0, -1.0, 0.0],
+        [0.0, 1.0, 0.0],
+        [0.5, -0.5, -0.7071067811865475],
+        [0.5, -0.5, 0.7071067811865475],
+        [0.5, 0.5, -0.7071067811865475],
+        [0.5, 0.5, 0.7071067811865475],
+        [1.0, 0.0, 0.0],
+    ]
+    icosidodecahedron_vertices = [
+        [0.0, -1.618033988749895, 0.0],
+        [0.0, 1.618033988749895, 0.0],
+        [0.2628655560595668, -0.8090169943749475, -1.3763819204711736],
+        [0.2628655560595668, 0.8090169943749475, -1.3763819204711736],
+        [0.42532540417601994, -1.3090169943749475, 0.85065080835204],
+        [0.42532540417601994, 1.3090169943749475, 0.85065080835204],
+        [0.6881909602355868, -0.5, 1.3763819204711736],
+        [0.6881909602355868, 0.5, 1.3763819204711736],
+        [1.1135163644116066, -0.8090169943749475, -0.85065080835204],
+        [1.1135163644116066, 0.8090169943749475, -0.85065080835204],
+        [-1.3763819204711736, 0.0, -0.85065080835204],
+        [-0.6881909602355868, -0.5, -1.3763819204711736],
+        [-0.6881909602355868, 0.5, -1.3763819204711736],
+        [1.3763819204711736, 0.0, 0.85065080835204],
+        [0.9510565162951535, -1.3090169943749475, 0.0],
+        [0.9510565162951535, 1.3090169943749475, 0.0],
+        [0.85065080835204, 0.0, -1.3763819204711736],
+        [-0.9510565162951535, -1.3090169943749475, 0.0],
+        [-0.9510565162951535, 1.3090169943749475, 0.0],
+        [-1.5388417685876268, -0.5, 0.0],
+        [-1.5388417685876268, 0.5, 0.0],
+        [1.5388417685876268, -0.5, 0.0],
+        [1.5388417685876268, 0.5, 0.0],
+        [-0.85065080835204, 0.0, 1.3763819204711736],
+        [-1.1135163644116066, -0.8090169943749475, 0.85065080835204],
+        [-1.1135163644116066, 0.8090169943749475, 0.85065080835204],
+        [-0.42532540417602, -1.3090169943749475, -0.85065080835204],
+        [-0.42532540417602, 1.3090169943749475, -0.85065080835204],
+        [-0.2628655560595668, -0.8090169943749475, 1.3763819204711736],
+        [-0.2628655560595668, 0.8090169943749475, 1.3763819204711736],
+    ]
+    # Now, test repr() for a few irregular polyhedra
+    cuboctahedron = ConvexPolyhedron(cuboctahedron_vertices)
+    cuboctahedron = Polyhedron(cuboctahedron.vertices, cuboctahedron.faces)
+    repr(cuboctahedron)
+    icosidodecahedron = ConvexPolyhedron(icosidodecahedron_vertices)
+    icosidodecahedron = Polyhedron(icosidodecahedron.vertices, icosidodecahedron.faces)
+    repr(icosidodecahedron)
 
 
 def test_curvature():

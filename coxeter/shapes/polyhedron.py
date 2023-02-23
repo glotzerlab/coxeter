@@ -856,7 +856,7 @@ class Polyhedron(Shape3D):
     def __repr__(self):
         return (
             f"coxeter.shapes.Polyhedron(vertices={self.vertices.tolist()}, "
-            f"faces={np.asarray(self.faces).tolist()})"
+            f"faces={self.faces})"
         )
 
     def _plato_primitive(self, backend):
