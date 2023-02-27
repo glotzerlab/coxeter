@@ -238,7 +238,7 @@ def test_edges():
         poly = PlatonicFamily.get_shape(name)
         if name == "Dodecahedron":
             poly.merge_faces(rtol=1)
-        for edge in poly.get_edge_vectors:
+        for edge in poly.edge_vectors:
             # rtol must be lowered to accomodate small inaccuracies in vertex locations
             assert np.isclose(np.linalg.norm(edge), edgelength, rtol=1e-4)
 
