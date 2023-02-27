@@ -380,11 +380,8 @@ class Polyhedron(Shape3D):
     @property
     def edge_vectors(self):
         """list(:class:`numpy.ndarray`): Get the polyhedron's edges as vectors."""
-        vecs = []
-        vertices = self.vertices
-        for edge in self.edges:
-            vecs.append(vertices[edge[1]] - vertices[edge[0]])
-        return vecs
+        edges = np.asarray(self.edges)
+        return list(self.vertices[edges[:, 1]] - self.vertices[edges[:, 0]])
 
     @property
     def volume(self):
