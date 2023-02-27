@@ -28,7 +28,6 @@ def combine_marks(*marks):
         argvalues, ids = mark.kwargs["argvalues"], mark.kwargs["ids"]
         combinedargvalues.extend(argvalues)
         combinedids.extend(ids)
-    print(combinedids)
     combined_mark = pytest.mark.parametrize(
         argnames="poly",
         argvalues=combinedargvalues,
