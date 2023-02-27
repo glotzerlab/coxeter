@@ -238,9 +238,16 @@ def test_edges():
         poly = PlatonicFamily.get_shape(name)
         if name == "Dodecahedron":
             poly.merge_faces(rtol=1)
+        # Test edge_vectors property
         for edge in poly.edge_vectors:
             # rtol must be lowered to accomodate small inaccuracies in vertex locations
             assert np.isclose(np.linalg.norm(edge), edgelength, rtol=1e-4)
+
+        # Test edges property
+        edges = np.asarray(poly.edges)
+        vertices = poly.vertices
+        veclens = np.linalg.norm(vertices[edges[:, 1]] - vertices[edges[:, 0]], axis=1)
+        assert np.allclose(veclens, edgelength)
 
 
 def test_curvature():
