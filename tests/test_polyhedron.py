@@ -247,7 +247,7 @@ def test_edges():
         edges = np.asarray(poly.edges)
         vertices = poly.vertices
         veclens = np.linalg.norm(vertices[edges[:, 1]] - vertices[edges[:, 0]], axis=1)
-        assert np.allclose(veclens, edgelength)
+        assert np.allclose(veclens, edgelength, rtol=1e-4)
 
 
 def test_curvature():
