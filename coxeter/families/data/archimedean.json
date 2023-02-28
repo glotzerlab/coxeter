@@ -673,7 +673,7 @@
         "symmetry_group": "[5,3]",
         "short_code": "A11"
     },
-    "TruncatedCuboctahedron": {
+    "Truncated Cuboctahedron": {
         "type": "ConvexPolyhedron",
         "vertices": [
             [
