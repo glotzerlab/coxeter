@@ -238,7 +238,6 @@ def test_edges():
         poly = PlatonicFamily.get_shape(name)
         # Test edge_vectors property
         for edge in poly.edge_vectors:
-            # rtol must be lowered to accomodate small inaccuracies in vertex locations
             assert np.isclose(np.linalg.norm(edge), edgelength)
 
         # Test edges property
