@@ -234,6 +234,7 @@ def test_edges():
         "Dodecahedron": np.power(2, 2 / 3) * np.cbrt(1 / (15 + np.sqrt(245))),
         "Icosahedron": np.cbrt(9 / 5 - 3 / 5 * np.sqrt(5)),
     }
+
     for name, edgelength in known_shapes.items():
         poly = PlatonicFamily.get_shape(name)
         # Test edge_vectors property
@@ -241,7 +242,11 @@ def test_edges():
             assert np.isclose(np.linalg.norm(edge), edgelength)
 
         # Test edges property
-        edges = np.asarray(poly.edges)
+        edges = np.asarray(
+            [
+                *poly.edges,
+            ]
+        )
         vertices = poly.vertices
         veclens = np.linalg.norm(vertices[edges[:, 1]] - vertices[edges[:, 0]], axis=1)
         assert np.allclose(veclens, edgelength)
