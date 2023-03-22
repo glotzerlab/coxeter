@@ -364,24 +364,32 @@ class Polyhedron(Shape3D):
 
     @property
     def edges(self):
-        """list(:class:`numpy.ndarray`): Get the polyhedron's edges.
+        """set(:class:`tuple`): Get the polyhedron's edges.
 
-        Results returned as vertex index pairs.
+        Results returned as vertex index pairs,  with each edge of the polyhedron
+        included exactly once.  Edge (i,j) pairs are ordered by vertex index with i<j.
+
+        For a list of (j,i) edges, the following set comprehension can be used:
+        ```python
+        {(j,i) for i,j in poly.edges}
+        ```
         """
-        edges = []
-        for face in self.faces:
-            [
-                edges.append((i, j))
-                for i, j in zip(np.append(face, face[0]), np.append(face[1:], face[0]))
-                if (j, i) not in edges
-            ]
-        return edges
+        return {
+            (i, j)
+            for face in self.faces
+            for i, j in zip(face, np.roll(face, -1))
+            if i < j
+        }
 
     @property
     def edge_vectors(self):
-        """list(:class:`numpy.ndarray`): Get the polyhedron's edges as vectors."""
-        edges = self.edges
-        return self.vertices[edges[:, 1]] - self.vertices[edges[:, 0]]
+        """set(:class:`tuple`): Get the polyhedron's edges as vectors."""
+        return [
+            np.subtract(
+                *self.vertices[[j, i]],
+            )
+            for (i, j) in self.edges
+        ]
 
     @property
     def volume(self):
