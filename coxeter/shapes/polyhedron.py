@@ -364,15 +364,14 @@ class Polyhedron(Shape3D):
 
     @property
     def edges(self):
-        """set(:class:`tuple`): Get the polyhedron's edges.
+        """set(tuple(int,int)): Get the polyhedron's edges.
 
         Results returned as vertex index pairs,  with each edge of the polyhedron
         included exactly once.  Edge (i,j) pairs are ordered by vertex index with i<j.
 
         For a list of (j,i) edges, the following set comprehension can be used:
-        ```python
-        {(j,i) for i,j in poly.edges}
-        ```
+
+        ``{(j,i) for i,j in poly.edges}``
         """
         return {
             (i, j)
@@ -383,7 +382,7 @@ class Polyhedron(Shape3D):
 
     @property
     def edge_vectors(self):
-        """set(:class:`tuple`): Get the polyhedron's edges as vectors."""
+        """set(tuple(float,float,float)): Get the polyhedron's edges as vectors."""
         return [
             np.subtract(
                 *self.vertices[[j, i]],
