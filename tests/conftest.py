@@ -326,3 +326,15 @@ named_damasceno_shapes_mark = pytest.mark.parametrize(
         for shape_id in _damasceno_shape_names
     ],
 )
+
+data_filenames_mark = pytest.mark.parametrize(
+    argnames="family",
+    argvalues=[
+        "platonic",
+        "archimedean",
+        "catalan",
+        "johnson",
+        "prism_antiprism",
+        "pyramid_dipyramid",
+    ],
+)
