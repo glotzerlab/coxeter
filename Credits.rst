@@ -113,7 +113,6 @@ Jen Bradley
 * Added shape family for prisms and antiprisms.
 * Added shape family for equilateral pyramids and dipyramids.
 
-
 Source code
 -----------
 
