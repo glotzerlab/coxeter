@@ -16,10 +16,16 @@ from conftest import (
     EllipsoidSurfaceStrategy,
     Random3DRotationStrategy,
     _test_get_set_minimal_bounding_sphere_radius,
+    combine_marks,
     get_oriented_cube_faces,
     get_oriented_cube_normals,
+    named_archimedean_mark,
+    named_catalan_mark,
     named_damasceno_shapes_mark,
+    named_johnson_mark,
     named_platonic_mark,
+    named_prismantiprism_mark,
+    named_pyramiddipyramid_mark,
     sphere_isclose,
 )
 from coxeter.families import DOI_SHAPE_REPOSITORIES, PlatonicFamily
@@ -147,6 +153,44 @@ def test_volume_damasceno_shapes(shape):
     poly = ConvexPolyhedron(vertices)
     hull = ConvexHull(vertices)
     assert np.isclose(poly.volume, hull.volume)
+
+
+@named_damasceno_shapes_mark
+def test_surface_area_damasceno_shapes(shape):
+    if shape["name"] in ("RESERVED", "Sphere"):
+        return
+    vertices = shape["vertices"]
+    poly = ConvexPolyhedron(vertices)
+    hull = ConvexHull(vertices)
+    assert np.isclose(poly.surface_area, hull.area)
+
+
+@combine_marks(
+    named_platonic_mark,
+    named_archimedean_mark,
+    named_catalan_mark,
+    named_johnson_mark,
+    named_prismantiprism_mark,
+    named_pyramiddipyramid_mark,
+)
+def test_volume_shapes(poly):
+    vertices = poly.vertices
+    hull = ConvexHull(vertices)
+    assert np.isclose(poly.volume, hull.volume)
+
+
+@combine_marks(
+    named_platonic_mark,
+    named_archimedean_mark,
+    named_catalan_mark,
+    named_johnson_mark,
+    named_prismantiprism_mark,
+    named_pyramiddipyramid_mark,
+)
+def test_surface_area_shapes(poly):
+    vertices = poly.vertices
+    hull = ConvexHull(vertices)
+    assert np.isclose(poly.surface_area, hull.area)
 
 
 # This test is a bit slow (a couple of minutes), so skip running it locally.
@@ -308,8 +352,8 @@ def test_curvature():
 
     for name, curvature in known_shapes.items():
         poly = PlatonicFamily.get_shape(name)
-        if name == "Dodecahedron":
-            poly.merge_faces(rtol=1)
+        # Normalize volume to ensure known_shape data is accurate
+        poly.volume = 1
         assert np.isclose(poly.mean_curvature, curvature)
 
 
@@ -339,8 +383,9 @@ def test_asphericity():
     pass
 
 
-@named_platonic_mark
-def test_circumsphere_platonic(poly):
+# Circumspheres cannot be generated for some Johnson and Catalan solids
+@combine_marks(named_platonic_mark, named_archimedean_mark)
+def test_circumsphere(poly):
     circumsphere = poly.circumsphere
 
     # Ensure polyhedron is centered, then compute distances.
@@ -350,8 +395,8 @@ def test_circumsphere_platonic(poly):
     assert np.allclose(r2, circumsphere.radius**2)
 
 
-@named_platonic_mark
-def test_circumsphere_radius_platonic(poly):
+@combine_marks(named_platonic_mark, named_archimedean_mark)
+def test_circumsphere_radius(poly):
     # Ensure polyhedron is centered, then compute distances.
     poly.center = [0, 0, 0]
     r2 = np.sum(poly.vertices**2, axis=1)
@@ -417,14 +462,16 @@ def test_minimal_centered_bounding_sphere():
     testfun()
 
 
-@named_platonic_mark
-def test_bounding_sphere_platonic(poly):
+# Shapes where |aspect ratio - 1| >> 0 cannot pass this test: this includes many
+# Johnson solids. Shapes with large numbers of vertices also tend to fail
+@combine_marks(named_platonic_mark, named_archimedean_mark)
+def test_bounding_sphere(poly):
     # Ensure polyhedron is centered, then compute distances.
     poly.center = [0, 0, 0]
     r2 = np.sum(poly.vertices**2, axis=1)
 
     bounding_sphere = poly.minimal_bounding_sphere
-    assert np.allclose(r2, bounding_sphere.radius**2, rtol=1e-4)
+    assert np.allclose(r2, bounding_sphere.radius**2, rtol=1e-5)
 
     with pytest.deprecated_call():
         assert sphere_isclose(bounding_sphere, poly.bounding_sphere)
@@ -477,20 +524,40 @@ def test_maximal_centered_bounded_sphere_convex_hulls(points, test_points):
         assert sphere_isclose(insphere, poly.insphere_from_center)
 
 
+# Platonic and Catalan shapes have a centered insphere, but Archimedean
+# and Johnson solids do not.
 @named_platonic_mark
-def test_insphere(poly):
+def test_insphere_platonic(poly):
     # The insphere should be centered for platonic solids.
     poly_insphere = poly.insphere
     assert sphere_isclose(
-        poly_insphere, poly.maximal_centered_bounded_sphere, atol=1e-4
+        poly_insphere, poly.maximal_centered_bounded_sphere, atol=1e-5
     )
 
     # The insphere of a platonic solid should be rotation invariant.
-    @settings(deadline=300)
+    @settings(deadline=500)
     @given(Random3DRotationStrategy)
     def check_rotation_invariance(quat):
         rotated_poly = ConvexPolyhedron(rowan.rotate(quat, poly.vertices))
-        assert sphere_isclose(poly_insphere, rotated_poly.insphere, atol=1e-4)
+        assert sphere_isclose(poly_insphere, rotated_poly.insphere, atol=1e-5)
+
+    check_rotation_invariance()
+
+
+@named_catalan_mark
+def test_insphere_catalan(poly):
+    # The insphere should be centered for catalan solids.
+    poly_insphere = poly.insphere
+    assert sphere_isclose(
+        poly_insphere, poly.maximal_centered_bounded_sphere, atol=1e-5
+    )
+
+    # The insphere of a catalan solid should be rotation invariant.
+    @settings(deadline=1200)
+    @given(Random3DRotationStrategy)
+    def check_rotation_invariance(quat):
+        rotated_poly = ConvexPolyhedron(rowan.rotate(quat, poly.vertices))
+        assert sphere_isclose(poly_insphere, rotated_poly.insphere, atol=1e-5)
 
     check_rotation_invariance()
 
@@ -499,6 +566,7 @@ def test_rotate_inertia(tetrahedron):
     # Use the input as noise rather than the base points to avoid precision and
     # degenerate cases provided by hypothesis.
     tet = PlatonicFamily.get_shape("Tetrahedron")
+    tet.volume = 1
 
     @given(
         arrays(np.float64, (4, 3), elements=floats(-10, 10, width=64), unique=True),
@@ -636,12 +704,26 @@ def test_form_factor(cube):
     )
 
 
-@named_platonic_mark
+@combine_marks(
+    named_platonic_mark,
+    named_archimedean_mark,
+    named_catalan_mark,
+    named_johnson_mark,
+    named_prismantiprism_mark,
+    named_pyramiddipyramid_mark,
+)
 def test_get_set_minimal_bounding_sphere_radius(poly):
     _test_get_set_minimal_bounding_sphere_radius(poly)
 
 
-@named_platonic_mark
+@combine_marks(
+    named_platonic_mark,
+    named_archimedean_mark,
+    named_catalan_mark,
+    named_johnson_mark,
+    named_prismantiprism_mark,
+    named_pyramiddipyramid_mark,
+)
 def test_get_set_minimal_centered_bounding_sphere_radius(poly):
     _test_get_set_minimal_bounding_sphere_radius(poly, True)
 

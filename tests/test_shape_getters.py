@@ -1,10 +1,14 @@
 # Copyright (c) 2021 The Regents of the University of Michigan
 # All rights reserved.
 # This software is licensed under the BSD 3-Clause License.
+import json
+
 import numpy as np
 from pytest import approx
 
+from conftest import data_filenames_mark
 from coxeter import from_gsd_type_shapes
+from coxeter.families import common
 
 
 def test_gsd_shape_getter():
@@ -96,3 +100,23 @@ def test_gsd_shape_getter():
 
         # Now convert back and make sure the conversion is lossless.
         assert shape.gsd_shape_spec == shape_spec
+
+
+@data_filenames_mark
+def test_json_data_families(family):
+    # Iterate through shape families stored in common
+    for fam in [attr for attr in dir(common)]:
+        # Set correct shape family for current test
+        if family.title().replace("_", "") in fam:
+            # Load the family via common
+            module = getattr(common, fam)
+            # Manually load the json data
+            with open("coxeter/families/data/" + family + ".json") as file:
+                fam_data = json.load(file)
+
+            # Extract the stored shape keys
+            shapes = list(fam_data.keys())
+            for shape in shapes:
+                module_vertices = module.get_shape(shape).vertices
+                json_vertices = fam_data[shape]["vertices"]
+                assert np.all(module_vertices == json_vertices)

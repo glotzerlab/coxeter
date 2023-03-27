@@ -105,8 +105,13 @@ Tobias Dwyer
 * Added examples for the shape classes.
 
 Jen Bradley
+
 * Bug fixes for ``gsd_shape_spec`` to correctly comply with GSD specifications.
 * Fixed error where ``__repr__`` would fail for polyhedra with multiple face types.
+* Increased accuracy of stored data for PlatonicFamily solids
+* Added shape families for Archimedean, Catalan, and Johnson solids.
+* Added shape family for prisms and antiprisms.
+* Added shape family for equilateral pyramids and dipyramids.
 
 Source code
 -----------
