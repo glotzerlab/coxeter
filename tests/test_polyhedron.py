@@ -712,6 +712,7 @@ def test_form_factor(cube):
     named_prismantiprism_mark,
     named_pyramiddipyramid_mark,
 )
+@pytest.mark.xfail(reason="Numerical precision problems with miniball. See https://github.com/glotzerlab/coxeter/issues/179")
 def test_get_set_minimal_bounding_sphere_radius(poly):
     _test_get_set_minimal_bounding_sphere_radius(poly)
 
