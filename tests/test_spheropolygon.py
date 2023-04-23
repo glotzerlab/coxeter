@@ -192,7 +192,6 @@ def test_perimeter_setter(unit_rounded_square):
     testfun()
 
 
-@settings(deadline=1000)
 @pytest.mark.parametrize("shape", regular_polygons())
 def test_distance_to_surface_regular_ngons(shape):
     """Make sure shape distance works for regular ngons."""
