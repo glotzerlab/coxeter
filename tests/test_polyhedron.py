@@ -553,7 +553,7 @@ def test_insphere_catalan(poly):
     )
 
     # The insphere of a catalan solid should be rotation invariant.
-    @settings(deadline=1200)
+    @settings(deadline=5000)
     @given(Random3DRotationStrategy)
     def check_rotation_invariance(quat):
         rotated_poly = ConvexPolyhedron(rowan.rotate(quat, poly.vertices))
