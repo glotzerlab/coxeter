@@ -234,9 +234,20 @@ def test_edges():
         "Dodecahedron": np.power(2, 2 / 3) * np.cbrt(1 / (15 + np.sqrt(245))),
         "Icosahedron": np.cbrt(9 / 5 - 3 / 5 * np.sqrt(5)),
     }
+    number_of_edges = {
+        "Tetrahedron": 6,
+        "Cube": 12,
+        "Octahedron": 12,
+        "Dodecahedron": 30,
+        "Icosahedron": 30,
+    }
 
     for name, edgelength in known_shapes.items():
         poly = PlatonicFamily.get_shape(name)
+        # Test that the correct number of edges has been found
+        assert(number_of_edges[name]==len(poly.edges))
+        assert(number_of_edges[name]==len(poly.edge_vectors))
+
         # Test edge_vectors property
         for edge in poly.edge_vectors:
             assert np.isclose(np.linalg.norm(edge), edgelength)
