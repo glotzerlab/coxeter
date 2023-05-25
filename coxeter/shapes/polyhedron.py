@@ -381,19 +381,21 @@ class Polyhedron(Shape3D):
                     for i, j in zip(face, np.roll(face, -1))
                     if i < j
                 ],
-                key=lambda x: (x[0],x[1]),
+                key=lambda x: (x[0], x[1]),
             )
         )
 
     @property
     def edge_vectors(self):
         """list(tuple(float,float,float)): Get the polyhedron's edges as vectors."""
-        return np.array([
-            np.subtract(
-                *self.vertices[[j, i]],
-            )
-            for (i, j) in self.edges
-        ])
+        return np.array(
+            [
+                np.subtract(
+                    *self.vertices[[j, i]],
+                )
+                for (i, j) in self.edges
+            ]
+        )
 
     @property
     def volume(self):
