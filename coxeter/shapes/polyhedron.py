@@ -369,26 +369,31 @@ class Polyhedron(Shape3D):
         Results returned as vertex index pairs,  with each edge of the polyhedron
         included exactly once.  Edge (i,j) pairs are ordered by vertex index with i<j.
 
-        For a list of (j,i) edges, the following set comprehension can be used:
+        For a list of (j,i) edges, the following list comprehension can be used:
 
-        ``{(j,i) for i,j in poly.edges}``
+        ``[(j,i) for i,j in poly.edges]``
         """
-        return {
-            (i, j)
-            for face in self.faces
-            for i, j in zip(face, np.roll(face, -1))
-            if i < j
-        }
+        return np.array(
+            sorted(
+                [
+                    (i, j)
+                    for face in self.faces
+                    for i, j in zip(face, np.roll(face, -1))
+                    if i < j
+                ],
+                key=lambda x: (x[0],x[1]),
+            )
+        )
 
     @property
     def edge_vectors(self):
-        """set(tuple(float,float,float)): Get the polyhedron's edges as vectors."""
-        return [
+        """list(tuple(float,float,float)): Get the polyhedron's edges as vectors."""
+        return np.array([
             np.subtract(
                 *self.vertices[[j, i]],
             )
             for (i, j) in self.edges
-        ]
+        ])
 
     @property
     def volume(self):
