@@ -105,7 +105,7 @@ CatalanFamily = TabulatedGSDShapeFamily.from_json_file(
     (13 total).
 The following parameters are required by this class:
     - name: The name of the CatalanFamily solid. Options are "Deltoidal  \
-            Hexecontahedron", "DeltoidalIcositetrahedron", "Disdyakis \
+            Hexecontahedron", "Deltoidal Icositetrahedron", "Disdyakis \
             Dodecahedron", "Disdyakis Triacontahedron", "Pentagonal \
             Hexecontahedron", "Pentagonal Icositetrahedron", "Pentakis \
             Dodecahedron", "Rhombic Dodecahedron", "Rhombic \
