@@ -531,6 +531,7 @@ def test_dict(square):
         "radius",
         "inertia_tensor",
         "gsd_shape_spec",
+        "area",
     ]
     assert set(proper_keys) == set(read_dict.keys())
 
@@ -541,3 +542,4 @@ def test_dict(square):
     assert np.array_equal(square.inertia_tensor, np.array(read_dict["inertia_tensor"]))
 
     assert square.gsd_shape_spec == read_dict["gsd_shape_spec"]
+    assert square.area == read_dict["area"]

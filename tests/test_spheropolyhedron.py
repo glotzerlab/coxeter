@@ -135,6 +135,7 @@ def test_dict(radius):
         "_faces_are_convex",
         "_neighbors",
         "gsd_shape_spec",
+        "volume",
     ]
     assert set(proper_keys) == set(read_dict.keys())
 
@@ -154,3 +155,4 @@ def test_dict(radius):
         == read_dict["_neighbors"]
     )
     assert sphero_cube.gsd_shape_spec == read_dict["gsd_shape_spec"]
+    assert sphero_cube.volume == read_dict["volume"]

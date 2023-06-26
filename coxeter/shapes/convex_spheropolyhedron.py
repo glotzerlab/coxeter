@@ -319,4 +319,5 @@ class ConvexSpheropolyhedron(Shape3D):
             "_faces_are_convex": self.polyhedron._faces_are_convex,
             "_neighbors": [nei.tolist() for nei in self.polyhedron.neighbors],
             "gsd_shape_spec": self.gsd_shape_spec,
+            "volume": self.volume,
         }

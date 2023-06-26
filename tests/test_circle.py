@@ -209,15 +209,11 @@ def test_repr():
 def test_dict(r, center):
     circle = Circle(r, center)
     read_dict = circle.__dict__
-    proper_keys = [
-        "radius",
-        "centroid",
-        "inertia_tensor",
-        "gsd_shape_spec",
-    ]
+    proper_keys = ["radius", "centroid", "inertia_tensor", "gsd_shape_spec", "area"]
     assert set(proper_keys) == set(read_dict.keys())
 
     assert read_dict["radius"] == r
     assert np.array_equal(read_dict["centroid"], center)
     assert np.array_equal(read_dict["inertia_tensor"], Circle(r, center).inertia_tensor)
     assert circle.gsd_shape_spec == read_dict["gsd_shape_spec"]
+    assert circle.area == read_dict["area"]

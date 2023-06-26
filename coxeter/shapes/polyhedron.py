@@ -885,4 +885,5 @@ class Polyhedron(Shape3D):
             "_faces_are_convex": self._faces_are_convex,
             "_neighbors": [nei.tolist() for nei in self.neighbors],
             "gsd_shape_spec": self.gsd_shape_spec,
+            "volume": self.volume,
         }

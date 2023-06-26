@@ -268,6 +268,7 @@ def test_dict(abc, center):
         "centroid",
         "inertia_tensor",
         "gsd_shape_spec",
+        "volume",
     ]
     assert set(proper_keys) == set(read_dict.keys())
 
@@ -279,3 +280,4 @@ def test_dict(abc, center):
         read_dict["inertia_tensor"], Ellipsoid(*abc, center).inertia_tensor
     )
     assert ellipsoid.gsd_shape_spec == read_dict["gsd_shape_spec"]
+    assert ellipsoid.volume == read_dict["volume"]

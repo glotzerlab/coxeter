@@ -223,13 +223,7 @@ def test_repr(unit_rounded_square):
 
 def test_dict(unit_rounded_square):
     read_dict = unit_rounded_square.__dict__
-    proper_keys = [
-        "vertices",
-        "centroid",
-        "normal",
-        "radius",
-        "gsd_shape_spec",
-    ]
+    proper_keys = ["vertices", "centroid", "normal", "radius", "gsd_shape_spec", "area"]
     assert set(proper_keys) == set(read_dict.keys())
 
     assert np.array_equal(unit_rounded_square.vertices, np.array(read_dict["vertices"]))
@@ -242,3 +236,4 @@ def test_dict(unit_rounded_square):
     assert read_dict["radius"] == 1
 
     assert unit_rounded_square.gsd_shape_spec == read_dict["gsd_shape_spec"]
+    assert unit_rounded_square.area == read_dict["area"]

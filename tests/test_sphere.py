@@ -239,15 +239,11 @@ def test_repr():
 def test_dict(r, center):
     sphere = Sphere(r, center)
     read_dict = sphere.__dict__
-    proper_keys = [
-        "radius",
-        "centroid",
-        "inertia_tensor",
-        "gsd_shape_spec",
-    ]
+    proper_keys = ["radius", "centroid", "inertia_tensor", "gsd_shape_spec", "volume"]
     assert set(proper_keys) == set(read_dict.keys())
 
     assert read_dict["radius"] == r
     assert np.array_equal(read_dict["centroid"], center)
     assert np.array_equal(read_dict["inertia_tensor"], Sphere(r, center).inertia_tensor)
     assert sphere.gsd_shape_spec == read_dict["gsd_shape_spec"]
+    assert sphere.volume == read_dict["volume"]

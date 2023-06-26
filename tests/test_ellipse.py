@@ -260,13 +260,7 @@ def test_repr():
 def test_dict(ab, center):
     ellipse = Ellipse(*ab, center)
     read_dict = ellipse.__dict__
-    proper_keys = [
-        "a",
-        "b",
-        "centroid",
-        "inertia_tensor",
-        "gsd_shape_spec",
-    ]
+    proper_keys = ["a", "b", "centroid", "inertia_tensor", "gsd_shape_spec", "area"]
     assert set(proper_keys) == set(read_dict.keys())
 
     assert read_dict["a"] == ab[0]
@@ -276,3 +270,4 @@ def test_dict(ab, center):
         read_dict["inertia_tensor"], Ellipse(*ab, center).inertia_tensor
     )
     assert ellipse.gsd_shape_spec == read_dict["gsd_shape_spec"]
+    assert read_dict["area"] == ellipse.area

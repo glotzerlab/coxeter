@@ -238,4 +238,5 @@ class Ellipsoid(Shape3D):
             "centroid": self.centroid.tolist(),
             "inertia_tensor": self.inertia_tensor,
             "gsd_shape_spec": self.gsd_shape_spec,
+            "volume": self.volume,
         }

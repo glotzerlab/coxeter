@@ -799,6 +799,7 @@ def test_dict(poly):
         "_faces_are_convex",
         "_neighbors",
         "gsd_shape_spec",
+        "volume",
     ]
     assert set(proper_keys) == set(read_dict.keys())
 
@@ -811,3 +812,4 @@ def test_dict(poly):
     assert poly._faces_are_convex and read_dict["_faces_are_convex"]
     assert np.all([nei.tolist() for nei in poly.neighbors] == read_dict["_neighbors"])
     assert poly.gsd_shape_spec == read_dict["gsd_shape_spec"]
+    assert poly.volume == read_dict["volume"]

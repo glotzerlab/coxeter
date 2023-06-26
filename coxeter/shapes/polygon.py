@@ -733,4 +733,5 @@ class Polygon(Shape2D):
             "radius": 0.0,
             "inertia_tensor": self.inertia_tensor,
             "gsd_shape_spec": self.gsd_shape_spec,
+            "area": self.area,
         }

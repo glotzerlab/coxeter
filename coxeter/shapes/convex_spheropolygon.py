@@ -280,4 +280,5 @@ class ConvexSpheropolygon(Shape2D):
             "normal": self.polygon.normal.tolist(),
             "radius": self.radius,
             "gsd_shape_spec": self.gsd_shape_spec,
+            "area": self.area,
         }
