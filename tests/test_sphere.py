@@ -230,3 +230,24 @@ def test_get_set_minimal_centered_bounding_circle_radius(r, center):
 def test_repr():
     sphere = Sphere(1, [1, 2, 3])
     assert str(sphere), str(eval(repr(sphere)))
+
+
+@given(
+    floats(0.1, np.pi * 3),
+    arrays(np.float64, (3,), elements=floats(-10, 10, width=64), unique=True),
+)
+def test_dict(r, center):
+    sphere = Sphere(r, center)
+    read_dict = sphere.__dict__
+    proper_keys = [
+        "radius",
+        "centroid",
+        "inertia_tensor",
+        "gsd_shape_spec",
+    ]
+    assert set(proper_keys) == set(read_dict.keys())
+
+    assert read_dict["radius"] == r
+    assert np.array_equal(read_dict["centroid"], center)
+    assert np.array_equal(read_dict["inertia_tensor"], Sphere(r, center).inertia_tensor)
+    assert sphere.gsd_shape_spec == read_dict["gsd_shape_spec"]

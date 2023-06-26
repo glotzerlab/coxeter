@@ -251,3 +251,28 @@ def test_is_inside(x, y, center):
 def test_repr():
     ellipse = Ellipse(1, 2, [1, 2, 0])
     assert str(ellipse), str(eval(repr(ellipse)))
+
+
+@given(
+    arrays(np.float64, (2,), elements=floats(0.0001, 10, width=64), unique=True),
+    arrays(np.float64, (3,), elements=floats(-10, 10, width=64), unique=True),
+)
+def test_dict(ab, center):
+    ellipse = Ellipse(*ab, center)
+    read_dict = ellipse.__dict__
+    proper_keys = [
+        "a",
+        "b",
+        "centroid",
+        "inertia_tensor",
+        "gsd_shape_spec",
+    ]
+    assert set(proper_keys) == set(read_dict.keys())
+
+    assert read_dict["a"] == ab[0]
+    assert read_dict["b"] == ab[1]
+    assert np.array_equal(read_dict["centroid"], center)
+    assert np.array_equal(
+        read_dict["inertia_tensor"], Ellipse(*ab, center).inertia_tensor
+    )
+    assert ellipse.gsd_shape_spec == read_dict["gsd_shape_spec"]

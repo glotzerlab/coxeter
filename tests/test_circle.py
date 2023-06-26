@@ -200,3 +200,24 @@ def test_inertia_tensor():
 def test_repr():
     circle = Circle(1, [1, 2, 0])
     assert str(circle), str(eval(repr(circle)))
+
+
+@given(
+    floats(0.1, np.pi * 3),
+    arrays(np.float64, (3,), elements=floats(-10, 10, width=64), unique=True),
+)
+def test_dict(r, center):
+    circle = Circle(r, center)
+    read_dict = circle.__dict__
+    proper_keys = [
+        "radius",
+        "centroid",
+        "inertia_tensor",
+        "gsd_shape_spec",
+    ]
+    assert set(proper_keys) == set(read_dict.keys())
+
+    assert read_dict["radius"] == r
+    assert np.array_equal(read_dict["centroid"], center)
+    assert np.array_equal(read_dict["inertia_tensor"], Circle(r, center).inertia_tensor)
+    assert circle.gsd_shape_spec == read_dict["gsd_shape_spec"]

@@ -219,3 +219,26 @@ def test_inertia(unit_rounded_square):
 
 def test_repr(unit_rounded_square):
     assert str(unit_rounded_square), str(eval(repr(unit_rounded_square)))
+
+
+def test_dict(unit_rounded_square):
+    read_dict = unit_rounded_square.__dict__
+    proper_keys = [
+        "vertices",
+        "centroid",
+        "normal",
+        "radius",
+        "gsd_shape_spec",
+    ]
+    assert set(proper_keys) == set(read_dict.keys())
+
+    assert np.array_equal(unit_rounded_square.vertices, np.array(read_dict["vertices"]))
+    assert np.array_equal(
+        unit_rounded_square.polygon.centroid, np.array(read_dict["centroid"])
+    )
+    assert np.array_equal(
+        unit_rounded_square.polygon.normal, np.array(read_dict["normal"])
+    )
+    assert read_dict["radius"] == 1
+
+    assert unit_rounded_square.gsd_shape_spec == read_dict["gsd_shape_spec"]

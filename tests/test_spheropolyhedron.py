@@ -120,3 +120,37 @@ def test_inside_boundaries():
 def test_repr():
     sphero_cube = make_sphero_cube(radius=1)
     assert str(sphero_cube), str(eval(repr(sphero_cube)))
+
+
+@given(radius=floats(0.1, 1))
+def test_dict(radius):
+    sphero_cube = make_sphero_cube(radius=radius)
+    read_dict = sphero_cube.__dict__
+    proper_keys = [
+        "vertices",
+        "faces",
+        "centroid",
+        "_equations",
+        "radius",
+        "_faces_are_convex",
+        "_neighbors",
+        "gsd_shape_spec",
+    ]
+    assert set(proper_keys) == set(read_dict.keys())
+
+    assert np.array_equal(sphero_cube.vertices, np.array(read_dict["vertices"]))
+    assert np.all(
+        [face.tolist() for face in sphero_cube.polyhedron.faces] == read_dict["faces"]
+    )
+    assert np.array_equal(
+        sphero_cube.polyhedron.centroid, np.array(read_dict["centroid"])
+    )
+    assert np.array_equal(
+        sphero_cube.polyhedron._equations, np.array(read_dict["_equations"])
+    )
+    assert read_dict["radius"] == radius
+    assert np.all(
+        [nei.tolist() for nei in sphero_cube.polyhedron.neighbors]
+        == read_dict["_neighbors"]
+    )
+    assert sphero_cube.gsd_shape_spec == read_dict["gsd_shape_spec"]

@@ -520,3 +520,24 @@ def test_repr_nonconvex(square):
 
 def test_repr_convex(convex_square):
     assert str(convex_square), str(eval(repr(convex_square)))
+
+
+def test_dict(square):
+    read_dict = square.__dict__
+    proper_keys = [
+        "vertices",
+        "centroid",
+        "normal",
+        "radius",
+        "inertia_tensor",
+        "gsd_shape_spec",
+    ]
+    assert set(proper_keys) == set(read_dict.keys())
+
+    assert np.array_equal(square.vertices, np.array(read_dict["vertices"]))
+    assert np.array_equal(square.centroid, np.array(read_dict["centroid"]))
+    assert np.array_equal(square.normal, np.array(read_dict["normal"]))
+    assert read_dict["radius"] == 0
+    assert np.array_equal(square.inertia_tensor, np.array(read_dict["inertia_tensor"]))
+
+    assert square.gsd_shape_spec == read_dict["gsd_shape_spec"]

@@ -252,3 +252,30 @@ def test_get_set_minimal_centered_bounding_circle_radius(a, b, c, center):
 def test_repr():
     ellipsoid = Ellipsoid(1, 2, 3, [1, 2, 3])
     assert str(ellipsoid), str(eval(repr(ellipsoid)))
+
+
+@given(
+    arrays(np.float64, (3,), elements=floats(0.0001, 10, width=64), unique=True),
+    arrays(np.float64, (3,), elements=floats(-10, 10, width=64), unique=True),
+)
+def test_dict(abc, center):
+    ellipsoid = Ellipsoid(*abc, center)
+    read_dict = ellipsoid.__dict__
+    proper_keys = [
+        "a",
+        "b",
+        "c",
+        "centroid",
+        "inertia_tensor",
+        "gsd_shape_spec",
+    ]
+    assert set(proper_keys) == set(read_dict.keys())
+
+    assert read_dict["a"] == abc[0]
+    assert read_dict["b"] == abc[1]
+    assert read_dict["c"] == abc[2]
+    assert np.array_equal(read_dict["centroid"], center)
+    assert np.array_equal(
+        read_dict["inertia_tensor"], Ellipsoid(*abc, center).inertia_tensor
+    )
+    assert ellipsoid.gsd_shape_spec == read_dict["gsd_shape_spec"]

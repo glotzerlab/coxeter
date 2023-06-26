@@ -777,3 +777,37 @@ def test_center(shape):
                 shape["name"], mc_result, coxeter_result
             )
         )
+
+
+@combine_marks(
+    named_platonic_mark,
+    named_archimedean_mark,
+    named_catalan_mark,
+    named_johnson_mark,
+    named_prismantiprism_mark,
+    named_pyramiddipyramid_mark,
+)
+def test_dict(poly):
+    read_dict = poly.__dict__
+    proper_keys = [
+        "vertices",
+        "faces",
+        "centroid",
+        "_equations",
+        "radius",
+        "inertia_tensor",
+        "_faces_are_convex",
+        "_neighbors",
+        "gsd_shape_spec",
+    ]
+    assert set(proper_keys) == set(read_dict.keys())
+
+    assert np.array_equal(poly.vertices, np.array(read_dict["vertices"]))
+    assert np.all([face.tolist() for face in poly.faces] == read_dict["faces"])
+    assert np.array_equal(poly.centroid, np.array(read_dict["centroid"]))
+    assert np.array_equal(poly._equations, np.array(read_dict["_equations"]))
+    assert read_dict["radius"] == 0
+    assert np.array_equal(poly.inertia_tensor, np.array(read_dict["inertia_tensor"]))
+    assert poly._faces_are_convex and read_dict["_faces_are_convex"]
+    assert np.all([nei.tolist() for nei in poly.neighbors] == read_dict["_neighbors"])
+    assert poly.gsd_shape_spec == read_dict["gsd_shape_spec"]
