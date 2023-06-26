@@ -10,6 +10,7 @@ parts of the code base that either require or return shapes.
 """
 
 from abc import ABC, abstractmethod
+from collections.abc import Mapping
 
 import numpy as np
 
@@ -192,6 +193,41 @@ class Shape(ABC):
             prim = self._plato_primitive(backend)
             scene.add_primitive(prim)
         return scene
+
+    def _data(self):
+        return self.__dict__
+
+    def __dict__(self):
+        return {}
+
+    def __getitem__(self, key):
+        return self.__dict__[key]
+
+    def __iter__(self):
+        return iter(self.__dict__)
+
+    def keys(self):
+        """Return keys from self.__dict__.
+
+        Returns:
+           dict_keys: List of keys stored in self.__dict__.
+
+        :meta private:
+        """
+        return self.__dict__.keys()
+
+    def items(self):
+        """Return keys from self.__dict__.
+
+        Returns:
+           dict_items: List of items stored in self.__dict__.
+
+        :meta private:
+        """
+        return self.__dict__.items()
+
+
+Mapping.register(Shape)
 
 
 class Shape2D(Shape):
