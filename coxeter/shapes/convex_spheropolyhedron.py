@@ -315,7 +315,8 @@ class ConvexSpheropolyhedron(Shape3D):
             "faces": [face.tolist() for face in self.polyhedron.faces],
             "centroid": self.polyhedron.centroid.tolist(),
             "_equations": self.polyhedron._equations.tolist(),
-            "radius": 0.0,
+            "radius": self.radius,
             "_faces_are_convex": self.polyhedron._faces_are_convex,
             "_neighbors": [nei.tolist() for nei in self.polyhedron.neighbors],
+            "gsd_shape_spec": self.gsd_shape_spec,
         }

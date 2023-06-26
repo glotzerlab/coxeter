@@ -881,7 +881,8 @@ class Polyhedron(Shape3D):
             "centroid": self.centroid.tolist(),
             "_equations": self._equations.tolist(),
             "radius": 0.0,
-            "inertia_tensor": self.inertia_tensor(),
+            "inertia_tensor": self.inertia_tensor.tolist(),
             "_faces_are_convex": self._faces_are_convex,
             "_neighbors": [nei.tolist() for nei in self.neighbors],
+            "gsd_shape_spec": self.gsd_shape_spec,
         }

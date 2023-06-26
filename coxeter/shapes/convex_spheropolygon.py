@@ -276,7 +276,8 @@ class ConvexSpheropolygon(Shape2D):
     def __dict__(self):
         return {
             "vertices": self.vertices.tolist(),
-            "centroid": self.centroid.tolist(),
-            "normal": self.normal.tolist(),
+            "centroid": self.polygon.centroid.tolist(),
+            "normal": self.polygon.normal.tolist(),
             "radius": self.radius,
+            "gsd_shape_spec": self.gsd_shape_spec,
         }
