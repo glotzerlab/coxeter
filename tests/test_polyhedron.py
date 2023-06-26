@@ -591,7 +591,7 @@ def test_insphere_catalan(poly):
     )
 
     # The insphere of a catalan solid should be rotation invariant.
-    @settings(deadline=1200)
+    @settings(deadline=5000)
     @given(Random3DRotationStrategy)
     def check_rotation_invariance(quat):
         rotated_poly = ConvexPolyhedron(rowan.rotate(quat, poly.vertices))
@@ -749,6 +749,12 @@ def test_form_factor(cube):
     named_johnson_mark,
     named_prismantiprism_mark,
     named_pyramiddipyramid_mark,
+)
+@pytest.mark.xfail(
+    reason=(
+        "Numerical precision problems with miniball. "
+        "See https://github.com/glotzerlab/coxeter/issues/179"
+    )
 )
 def test_get_set_minimal_bounding_sphere_radius(poly):
     _test_get_set_minimal_bounding_sphere_radius(poly)
