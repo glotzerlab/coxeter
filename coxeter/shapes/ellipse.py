@@ -267,3 +267,16 @@ class Ellipse(Shape2D):
             f"coxeter.shapes.Ellipse(a={self.a}, b={self.b}, "
             f"center={self.centroid.tolist()})"
         )
+
+    @property
+    def _data(self):
+        return self.__dict__
+
+    @property
+    def __dict__(self):
+        return {
+            "a": self.a,
+            "b": self.b,
+            "centroid": self.centroid.tolist(),
+            "inertia_tensor": self.inertia_tensor,
+        }

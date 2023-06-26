@@ -868,3 +868,20 @@ class Polyhedron(Shape3D):
             indices=self.faces,
             shape_colors=np.array([[0.5, 0.5, 0.5, 1]]),
         )
+
+    @property
+    def _data(self):
+        return self.__dict__
+
+    @property
+    def __dict__(self):
+        return {
+            "vertices": self.vertices.tolist(),
+            "faces": [face.tolist() for face in self.faces],
+            "centroid": self.centroid.tolist(),
+            "_equations": self._equations.tolist(),
+            "radius": 0.0,
+            "inertia_tensor": self.inertia_tensor(),
+            "_faces_are_convex": self._faces_are_convex,
+            "_neighbors": [nei.tolist() for nei in self.neighbors],
+        }

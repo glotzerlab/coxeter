@@ -719,3 +719,17 @@ class Polygon(Shape2D):
             colors=np.array([[0.5, 0.5, 0.5, 1]]),
             vertices=verts[:, :2],
         )
+
+    @property
+    def _data(self):
+        return self.__dict__
+
+    @property
+    def __dict__(self):
+        return {
+            "vertices": self.vertices.tolist(),
+            "centroid": self.centroid.tolist(),
+            "normal": self.normal.tolist(),
+            "radius": 0.0,
+            "inertia_tensor": self.inertia_tensor,
+        }

@@ -303,3 +303,19 @@ class ConvexSpheropolyhedron(Shape3D):
             vertices=self.vertices,
             radius=self.radius,
         )
+
+    @property
+    def _data(self):
+        return self.__dict__
+
+    @property
+    def __dict__(self):
+        return {
+            "vertices": self.vertices.tolist(),
+            "faces": [face.tolist() for face in self.polyhedron.faces],
+            "centroid": self.polyhedron.centroid.tolist(),
+            "_equations": self.polyhedron._equations.tolist(),
+            "radius": 0.0,
+            "_faces_are_convex": self.polyhedron._faces_are_convex,
+            "_neighbors": [nei.tolist() for nei in self.polyhedron.neighbors],
+        }

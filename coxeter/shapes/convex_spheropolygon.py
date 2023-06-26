@@ -267,3 +267,16 @@ class ConvexSpheropolygon(Shape2D):
             vertices=verts[:, :2],
             radius=self.radius,
         )
+
+    @property
+    def _data(self):
+        return self.__dict__
+
+    @property
+    def __dict__(self):
+        return {
+            "vertices": self.vertices.tolist(),
+            "centroid": self.centroid.tolist(),
+            "normal": self.normal.tolist(),
+            "radius": self.radius,
+        }

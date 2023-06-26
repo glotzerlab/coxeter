@@ -224,3 +224,17 @@ class Ellipsoid(Shape3D):
             f"coxeter.shapes.Ellipsoid(a={self.a}, b={self.b}, c={self.c}, "
             f"center={self.centroid.tolist()})"
         )
+
+    @property
+    def _data(self):
+        return self.__dict__
+
+    @property
+    def __dict__(self):
+        return {
+            "a": self.a,
+            "b": self.b,
+            "c": self.c,
+            "centroid": self.centroid.tolist(),
+            "inertia_tensor": self.inertia_tensor,
+        }

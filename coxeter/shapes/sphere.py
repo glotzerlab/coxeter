@@ -201,3 +201,15 @@ class Sphere(Shape3D):
             colors=np.array([[0.5, 0.5, 0.5, 1]]),
             radii=[self.radius],
         )
+
+    @property
+    def _data(self):
+        return self.__dict__
+
+    @property
+    def __dict__(self):
+        return {
+            "radius": self.radius,
+            "centroid": self.centroid.tolist(),
+            "inertia_tensor": self.inertia_tensor,
+        }
