@@ -270,15 +270,45 @@ class ConvexSpheropolygon(Shape2D):
 
     @property
     def _data(self):
-        return self.__dict__
+        return self.to_hoomd
 
     @property
-    def __dict__(self):
-        return {
-            "vertices": self.vertices.tolist(),
-            "centroid": self.polygon.centroid.tolist(),
-            "normal": self.polygon.normal.tolist(),
-            "radius": self.radius,
-            "gsd_shape_spec": self.gsd_shape_spec,
+    def to_hoomd(self):
+        """dict: Get a dict of json-serializable subset of shape properties.
+
+        The json-serializable output of the to_hoomd method can be directly imported
+        into data management tools like Signac. This data can then be queried for use in
+        HOOMD simulations. Key naming matches HOOMD integrators: for example, the
+        sweep_radius key links to data from coxeter's poly.radius.
+
+        For a ConvexSpheropolygon, the following properties are stored:
+
+        * vertices (list(list)):
+            The vertices of the shape.
+        * centroid (list(float))
+            The centroid of the shape.
+            This is set to [0,0] to ensure the shape is properly embedded in 2D.
+        * sweep_radius (float):
+            The rounding radius of the shape.
+        * area (float)
+            The area of the shape.
+
+        Returns
+        -------
+        dict
+            Dict containing a subset of shape properties.
+        """
+        old_centroid = self.centroid
+        self.centroid = np.array([0, 0, 0])
+        assert np.isclose(
+            self.normal, [0, 0, 1]
+        ), "HOOMD requires ConvexPolygons to be embedded in the :math:`xy` plane."
+
+        hoomd_dict = {
+            "vertices": self.vertices[:, :-1].tolist(),
+            "centroid": self.centroid[:, :-1].tolist(),
+            "sweep_radius": self.radius,
             "area": self.area,
         }
+        self.centroid = old_centroid
+        return hoomd_dict

@@ -871,19 +871,47 @@ class Polyhedron(Shape3D):
 
     @property
     def _data(self):
-        return self.__dict__
+        return self.to_hoomd
 
     @property
-    def __dict__(self):
-        return {
+    def to_hoomd(self):
+        """dict: Get a dict of json-serializable subset of shape properties.
+
+        The json-serializable output of the to_hoomd method can be directly imported
+        into data management tools like Signac. This data can then be queried for use in
+        HOOMD simulations. Key naming matches HOOMD integrators: for example, the
+        moment_inertia key links to data from coxeter's inertia_tensor.
+
+        For a Polyhedron or ConvexPolyhedron, the following properties are stored:
+
+        * vertices (list(list)):
+            The vertices of the shape.
+        * faces (list(list)):
+            The faces of the shape.
+        * centroid (list(float))
+            The centroid of the shape.
+            This is set to [0,0,0] to improve HOOMD performance.
+        * sweep_radius (float):
+            The rounding radius of the shape (0.0).
+        * volume (float)
+            The volume of the shape.
+        * moment_inertia (list(list))
+            The shape's inertia tensor.
+
+        Returns
+        -------
+        dict
+            Dict containing a subset of shape properties.
+        """
+        old_centroid = self.centroid
+        self.centroid = np.array([0, 0, 0])
+        hoomd_dict = {
             "vertices": self.vertices.tolist(),
             "faces": [face.tolist() for face in self.faces],
             "centroid": self.centroid.tolist(),
-            "_equations": self._equations.tolist(),
-            "radius": 0.0,
-            "inertia_tensor": self.inertia_tensor.tolist(),
-            "_faces_are_convex": self._faces_are_convex,
-            "_neighbors": [nei.tolist() for nei in self.neighbors],
-            "gsd_shape_spec": self.gsd_shape_spec,
+            "sweep_radius": 0.0,
             "volume": self.volume,
+            "moment_inertia": self.inertia_tensor.tolist(),
         }
+        self.centroid = old_centroid
+        return hoomd_dict

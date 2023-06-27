@@ -204,14 +204,36 @@ class Sphere(Shape3D):
 
     @property
     def _data(self):
-        return self.__dict__
+        return self.to_hoomd
 
     @property
-    def __dict__(self):
+    def to_hoomd(self):
+        """dict: Get a dict of json-serializable subset of shape properties.
+
+        The json-serializable output of the to_hoomd method can be directly imported
+        into data management tools like Signac. This data can then be queried for use in
+        HOOMD simulations. Key naming matches HOOMD integrators: for example, the
+        moment_inertia key links to data from coxeter's inertia_tensor.
+
+        For a Sphere, the following properties are stored:
+
+        * diameter (float):
+            The diameter of the shape (twice the radius).
+        * centroid (list(float))
+            The centroid of the shape.
+        * volume (float)
+            The volume of the shape.
+        * moment_inertia (list(list))
+            The shape's inertia tensor.
+
+        Returns
+        -------
+        dict
+            Dict containing a subset of shape properties.
+        """
         return {
-            "radius": self.radius,
+            "diameter": 2 * self.radius,
             "centroid": self.centroid.tolist(),
-            "inertia_tensor": self.inertia_tensor,
-            "gsd_shape_spec": self.gsd_shape_spec,
             "volume": self.volume,
+            "moment_inertia": self.inertia_tensor.tolist(),
         }

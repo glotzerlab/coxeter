@@ -306,18 +306,44 @@ class ConvexSpheropolyhedron(Shape3D):
 
     @property
     def _data(self):
-        return self.__dict__
+        return self.to_hoomd
 
     @property
-    def __dict__(self):
-        return {
-            "vertices": self.vertices.tolist(),
+    def to_hoomd(self):
+        """dict: Get a dict of json-serializable subset of shape properties.
+
+        The json-serializable output of the to_hoomd method can be directly imported
+        into data management tools like Signac. This data can then be queried for use in
+        HOOMD simulations. Key naming matches HOOMD integrators: for example, the
+        sweep_radius key links to data from coxeter's poly.radius.
+
+        For a ConvexSpheropolyhedron, the following properties are stored:
+
+        * vertices (list(list)):
+            The vertices of the shape.
+        * faces (list(list)):
+            The faces of the shape.
+        * centroid (list(float))
+            The centroid of the shape.
+            This is set to [0,0,0] to improve HOOMD performance.
+        * sweep_radius (float):
+            The rounding radius of the shape.
+        * volume (float)
+            The volume of the shape.
+
+        Returns
+        -------
+        dict
+            Dict containing a subset of shape properties.
+        """
+        old_centroid = self.centroid
+        self.centroid = np.array([0, 0, 0])
+        hoomd_dict = {
+            "vertices": self.polyhedron.vertices.tolist(),
             "faces": [face.tolist() for face in self.polyhedron.faces],
             "centroid": self.polyhedron.centroid.tolist(),
-            "_equations": self.polyhedron._equations.tolist(),
-            "radius": self.radius,
-            "_faces_are_convex": self.polyhedron._faces_are_convex,
-            "_neighbors": [nei.tolist() for nei in self.polyhedron.neighbors],
-            "gsd_shape_spec": self.gsd_shape_spec,
-            "volume": self.volume,
+            "sweep_radius": self.radius,
+            "volume": self.polyhedron.volume,
         }
+        self.centroid = old_centroid
+        return hoomd_dict

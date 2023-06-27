@@ -195,36 +195,7 @@ class Shape(ABC):
         return scene
 
     def _data(self):
-        return self.__dict__
-
-    def __dict__(self):
-        return {}
-
-    def __getitem__(self, key):
-        return self.__dict__[key]
-
-    def __iter__(self):
-        return iter(self.__dict__)
-
-    def keys(self):
-        """Return keys from self.__dict__.
-
-        Returns:
-           dict_keys: List of keys stored in self.__dict__.
-
-        :meta private:
-        """
-        return self.__dict__.keys()
-
-    def items(self):
-        """Return keys from self.__dict__.
-
-        Returns:
-           dict_items: List of items stored in self.__dict__.
-
-        :meta private:
-        """
-        return self.__dict__.items()
+        return
 
 
 Mapping.register(Shape)
