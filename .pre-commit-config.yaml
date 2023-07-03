@@ -19,7 +19,7 @@ repos:
       - id: check-json
       - id: check-yaml
   - repo: https://github.com/asottile/pyupgrade
-    rev: 'v3.3.1'
+    rev: 'v3.8.0'
     hooks:
       - id: pyupgrade
         args:
@@ -31,7 +31,7 @@ repos:
       - id: isort
         exclude: '(?:extern/.*)'
   - repo: https://github.com/psf/black
-    rev: '23.1.0'
+    rev: '23.3.0'
     hooks:
       - id: black
         exclude: '(?:extern/.*)'
@@ -52,7 +52,7 @@ repos:
             'flake8-comprehensions==3.8.0',
         ]
   - repo: https://github.com/nbQA-dev/nbQA
-    rev: 1.6.1
+    rev: 1.7.0
     hooks:
       - id: nbqa-pyupgrade
         args:
