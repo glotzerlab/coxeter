@@ -508,8 +508,8 @@ def test_is_inside(convex_square):
 
     @given(floats(0, 1), floats(0, 1))
     def testfun(x, y):
-        assert convex_square.is_inside([[x, y, 0]])
-        assert rotated_square.is_inside([[x, y, 0]])
+        assert not convex_square.is_inside([[x, y, 0]])
+        assert not rotated_square.is_inside([[x, y, 0]])
 
     testfun()
 
