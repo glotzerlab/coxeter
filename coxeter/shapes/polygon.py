@@ -668,30 +668,30 @@ class Polygon(Shape2D):
 
         Simple point-in-polygon algorithm based on winding number, with robustness
         depending only on the underlying arithmetic.
-        
+
         We've got a closed, possibly non-simple polygon described as a list of vertices
         in R^2, and we're given a point that doesn't lie directly on the path of the
         polygon.  We'd like to compute the winding number of the polygon around the
         point.
-        
+
         There are two sources of difficulty: (1) dealing with numerical errors that
         might result in an incorrect answer, and (2) dealing with degenerate cases.
         We'll ignore the numerical issues for the moment.
-        
+
         Strategy: without loss of generality, let's place the point at the origin.
         Divide the remainder of the plane (i.e., R^2 minus the origin) into two
         halves, L and R, defined as follows:
-        
+
             L = {(x, y) | x < 0 or x == 0 and y < 0}
-        
+
             R = {(x, y) | x > 0 or x == 0 and y > 0}
-        
+
         That is, R contains all points with argument in the half-closed interval
         (-pi/2, pi/2], and L contains all others.  Note that with these definitions, L
         and R are both convex: a line segment between two points in R lies entirely in
         R, and similarly for L.  In particular, a line segment between two points can
         only pass through the origin if one of those points is in L and the other in R.
-        
+
         Now the idea is that we follow the edges of the polygon, keeping track of how
         many times we move between L and R.  For each move from L to R (or vice versa),
         we also need to compute whether the edge passes *above* or *below* the origin,
@@ -715,11 +715,9 @@ class Polygon(Shape2D):
         """
         # Rotate both the vertices and the points into the plane.
         verts, rotation = _align_points_by_normal(self.normal, self.vertices)
-        points =np.atleast_2d( np.dot(points, rotation.T))
+        points = np.atleast_2d(np.dot(points, rotation.T))
         p1 = verts[:, None]  # Add new axis to make it 3D
-        p2 = np.roll(verts, shift=-1, axis=0)[
-            :, None
-        ]  # Add new axis to make it 3D
+        p2 = np.roll(verts, shift=-1, axis=0)[:, None]  # Add new axis to make it 3D
         points = points[None, :, :]  # Add new axis to make it 3D
 
         diff_x_p1 = p1[..., 0] - points[..., 0]
@@ -745,7 +743,6 @@ class Polygon(Shape2D):
         winding_number = np.sum(half_turn, axis=0) // 2  # Sum along the first axis
 
         return winding_number != 0
-
 
     def __repr__(self):
         return (
