@@ -705,7 +705,7 @@ class Polygon(Shape2D):
             Points on the boundary of the shape will return :code:`False`.
 
         Args:
-            points (:math:`(N, 3)` :class:`numpy.ndarray`):
+            points (:math:`(N, 3)` or :math:`(N, 2)` :class:`numpy.ndarray`):
                 The points to test.
 
         Returns:
@@ -715,6 +715,9 @@ class Polygon(Shape2D):
         """
         # Rotate both the vertices and the points into the plane.
         verts, rotation = _align_points_by_normal(self.normal, self.vertices)
+        # add zero to points if only x and y
+        if points.shape[1] == 2:
+            points = np.hstack((points, np.zeros((points.shape[0], 1))))
         points = np.atleast_2d(np.dot(points, rotation.T))
         p1 = verts[:, None]  # Add new axis to make it 3D
         p2 = np.roll(verts, shift=-1, axis=0)[:, None]  # Add new axis to make it 3D
