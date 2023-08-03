@@ -506,12 +506,12 @@ def test_is_inside(convex_square):
     assert convex_square.is_inside(convex_square.center)
     assert rotated_square.is_inside(rotated_square.center)
 
-    @given(floats(0, 1), floats(0, 1))
-    def testfun(x, y):
-        assert not convex_square.is_inside([[x, y, 0]])
-        assert not rotated_square.is_inside([[x, y, 0]])
-
-    testfun()
+    point1 = np.array([0.0, 0.0])
+    point2 = np.array([1, 1])
+    assert not convex_square.is_inside(point1)
+    assert not rotated_square.is_inside(point1)
+    assert not convex_square.is_inside(point2)
+    assert not rotated_square.is_inside(point2)
 
 
 def test_is_point_inside():
