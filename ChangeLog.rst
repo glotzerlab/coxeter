@@ -14,6 +14,7 @@ Changed
 
 - The minimum required Python version is now 3.8.
 - The minimum required NumPy version is now 1.19.
+- Speed up point in polygon using NumPy.
 
 v0.6.1 - 2021-07-15
 -------------------
