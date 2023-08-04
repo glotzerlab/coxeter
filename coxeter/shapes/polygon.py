@@ -668,7 +668,7 @@ class Polygon(Shape2D):
 
         The code in this function is based on implementation in
         https://github.com/mdickinson/polyhedron which is licensed under
-        BSD-3 license.  
+        BSD-3 license.
 
         Simple point-in-polygon algorithm based on winding number, with robustness
         depending only on the underlying arithmetic.
