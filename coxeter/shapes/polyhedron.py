@@ -368,22 +368,12 @@ class Polyhedron(Shape3D):
 
         Results returned as vertex index pairs,  with each edge of the polyhedron
         included exactly once.  Edge (i,j) pairs are ordered by vertex index with i<j.
-
         For a list of (j,i) edges, the following list comprehension can be used:
-
         ``[(j,i) for i,j in poly.edges]``
         """
-        return np.array(
-            sorted(
-                [
-                    (i, j)
-                    for face in self.faces
-                    for i, j in zip(face, np.roll(face, -1))
-                    if i < j
-                ],
-                key=lambda x: (x[0], x[1]),
-            )
-        )
+        if hasattr(self, "_edges") is False:
+            self._find_edges()
+        return self._edges
 
     @property
     def edge_vectors(self):
@@ -395,6 +385,19 @@ class Polyhedron(Shape3D):
                 )
                 for (i, j) in self.edges
             ]
+        )
+
+    def _find_edges(self):
+        self._edges = np.array(
+            sorted(
+                [
+                    (i, j)
+                    for face in self.faces
+                    for i, j in zip(face, np.roll(face, -1))
+                    if i < j
+                ],
+                key=lambda x: (x[0], x[1]),
+            )
         )
 
     @property
