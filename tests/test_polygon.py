@@ -506,12 +506,20 @@ def test_is_inside(convex_square):
     assert convex_square.is_inside(convex_square.center)
     assert rotated_square.is_inside(rotated_square.center)
 
-    point1 = np.array([0.0, 0.0])
-    point2 = np.array([1, 1])
-    assert not convex_square.is_inside(point1)
-    assert not rotated_square.is_inside(point1)
-    assert not convex_square.is_inside(point2)
-    assert not rotated_square.is_inside(point2)
+    # the smallest positive normalized floating-point number
+    import sys
+
+    limit = sys.float_info.min
+
+    @given(
+        floats(limit, 1 - limit, exclude_min=True, exclude_max=True),
+        floats(limit, 1 - limit, exclude_min=True, exclude_max=True),
+    )
+    def test_is_inside(x, y):
+        assert convex_square.is_inside([[x, y, 0]])
+        assert rotated_square.is_inside([[x, y, 0]])
+
+    test_is_inside()
 
 
 def test_is_point_inside():
