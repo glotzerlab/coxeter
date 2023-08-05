@@ -666,33 +666,33 @@ class Polygon(Shape2D):
     def is_inside(self, points):
         """Simple point-in-polygon algorithm based on winding number.
 
-        The code in this function is based on implementation in :cite:`Dickinson2019` 
-        which is licensed under the BSD-3 license. 
-        
-        Given a closed, possibly non-simple polygon described as a list of vertices in 
-        :math:`\mathbb{R}^2` and a point that doesn't lie directly on the path of the 
-        polygon, we'd like to compute the winding number of the polygon around the 
-        point. To achieve this, we place the point at the origin. Divide the remainder 
-        of the plane (i.e., :math:`\mathbb{R}^2` minus the origin) into two halves, 
+        The code in this function is based on implementation in :cite:`Dickinson2019`
+        which is licensed under the BSD-3 license.
+
+        Given a closed, possibly non-simple polygon described as a list of vertices in
+        :math:`\\mathbb{R}^2` and a point that doesn't lie directly on the path of the
+        polygon, we'd like to compute the winding number of the polygon around the
+        point. To achieve this, we place the point at the origin. Divide the remainder
+        of the plane (i.e., :math:`\\mathbb{R}^2` minus the origin) into two halves,
         :math:`L` and :math:`R`, defined as follows:
 
         .. math::
-            L = {(x, y) | x < 0 \lor x = 0 \land y < 0}
+            L = {(x, y) | x < 0 \\lor x = 0 \\land y < 0}
 
-            R = {(x, y) | x > 0 \lor x = 0 \land y > 0}
+            R = {(x, y) | x > 0 \\lor x = 0 \\land y > 0}
 
         That is, :math:`R` contains all points with argument in the half-closed
-        interval :math:`\\left[-\\frac{\pi}{2},\\frac{\pi}{2}\\right)`, and :math:`L` 
-        contains all others.  Note that with these definitions, :math:`L` and :math:`R` 
-        are both convex: a line segment between two points in :math:`R` lies entirely 
-        in :math:`R`, and similarly for :math:`L`.  In particular, a line segment 
-        between two points can only pass through the origin if one of those points is 
-        in :math:`L` and the other in :math:`R`. Now, we follow the edges of the 
-        polygon, keeping track of how many times we move between :math:`L` 
+        interval :math:`\\left[-\\frac{\\pi}{2},\\frac{\\pi}{2}\\right)`, and :math:`L`
+        contains all others.  Note that with these definitions, :math:`L` and :math:`R`
+        are both convex: a line segment between two points in :math:`R` lies entirely
+        in :math:`R`, and similarly for :math:`L`.  In particular, a line segment
+        between two points can only pass through the origin if one of those points is
+        in :math:`L` and the other in :math:`R`. Now, we follow the edges of the
+        polygon, keeping track of how many times we move between :math:`L`
         and :math:`R`.  For each move from :math:`L` to :math:`R` (or vice versa),
         we also need to compute whether the edge passes *above* or *below* the origin,
         to compute its contribution to the total winding number.  From the comment
-        above, we can safely ignore all edges that lie entirely within either :math:`L` 
+        above, we can safely ignore all edges that lie entirely within either :math:`L`
         or :math:`R`.
         .. note::
 
