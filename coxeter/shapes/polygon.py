@@ -664,7 +664,7 @@ class Polygon(Shape2D):
         return form_factor
 
     def is_inside(self, points):
-        """Simple point-in-polygon algorithm based on winding number.
+        r"""Simple point-in-polygon algorithm based on winding number.
 
         The code in this function is based on implementation in :cite:`Dickinson2019`
         which is licensed under the BSD-3 license.
