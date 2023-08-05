@@ -664,46 +664,36 @@ class Polygon(Shape2D):
         return form_factor
 
     def is_inside(self, points):
-        """Determine whether points are contained in this polygon.
+        """Simple point-in-polygon algorithm based on winding number.
 
-        The code in this function is based on implementation in
-        https://github.com/mdickinson/polyhedron which is licensed under
-        BSD-3 license.
+        The code in this function is based on implementation in :cite:`Dickinson2019` 
+        which is licensed under the BSD-3 license. 
+        
+        Given a closed, possibly non-simple polygon described as a list of vertices in 
+        :math:`\mathbb{R}^2` and a point that doesn't lie directly on the path of the 
+        polygon, we'd like to compute the winding number of the polygon around the 
+        point. To achieve this, we place the point at the origin. Divide the remainder 
+        of the plane (i.e., :math:`\mathbb{R}^2` minus the origin) into two halves, 
+        :math:`L` and :math:`R`, defined as follows:
 
-        Simple point-in-polygon algorithm based on winding number, with robustness
-        depending only on the underlying arithmetic.
+        .. math::
+            L = {(x, y) | x < 0 \lor x = 0 \land y < 0}
 
-        We've got a closed, possibly non-simple polygon described as a list of vertices
-        in R^2, and we're given a point that doesn't lie directly on the path of the
-        polygon.  We'd like to compute the winding number of the polygon around the
-        point.
+            R = {(x, y) | x > 0 \lor x = 0 \land y > 0}
 
-        There are two sources of difficulty: (1) dealing with numerical errors that
-        might result in an incorrect answer, and (2) dealing with degenerate cases.
-        We'll ignore the numerical issues for the moment.
-
-        Strategy: without loss of generality, let's place the point at the origin.
-        Divide the remainder of the plane (i.e., R^2 minus the origin) into two
-        halves, L and R, defined as follows:
-
-            L = {(x, y) | x < 0 or x == 0 and y < 0}
-
-            R = {(x, y) | x > 0 or x == 0 and y > 0}
-
-        That is, R contains all points with argument in the half-closed interval
-        (-pi/2, pi/2], and L contains all others.  Note that with these definitions, L
-        and R are both convex: a line segment between two points in R lies entirely in
-        R, and similarly for L.  In particular, a line segment between two points can
-        only pass through the origin if one of those points is in L and the other in R.
-
-        Now the idea is that we follow the edges of the polygon, keeping track of how
-        many times we move between L and R.  For each move from L to R (or vice versa),
+        That is, :math:`R` contains all points with argument in the half-closed
+        interval :math:`\\left[-\\frac{\pi}{2},\\frac{\pi}{2}\\right)`, and :math:`L` 
+        contains all others.  Note that with these definitions, :math:`L` and :math:`R` 
+        are both convex: a line segment between two points in :math:`R` lies entirely 
+        in :math:`R`, and similarly for :math:`L`.  In particular, a line segment 
+        between two points can only pass through the origin if one of those points is 
+        in :math:`L` and the other in :math:`R`. Now, we follow the edges of the 
+        polygon, keeping track of how many times we move between :math:`L` 
+        and :math:`R`.  For each move from :math:`L` to :math:`R` (or vice versa),
         we also need to compute whether the edge passes *above* or *below* the origin,
         to compute its contribution to the total winding number.  From the comment
-        above, we can safely ignore all edges that lie entirely within either L or R.
-
-        This implementation is a numpy vectorized version of the algorithm described.
-
+        above, we can safely ignore all edges that lie entirely within either :math:`L` 
+        or :math:`R`.
         .. note::
 
             Points on the boundary of the shape will return :code:`False`.
