@@ -341,6 +341,11 @@ class ConvexPolyhedron(Polyhedron):
         """
         return self._equations
 
+    @property
+    def normals(self):
+        """:math:`(N, 3)` :class:`numpy.ndarray`: Get normal vectors for each face."""
+        return self._equations[:, :3]
+
     def _find_simplex_equations(self):
         """Find the plane equations of the polyhedron simplices."""
         abc = self._vertices[self._simplices]
