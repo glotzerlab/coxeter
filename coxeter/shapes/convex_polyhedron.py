@@ -278,6 +278,21 @@ class ConvexPolyhedron(Polyhedron):
         scale_factor = np.cbrt(value / self._volume)
         self._rescale(scale_factor)
 
+    @property
+    def surface_area(self):
+        """float: Get or set the surface area."""
+        return self._area
+
+    @surface_area.setter
+    def surface_area(self, value: Number):
+        scale_factor = np.sqrt(value / self._area)
+        self._rescale(scale_factor)
+
+    def _calculate_surface_area(self):
+        new_area = self._find_triangle_array_area(self._vertices[self._simplices])
+        self._area = new_area
+        return self._area
+
     def _rescale(self, scale_factor: Number):
         """Scale polytope by changing the length of the edges.
 
@@ -483,8 +498,8 @@ class ConvexPolyhedron(Polyhedron):
         """
         v1 = triangle_vertices[:, 2] - triangle_vertices[:, 1]
         v2 = triangle_vertices[:, 0] - triangle_vertices[:, 1]
-        unnormalized_normals = np.cross(v1,v2,axis=1)
-        
+        unnormalized_normals = np.cross(v1, v2, axis=1)
+
         if sum_result:
             return np.sum(np.linalg.norm(unnormalized_normals, axis=1)) / 2
         else:
