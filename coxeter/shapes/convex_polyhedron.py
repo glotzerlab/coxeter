@@ -798,6 +798,37 @@ class ConvexPolyhedron(Polyhedron):
         min_distance = -np.max(distances)
         return Sphere(min_distance, center)
 
+    def get_dihedral(self, a, b):
+        """Get the dihedral angle between a pair of faces.
+
+        The dihedral is computed from the dot product of the face normals.
+
+        Args:
+            a (int):
+                The index of the first face.
+            b (int):
+                The index of the second face.
+
+        Returns:
+            float: The dihedral angle in radians.
+
+        Example:
+            >>> cube = coxeter.shapes.ConvexPolyhedron(
+            ...   [[1, 1, 1], [1, -1, 1], [1, 1, -1], [1, -1, -1],
+            ...    [-1, 1, 1], [-1, -1, 1], [-1, 1, -1], [-1, -1, -1]])
+            >>> cube = coxeter.shapes.Polyhedron(
+            ...   vertices=cube.vertices, faces=cube.faces)
+            >>> import numpy as np
+            >>> assert np.isclose(cube.get_dihedral(1, 2), np.pi / 2.)
+
+        """
+        if self._faces_are_sorted is False:
+            self.sort_faces()
+        if b not in self.neighbors[a]:
+            raise ValueError("The two faces are not neighbors.")
+        n1, n2 = self._equations[[a, b], :3]
+        return np.arccos(np.dot(-n1, n2))
+
     def _plato_primitive(self, backend):
         return backend.ConvexPolyhedra(
             positions=np.array([self.center]),
