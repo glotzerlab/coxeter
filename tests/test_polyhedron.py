@@ -799,16 +799,25 @@ def test_repr_convex(convex_cube):
     assert str(convex_cube), str(eval(repr(convex_cube)))
 
 
+@pytest.mark.parametrize(
+    "atol",
+    [
+        5e-3
+        if os.getenv("CI", "false") == "true"
+        or os.getenv("CIRCLECI", "false") == "true"
+        else 1e-2
+    ],
+)
 @named_damasceno_shapes_mark
-def test_center(shape):
+def test_center(shape, atol):
     poly = ConvexPolyhedron(shape["vertices"])
     coxeter_result = poly.center
-    num_samples = 1000
+    num_samples = 5000
     accept = False
-    while num_samples < 1e8:
+    while num_samples < 5e7:
         try:
             mc_result = compute_centroid_mc(shape["vertices"], num_samples)
-            assert np.allclose(coxeter_result, mc_result, atol=1e-1)
+            assert np.allclose(coxeter_result, mc_result, atol=atol)
             accept = True
             break
         except AssertionError:
@@ -821,3 +830,20 @@ def test_center(shape):
                 shape["name"], mc_result, coxeter_result
             )
         )
+
+
+@combine_marks(
+    named_platonic_mark,
+    named_archimedean_mark,
+    named_catalan_mark,
+    named_johnson_mark,
+    named_prismantiprism_mark,
+    named_pyramiddipyramid_mark,
+)
+@given(arrays(np.float64, (3,), elements=floats(-10, 10, width=64), unique=True))
+def test_set_centroid(poly, centroid_vector):
+    poly.centroid = centroid_vector
+    coxeter_result = poly.centroid
+    assert np.allclose(coxeter_result, centroid_vector, atol=1e-12)
+    poly.centroid = [0, 0, 0]
+    assert np.allclose(poly.centroid, [0, 0, 0], atol=1e-12)
