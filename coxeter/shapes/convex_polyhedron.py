@@ -294,6 +294,23 @@ class ConvexPolyhedron(Polyhedron):
         _equations[:, 3] = -np.einsum("ij,ij->i", n, a)
         self._simplex_equations = _equations
 
+    @property
+    def centroid(self):
+        """:math:`(3, )` :class:`numpy.ndarray` of float: Get or set the center of mass.
+
+        The centroid is calculated using the curl theorem over the surface simplices.
+        """
+        return self._centroid
+
+    @centroid.setter
+    def centroid(self, value):
+        assert len(value) == 3, "Centroid must be a point in 3-space."
+        self._vertices += np.asarray(value) - self.centroid
+        self._find_equations()
+        self._find_simplex_equations()
+        self._centroid_from_triangulated_surface()
+        self._calculate_signed_volume()
+
     def _centroid_from_triangulated_surface(self):
         abc = self._vertices[self._simplices]
         a = abc[:, 0]
