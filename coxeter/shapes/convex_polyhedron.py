@@ -385,6 +385,13 @@ class ConvexPolyhedron(Polyhedron):
         )
 
     @property
+    def faces(self):
+        """list(:class:`numpy.ndarray`): Get the polyhedron's faces."""
+        if self._faces_are_sorted is False:
+            self.sort_faces()
+        return self._faces
+
+    @property
     def mean_curvature(self):
         r"""float: The integrated, normalized mean curvature.
 
