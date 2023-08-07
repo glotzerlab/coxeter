@@ -445,6 +445,25 @@ class ConvexPolyhedron(Polyhedron):
         self._faces = sorted_faces
         self._find_neighbors()
 
+    def _surface_triangulation(self):
+        """Output the vertices of simplices composing the polyhedron's surface.
+
+        Returns:
+            :math:`(N,3,3)` :class:`numpy.ndarray`:
+                Array of vertices for simplices composing the polyhedron's surface.
+        """
+        return self.vertices[self._simplices]
+
+    @property
+    def simplices(self):
+        """Output the vertex indices of simplices composing the polyhedron's surface.
+
+        Returns:
+            :math:`(N,3)` :class:`numpy.ndarray`:
+                Array of vertex indices of simplices making up the polyhedron's surface.
+        """
+        return self._simplices
+
     @property
     def mean_curvature(self):
         r"""float: The integrated, normalized mean curvature.
