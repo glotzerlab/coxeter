@@ -5,6 +5,7 @@
 
 import warnings
 from collections import defaultdict
+from numbers import Number
 
 import numpy as np
 from scipy.spatial import ConvexHull
@@ -264,6 +265,33 @@ class ConvexPolyhedron(Polyhedron):
 
         # Recompute simplex equations and centroid from the new triangulation.
         self._find_simplex_equations()
+        self._centroid_from_triangulated_surface()
+
+    @property
+    def volume(self):
+        """float: Get or set the polyhedron's volume."""
+        return self._volume
+
+    @volume.setter
+    def volume(self, value: Number):
+        scale_factor = np.cbrt(value / self._volume)
+        self._rescale(scale_factor)
+
+    def _rescale(self, scale_factor: Number):
+        """Scale polytope by changing the length of the edges.
+
+        Args:
+            scale_factor (int or float):
+                Multiplier to scale edges by. Volume and surface area setters preconvert
+                the scale_factor to the correct value for the desired property.
+        """
+        self._vertices *= scale_factor
+        self._equations[:, 3] *= scale_factor
+        self._simplex_equations[:, 3] *= scale_factor
+        self._volume = self._volume * scale_factor**3
+        self._area = self._area * scale_factor**2
+
+        # Recalculate centroid of shape
         self._centroid_from_triangulated_surface()
 
     def _calculate_signed_volume(self):
