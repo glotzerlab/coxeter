@@ -16,35 +16,42 @@ class ConvexPolyhedron(Polyhedron):
     """A convex polyhedron.
 
     A convex polyhedron is defined as the convex hull of its vertices. The
-    class is a simple extension of :class:`~.Polyhedron` that builds the
-    faces from the simplices of the convex hull. This class also includes
-    various additional properties that can be used to characterize the
-    geometric features of the polyhedron.
+    class is an extension of :class:`~.Polyhedron` that builds the
+    faces from the simplices of the convex hull. Simplices are stored and class methods
+    are optimized to make use of the triangulation, as well as  special properties of
+    convex solids in three dimensions. This class also includes various additional
+    properties that can be used to characterize geometric features of the polyhedron.
 
     Args:
         vertices (:math:`(N, 3)` :class:`numpy.ndarray`):
             The vertices of the polyhedron.
+        fast (bool, optional):
+            Creation mode for the polyhedron. fast=False (default) will perform all
+            checks and precalculate most properties. fast=True  will precalculate some
+            properties, but will not find face neighbors or sort face indices. These
+            calculations will instead be performed when required by another method.
+            (Default value: False).
 
     Example:
         >>> cube = coxeter.shapes.ConvexPolyhedron(
-        ...   [[1, 1, 1], [1, -1, 1], [1, 1, -1], [1, -1, -1],
-        ...    [-1, 1, 1], [-1, -1, 1], [-1, 1, -1], [-1, -1, -1]])
+        ...   [[-1, -1, -1], [-1, -1, 1], [-1, 1, -1], [-1, 1, 1],
+        ...    [1, -1, -1], [1, -1, 1], [1, 1, -1], [1, 1, 1]])
         >>> import numpy as np
         >>> assert np.isclose(cube.asphericity, 1.5)
         >>> bounding_sphere = cube.minimal_bounding_sphere
         >>> assert np.isclose(bounding_sphere.radius, np.sqrt(3))
-        >>> cube.center
+        >>> cube.centroid
         array([0., 0., 0.])
         >>> circumsphere = cube.circumsphere
         >>> assert np.isclose(circumsphere.radius, np.sqrt(3))
         >>> cube.faces
-        [array([4, 5, 1, 0], dtype=int32), array([0, 2, 6, 4], dtype=int32),
-        array([6, 7, 5, 4], dtype=int32), array([0, 1, 3, 2], dtype=int32),
-        array([5, 7, 3, 1], dtype=int32), array([2, 3, 7, 6], dtype=int32)]
+        [array([0, 2, 6, 4], dtype=int32), array([0, 4, 5, 1], dtype=int32),
+        array([4, 6, 7, 5], dtype=int32), array([0, 1, 3, 2], dtype=int32),
+        array([2, 3, 7, 6], dtype=int32), array([1, 5, 7, 3], dtype=int32)]
         >>> cube.gsd_shape_spec
-        {'type': 'ConvexPolyhedron', 'vertices': [[1.0, 1.0, 1.0], [1.0, -1.0, 1.0],
-        [1.0, 1.0, -1.0], [1.0, -1.0, -1.0], [-1.0, 1.0, 1.0], [-1.0, -1.0, 1.0],
-        [-1.0, 1.0, -1.0], [-1.0, -1.0, -1.0]]}
+        {'type': 'ConvexPolyhedron', 'vertices': [[-1.0, -1.0, -1.0], [-1.0, -1.0, 1.0],
+        [-1.0, 1.0, -1.0], [-1.0, 1.0, 1.0], [1.0, -1.0, -1.0], [1.0, -1.0, 1.0],
+        [1.0, 1.0, -1.0], [1.0, 1.0, 1.0]]}
         >>> assert np.allclose(
         ...   cube.inertia_tensor,
         ...   np.diag([16. / 3., 16. / 3., 16. / 3.]))
@@ -57,12 +64,12 @@ class ConvexPolyhedron(Polyhedron):
         [array([1, 2, 3, 4]), array([0, 2, 3, 5]), array([0, 1, 4, 5]),
         array([0, 1, 4, 5]), array([0, 2, 3, 5]), array([1, 2, 3, 4])]
         >>> cube.normals
-        array([[-0., -0.,  1.],
-               [-0.,  1., -0.],
-               [-1.,  0., -0.],
+        array([[-0., -0., -1.],
+               [ 0., -1.,  0.],
                [ 1., -0., -0.],
-               [-0., -1.,  0.],
-               [-0., -0., -1.]])
+               [-1., -0., -0.],
+               [ 0.,  1., -0.],
+               [-0., -0.,  1.]])
         >>> cube.num_faces
         6
         >>> cube.num_vertices
@@ -71,14 +78,14 @@ class ConvexPolyhedron(Polyhedron):
         24.0
         >>> assert np.isclose(cube.tau, 3. / 8. * np.pi)
         >>> cube.vertices
-        array([[ 1.,  1.,  1.],
-               [ 1., -1.,  1.],
-               [ 1.,  1., -1.],
-               [ 1., -1., -1.],
-               [-1.,  1.,  1.],
+        array([[-1., -1., -1.],
                [-1., -1.,  1.],
                [-1.,  1., -1.],
-               [-1., -1., -1.]])
+               [-1.,  1.,  1.],
+               [ 1., -1., -1.],
+               [ 1., -1.,  1.],
+               [ 1.,  1., -1.],
+               [ 1.,  1.,  1.]])
         >>> assert np.isclose(cube.volume, 8.)
 
     """
