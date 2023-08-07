@@ -359,7 +359,7 @@ def test_edges():
     for name, edgelength in known_shapes.items():
         poly = PlatonicFamily.get_shape(name)
         # Test that the correct number of edges has been found
-        assert number_of_edges[name] == len(poly.edges)
+        assert number_of_edges[name] == poly.num_edges
         assert number_of_edges[name] == len(poly.edge_vectors)
 
         # Test edge_vectors property
