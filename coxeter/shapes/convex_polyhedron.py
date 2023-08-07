@@ -464,6 +464,32 @@ class ConvexPolyhedron(Polyhedron):
         """
         return self._simplices
 
+    def _find_triangle_array_area(self, triangle_vertices, sum_result=True):
+        """
+        Get the areas of each triangle in an input array.
+
+        Args:
+            angles (:math:`(N, 3, 3)` :class:`numpy.ndarray`):
+                Array of vertices for the triangles that will have their area computed.
+            sum_result (bool):
+                Whether the output should be summed.
+                (Default value: True).
+
+        Returns:
+            :math:`(N, )` :class:`numpy.ndarray` or float:
+                Boolean array indicating which points are contained in thepolyhedron.
+                If sum_result is True, a single value is returned.
+
+        """
+        v1 = triangle_vertices[:, 2] - triangle_vertices[:, 1]
+        v2 = triangle_vertices[:, 0] - triangle_vertices[:, 1]
+        unnormalized_normals = np.cross(v1,v2,axis=1)
+        
+        if sum_result:
+            return np.sum(np.linalg.norm(unnormalized_normals, axis=1)) / 2
+        else:
+            return np.linalg.norm(unnormalized_normals, axis=1) / 2
+
     @property
     def mean_curvature(self):
         r"""float: The integrated, normalized mean curvature.
