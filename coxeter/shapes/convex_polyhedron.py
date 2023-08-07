@@ -352,6 +352,8 @@ class ConvexPolyhedron(Polyhedron):
         self._simplex_areas = self._find_triangle_array_area(
             self._vertices[self._simplices], sum_result=False
         )
+        if not hasattr(self, "_coplanar_simplices"):
+            self._find_coplanar_simplices()
         if face is None:
             return [
                 np.sum(self._simplex_areas[self._coplanar_simplices[fac]])
@@ -459,6 +461,8 @@ class ConvexPolyhedron(Polyhedron):
         return self._faces
 
     def _find_face_centroids(self):
+        if not hasattr(self, "_coplanar_simplices"):
+            self._find_coplanar_simplices()
         simplex_centroids = np.mean(self._vertices[self._simplices], axis=1)  # (N,3)
         self._simplex_areas = self._find_triangle_array_area(
             self._vertices[self._simplices], sum_result=False

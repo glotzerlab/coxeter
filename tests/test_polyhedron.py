@@ -876,3 +876,14 @@ def test_set_centroid(poly, centroid_vector):
     assert np.allclose(coxeter_result, centroid_vector, atol=1e-12)
     poly.centroid = [0, 0, 0]
     assert np.allclose(poly.centroid, [0, 0, 0], atol=1e-12)
+
+
+@named_platonic_mark
+def test_face_centroids(poly):
+    # For platonic solids, the centroid of a face is equal to the mean of its vertices
+    poly.centroid = [0, 0, 0]
+    coxeter_result = poly.face_centroids
+    for i, face in enumerate(poly.faces):
+        face_vertices = poly.vertices[face]
+        vertex_mean = np.mean(face_vertices, axis=0)
+        assert np.allclose(vertex_mean, coxeter_result[i])
