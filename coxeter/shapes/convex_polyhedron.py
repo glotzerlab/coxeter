@@ -308,6 +308,31 @@ class ConvexPolyhedron(Polyhedron):
         self._volume = abs(signed_volume)
         return signed_volume
 
+    def _find_equations(self):
+        """Find the plane equations of the polyhedron faces."""
+        # This method only takes the first three items from each face, so it is
+        # unaffected by face structure or ordering.
+        point_on_face_indices = []
+        for face in self.faces:
+            point_on_face_indices.append(face[0:3])
+        vertices = self._vertices[point_on_face_indices]
+
+        # Calculate the directions of the normals
+        v1 = vertices[:, 2] - vertices[:, 1]
+        v2 = vertices[:, 0] - vertices[:, 1]
+        normals = np.cross(v1, v2)
+
+        # Normalize the normals
+        norms = np.linalg.norm(normals, axis=1)
+        normals /= norms[:, None]
+
+        _equations = np.empty((len(self._faces), 4))
+        _equations[:, :3] = normals
+        _equations[:, 3] = -np.einsum(
+            "ij,ij->i", normals, vertices[:, 0]
+        )  # dot product
+        self._equations = _equations
+
     def _find_simplex_equations(self):
         """Find the plane equations of the polyhedron simplices."""
         abc = self._vertices[self._simplices]
