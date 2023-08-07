@@ -124,7 +124,7 @@ class ConvexPolyhedron(Polyhedron):
         """Extract data from ConvexHull.
 
         Data is moved from convex hull into private variables. This method deletes the
-        original hull in order to avoid double storage, and chec.
+        original hull in order to avoid double storage.
         """
         assert (
             self._ndim == self._convex_hull.ndim
