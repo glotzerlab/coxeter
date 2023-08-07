@@ -13,6 +13,7 @@ from scipy.spatial import ConvexHull
 
 from .polyhedron import Polyhedron
 from .sphere import Sphere
+from .utils import translate_inertia_tensor
 
 
 class ConvexPolyhedron(Polyhedron):
@@ -576,6 +577,123 @@ class ConvexPolyhedron(Polyhedron):
             return np.sum(np.linalg.norm(unnormalized_normals, axis=1)) / 2
         else:
             return np.linalg.norm(unnormalized_normals, axis=1) / 2
+
+    @property
+    def inertia_tensor(self):
+        """:math:`(3, 3)` :class:`numpy.ndarray`: Get the inertia tensor.
+
+        The inertia tensor for convex shapes is computed using the algorithm described
+        in :cite:`Messner1980`.
+
+        Note:
+            For improved stability, the inertia tensor is computed about the
+            center of mass and then shifted rather than directly computed in
+            the global frame.
+        """
+        it = self._compute_inertia_tensor()
+        return translate_inertia_tensor(self.center, it, self.volume)
+
+    def _compute_inertia_tensor(self, centered=True):
+        """Compute the inertia tensor.
+
+        Internal function for computing the inertia tensor that supports both
+        centered and uncentered calculations.
+        """
+
+        def _quadrature_points(abc):
+            """Compute quadrature points at which to evaluate the integral."""
+            scalars = [
+                [5 / 3, 5 / 3, 5 / 3],
+                [[1], [1], [3]],
+                [[3], [1], [1]],
+                [[1], [3], [1]],
+            ]
+
+            q = np.zeros((abc.shape[0], 3, 4))
+
+            for i in range(4):
+                q[:, :, i] = np.sum(abc * scalars[i], axis=1)
+            q /= 5
+            return q
+
+        # Define triangle array
+        abc = self.vertices[self.simplices]
+        if centered:
+            abc -= self.centroid
+        n = self._simplex_equations[:, :3]
+        nt = n.T
+        q = _quadrature_points(abc)
+        q2 = q**2
+        q3 = q**3
+
+        # Define quadrature weights (from integrating a third order polynomial over a
+        # triangular domain). The weights have been normalized such that their sum is 1.
+        w = np.array([[-9 / 16, 25 / 48, 25 / 48, 25 / 48]]).T
+
+        # Face simplex areas
+        at = self._find_triangle_array_area(abc, sum_result=False) * 2
+
+        # Calculate and sum on-diagonal contributions to the moment of inertia.
+        def i_nn(nt, q3, w, at, sub):
+            return np.einsum("ij, j, jik, kl ->", nt[sub, :], at, q3[:, sub, :], w) / 6
+
+        # Calculate and sum off-diagonal contributions to the moment of inertia.
+        def i_nm(n, q, q2, w, at, sub):
+            return (
+                -(
+                    np.einsum(
+                        "ij,ki,k,k->",
+                        w,
+                        q2[:, sub[0], :] * q[:, sub[1], :],
+                        n[:, sub[0]],
+                        at,
+                    )
+                    + np.einsum(
+                        "ij,ki,k,k->",
+                        w,
+                        q[:, sub[0], :] * q2[:, sub[1], :],
+                        n[:, sub[1]],
+                        at,
+                    )
+                )
+                / 8
+            )
+
+        i_xx = i_nn(nt, q3, w, at, sub=[1, 2])
+        i_xy = i_nm(n, q, q2, w, at, sub=[0, 1])
+        i_xz = i_nm(n, q, q2, w, at, sub=[0, 2])
+        i_yy = i_nn(nt, q3, w, at, sub=[0, 2])
+        i_yz = i_nm(n, q, q2, w, at, sub=[1, 2])
+        i_zz = i_nn(nt, q3, w, at, sub=[0, 1])
+
+        return np.array([[i_xx, i_xy, i_xz], [i_xy, i_yy, i_yz], [i_xz, i_yz, i_zz]])
+
+    def diagonalize_inertia(self):
+        """Orient the shape along its principal axes.
+
+        The principal axes of a shape are defined by the eigenvectors of the inertia
+        tensor. This method computes the inertia tensor of the shape, diagonalizes it,
+        and then rotates the shape by the corresponding orthogonal transformation.
+
+        Example:
+            >>> cube = coxeter.shapes.ConvexPolyhedron(
+            ...   [[1, 1, 1], [1, -1, 1], [1, 1, -1], [1, -1, -1],
+            ...    [-1, 1, 1], [-1, -1, 1], [-1, 1, -1], [-1, -1, -1]])
+            >>> cube.diagonalize_inertia()
+            >>> cube.vertices
+            array([[ 1.,  1.,  1.],
+                   [ 1., -1.,  1.],
+                   [ 1.,  1., -1.],
+                   [ 1., -1., -1.],
+                   [-1.,  1.,  1.],
+                   [-1., -1.,  1.],
+                   [-1.,  1., -1.],
+                   [-1., -1., -1.]])
+
+        """
+        principal_moments, principal_axes = np.linalg.eigh(self.inertia_tensor)
+        self._vertices = np.dot(self._vertices, principal_axes)
+        self._sort_simplices()
 
     @property
     def mean_curvature(self):

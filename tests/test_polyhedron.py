@@ -193,27 +193,33 @@ def test_surface_area_shapes(poly):
     assert np.isclose(poly.surface_area, hull.area)
 
 
-# This test is a bit slow (a couple of minutes), so skip running it locally.
-@pytest.mark.skipif(
-    os.getenv("CI", "false") != "true" and os.getenv("CIRCLECI", "false") != "true",
-    reason="Test is too slow to run during rapid development",
+# This test is slow at high precisions. Run fast locally, and test in detail on CircleCI
+@pytest.mark.parametrize(
+    "atol",
+    [
+        5e-2
+        if os.getenv("CI", "false") == "true"
+        or os.getenv("CIRCLECI", "false") == "true"
+        else 1e-1
+    ],
 )
 @named_damasceno_shapes_mark
-def test_moment_inertia_damasceno_shapes(shape):
+def test_moment_inertia_damasceno_shapes(shape, atol):
     # These shapes pass the test for a sufficiently high number of samples, but
     # the number is too high to be worth running them regularly.
     bad_shapes = [
         "Augmented Truncated Dodecahedron",
         "Deltoidal Hexecontahedron",
         "Disdyakis Triacontahedron",
-        "Truncated Dodecahedron",
-        "Truncated Icosidodecahedron",
         "Metabiaugmented Truncated Dodecahedron",
-        "Pentagonal Hexecontahedron",
+        "Parabiaugmented Truncated Dodecahedron",
         "Paragyrate Diminished Rhombicosidodecahedron",
+        "Pentagonal Hexecontahedron",
+        "Rhombic Enneacontahedron",
         "Square Cupola",
         "Triaugmented Truncated Dodecahedron",
-        "Parabiaugmented Truncated Dodecahedron",
+        "Truncated Dodecahedron",
+        "Truncated Icosidodecahedron",
     ]
     if shape["name"] in ["RESERVED", "Sphere"] + bad_shapes:
         return
@@ -228,7 +234,7 @@ def test_moment_inertia_damasceno_shapes(shape):
     while num_samples < 1e8:
         try:
             mc_result = compute_inertia_mc(poly.vertices, volume, num_samples)
-            assert np.allclose(coxeter_result, mc_result, atol=1e-1)
+            assert np.allclose(coxeter_result, mc_result, atol=atol)
             accept = True
             break
         except AssertionError:
