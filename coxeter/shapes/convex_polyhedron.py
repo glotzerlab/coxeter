@@ -333,6 +333,14 @@ class ConvexPolyhedron(Polyhedron):
         )  # dot product
         self._equations = _equations
 
+    @property
+    def equations(self):
+        """:math:`(N, 4)` :class:`numpy.ndarray`: Get plane equations for each face.
+
+        Sign convention matches Scipy Convex Hull (ax + by + cz + d = 0).
+        """
+        return self._equations
+
     def _find_simplex_equations(self):
         """Find the plane equations of the polyhedron simplices."""
         abc = self._vertices[self._simplices]
