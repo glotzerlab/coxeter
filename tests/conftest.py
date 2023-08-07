@@ -1,6 +1,8 @@
 # Copyright (c) 2021 The Regents of the University of Michigan
 # All rights reserved.
 # This software is licensed under the BSD 3-Clause License.
+import os
+
 import numpy as np
 import pytest
 import rowan
@@ -35,6 +37,14 @@ def combine_marks(*marks):
     )
 
     return combined_mark
+
+
+# Define a function that checks if the script is running on CircleCI
+def is_not_ci_circleci():
+    if os.getenv("CI", "false") == "true" or os.getenv("CIRCLECI", "false") == "true":
+        return False
+    else:
+        return True
 
 
 # Need to declare this outside the fixture so that it can be used in multiple

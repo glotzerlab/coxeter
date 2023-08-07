@@ -1,7 +1,6 @@
 # Copyright (c) 2021 The Regents of the University of Michigan
 # All rights reserved.
 # This software is licensed under the BSD 3-Clause License.
-import os
 
 import numpy as np
 import pytest
@@ -19,6 +18,7 @@ from conftest import (
     combine_marks,
     get_oriented_cube_faces,
     get_oriented_cube_normals,
+    is_not_ci_circleci,
     named_archimedean_mark,
     named_catalan_mark,
     named_damasceno_shapes_mark,
@@ -155,6 +155,9 @@ def test_volume_damasceno_shapes(shape):
     assert np.isclose(poly.volume, hull.volume)
 
 
+@pytest.mark.skipif(
+    is_not_ci_circleci(), reason="Test is too slow to run during rapid development"
+)
 @settings(deadline=1000)
 @named_damasceno_shapes_mark
 @given(v_test=floats(0, 10))
@@ -181,6 +184,9 @@ def test_surface_area_damasceno_shapes(shape):
     assert np.isclose(poly.surface_area, hull.area)
 
 
+@pytest.mark.skipif(
+    is_not_ci_circleci(), reason="Test is too slow to run during rapid development"
+)
 @settings(deadline=1000)
 @named_damasceno_shapes_mark
 @given(a_test=floats(0, 10))
@@ -227,12 +233,7 @@ def test_surface_area_shapes(poly):
 # This test is slow at high precisions. Run fast locally, and test in detail on CircleCI
 @pytest.mark.parametrize(
     "atol",
-    [
-        5e-2
-        if os.getenv("CI", "false") == "true"
-        or os.getenv("CIRCLECI", "false") == "true"
-        else 1e-1
-    ],
+    [1e-1 if is_not_ci_circleci() else 5e-2],
 )
 @named_damasceno_shapes_mark
 def test_moment_inertia_damasceno_shapes(shape, atol):
@@ -830,14 +831,10 @@ def test_repr_convex(convex_cube):
     assert str(convex_cube), str(eval(repr(convex_cube)))
 
 
+# Test fast locally, and in more depth on CircleCI
 @pytest.mark.parametrize(
     "atol",
-    [
-        5e-3
-        if os.getenv("CI", "false") == "true"
-        or os.getenv("CIRCLECI", "false") == "true"
-        else 1e-2
-    ],
+    [1e-2 if is_not_ci_circleci() else 5e-3],
 )
 @named_damasceno_shapes_mark
 def test_center(shape, atol):
