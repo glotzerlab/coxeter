@@ -94,7 +94,7 @@ class ConvexPolyhedron(Polyhedron):
 
     """
 
-    def __init__(self, vertices, fast=True):
+    def __init__(self, vertices, fast=False):
         self._vertices = np.array(vertices, dtype=np.float64)
         self._ndim = self._vertices.shape[1]
         self._convex_hull = ConvexHull(self._vertices)
