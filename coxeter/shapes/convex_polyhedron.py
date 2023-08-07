@@ -324,6 +324,51 @@ class ConvexPolyhedron(Polyhedron):
         self._volume = abs(signed_volume)
         return signed_volume
 
+    def get_face_area(self, face=None):
+        """Get the total surface area of a set of faces.
+
+        Args:
+            faces (int, sequence, or None):
+                The index of a face or a set of face indices for which to
+                find the area. If None, finds the area of all faces.
+                (Default value: None).
+
+        Returns:
+            :class:`numpy.ndarray`: The area of each face.
+
+        Example:
+            >>> cube = coxeter.shapes.ConvexPolyhedron(
+            ...   [[1, 1, 1], [1, -1, 1], [1, 1, -1], [1, -1, -1],
+            ...    [-1, 1, 1], [-1, -1, 1], [-1, 1, -1], [-1, -1, -1]])
+            >>> cube = coxeter.shapes.Polyhedron(
+            ...   vertices=cube.vertices,faces=cube.faces)
+            >>> import numpy as np
+            >>> assert np.allclose(
+            ...   cube.get_face_area([1, 2, 3]),
+            ...   [4., 4., 4.])
+
+        """
+        self._simplex_areas = self._find_triangle_array_area(
+            self._vertices[self._simplices], sum_result=False
+        )
+        if face is None:
+            return [
+                np.sum(self._simplex_areas[self._coplanar_simplices[fac]])
+                for fac in range(self.num_faces)
+            ]
+        elif face == "total":  # return total surface area
+            return np.sum(self._simplex_areas)
+        elif hasattr(face, "__len__"):
+            # For list of input vertices
+            # Combine coplanar simplices
+            return [
+                np.sum(self._simplex_areas[self._coplanar_simplices[fac]])
+                for fac in face
+            ]
+        else:
+            # For integer input (single face)
+            return np.sum(self._simplex_areas[self._coplanar_simplices[face]])
+
     def _find_equations(self):
         """Find the plane equations of the polyhedron faces."""
         # This method only takes the first three items from each face, so it is
