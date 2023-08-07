@@ -397,6 +397,18 @@ class ConvexPolyhedron(Polyhedron):
             self.sort_faces()
         return self._faces
 
+    @property
+    def neighbors(self):
+        r"""list(:class:`numpy.ndarray`): Get neighboring pairs of faces.
+
+        The neighbors are provided as a list where the :math:`i^{\text{th}}`
+        element is an array of indices of faces that are neighbors of face
+        :math:`i`.
+        """
+        if self._faces_are_sorted is False:
+            self.sort_faces()
+        return self._neighbors
+
     def sort_faces(self):
         """Reorder faces counterclockwise relatative to the plane they lie on.
 
