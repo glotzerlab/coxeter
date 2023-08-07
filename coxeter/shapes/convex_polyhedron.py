@@ -457,6 +457,33 @@ class ConvexPolyhedron(Polyhedron):
             self.sort_faces()
         return self._faces
 
+    def _find_face_centroids(self):
+        simplex_centroids = np.mean(self._vertices[self._simplices], axis=1)  # (N,3)
+        self._simplex_areas = self._find_triangle_array_area(
+            self._vertices[self._simplices], sum_result=False
+        )  # (N,)
+        self._face_centroids = []
+        for face in self._coplanar_simplices:
+            self._face_centroids.append(
+                np.sum(
+                    simplex_centroids[face] * self._simplex_areas[face][:, None],
+                    axis=0,
+                )
+                / np.sum(self._simplex_areas[face]),  # Rescale by area of face
+            )
+        self._face_centroids = np.array(self._face_centroids)
+
+    @property
+    def face_centroids(self):
+        """Calculate the centroid (center of mass) of each polygonal face.
+
+        Returns:
+            :math:`(N,3)` :class:`numpy.ndarray`:
+                Array of centroids for each face.
+        """
+        self._find_face_centroids()
+        return self._face_centroids
+
     @property
     def neighbors(self):
         r"""list(:class:`numpy.ndarray`): Get neighboring pairs of faces.
