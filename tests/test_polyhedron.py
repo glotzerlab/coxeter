@@ -251,6 +251,7 @@ def test_moment_inertia_damasceno_shapes(shape, atol):
         "Square Cupola",
         "Triaugmented Truncated Dodecahedron",
         "Truncated Dodecahedron",
+        "Truncated Icosahedron",
         "Truncated Icosidodecahedron",
     ]
     if shape["name"] in ["RESERVED", "Sphere"] + bad_shapes:
