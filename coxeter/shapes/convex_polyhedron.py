@@ -4,6 +4,7 @@
 """Defines a convex polyhedron."""
 
 import warnings
+from collections import defaultdict
 
 import numpy as np
 from scipy.spatial import ConvexHull
@@ -90,10 +91,220 @@ class ConvexPolyhedron(Polyhedron):
 
     """
 
-    def __init__(self, vertices):
-        hull = ConvexHull(vertices)
-        super().__init__(vertices, hull.simplices, True)
-        self.merge_faces()
+    def __init__(self, vertices, fast=True):
+        self._vertices = np.array(vertices, dtype=np.float64)
+        self._ndim = self._vertices.shape[1]
+        self._convex_hull = ConvexHull(self._vertices)
+        self._faces_are_convex = True
+
+        if not len(self._convex_hull.vertices) == len(self._vertices):
+            warnings.warn("Not all vertices used for hull.", RuntimeWarning)
+
+            # Remove internal points
+            self._vertices = self._vertices[self._convex_hull.vertices]
+
+        # Transfer data in from convex hull, then clean up the results.
+        self._consume_hull()
+        self._combine_simplices()
+
+        # Sort simplices. This method also calculates simplex equations and the centroid
+        self._sort_simplices()
+
+        # If mode is NOT fast, perform additional initializiation steps
+        if fast is False:
+            self._find_coplanar_simplices()
+            self.sort_faces()
+        else:
+            self._faces_are_sorted = False
+
+    def _consume_hull(self):
+        """Extract data from ConvexHull.
+
+        Data is moved from convex hull into private variables. This method deletes the
+        original hull in order to avoid double storage, and chec.
+        """
+        assert (
+            self._ndim == self._convex_hull.ndim
+        ), "Input points are coplanar or close to coplanar."
+
+        self._simplices = self._convex_hull.simplices[:]
+        self._simplex_equations = self._convex_hull.equations[:]
+        self._simplex_neighbors = self._convex_hull.neighbors[:]
+        self._volume = self._convex_hull.volume
+        self._area = self._convex_hull.area
+        self._maximal_extents = np.array(
+            [self._convex_hull.min_bound, self._convex_hull.max_bound]
+        )
+
+        # Clean up the result.
+        del self._convex_hull
+
+    def _combine_simplices(self, rounding: int = 15):
+        """Combine simplices into faces, merging based on simplex equations.
+
+        Coplanar faces will have identical equations (within rounding tolerance). Values
+        should be slightly larger than machine epsilon (e.g. rounding=15 for ~1e-15)
+
+        Args:
+            rounding (int, optional):
+                Integer number of decimal places to round equations to.
+                (Default value: 15).
+
+        """
+        equation_groups = defaultdict(list)
+
+        # Iterate over all simplex equations
+        for i, equation in enumerate(self._simplex_equations):
+            # Convert to hashable key
+            equation_key = tuple(equation.round(rounding))
+
+            # Store vertex indices from the new simplex under the correct equation key
+            equation_groups[equation_key].extend(self._simplices[i])
+
+        # Combine elements with the same plan equation and remove duplicate indices
+        ragged_faces = [
+            np.fromiter(set(group), np.int32) for group in equation_groups.values()
+        ]
+        self._faces = ragged_faces
+        self._equations = np.array(list(equation_groups.keys()))
+
+    def _find_coplanar_simplices(self, rounding: int = 15):
+        """
+        Get lists of simplex indices for coplanar simplices.
+
+        Args:
+            rounding (int, optional):
+                Integer number of decimal places to round equations to.
+                (Default value: 15).
+
+
+        """
+        # Combine simplex indices
+        equation_groups = defaultdict(list)
+
+        # Iterate over all simplex equations
+        for i, equation in enumerate(self._simplex_equations):
+            # Convert equation into hashable tuple
+            equation_key = tuple(equation.round(rounding))
+            equation_groups[equation_key].append(i)
+        ragged_coplanar_indices = [
+            np.fromiter(set(group), np.int32) for group in equation_groups.values()
+        ]
+
+        self._coplanar_simplices = ragged_coplanar_indices
+
+    def _sort_simplices(self):
+        """Reorder simplices counterclockwise relatative to the plane they lie on.
+
+        This does NOT change the *order* of simplices in the list.
+        """
+        # Get correct-quadrant angles about the simplex normal
+        vertices = self._vertices[self._simplices]
+
+        # Get the absolute angles of each vertex and fit to unit circle
+        angles = np.arctan2(vertices[:, 1], vertices[:, 0])
+        angles = np.mod(angles - angles[0], 2 * np.pi)
+
+        # Calculate distances
+        distances = np.linalg.norm(vertices, axis=1)
+
+        # Create a tuple of distances and angles to use for lexicographical sorting
+        vert_order = np.lexsort((distances, angles))
+
+        # Apply orientation reordering to every simplex
+        self._simplices = np.take_along_axis(
+            self._simplices, np.argsort(vert_order), axis=1
+        )
+
+        # Compute N,3,2 array of simplex edges from an N,3 array of simplices
+        def _tri_to_edge_tuples(simplices, shift=-3):
+            # edges = np.column_stack((simplices, np.roll(simplices, shift, axis=1)))
+            edges = np.roll(
+                np.repeat(simplices, repeats=2, axis=1), shift=shift, axis=1
+            )
+            edges = edges.reshape(-1, 3, 2)
+            # Convert to tuples for fast comparison
+            return [[tuple(edge) for edge in triedge] for triedge in edges]
+
+        simplex_edges = _tri_to_edge_tuples(self._simplices, shift=-1)
+
+        # Now, reorient simplices to match the orientation of simplex 0
+        visited_simplices = []
+        remaining_simplices = [0]
+        while len(remaining_simplices):
+            current_simplex = remaining_simplices[-1]
+            visited_simplices.append(current_simplex)
+            remaining_simplices.pop()
+
+            # Search for common edges between pairs of simplices, then check the
+            # ordering of the edge to determine relative face orientation.
+            current_edges = simplex_edges[current_simplex]
+            for neighbor in self._simplex_neighbors[current_simplex]:
+                if neighbor in visited_simplices:
+                    continue
+                remaining_simplices.append(neighbor)
+
+                # Two faces can only share a single edge (otherwise they would
+                # be coplanar), so we can break as soon as we find the
+                # neighbor. Flip the neighbor if the edges are identical.
+                for edge in simplex_edges[neighbor]:
+                    if edge in current_edges:
+                        self._simplices[neighbor] = self._simplices[neighbor][::-1]
+                        simplex_edges[neighbor] = [
+                            (j, i) for i, j in simplex_edges[neighbor]
+                        ][::-1]
+                        break
+                    elif edge[::-1] in current_edges:
+                        break
+                visited_simplices.append(neighbor)
+
+        # Flip if calcualted volume is negative
+        if self._calculate_signed_volume() < 0:
+            self._simplices = self._simplices[:, ::-1, ...]
+
+        # Recompute simplex equations and centroid from the new triangulation.
+        self._find_simplex_equations()
+        self._centroid_from_triangulated_surface()
+
+    def _calculate_signed_volume(self):
+        """Internal method to calculate the signed volume of the polyhedron.
+
+        This class splits the shape into tetrahedra, then sums their contributing
+        volumes. The external volume property will always be a positive value, but
+        accessing the signed volume can be useful for some mathematical operations.
+
+        Returns:
+            float: Signed volume of the polyhedron.
+        """
+        signed_volume = np.sum(np.linalg.det(self._vertices[self._simplices]) / 6)
+        self._volume = abs(signed_volume)
+        return signed_volume
+
+    def _find_simplex_equations(self):
+        """Find the plane equations of the polyhedron simplices."""
+        abc = self._vertices[self._simplices]
+        a = abc[:, 0]
+        b = abc[:, 1]
+        c = abc[:, 2]
+        n = np.cross((b - a), (c - a))
+        n /= np.linalg.norm(n, axis=1)[:, None]
+
+        _equations = np.empty((len(self._simplices), 4))
+        _equations[:, :3] = n
+        _equations[:, 3] = -np.einsum("ij,ij->i", n, a)
+        self._simplex_equations = _equations
+
+    def _centroid_from_triangulated_surface(self):
+        abc = self._vertices[self._simplices]
+        a = abc[:, 0]
+        b = abc[:, 1]
+        c = abc[:, 2]
+        n = np.cross((b - a), (c - a))
+        self._centroid = (
+            1
+            / (48 * self._volume)
+            * np.sum(n * ((a + b) ** 2 + (b + c) ** 2 + (a + c) ** 2), axis=0)
+        )
 
     @property
     def mean_curvature(self):
