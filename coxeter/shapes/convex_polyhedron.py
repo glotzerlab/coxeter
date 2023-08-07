@@ -8,6 +8,7 @@ from collections import defaultdict
 from numbers import Number
 
 import numpy as np
+import rowan
 from scipy.spatial import ConvexHull
 
 from .polyhedron import Polyhedron
@@ -395,6 +396,42 @@ class ConvexPolyhedron(Polyhedron):
         if self._faces_are_sorted is False:
             self.sort_faces()
         return self._faces
+
+    def sort_faces(self):
+        """Reorder faces counterclockwise relatative to the plane they lie on.
+
+        This does NOT change the *order* of faces in the list.
+        """
+        self._faces_are_sorted = True
+
+        # Get correct-quadrant angles about the face normal
+        sorted_faces = []
+
+        for i, face in enumerate(self._faces):
+            vertices = self._vertices[face]
+
+            # Rotate the face's points into the XY plane
+            normal = self._equations[i][:3]
+            rotation, _ = rowan.mapping.kabsch(
+                [normal, -normal], [[0, 0, 1], [0, 0, -1]]
+            )
+            vertices = np.dot(vertices - np.mean(vertices, axis=0), rotation.T)
+
+            # Get the absolute angles of each vertex and fit to unit circle
+            angles = np.arctan2(vertices[:, 1], vertices[:, 0])
+            angles = np.mod(angles - angles[0], 2 * np.pi)
+
+            # Calculate distances
+            distances = np.linalg.norm(vertices, axis=1)
+
+            # Create a tuple of distances and angles to use for lexicographical sorting
+            vert_order = np.lexsort((distances, angles))
+
+            # Apply reordering to every simplex
+            sorted_faces.append(face[vert_order])
+
+        self._faces = sorted_faces
+        self._find_neighbors()
 
     @property
     def mean_curvature(self):
