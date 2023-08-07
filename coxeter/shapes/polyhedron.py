@@ -4,6 +4,7 @@
 """Defines a polyhedron."""
 
 import warnings
+from functools import cached_property
 
 import numpy as np
 import rowan
@@ -362,43 +363,33 @@ class Polyhedron(Shape3D):
         """
         return self._faces
 
-    @property
+    @cached_property
     def edges(self):
         """set(tuple(int,int)): Get the polyhedron's edges.
 
         Results returned as vertex index pairs,  with each edge of the polyhedron
         included exactly once.  Edge (i,j) pairs are ordered by vertex index with i<j.
-        For a list of (j,i) edges, the following list comprehension can be used:
-        ``[(j,i) for i,j in poly.edges]``
         """
-        if hasattr(self, "_edges") is False:
-            self._find_edges()
-        return self._edges
+        ij_pairs = np.array(
+            [
+                [i, j]
+                for face in self.faces
+                for i, j in zip(face, np.roll(face, -1))
+                if i < j
+            ]
+        )
+        sorted_indices = np.lexsort(ij_pairs.T[::-1])
+        sorted_ij_pairs = ij_pairs[sorted_indices]
+        # Make edge data read-only so that the cached property of this instance
+        # cannot be edited
+        sorted_ij_pairs.flags.writeable = False
+
+        return sorted_ij_pairs
 
     @property
     def edge_vectors(self):
         """list(tuple(float,float,float)): Get the polyhedron's edges as vectors."""
-        return np.array(
-            [
-                np.subtract(
-                    *self.vertices[[j, i]],
-                )
-                for (i, j) in self.edges
-            ]
-        )
-
-    def _find_edges(self):
-        self._edges = np.array(
-            sorted(
-                [
-                    (i, j)
-                    for face in self.faces
-                    for i, j in zip(face, np.roll(face, -1))
-                    if i < j
-                ],
-                key=lambda x: (x[0], x[1]),
-            )
-        )
+        return self.vertices[self.edges[:, 1]] - self.vertices[self.edges[:, 0]]
 
     @property
     def volume(self):
