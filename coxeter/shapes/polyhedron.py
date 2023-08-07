@@ -392,6 +392,11 @@ class Polyhedron(Shape3D):
         return self.vertices[self.edges[:, 1]] - self.vertices[self.edges[:, 0]]
 
     @property
+    def num_edges(self):
+        """int: Get the number of edges."""
+        return len(self.edges)
+
+    @property
     def volume(self):
         """float: Get or set the polyhedron's volume."""
         ds = -self._equations[:, 3]
