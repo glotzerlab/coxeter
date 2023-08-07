@@ -155,6 +155,22 @@ def test_volume_damasceno_shapes(shape):
     assert np.isclose(poly.volume, hull.volume)
 
 
+@settings(deadline=1000)
+@named_damasceno_shapes_mark
+@given(v_test=floats(0, 10))
+def test_set_volume_damasceno_shapes(shape, v_test):
+    if shape["name"] in ("RESERVED", "Sphere"):
+        return
+    if v_test == 0:
+        return
+    vertices = shape["vertices"]
+    poly = ConvexPolyhedron(vertices)
+    poly.volume = v_test
+    # Recalculate volume from simplices
+    calculated_volume = poly._calculate_signed_volume()
+    assert np.isclose(calculated_volume, v_test)
+
+
 @named_damasceno_shapes_mark
 def test_surface_area_damasceno_shapes(shape):
     if shape["name"] in ("RESERVED", "Sphere"):
@@ -163,6 +179,21 @@ def test_surface_area_damasceno_shapes(shape):
     poly = ConvexPolyhedron(vertices)
     hull = ConvexHull(vertices)
     assert np.isclose(poly.surface_area, hull.area)
+
+
+@settings(deadline=1000)
+@named_damasceno_shapes_mark
+@given(a_test=floats(0, 10))
+def test_set_surface_area_damasceno_shapes(shape, a_test):
+    if shape["name"] in ("RESERVED", "Sphere"):
+        return
+    if a_test == 0:
+        return
+    vertices = shape["vertices"]
+    poly = ConvexPolyhedron(vertices)
+    poly.surface_area = a_test
+    calculated_area = poly._calculate_surface_area()
+    assert np.isclose(calculated_area, a_test)
 
 
 @combine_marks(
