@@ -71,7 +71,7 @@ class Polyhedron(Shape3D):
 
     Example:
         >>> cube = coxeter.shapes.ConvexPolyhedron(
-       ...   [[-1, -1, -1], [-1, -1, 1], [-1, 1, -1], [-1, 1, 1],
+        ...   [[-1, -1, -1], [-1, -1, 1], [-1, 1, -1], [-1, 1, 1],
         ...    [1, -1, -1], [1, -1, 1], [1, 1, -1], [1, 1, 1]])
         >>> cube = coxeter.shapes.Polyhedron(
         ...   vertices=cube.vertices, faces=cube.faces)
