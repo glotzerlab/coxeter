@@ -887,3 +887,35 @@ def test_face_centroids(poly):
         face_vertices = poly.vertices[face]
         vertex_mean = np.mean(face_vertices, axis=0)
         assert np.allclose(vertex_mean, coxeter_result[i])
+
+@given(EllipsoidSurfaceStrategy)
+def test_find_simplex_equations(points):
+    hull = ConvexHull(points)
+    poly = ConvexPolyhedron(points[hull.vertices])
+    # Check simplex equations are stored properly
+    assert np.allclose(hull.equations, poly._simplex_equations)
+
+    # Now recalculate and check answers are still correct
+    poly._find_simplex_equations()
+    assert np.allclose(hull.equations, poly._simplex_equations)
+
+
+@combine_marks(
+    named_platonic_mark,
+    named_archimedean_mark,
+    named_catalan_mark,
+    named_johnson_mark,
+    named_prismantiprism_mark,
+    named_pyramiddipyramid_mark,
+)
+def test_find_equations_and_normals(poly):
+    ppoly = Polyhedron(poly.vertices, poly.faces)
+    # Check face equations are stored properly
+    assert np.allclose(poly.equations, ppoly._equations)
+    assert np.allclose(poly.normals, ppoly.normals)
+
+    # Now recalculate and check answers are still correct
+    poly._find_equations()
+    ppoly._find_equations()
+    assert np.allclose(poly.equations, ppoly._equations)
+    assert np.allclose(poly.normals, ppoly.normals)
