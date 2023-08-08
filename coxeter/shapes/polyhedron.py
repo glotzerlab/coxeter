@@ -71,8 +71,8 @@ class Polyhedron(Shape3D):
 
     Example:
         >>> cube = coxeter.shapes.ConvexPolyhedron(
-        ...   [[1, 1, 1], [1, -1, 1], [1, 1, -1], [1, -1, -1],
-        ...    [-1, 1, 1], [-1, -1, 1], [-1, 1, -1], [-1, -1, -1]])
+       ...   [[-1, -1, -1], [-1, -1, 1], [-1, 1, -1], [-1, 1, 1],
+        ...    [1, -1, -1], [1, -1, 1], [1, 1, -1], [1, 1, 1]])
         >>> cube = coxeter.shapes.Polyhedron(
         ...   vertices=cube.vertices, faces=cube.faces)
         >>> bounding_sphere = cube.minimal_bounding_sphere
@@ -81,16 +81,16 @@ class Polyhedron(Shape3D):
         >>> cube.center
         array([0., 0., 0.])
         >>> cube.faces
-        [array([4, 5, 1, 0], dtype=int32), array([0, 2, 6, 4], dtype=int32),
-        array([6, 7, 5, 4], dtype=int32), array([0, 1, 3, 2], dtype=int32),
-        array([5, 7, 3, 1], dtype=int32), array([2, 3, 7, 6], dtype=int32)]
+        [array([0, 2, 6, 4], dtype=int32), array([0, 4, 5, 1], dtype=int32),
+        array([4, 6, 7, 5], dtype=int32), array([0, 1, 3, 2], dtype=int32),
+        array([2, 3, 7, 6], dtype=int32), array([1, 5, 7, 3], dtype=int32)]
         >>> cube.gsd_shape_spec
         {'type': 'Mesh', 'vertices': [[1.0, 1.0, 1.0], [1.0, -1.0, 1.0],
         [1.0, 1.0, -1.0], [1.0, -1.0, -1.0], [-1.0, 1.0, 1.0],
         [-1.0, -1.0, 1.0], [-1.0, 1.0, -1.0], [-1.0, -1.0, -1.0]], 'indices':
-        [array([4, 5, 1, 0], dtype=int32), array([0, 2, 6, 4], dtype=int32),
-        array([6, 7, 5, 4], dtype=int32), array([0, 1, 3, 2], dtype=int32),
-        array([5, 7, 3, 1], dtype=int32), array([2, 3, 7, 6], dtype=int32)]}
+        [array([0, 2, 6, 4], dtype=int32), array([0, 4, 5, 1], dtype=int32),
+        array([4, 6, 7, 5], dtype=int32), array([0, 1, 3, 2], dtype=int32),
+        array([2, 3, 7, 6], dtype=int32), array([1, 5, 7, 3], dtype=int32)]}
         >>> assert np.allclose(
         ...   cube.inertia_tensor,
         ...   np.diag([16. / 3., 16. / 3., 16. / 3.]))
@@ -99,26 +99,26 @@ class Polyhedron(Shape3D):
         [array([1, 2, 3, 4]), array([0, 2, 3, 5]), array([0, 1, 4, 5]),
         array([0, 1, 4, 5]), array([0, 2, 3, 5]), array([1, 2, 3, 4])]
         >>> cube.normals
-        array([[ 0.,  0.,  1.],
-               [ 0.,  1., -0.],
-               [-1.,  0.,  0.],
-               [ 1., -0.,  0.],
+        array([[ 0.,  0., -1.],
                [ 0., -1.,  0.],
-               [ 0.,  0., -1.]])
+               [ 1.,  0., -0.],
+               [-1.,  0.,  0.],
+               [-0.,  1.,  0.],
+               [ 0., -0.,  1.]])
         >>> cube.num_faces
         6
         >>> cube.num_vertices
         8
         >>> assert np.isclose(cube.surface_area, 24.0)
         >>> cube.vertices
-        array([[ 1.,  1.,  1.],
-               [ 1., -1.,  1.],
-               [ 1.,  1., -1.],
-               [ 1., -1., -1.],
-               [-1.,  1.,  1.],
+        array([[-1., -1., -1.],
                [-1., -1.,  1.],
                [-1.,  1., -1.],
-               [-1., -1., -1.]])
+               [-1.,  1.,  1.],
+               [ 1., -1., -1.],
+               [ 1., -1.,  1.],
+               [ 1.,  1., -1.],
+               [ 1.,  1.,  1.]])
         >>> assert np.isclose(cube.volume, 8.0)
 
     """
