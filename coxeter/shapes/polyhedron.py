@@ -365,7 +365,7 @@ class Polyhedron(Shape3D):
 
     @cached_property
     def edges(self):
-        """set(tuple(int,int)): Get the polyhedron's edges.
+        """:class:`numpy.ndarray`: Get the polyhedron's edges.
 
         Results returned as vertex index pairs,  with each edge of the polyhedron
         included exactly once.  Edge (i,j) pairs are ordered by vertex index with i<j.
