@@ -2,6 +2,8 @@
 # All rights reserved.
 # This software is licensed under the BSD 3-Clause License.
 
+import warnings
+
 import numpy as np
 import pytest
 import rowan
@@ -876,3 +878,37 @@ def test_find_equations_and_normals(poly):
     ppoly._find_equations()
     assert np.allclose(poly.equations, ppoly._equations)
     assert np.allclose(poly.normals, ppoly.normals)
+
+
+def test_degenerate_cube(convex_cube):
+    np.random.seed(0)
+    convex_cube.center = [0, 0, 0]
+
+    # Get a point on the plane for each face
+    xyz_planes = convex_cube.equations[:, -1][:, None] * convex_cube.equations[:, 0:-1]
+
+    # Extend so there are 10_000 copies of each plane point
+    xyz_planes = np.repeat(xyz_planes[:, None], 10_000, axis=1)
+
+    # Generate a (10_000,3) array of random points with values ranging from -0.5 to 0.5
+    random_points = np.random.rand(*xyz_planes.shape) - 0.5
+
+    # Move points onto the faces
+    nonzero_mask = np.where(xyz_planes == 0, 1, 0)
+    random_points *= nonzero_mask
+    plane_points = xyz_planes + random_points
+
+    # Add actual cube vertices to the list of degenerate points
+    degenerate_points = convex_cube.vertices
+    degenerate_points = np.vstack([degenerate_points, plane_points.reshape(-1, 3)])
+
+    with warnings.catch_warnings(record=True) as caught:
+        degenerate_cube = ConvexPolyhedron(degenerate_points)
+
+    # Should catch one warning - the one raised when degenerate points are pruned
+    assert len(caught) == 1
+
+    assert degenerate_cube.num_faces == 6
+    assert degenerate_cube.num_edges == 12
+    assert degenerate_cube.num_vertices == 8
+    assert len(degenerate_cube.simplices) == 12
