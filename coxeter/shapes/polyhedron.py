@@ -388,7 +388,7 @@ class Polyhedron(Shape3D):
 
     @property
     def edge_vectors(self):
-        """list(tuple(float,float,float)): Get the polyhedron's edges as vectors."""
+        """:class:`numpy.ndarray`: Get the polyhedron's edges as vectors."""
         return self.vertices[self.edges[:, 1]] - self.vertices[self.edges[:, 0]]
 
     @property
