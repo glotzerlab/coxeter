@@ -113,6 +113,9 @@ Jen Bradley
 * Added shape family for prisms and antiprisms.
 * Added shape family for equilateral pyramids and dipyramids.
 
+Domagoj Fijan
+* Rewrote point in polygon check to use NumPy vectorized operations.
+
 Source code
 -----------
 
@@ -183,9 +186,11 @@ the MIT license::
     OTHER DEALINGS IN THE SOFTWARE.
 
 The source of polyhedron (https://github.com/mdickinson/polyhedron) is included
-directly into the **coxeter** package. It is used for point in polygon/polyhedron
-checks for general polygons and polyhedra (specifically, to calculate the winding
-number). This software is made available under the BSD-3 license::
+directly into the **coxeter** package. It is used for point in polyhedron
+checks for general polygons (specifically, to calculate the winding
+number). The code for point in polygon check is based on the same
+repository, but has been rewritten to utilize vectorized NumPy
+operations. This software is made available under the BSD-3 license::
 
     BSD 3-Clause License
 
