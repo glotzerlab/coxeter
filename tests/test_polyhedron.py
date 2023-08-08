@@ -339,8 +339,37 @@ def test___repr__():
     repr(icosidodecahedron)
 
 
-def test_edges():
-    # The shapes in the PlatonicFamily are normalized to unit volume
+@combine_marks(
+    named_platonic_mark,
+    named_archimedean_mark,
+    named_catalan_mark,
+    named_johnson_mark,
+    named_prismantiprism_mark,
+    named_pyramiddipyramid_mark,
+)
+def test_edges(poly):
+    # Check that the first column is in ascending order.
+    assert np.all(np.diff(poly.edges[:, 0]) >= 0)
+
+    # Check that all items in the first column are greater than those in the second.
+    assert np.all(np.diff(poly.edges, axis=1) >= 0)
+
+    # Check the second column is in ascending order for each unique item in the first.
+    # For example, [[0,1],[0,3],[1,2]] is permitted but [[0,1],[0,3],[0,2]] is not.
+    edges = poly.edges
+    unique_values = unique_values = np.unique(edges[:, 0])
+    assert all(
+        [
+            np.all(np.diff(edges[edges[:, 0] == value, 1]) >= 0)
+            for value in unique_values
+        ]
+    )
+
+    # Check that there are no duplicate edges. This also double-checks the sorting
+    assert np.all(np.unique(poly.edges, axis=1) == poly.edges)
+
+
+def test_edge_lengths():
     known_shapes = {
         "Tetrahedron": np.sqrt(2) * np.cbrt(3),
         "Cube": 1,
@@ -348,33 +377,26 @@ def test_edges():
         "Dodecahedron": np.power(2, 2 / 3) * np.cbrt(1 / (15 + np.sqrt(245))),
         "Icosahedron": np.cbrt(9 / 5 - 3 / 5 * np.sqrt(5)),
     }
-    number_of_edges = {
-        "Tetrahedron": 6,
-        "Cube": 12,
-        "Octahedron": 12,
-        "Dodecahedron": 30,
-        "Icosahedron": 30,
-    }
-
     for name, edgelength in known_shapes.items():
         poly = PlatonicFamily.get_shape(name)
-        # Test that the correct number of edges has been found
-        assert number_of_edges[name] == poly.num_edges
-        assert number_of_edges[name] == len(poly.edge_vectors)
-
-        # Test edge_vectors property
-        for edge in poly.edge_vectors:
-            assert np.isclose(np.linalg.norm(edge), edgelength)
-
-        # Test edges property
-        edges = np.asarray(
-            [
-                *poly.edges,
-            ]
+        # Check that edge lengths are correct
+        veclens = np.linalg.norm(
+            poly.vertices[poly.edges[:, 1]] - poly.vertices[poly.edges[:, 0]], axis=1
         )
-        vertices = poly.vertices
-        veclens = np.linalg.norm(vertices[edges[:, 1]] - vertices[edges[:, 0]], axis=1)
         assert np.allclose(veclens, edgelength)
+        assert np.allclose(veclens, np.linalg.norm(poly.edge_vectors, axis=1))
+
+
+@given(
+    EllipsoidSurfaceStrategy,
+)
+def test_num_edges(points):
+    hull = ConvexHull(points)
+    poly = ConvexPolyhedron(points[hull.vertices])
+
+    # Calculate correct number of edges from euler characteristic
+    euler_characteristic_edge_count = poly.num_vertices + poly.num_faces - 2
+    assert poly.num_edges == euler_characteristic_edge_count
 
 
 def test_curvature():
