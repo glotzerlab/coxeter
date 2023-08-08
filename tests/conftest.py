@@ -337,6 +337,15 @@ named_damasceno_shapes_mark = pytest.mark.parametrize(
     ],
 )
 
+named_solids_mark = combine_marks(
+    named_platonic_mark,
+    named_archimedean_mark,
+    named_catalan_mark,
+    named_johnson_mark,
+    named_prismantiprism_mark,
+    named_pyramiddipyramid_mark,
+)
+
 data_filenames_mark = pytest.mark.parametrize(
     argnames="family",
     argvalues=[

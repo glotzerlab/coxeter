@@ -22,10 +22,8 @@ from conftest import (
     named_archimedean_mark,
     named_catalan_mark,
     named_damasceno_shapes_mark,
-    named_johnson_mark,
     named_platonic_mark,
-    named_prismantiprism_mark,
-    named_pyramiddipyramid_mark,
+    named_solids_mark,
     sphere_isclose,
 )
 from coxeter.families import DOI_SHAPE_REPOSITORIES, PlatonicFamily
@@ -202,28 +200,14 @@ def test_set_surface_area_damasceno_shapes(shape, a_test):
     assert np.isclose(calculated_area, a_test)
 
 
-@combine_marks(
-    named_platonic_mark,
-    named_archimedean_mark,
-    named_catalan_mark,
-    named_johnson_mark,
-    named_prismantiprism_mark,
-    named_pyramiddipyramid_mark,
-)
+@named_solids_mark
 def test_volume_shapes(poly):
     vertices = poly.vertices
     hull = ConvexHull(vertices)
     assert np.isclose(poly.volume, hull.volume)
 
 
-@combine_marks(
-    named_platonic_mark,
-    named_archimedean_mark,
-    named_catalan_mark,
-    named_johnson_mark,
-    named_prismantiprism_mark,
-    named_pyramiddipyramid_mark,
-)
+@named_solids_mark
 def test_surface_area_shapes(poly):
     vertices = poly.vertices
     hull = ConvexHull(vertices)
@@ -781,14 +765,7 @@ def test_form_factor(cube):
     )
 
 
-@combine_marks(
-    named_platonic_mark,
-    named_archimedean_mark,
-    named_catalan_mark,
-    named_johnson_mark,
-    named_prismantiprism_mark,
-    named_pyramiddipyramid_mark,
-)
+@named_solids_mark
 @pytest.mark.xfail(
     reason=(
         "Numerical precision problems with miniball. "
@@ -799,14 +776,7 @@ def test_get_set_minimal_bounding_sphere_radius(poly):
     _test_get_set_minimal_bounding_sphere_radius(poly)
 
 
-@combine_marks(
-    named_platonic_mark,
-    named_archimedean_mark,
-    named_catalan_mark,
-    named_johnson_mark,
-    named_prismantiprism_mark,
-    named_pyramiddipyramid_mark,
-)
+@named_solids_mark
 def test_get_set_minimal_centered_bounding_sphere_radius(poly):
     _test_get_set_minimal_bounding_sphere_radius(poly, True)
 
@@ -861,14 +831,7 @@ def test_center(shape, atol):
         )
 
 
-@combine_marks(
-    named_platonic_mark,
-    named_archimedean_mark,
-    named_catalan_mark,
-    named_johnson_mark,
-    named_prismantiprism_mark,
-    named_pyramiddipyramid_mark,
-)
+@named_solids_mark
 @given(arrays(np.float64, (3,), elements=floats(-10, 10, width=64), unique=True))
 def test_set_centroid(poly, centroid_vector):
     poly.centroid = centroid_vector
@@ -888,6 +851,7 @@ def test_face_centroids(poly):
         vertex_mean = np.mean(face_vertices, axis=0)
         assert np.allclose(vertex_mean, coxeter_result[i])
 
+
 @given(EllipsoidSurfaceStrategy)
 def test_find_simplex_equations(points):
     hull = ConvexHull(points)
@@ -900,14 +864,7 @@ def test_find_simplex_equations(points):
     assert np.allclose(hull.equations, poly._simplex_equations)
 
 
-@combine_marks(
-    named_platonic_mark,
-    named_archimedean_mark,
-    named_catalan_mark,
-    named_johnson_mark,
-    named_prismantiprism_mark,
-    named_pyramiddipyramid_mark,
-)
+@named_solids_mark
 def test_find_equations_and_normals(poly):
     ppoly = Polyhedron(poly.vertices, poly.faces)
     # Check face equations are stored properly
