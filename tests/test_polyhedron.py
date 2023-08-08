@@ -28,7 +28,7 @@ from conftest import (
     named_pyramiddipyramid_mark,
     sphere_isclose,
 )
-from coxeter.families import DOI_SHAPE_REPOSITORIES, PlatonicFamily
+from coxeter.families import DOI_SHAPE_REPOSITORIES, ArchimedeanFamily, PlatonicFamily
 from coxeter.shapes import ConvexPolyhedron, Polyhedron
 from coxeter.shapes.utils import rotate_order2_tensor, translate_inertia_tensor
 from utils import compute_centroid_mc, compute_inertia_mc
@@ -368,6 +368,14 @@ def test_edges(poly):
     # Check that there are no duplicate edges. This also double-checks the sorting
     assert np.all(np.unique(poly.edges, axis=1) == poly.edges)
 
+    # Check that the edges are immutable
+    try:
+        poly.edges[1] = [99, 99]
+        # If the assignment works, catch that:
+        assert poly.edges[1] != [99, 99]
+    except ValueError as ve:
+        assert "read-only" in str(ve)
+
 
 def test_edge_lengths():
     known_shapes = {
@@ -385,6 +393,27 @@ def test_edge_lengths():
         )
         assert np.allclose(veclens, edgelength)
         assert np.allclose(veclens, np.linalg.norm(poly.edge_vectors, axis=1))
+
+
+def test_num_edges_archimedean():
+    known_shapes = {
+        "Cuboctahedron": 24,
+        "Icosidodecahedron": 60,
+        "Truncated Tetrahedron": 18,
+        "Truncated Octahedron": 36,
+        "Truncated Cube": 36,
+        "Truncated Icosahedron": 90,
+        "Truncated Dodecahedron": 90,
+        "Rhombicuboctahedron": 48,
+        "Rhombicosidodecahedron": 120,
+        "Truncated Cuboctahedron": 72,
+        "Truncated Icosidodecahedron": 180,
+        "Snub Cuboctahedron": 60,
+        "Snub Icosidodecahedron": 150,
+    }
+    for name, num_edges in known_shapes.items():
+        poly = ArchimedeanFamily.get_shape(name)
+        assert poly.num_edges == num_edges
 
 
 @given(
