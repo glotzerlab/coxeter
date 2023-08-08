@@ -112,6 +112,16 @@ Jen Bradley
 * Added shape families for Archimedean, Catalan, and Johnson solids.
 * Added shape family for prisms and antiprisms.
 * Added shape family for equilateral pyramids and dipyramids.
+* Added optional ``fast`` flag for ConvexPolyhedron generation.
+* Reimplemented ``find_equations``, ``_volume``, ``surface_area``, ``centroid``,
+  ``_compute_inertia_tensor``, ``rescale``, and ``get_face_area`` methods for convex
+  polyhedra using NumPy vectorized operations and polyhedron simplices.
+* Added the ``combine_simplices``, ``find_simplex_equations``, ``_find_face_centroids``,
+  ``find_coplanar_simplices``, ``_find_face_centroids``, and ``calculate_signed_volume``
+  methods to the ConvexPolyhedron class.
+* Added ``simplices``, ``equations``, and ``face_centroids`` properties to the
+  ConvexPolyhedron class.
+* Optimized pytest configurations for more efficient use of local and remote resources.
 
 Domagoj Fijan
 * Rewrote point in polygon check to use NumPy vectorized operations.
