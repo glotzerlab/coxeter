@@ -419,13 +419,14 @@ def test_num_edges_archimedean():
 @given(
     EllipsoidSurfaceStrategy,
 )
-def test_num_edges(points):
+def test_num_edges_polyhedron(points):
     hull = ConvexHull(points)
     poly = ConvexPolyhedron(points[hull.vertices])
+    ppoly = Polyhedron(poly.vertices, poly.faces)
 
     # Calculate correct number of edges from euler characteristic
-    euler_characteristic_edge_count = poly.num_vertices + poly.num_faces - 2
-    assert poly.num_edges == euler_characteristic_edge_count
+    euler_characteristic_edge_count = ppoly.num_vertices + ppoly.num_faces - 2
+    assert ppoly.num_edges == euler_characteristic_edge_count
 
 
 def test_curvature():
