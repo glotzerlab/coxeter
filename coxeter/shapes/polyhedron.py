@@ -1004,10 +1004,9 @@ class Polyhedron(Shape3D):
         homology:
 
                        d               d
-          Z[U] + Z[D] --> Z[L] + Z[R] --> Z[B] + Z[F]
 
         with boundary maps given by:
-        
+
           d[U] = [L] + [R]; d[D] = -[L] - [R]
           d[R] = [B] - [F]; d[L] = [F] - [B]
 
@@ -1041,6 +1040,7 @@ class Polyhedron(Shape3D):
             :math:`(N, )` :class:`numpy.ndarray`:
                 Boolean array indicating which points are contained in the
                 polyhedron.
+
         """
         # polytri generates a triangulation directly from the vertices. We need
         # to map this back to index positions to feed to the polyhedron winding
@@ -1055,52 +1055,65 @@ class Polyhedron(Shape3D):
         )
         points = np.atleast_2d(points)
 
-        # Separate vertices
-        v1, v2, v3 = triangles[:, 0, :], triangles[:, 1, :], triangles[:, 2, :]
+        # triangle vertices
+        v1 = self.vertices[triangles[:, 0]]
+        v2 = self.vertices[triangles[:, 1]]
+        v3 = self.vertices[triangles[:, 2]]
+        v1_expanded = v1[:, None, :]
+        v2_expanded = v2[:, None, :]
+        v3_expanded = v3[:, None, :]
+        points_expanded = np.tile(points, (v1.shape[0], 1, 1))
 
-        # Sign functions for vertices
-        v1sign = np.sign(v1[:, None, :] - points[..., :3])
-        v2sign = np.sign(v2[:, None, :] - points[..., :3])
-        v3sign = np.sign(v3[:, None, :] - points[..., :3])
+        diff_x_v1 = v1_expanded[..., 0] - points_expanded[..., 0]
+        diff_y_v1 = v1_expanded[..., 1] - points_expanded[..., 1]
+        diff_z_v1 = v1_expanded[..., 2] - points_expanded[..., 2]
+        diff_x_v2 = v2_expanded[..., 0] - points_expanded[..., 0]
+        diff_y_v2 = v2_expanded[..., 1] - points_expanded[..., 1]
+        diff_z_v2 = v2_expanded[..., 2] - points_expanded[..., 2]
+        diff_x_v3 = v3_expanded[..., 0] - points_expanded[..., 0]
+        diff_y_v3 = v3_expanded[..., 1] - points_expanded[..., 1]
+        diff_z_v3 = v3_expanded[..., 2] - points_expanded[..., 2]
 
-        # Compute edge_sign
-        edge_sign = (
-            np.sign(
-                (v1[:, None, 1] - points[..., 1]) * (v2[:, None, 0] - points[..., 0])
-                - (v1[:, None, 0] - points[..., 0]) * (v2[:, None, 1] - points[..., 1])
-            )
-            + np.sign(
-                (v1[:, None, 2] - points[..., 2]) * (v2[:, None, 0] - points[..., 0])
-                - (v1[:, None, 0] - points[..., 0]) * (v2[:, None, 2] - points[..., 2])
-            )
-            + np.sign(
-                (v1[:, None, 2] - points[..., 2]) * (v2[:, None, 1] - points[..., 1])
-                - (v1[:, None, 1] - points[..., 1]) * (v2[:, None, 2] - points[..., 2])
-            )
+        def superfast_or(a, b, c):
+            return np.where(a != 0, a, np.where(b != 0, b, c))
+
+        v1sign = superfast_or(
+            np.sign(diff_x_v1), np.sign(diff_y_v1), np.sign(diff_z_v1)
+        )
+        v2sign = superfast_or(
+            np.sign(diff_x_v2), np.sign(diff_y_v2), np.sign(diff_z_v2)
+        )
+        v3sign = superfast_or(
+            np.sign(diff_x_v3), np.sign(diff_y_v3), np.sign(diff_z_v3)
         )
 
-        # Compute triangle_sign
-        m1 = v1[:, None, :] - points[..., :3]
-        m2 = v2[:, None, :] - points[..., :3]
-        m3 = v3[:, None, :] - points[..., :3]
+        mask12 = v1sign != v2sign
+        mask23 = v2sign != v3sign
+        mask31 = v3sign != v1sign
+
+        term_1_1 = diff_y_v1 * diff_x_v2 - diff_x_v1 * diff_y_v2
+        term_2_1 = diff_z_v1 * diff_x_v2 - diff_x_v1 * diff_z_v2
+        term_3_1 = diff_z_v1 * diff_y_v2 - diff_y_v1 * diff_z_v2
+        term_1_2 = diff_y_v2 * diff_x_v3 - diff_x_v2 * diff_y_v3
+        term_2_2 = diff_z_v2 * diff_x_v3 - diff_x_v2 * diff_z_v3
+        term_3_2 = diff_z_v2 * diff_y_v3 - diff_y_v2 * diff_z_v3
+        term_1_3 = diff_y_v3 * diff_x_v1 - diff_x_v3 * diff_y_v1
+        term_2_3 = diff_z_v3 * diff_x_v1 - diff_x_v3 * diff_z_v1
+        term_3_3 = diff_z_v3 * diff_y_v1 - diff_y_v3 * diff_z_v1
+        edge1 = superfast_or(np.sign(term_1_1), np.sign(term_2_1), np.sign(term_3_1))
+        edge2 = superfast_or(np.sign(term_1_2), np.sign(term_2_2), np.sign(term_3_2))
+        edge3 = superfast_or(np.sign(term_1_3), np.sign(term_2_3), np.sign(term_3_3))
+
         triangle_sign = np.sign(
-            (m1[..., 0] * m2[..., 1] - m1[..., 1] * m2[..., 0])
-            * (v3[:, None, 2] - points[..., 2])
-            + (m2[..., 0] * m3[..., 1] - m2[..., 1] * m3[..., 0])
-            * (v1[:, None, 2] - points[..., 2])
-            + (m3[..., 0] * m1[..., 1] - m3[..., 1] * m1[..., 0])
-            * (v2[:, None, 2] - points[..., 2])
+            -term_1_1 * diff_z_v3 - term_1_2 * diff_z_v1 - term_1_3 * diff_z_v2
         )
 
-        # Compute face boundary contribution
-        face_boundary = (
-            np.where(v1sign != v2sign, edge_sign, 0)
-            + np.where(v2sign != v3sign, edge_sign, 0)
-            + np.where(v3sign != v1sign, edge_sign, 0)
-        )
+        face_boundary = (mask12 * edge1) + (mask23 * edge2) + (mask31 * edge3)
 
-        # Sum up the winding number
-        winding_number = np.sum(face_boundary * triangle_sign, axis=0) // 2
+        triangle_chain_res = np.where(face_boundary != 0, triangle_sign, 0)
+
+        winding_number = np.sum(triangle_chain_res, axis=0) // 2
+
         return winding_number != 0
 
     def __repr__(self):
