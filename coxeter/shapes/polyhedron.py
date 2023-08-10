@@ -857,18 +857,12 @@ class Polyhedron(Shape3D):
         diff_y_v3 = v3_expanded[..., 1] - points_expanded[..., 1]
         diff_z_v3 = v3_expanded[..., 2] - points_expanded[..., 2]
 
-        def superfast_or(a, b, c):
+        def sign_or(a, b, c):
             return np.where(a != 0, a, np.where(b != 0, b, c))
 
-        v1sign = superfast_or(
-            np.sign(diff_x_v1), np.sign(diff_y_v1), np.sign(diff_z_v1)
-        )
-        v2sign = superfast_or(
-            np.sign(diff_x_v2), np.sign(diff_y_v2), np.sign(diff_z_v2)
-        )
-        v3sign = superfast_or(
-            np.sign(diff_x_v3), np.sign(diff_y_v3), np.sign(diff_z_v3)
-        )
+        v1sign = sign_or(np.sign(diff_x_v1), np.sign(diff_y_v1), np.sign(diff_z_v1))
+        v2sign = sign_or(np.sign(diff_x_v2), np.sign(diff_y_v2), np.sign(diff_z_v2))
+        v3sign = sign_or(np.sign(diff_x_v3), np.sign(diff_y_v3), np.sign(diff_z_v3))
 
         mask12 = v1sign != v2sign
         mask23 = v2sign != v3sign
@@ -883,9 +877,9 @@ class Polyhedron(Shape3D):
         term_1_3 = diff_y_v3 * diff_x_v1 - diff_x_v3 * diff_y_v1
         term_2_3 = diff_z_v3 * diff_x_v1 - diff_x_v3 * diff_z_v1
         term_3_3 = diff_z_v3 * diff_y_v1 - diff_y_v3 * diff_z_v1
-        edge1 = superfast_or(np.sign(term_1_1), np.sign(term_2_1), np.sign(term_3_1))
-        edge2 = superfast_or(np.sign(term_1_2), np.sign(term_2_2), np.sign(term_3_2))
-        edge3 = superfast_or(np.sign(term_1_3), np.sign(term_2_3), np.sign(term_3_3))
+        edge1 = sign_or(np.sign(term_1_1), np.sign(term_2_1), np.sign(term_3_1))
+        edge2 = sign_or(np.sign(term_1_2), np.sign(term_2_2), np.sign(term_3_2))
+        edge3 = sign_or(np.sign(term_1_3), np.sign(term_2_3), np.sign(term_3_3))
 
         triangle_sign = np.sign(
             -term_1_1 * diff_z_v3 - term_1_2 * diff_z_v1 - term_1_3 * diff_z_v2
