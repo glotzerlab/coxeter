@@ -809,9 +809,7 @@ class Polyhedron(Shape3D):
 
         The code in this function is based on implementation in
         :cite:`Dickinson2019` which is licensed under the BSD-3 license.
-        The computation is based on calculation of winding number. For
-        more details on the implementation see
-        [here](https://github.com/mdickinson/polyhedron/blob/master/polyhedron.py).
+        The computation is based on calculation of winding number.
 
         .. note::
 
