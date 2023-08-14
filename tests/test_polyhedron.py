@@ -352,7 +352,7 @@ def test_edges(poly):
     assert np.all(np.diff(poly.edges[:, 0]) >= 0)
 
     # Check that all items in the first column are greater than those in the second.
-    assert np.all(np.diff(poly.edges, axis=1) >= 0)
+    assert np.all(np.diff(poly.edges, axis=1) > 0)
 
     # Check the second column is in ascending order for each unique item in the first.
     # For example, [[0,1],[0,3],[1,2]] is permitted but [[0,1],[0,3],[0,2]] is not.
