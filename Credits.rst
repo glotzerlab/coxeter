@@ -112,6 +112,7 @@ Jen Bradley
 * Added shape families for Archimedean, Catalan, and Johnson solids.
 * Added shape family for prisms and antiprisms.
 * Added shape family for equilateral pyramids and dipyramids.
+* Added edges, edge_vectors, and num_edges methods.
 * Added optional ``fast`` flag for ConvexPolyhedron generation.
 * Reimplemented ``find_equations``, ``_volume``, ``surface_area``, ``centroid``,
   ``_compute_inertia_tensor``, ``rescale``, and ``get_face_area`` methods for convex

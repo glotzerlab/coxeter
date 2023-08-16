@@ -737,6 +737,12 @@ class ConvexPolyhedron(Polyhedron):
         """float: Get the asphericity as defined in :cite:`Irrgang2017`."""
         return self.mean_curvature * self.surface_area / (3 * self.volume)
 
+    @property
+    def num_edges(self):
+        """int: Get the number of edges."""
+        # Calculate number of edges from Euler Characteristic
+        return self.num_vertices + self.num_faces - 2
+
     def is_inside(self, points):
         """Determine whether points are contained in this polyhedron.
 
