@@ -112,6 +112,7 @@ Jen Bradley
 * Added shape families for Archimedean, Catalan, and Johnson solids.
 * Added shape family for prisms and antiprisms.
 * Added shape family for equilateral pyramids and dipyramids.
+* Added edges, edge_vectors, and num_edges methods.
 
 Domagoj Fijan
 * Rewrote point in polygon check to use NumPy vectorized operations.
