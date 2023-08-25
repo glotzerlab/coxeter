@@ -1,9 +1,10 @@
 numpy
 rowan>=1.2
 scipy
-jupyter
+sphinx==5.3.0
 sphinxcontrib-bibtex>=2.0.0
-autodocsumm
+sphinx_rtd_theme
 nbsphinx
-fresnel
+autodocsumm
+jupyter
 matplotlib

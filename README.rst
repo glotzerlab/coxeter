@@ -78,7 +78,15 @@ To install from source, execute:
 
    git clone https://github.com/glotzerlab/coxeter.git
    cd coxeter
-   python setup.py install --user
+
+To install the package, choose one of the following:
+
+.. code:: bash
+
+   pip install . # Install with no additional dependencies
+   pip install .[tests] # RECOMMENDED: Install with dependencies required to run pytests
+   pip install .[tests,doc] # Install all dependencies required to develop for coxeter
+
 
 Requirements
 ~~~~~~~~~~~~
@@ -94,19 +102,19 @@ Testing
 The package is currently tested for Python >= 3.8 on Unix-like systems.
 Continuous integrated testing is performed using CircleCI on these Python versions.
 
+First, install the packages required to test coxeter (if not already done):
+
+.. code:: bash
+
+   pip install -r tests/requirements.txt
+
 To run the packaged unit tests, execute the following line from the root of the repository:
 
 .. code:: bash
 
    pytest
 
-To check test coverage, make sure the coverage module is installed:
-
-.. code:: bash
-
-   pip install coverage
-
-and then run the packaged unit tests with the coverage module:
+To run the packaged unit tests with the coverage module:
 
 .. code:: bash
 
@@ -115,13 +123,17 @@ and then run the packaged unit tests with the coverage module:
 Building Documentation
 ----------------------
 
-Documentation for coxeter is written in `reStructuredText <http://docutils.sourceforge.net/rst.html>`__ and compiled using `Sphinx <http://www.sphinx-doc.org/en/master/>`__.
-To build the documentation, first install Sphinx:
+Documentation for coxeter is written in `reStructuredText <http://docutils.sourceforge.net/rst.html>`_ and compiled using `Sphinx <http://www.sphinx-doc.org/en/master/>`__.
+To build the documentation, first install Sphinx and the other required packges:
 
 .. code:: bash
 
    cd doc
    pip install -r requirements.txt
+   conda install -c conda-forge fresnel
+
+.. warning::
+   The `fresnel <https://fresnel.readthedocs.io/en/v0.13.5/>`_ package on conda forge must be used. The PyPI package *fresnel* is different and will not function properly.
 
 You can then use Sphinx to create the actual documentation in either PDF or HTML form by running the following commands in the coxeter root directory:
 
