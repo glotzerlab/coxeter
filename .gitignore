@@ -1,7 +1,10 @@
 *~
 *.swp
 
-# Packages
+# OS Specific
+.DS_Store
+
+# Packaging
 *.egg
 *.egg-info*
 dist
@@ -15,8 +18,25 @@ develop-eggs
 .installed.cfg
 lib
 lib64
+
+# Optimization
 __pycache__
-.hypothesis
 *.pyc
+
+# Unit tests
+.coverage
+.coverage.*
+.hypothesis
+.hypothesis/
+.pytest_cache/
+
+# Documentation
 doc/source/bibtex.json
+
+# Development tools
 .ipynb_checkpoints
+.spyderproject
+.spyproject
+*.sublime-workspace
+.vscode
+.code-workspace
