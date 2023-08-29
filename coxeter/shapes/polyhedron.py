@@ -876,53 +876,53 @@ class Polyhedron(Shape3D):
         points = np.atleast_2d(points)
 
         # triangle vertices
-        v1 = self.vertices[triangles[:, 0]]
-        v2 = self.vertices[triangles[:, 1]]
-        v3 = self.vertices[triangles[:, 2]]
+        v0 = self.vertices[triangles[:, 0]]
+        v1 = self.vertices[triangles[:, 1]]
+        v2 = self.vertices[triangles[:, 2]]
+        v0_expanded = v0[:, None, :]
         v1_expanded = v1[:, None, :]
         v2_expanded = v2[:, None, :]
-        v3_expanded = v3[:, None, :]
-        points_expanded = np.tile(points, (v1.shape[0], 1, 1))
+        points_expanded = np.tile(points, (v0.shape[0], 1, 1))
 
+        diff_x_v0 = v0_expanded[..., 0] - points_expanded[..., 0]
+        diff_y_v0 = v0_expanded[..., 1] - points_expanded[..., 1]
+        diff_z_v0 = v0_expanded[..., 2] - points_expanded[..., 2]
         diff_x_v1 = v1_expanded[..., 0] - points_expanded[..., 0]
         diff_y_v1 = v1_expanded[..., 1] - points_expanded[..., 1]
         diff_z_v1 = v1_expanded[..., 2] - points_expanded[..., 2]
         diff_x_v2 = v2_expanded[..., 0] - points_expanded[..., 0]
         diff_y_v2 = v2_expanded[..., 1] - points_expanded[..., 1]
         diff_z_v2 = v2_expanded[..., 2] - points_expanded[..., 2]
-        diff_x_v3 = v3_expanded[..., 0] - points_expanded[..., 0]
-        diff_y_v3 = v3_expanded[..., 1] - points_expanded[..., 1]
-        diff_z_v3 = v3_expanded[..., 2] - points_expanded[..., 2]
 
         def sign_or(a, b, c):
             return np.where(a != 0, a, np.where(b != 0, b, c))
 
+        v0sign = sign_or(np.sign(diff_x_v0), np.sign(diff_y_v0), np.sign(diff_z_v0))
         v1sign = sign_or(np.sign(diff_x_v1), np.sign(diff_y_v1), np.sign(diff_z_v1))
         v2sign = sign_or(np.sign(diff_x_v2), np.sign(diff_y_v2), np.sign(diff_z_v2))
-        v3sign = sign_or(np.sign(diff_x_v3), np.sign(diff_y_v3), np.sign(diff_z_v3))
 
+        mask01 = v0sign != v1sign
         mask12 = v1sign != v2sign
-        mask23 = v2sign != v3sign
-        mask31 = v3sign != v1sign
+        mask20 = v2sign != v0sign
 
-        term_1_1 = diff_y_v1 * diff_x_v2 - diff_x_v1 * diff_y_v2
-        term_2_1 = diff_z_v1 * diff_x_v2 - diff_x_v1 * diff_z_v2
-        term_3_1 = diff_z_v1 * diff_y_v2 - diff_y_v1 * diff_z_v2
-        term_1_2 = diff_y_v2 * diff_x_v3 - diff_x_v2 * diff_y_v3
-        term_2_2 = diff_z_v2 * diff_x_v3 - diff_x_v2 * diff_z_v3
-        term_3_2 = diff_z_v2 * diff_y_v3 - diff_y_v2 * diff_z_v3
-        term_1_3 = diff_y_v3 * diff_x_v1 - diff_x_v3 * diff_y_v1
-        term_2_3 = diff_z_v3 * diff_x_v1 - diff_x_v3 * diff_z_v1
-        term_3_3 = diff_z_v3 * diff_y_v1 - diff_y_v3 * diff_z_v1
-        edge1 = sign_or(np.sign(term_1_1), np.sign(term_2_1), np.sign(term_3_1))
-        edge2 = sign_or(np.sign(term_1_2), np.sign(term_2_2), np.sign(term_3_2))
-        edge3 = sign_or(np.sign(term_1_3), np.sign(term_2_3), np.sign(term_3_3))
+        term_0_0 = diff_y_v0 * diff_x_v1 - diff_x_v0 * diff_y_v1
+        term_1_0 = diff_z_v0 * diff_x_v1 - diff_x_v0 * diff_z_v1
+        term_2_0 = diff_z_v0 * diff_y_v1 - diff_y_v0 * diff_z_v1
+        term_0_1 = diff_y_v1 * diff_x_v2 - diff_x_v1 * diff_y_v2
+        term_1_1 = diff_z_v1 * diff_x_v2 - diff_x_v1 * diff_z_v2
+        term_2_1 = diff_z_v1 * diff_y_v2 - diff_y_v1 * diff_z_v2
+        term_0_2 = diff_y_v2 * diff_x_v0 - diff_x_v2 * diff_y_v0
+        term_1_2 = diff_z_v2 * diff_x_v0 - diff_x_v2 * diff_z_v0
+        term_2_2 = diff_z_v2 * diff_y_v0 - diff_y_v2 * diff_z_v0
+        edge0 = sign_or(np.sign(term_0_0), np.sign(term_1_0), np.sign(term_2_0))
+        edge1 = sign_or(np.sign(term_0_1), np.sign(term_1_1), np.sign(term_2_1))
+        edge2 = sign_or(np.sign(term_0_2), np.sign(term_1_2), np.sign(term_2_2))
 
         triangle_sign = np.sign(
-            -term_1_1 * diff_z_v3 - term_1_2 * diff_z_v1 - term_1_3 * diff_z_v2
+            -term_0_0 * diff_z_v2 - term_0_1 * diff_z_v0 - term_0_2 * diff_z_v1
         )
 
-        face_boundary = (mask12 * edge1) + (mask23 * edge2) + (mask31 * edge3)
+        face_boundary = (mask01 * edge0) + (mask12 * edge1) + (mask20 * edge2)
 
         triangle_chain_res = np.where(face_boundary != 0, triangle_sign, 0)
 
