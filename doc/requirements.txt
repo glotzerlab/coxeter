@@ -1,7 +1,7 @@
 numpy
 rowan>=1.2
 scipy
-sphinx==5.3.0
+sphinx<=5.3.0
 sphinxcontrib-bibtex>=2.0.0
 sphinx_rtd_theme
 nbsphinx
