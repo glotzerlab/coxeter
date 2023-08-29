@@ -4,6 +4,7 @@
 """Defines a polyhedron."""
 
 import warnings
+from functools import cached_property
 
 import numpy as np
 import rowan
@@ -355,8 +356,44 @@ class Polyhedron(Shape3D):
 
     @property
     def faces(self):
-        """list(:class:`numpy.ndarray`): Get the polyhedron's faces."""
+        """list(:class:`numpy.ndarray`): Get the polyhedron's faces.
+
+        Results returned as vertex index lists.
+        """
         return self._faces
+
+    @cached_property
+    def edges(self):
+        """:class:`numpy.ndarray`: Get the polyhedron's edges.
+
+        Results returned as vertex index pairs,  with each edge of the polyhedron
+        included exactly once.  Edge (i,j) pairs are ordered by vertex index with i<j.
+        """
+        ij_pairs = np.array(
+            [
+                [i, j]
+                for face in self.faces
+                for i, j in zip(face, np.roll(face, -1))
+                if i < j
+            ]
+        )
+        sorted_indices = np.lexsort(ij_pairs.T[::-1])
+        sorted_ij_pairs = ij_pairs[sorted_indices]
+        # Make edge data read-only so that the cached property of this instance
+        # cannot be edited
+        sorted_ij_pairs.flags.writeable = False
+
+        return sorted_ij_pairs
+
+    @property
+    def edge_vectors(self):
+        """:class:`numpy.ndarray`: Get the polyhedron's edges as vectors."""
+        return self.vertices[self.edges[:, 1]] - self.vertices[self.edges[:, 0]]
+
+    @property
+    def num_edges(self):
+        """int: Get the number of edges."""
+        return len(self.edges)
 
     @property
     def volume(self):
