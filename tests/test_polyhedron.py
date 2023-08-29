@@ -829,7 +829,6 @@ def test_get_set_minimal_centered_bounding_sphere_radius(poly):
 )
 def test_is_inside(cube):
     assert cube.is_inside(cube.center)
-    import sys
 
     limit = np.finfo(np.float64).smallest_normal
 
