@@ -741,7 +741,7 @@ def test_is_inside(cube):
     assert cube.is_inside(cube.center)
     import sys
 
-    limit = sys.float_info.min
+    limit = np.finfo(np.float64).smallest_normal
 
     @given(
         floats(limit, 1 - limit, exclude_min=True, exclude_max=True),
