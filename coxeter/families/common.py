@@ -138,7 +138,7 @@ PyramidDipyramidFamily = TabulatedGSDShapeFamily.from_json_file(
     docstring="""The family of regular equilateral pyramids and dipyramids (6 total).
 
     The following parameters are required by this class:
-    
+
     - name: The name of the pyramid or dipyramid. Options are "Triangular Pyramid", \
             "Square Pyramid", "Pentagonal Pyramid", "Triangular Dipyramid", \
             "Square Dipyramid", and "Pentagonal Dipyramid".
