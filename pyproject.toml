@@ -27,7 +27,12 @@ Issues = "https://github.com/glotzerlab/coxeter/issues"
 [tool.setuptools]
 # Build the contents of coxeter rather than the JOSS paper
 # Subpackages are enumerated to avoid circular imports
-packages=["coxeter","coxeter.shapes","coxeter.families"]
+packages=["coxeter",
+          "coxeter.shapes",
+          "coxeter.families",
+          "coxeter.extern.polytri",
+          "coxeter.extern.bentley_ottmann",
+          "coxeter.extern.polyhedron"]
 
 [tool.setuptools.dynamic]
 optional-dependencies = {tests = { file = ["tests/requirements.txt"] }, doc = { file = ["doc/requirements.txt"] }}
