@@ -75,7 +75,7 @@ class RegularNGonFamily(ShapeFamily):
 PlatonicFamily = TabulatedGSDShapeFamily.from_json_file(
     os.path.join(_DATA_FOLDER, "platonic.json"),
     classname="PlatonicFamily",
-    docstring="""The family of Platonic solids.
+    docstring="""The family of Platonic solids (5 total).
 
 The following parameters are required by this class:
 
@@ -88,6 +88,7 @@ ArchimedeanFamily = TabulatedGSDShapeFamily.from_json_file(
     os.path.join(_DATA_FOLDER, "archimedean.json"),
     classname="ArchimedeanFamily",
     docstring="""The family of Archimedean solids (13 total).
+
 The following parameters are required by this class:
     - name: The name of the ArchimedeanFamily solid. Options are "Cuboctahedron", \
             "Icosidodecahedron", "Truncated Tetrahedron", "Truncated Octahedron", \
@@ -101,8 +102,9 @@ The following parameters are required by this class:
 CatalanFamily = TabulatedGSDShapeFamily.from_json_file(
     os.path.join(_DATA_FOLDER, "catalan.json"),
     classname="CatalanFamily",
-    docstring="""The family of Catalan solids, also known as Archimedean duals
+    docstring="""The family of Catalan solids, also known as Archimedean duals \
     (13 total).
+
 The following parameters are required by this class:
     - name: The name of the CatalanFamily solid. Options are "Deltoidal  \
             Hexecontahedron", "Deltoidal Icositetrahedron", "Disdyakis \
@@ -117,10 +119,12 @@ The following parameters are required by this class:
 JohnsonFamily = TabulatedGSDShapeFamily.from_json_file(
     os.path.join(_DATA_FOLDER, "johnson.json"),
     classname="JohnsonFamily",
-    docstring="""The family of Johnson solids (92 total).
+    docstring="""The family of Johnson solids, as enumerated in \
+    :cite:`Johnson1966` (92 total).
+
 The following parameters are required by this class:
     - name: The name of the JohnsonFamily solid. A full list is available in \
-            10.1126/science.1220869: :cite:`Damasceno2012`. In general, shape names \
+            :cite:`Johnson1966`. In general, shape names \
             should have the first character of each word capitalized, with spaces \
             between words (e.g. "Elongated Triangular Cupola"). Pyramids and \
             dipyramids are named from their base polygon (e.g. "Square Pyramid" \
@@ -128,12 +132,12 @@ The following parameters are required by this class:
 """,
 )
 
-
 PyramidDipyramidFamily = TabulatedGSDShapeFamily.from_json_file(
     os.path.join(_DATA_FOLDER, "pyramid_dipyramid.json"),
     classname="PyramidDipyramidFamily",
     docstring="""The family of regular equilateral pyramids and dipyramids (6 total).
-The following parameters are required by this class:
+
+    The following parameters are required by this class:
     - name: The name of the pyramid or dipyramid. Options are "Triangular Pyramid", \
             "Square Pyramid", "Pentagonal Pyramid", "Triangular Dipyramid", \
             "Square Dipyramid", and "Pentagonal Dipyramid".
@@ -143,8 +147,10 @@ The following parameters are required by this class:
 PrismAntiprismFamily = TabulatedGSDShapeFamily.from_json_file(
     os.path.join(_DATA_FOLDER, "prism_antiprism.json"),
     classname="PrismAntiprismFamily",
-    docstring="""The family of n-gonal prisms and antiprisms with n∈[3,10] (16 total).
-The following parameters are required by this class:
+    docstring="""The family of uniform n-prisms and n-antiprisms with n∈[3,10] \
+    (16 total).
+
+    The following parameters are required by this class:
     - name: The name of the prism or antiprism. Options for prisms are  \
             "Triangular Prism", "Square Prism", "Pentagonal Prism", "Hexagonal Prism", \
             "Heptagonal Prism", "Octagonal Prism", "Nonagonal Prism", and \
