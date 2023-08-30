@@ -2,7 +2,9 @@ numpy
 rowan>=1.2
 scipy
 jupyter
+sphinx<=5.3.0
 sphinxcontrib-bibtex>=2.0.0
+sphinx-rtd-theme
 autodocsumm
 nbsphinx
 fresnel

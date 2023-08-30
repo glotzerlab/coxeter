@@ -1,3 +1,55 @@
+[build-system]
+requires = ["setuptools","wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "coxeter"
+version = "0.6.1"
+requires-python = ">=3.8"
+description = "Tools for creating and manipulating shapes."
+readme = "README.rst"
+license = { file = "LICENSE" }
+authors = [
+    {name = "Vyas Ramasubramani", email = "vramasub@umich.edu"},
+    {name = "Bradley Dice", email = "bdice@umich.edu"},
+    {name = "Jen Bradley", email = "jenbrad@umich.edu"},
+]
+dependencies = ["numpy>=1.19.0","rowan>=1.2.0","scipy>1.0.0"]
+keywords = ["geometry"]
+dynamic = ["optional-dependencies"]
+
+[project.urls]
+Documentation = "https://coxeter.readthedocs.io"
+Download = "https://pypi.org/project/coxeter/"
+Source = "https://github.com/glotzerlab/coxeter"
+Issues = "https://github.com/glotzerlab/coxeter/issues"
+
+[tool.setuptools]
+# Build the contents of coxeter rather than the JOSS paper
+packages=["coxeter"]
+
+[tool.setuptools.dynamic]
+optional-dependencies = {tests = { file = ["tests/requirements.txt"] }, doc = { file = ["doc/requirements.txt"] }}
+
+[tool.pytest.ini_options]
+# Additional command line options for pytest
+addopts = "--doctest-modules -p coxeter.__doctest_fixtures"
+doctest_optionflags = "NORMALIZE_WHITESPACE ELLIPSIS"
+# Add percentage progress bar to the pytest console output
+console_output_style = "progress"
+# Specify the tests folder to speed up collection.
+testpaths = ["tests"]
+
+[tool.isort]
+skip_glob = "*/extern/*"
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+line_length = 88
+known_third_party = ["hypothesis","pytest"]
+known_first_party = ["conftest","coxeter","utils"]
+
 [tool.black]
 exclude = '''
 (
@@ -6,3 +58,12 @@ exclude = '''
   )/
 )
 '''
+
+[tool.pydocstyle]
+add-ignore =[
+  "D105", # Magic methods don't require documentation.
+  "D107", # __init__ should be documented in class constructors.
+  "D401", # This doesn't play nice with property docstrings of the form `type: ...`
+  "D402", # This doesn't play nice with property docstrings of the form `type: ...`
+  "D403" # This doesn't play nice with property docstrings of the form `type: ...`
+]
