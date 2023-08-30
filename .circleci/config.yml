@@ -21,7 +21,7 @@ jobs:
       - run: &install
           name: Install package
           command: |
-            python -m pip install .[test] --progress-bar off --user
+            python -m pip install .[tests] --progress-bar off --user
 
       - run: &run-tests
           name: Run tests
