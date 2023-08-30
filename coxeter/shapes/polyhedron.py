@@ -905,23 +905,29 @@ class Polyhedron(Shape3D):
         mask12 = v1sign != v2sign
         mask20 = v2sign != v0sign
 
-        term_0_0 = diff_y_v0 * diff_x_v1 - diff_x_v0 * diff_y_v1
-        term_1_0 = diff_z_v0 * diff_x_v1 - diff_x_v0 * diff_z_v1
-        term_2_0 = diff_z_v0 * diff_y_v1 - diff_y_v0 * diff_z_v1
-        term_0_1 = diff_y_v1 * diff_x_v2 - diff_x_v1 * diff_y_v2
-        term_1_1 = diff_z_v1 * diff_x_v2 - diff_x_v1 * diff_z_v2
-        term_2_1 = diff_z_v1 * diff_y_v2 - diff_y_v1 * diff_z_v2
-        term_0_2 = diff_y_v2 * diff_x_v0 - diff_x_v2 * diff_y_v0
-        term_1_2 = diff_z_v2 * diff_x_v0 - diff_x_v2 * diff_z_v0
-        term_2_2 = diff_z_v2 * diff_y_v0 - diff_y_v2 * diff_z_v0
-        edge0 = sign_or(np.sign(term_0_0), np.sign(term_1_0), np.sign(term_2_0))
-        edge1 = sign_or(np.sign(term_0_1), np.sign(term_1_1), np.sign(term_2_1))
-        edge2 = sign_or(np.sign(term_0_2), np.sign(term_1_2), np.sign(term_2_2))
+        def compute_cross(diff_i, diff_j):
+            term_1 = diff_i[1] * diff_j[0] - diff_i[0] * diff_j[1]
+            term_2 = diff_i[2] * diff_j[0] - diff_i[0] * diff_j[2]
+            term_3 = diff_i[2] * diff_j[1] - diff_i[1] * diff_j[2]
+            return term_1, term_2, term_3
 
-        triangle_sign = np.sign(
-            -term_0_0 * diff_z_v2 - term_0_1 * diff_z_v0 - term_0_2 * diff_z_v1
+        term0 = compute_cross(
+            (diff_x_v0, diff_y_v0, diff_z_v0), (diff_x_v1, diff_y_v1, diff_z_v1)
+        )
+        term1 = compute_cross(
+            (diff_x_v1, diff_y_v1, diff_z_v1), (diff_x_v2, diff_y_v2, diff_z_v2)
+        )
+        term2 = compute_cross(
+            (diff_x_v2, diff_y_v2, diff_z_v2), (diff_x_v0, diff_y_v0, diff_z_v0)
         )
 
+        edge0 = sign_or(*[np.sign(term) for term in term0])
+        edge1 = sign_or(*[np.sign(term) for term in term1])
+        edge2 = sign_or(*[np.sign(term) for term in term2])
+
+        triangle_sign = np.sign(
+            -term0[0] * diff_z_v2 - term1[0] * diff_z_v0 - term2[0] * diff_z_v1
+        )
         face_boundary = (mask01 * edge0) + (mask12 * edge1) + (mask20 * edge2)
 
         triangle_chain_res = np.where(face_boundary != 0, triangle_sign, 0)
