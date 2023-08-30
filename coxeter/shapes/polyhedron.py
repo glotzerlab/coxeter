@@ -906,10 +906,10 @@ class Polyhedron(Shape3D):
         mask20 = v2sign != v0sign
 
         def compute_cross(diff_i, diff_j):
-            term_1 = diff_i[1] * diff_j[0] - diff_i[0] * diff_j[1]
-            term_2 = diff_i[2] * diff_j[0] - diff_i[0] * diff_j[2]
-            term_3 = diff_i[2] * diff_j[1] - diff_i[1] * diff_j[2]
-            return term_1, term_2, term_3
+            term_0 = diff_i[1] * diff_j[0] - diff_i[0] * diff_j[1]
+            term_1 = diff_i[2] * diff_j[0] - diff_i[0] * diff_j[2]
+            term_2 = diff_i[2] * diff_j[1] - diff_i[1] * diff_j[2]
+            return term_0, term_1, term_2
 
         term0 = compute_cross(
             (diff_x_v0, diff_y_v0, diff_z_v0), (diff_x_v1, diff_y_v1, diff_z_v1)
