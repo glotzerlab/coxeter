@@ -9,7 +9,6 @@ import numpy as np
 import rowan
 
 from ..extern.bentley_ottmann import poly_point_isect
-from ..extern.polyhedron.polygon import Polygon as PolyInside
 from ..extern.polytri import polytri
 from .base_classes import Shape2D
 from .circle import Circle
@@ -665,14 +664,43 @@ class Polygon(Shape2D):
         return form_factor
 
     def is_inside(self, points):
-        """Determine whether points are contained in this polygon.
+        r"""Simple point-in-polygon algorithm based on winding number.
+
+        The code in this function is based on implementation in :cite:`Dickinson2019`
+        which is licensed under the BSD-3 license.
+
+        Given a closed, possibly non-simple polygon described as a list of vertices in
+        :math:`\mathbb{R}^2` and a point that doesn't lie directly on the path of the
+        polygon, we'd like to compute the winding number of the polygon around the
+        point. To achieve this, we place the point at the origin. Divide the remainder
+        of the plane (i.e., :math:`\mathbb{R}^2` minus the origin) into two halves,
+        :math:`L` and :math:`R`, defined as follows:
+
+        .. math::
+            L = {(x, y) | x < 0 \lor x = 0 \land y < 0}
+
+            R = {(x, y) | x > 0 \lor x = 0 \land y > 0}
+
+        That is, :math:`R` contains all points with argument in the half-closed
+        interval :math:`\left[-\frac{\pi}{2},\frac{\pi}{2}\right)`, and :math:`L`
+        contains all others.  Note that with these definitions, :math:`L` and :math:`R`
+        are both convex: a line segment between two points in :math:`R` lies entirely
+        in :math:`R`, and similarly for :math:`L`.  In particular, a line segment
+        between two points can only pass through the origin if one of those points is
+        in :math:`L` and the other in :math:`R`. Now, we follow the edges of the
+        polygon, keeping track of how many times we move between :math:`L`
+        and :math:`R`.  For each move from :math:`L` to :math:`R` (or vice versa),
+        we also need to compute whether the edge passes *above* or *below* the origin,
+        to compute its contribution to the total winding number.  From the comment
+        above, we can safely ignore all edges that lie entirely within either :math:`L`
+        or :math:`R`.
 
         .. note::
 
-            Points on the boundary of the shape will return :code:`True`.
+            Points on the boundary of the shape will return :code:`False`.
 
         Args:
-            points (:math:`(N, 3)` :class:`numpy.ndarray`):
+            points (:math:`(N, 3)` or :math:`(N, 2)` :class:`numpy.ndarray`):
                 The points to test.
 
         Returns:
@@ -682,28 +710,38 @@ class Polygon(Shape2D):
         """
         # Rotate both the vertices and the points into the plane.
         verts, rotation = _align_points_by_normal(self.normal, self.vertices)
-        points_in_plane = np.dot(points, rotation.T)
+        points = np.atleast_2d(points)
+        # add zero to points if only x and y
+        if points.shape[1] == 2:
+            points = np.hstack((points, np.zeros((points.shape[0], 1))))
+        points = np.dot(points, rotation.T)
+        p1 = verts[:, None]  # Add new axis to make it 3D
+        p2 = np.roll(verts, shift=-1, axis=0)[:, None]  # Add new axis to make it 3D
+        points = points[None, :, :]  # Add new axis to make it 3D
 
-        winding_number_calculator = PolyInside(verts)
+        diff_x_p1 = p1[..., 0] - points[..., 0]
+        diff_y_p1 = p1[..., 1] - points[..., 1]
+        diff_x_p2 = p2[..., 0] - points[..., 0]
+        diff_y_p2 = p2[..., 1] - points[..., 1]
 
-        def _check_inside(p):
-            """Check if point is inside, including boundary points.
+        vertex_sign_p1 = np.sign(diff_x_p1)
+        vertex_sign_p2 = np.sign(diff_x_p2)
 
-            The polyhedron check will will raise a ValueError for points on the
-            boundary, which we want to be inside.
-            """
-            try:
-                return winding_number_calculator.winding_number(p) != 0
-            except ValueError as e:
-                if str(e) in (
-                    "vertex coincides with origin",
-                    "vertices collinear with origin",
-                ):
-                    return True
-                else:
-                    raise
+        zeros_p1 = vertex_sign_p1 == 0
+        zeros_p2 = vertex_sign_p2 == 0
 
-        return np.array([_check_inside(p) for p in np.atleast_2d(points_in_plane)])
+        vertex_sign_p1[zeros_p1] = np.sign(diff_y_p1)[zeros_p1]
+        vertex_sign_p2[zeros_p2] = np.sign(diff_y_p2)[zeros_p2]
+
+        vertex_sign_p2 -= vertex_sign_p1
+        vertex_sign_p2[vertex_sign_p2 != 0] = 1
+
+        edge_sign = np.sign(diff_x_p1 * diff_y_p2 - diff_y_p1 * diff_x_p2)
+
+        half_turn = np.multiply(edge_sign, vertex_sign_p2)
+        winding_number = np.sum(half_turn, axis=0) // 2  # Sum along the first axis
+
+        return winding_number != 0
 
     def __repr__(self):
         return (

@@ -28,7 +28,7 @@ from conftest import (
     named_pyramiddipyramid_mark,
     sphere_isclose,
 )
-from coxeter.families import DOI_SHAPE_REPOSITORIES, PlatonicFamily
+from coxeter.families import DOI_SHAPE_REPOSITORIES, ArchimedeanFamily, PlatonicFamily
 from coxeter.shapes import ConvexPolyhedron, Polyhedron
 from coxeter.shapes.utils import rotate_order2_tensor, translate_inertia_tensor
 from utils import compute_centroid_mc, compute_inertia_mc
@@ -337,6 +337,96 @@ def test___repr__():
     icosidodecahedron = ConvexPolyhedron(icosidodecahedron_vertices)
     icosidodecahedron = Polyhedron(icosidodecahedron.vertices, icosidodecahedron.faces)
     repr(icosidodecahedron)
+
+
+@combine_marks(
+    named_platonic_mark,
+    named_archimedean_mark,
+    named_catalan_mark,
+    named_johnson_mark,
+    named_prismantiprism_mark,
+    named_pyramiddipyramid_mark,
+)
+def test_edges(poly):
+    # Check that the first column is in ascending order.
+    assert np.all(np.diff(poly.edges[:, 0]) >= 0)
+
+    # Check that all items in the first column are greater than those in the second.
+    assert np.all(np.diff(poly.edges, axis=1) > 0)
+
+    # Check the second column is in ascending order for each unique item in the first.
+    # For example, [[0,1],[0,3],[1,2]] is permitted but [[0,1],[0,3],[0,2]] is not.
+    edges = poly.edges
+    unique_values = unique_values = np.unique(edges[:, 0])
+    assert all(
+        [
+            np.all(np.diff(edges[edges[:, 0] == value, 1]) >= 0)
+            for value in unique_values
+        ]
+    )
+
+    # Check that there are no duplicate edges. This also double-checks the sorting
+    assert np.all(np.unique(poly.edges, axis=1) == poly.edges)
+
+    # Check that the edges are immutable
+    try:
+        poly.edges[1] = [99, 99]
+        # If the assignment works, catch that:
+        assert poly.edges[1] != [99, 99]
+    except ValueError as ve:
+        assert "read-only" in str(ve)
+
+
+def test_edge_lengths():
+    known_shapes = {
+        "Tetrahedron": np.sqrt(2) * np.cbrt(3),
+        "Cube": 1,
+        "Octahedron": np.power(2, 5 / 6) * np.cbrt(3 / 8),
+        "Dodecahedron": np.power(2, 2 / 3) * np.cbrt(1 / (15 + np.sqrt(245))),
+        "Icosahedron": np.cbrt(9 / 5 - 3 / 5 * np.sqrt(5)),
+    }
+    for name, edgelength in known_shapes.items():
+        poly = PlatonicFamily.get_shape(name)
+        # Check that edge lengths are correct
+        veclens = np.linalg.norm(
+            poly.vertices[poly.edges[:, 1]] - poly.vertices[poly.edges[:, 0]], axis=1
+        )
+        assert np.allclose(veclens, edgelength)
+        assert np.allclose(veclens, np.linalg.norm(poly.edge_vectors, axis=1))
+
+
+def test_num_edges_archimedean():
+    known_shapes = {
+        "Cuboctahedron": 24,
+        "Icosidodecahedron": 60,
+        "Truncated Tetrahedron": 18,
+        "Truncated Octahedron": 36,
+        "Truncated Cube": 36,
+        "Truncated Icosahedron": 90,
+        "Truncated Dodecahedron": 90,
+        "Rhombicuboctahedron": 48,
+        "Rhombicosidodecahedron": 120,
+        "Truncated Cuboctahedron": 72,
+        "Truncated Icosidodecahedron": 180,
+        "Snub Cuboctahedron": 60,
+        "Snub Icosidodecahedron": 150,
+    }
+    for name, num_edges in known_shapes.items():
+        poly = ArchimedeanFamily.get_shape(name)
+        assert poly.num_edges == num_edges
+
+
+@given(
+    EllipsoidSurfaceStrategy,
+)
+def test_num_edges_polyhedron(points):
+    hull = ConvexHull(points)
+    poly = ConvexPolyhedron(points[hull.vertices])
+    ppoly = Polyhedron(poly.vertices, poly.faces)
+
+    # Calculate correct number of edges from euler characteristic
+    euler_characteristic_edge_count = ppoly.num_vertices + ppoly.num_faces - 2
+    assert ppoly.num_edges == euler_characteristic_edge_count
 
 
 def test_curvature():
