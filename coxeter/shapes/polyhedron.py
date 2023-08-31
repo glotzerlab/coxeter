@@ -884,6 +884,7 @@ class Polyhedron(Shape3D):
         v2_expanded = v2[:, None, :]
         points_expanded = np.tile(points, (v0.shape[0], 1, 1))
 
+        # saving precomputed slices for speed
         diff_x_v0 = v0_expanded[..., 0] - points_expanded[..., 0]
         diff_y_v0 = v0_expanded[..., 1] - points_expanded[..., 1]
         diff_z_v0 = v0_expanded[..., 2] - points_expanded[..., 2]
@@ -905,6 +906,9 @@ class Polyhedron(Shape3D):
         mask12 = v1sign != v2sign
         mask20 = v2sign != v0sign
 
+        # this is equivalent to np.moveaxis(-np.cross(diff_i, diff_j,
+        # axis=2)[..., [2,1,0]], -1, 0)
+        # however the following is faster by a factor of 2
         def compute_cross(diff_i, diff_j):
             term_0 = diff_i[1] * diff_j[0] - diff_i[0] * diff_j[1]
             term_1 = diff_i[2] * diff_j[0] - diff_i[0] * diff_j[2]
