@@ -33,8 +33,3 @@ doc/source/bibtex.json
 
 # Development tooling
 .ipynb_checkpoints/
-.spyderproject
-.spyproject
-*.sublime-workspace
-.vscode/
-.code-workspace
