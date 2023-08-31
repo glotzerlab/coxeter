@@ -6,6 +6,7 @@
 # Packaging and distribution
 *.egg
 *.egg-info*
+*.whl
 dist
 build
 eggs
