@@ -30,7 +30,8 @@ Issues = "https://github.com/glotzerlab/coxeter/issues"
 packages=["coxeter",
           "coxeter.shapes",
           "coxeter.families",
-          "coxeter.extern"]
+          "coxeter.extern.polytri",
+          "coxeter.extern.bentley_ottmann"]
 
 [tool.setuptools.dynamic]
 optional-dependencies = {tests = { file = ["tests/requirements.txt"] }, doc = { file = ["doc/requirements.txt"] }}
