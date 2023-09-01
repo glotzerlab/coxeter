@@ -53,7 +53,7 @@ def near_zero(v):
         return np.allclose(v, np.zeros(np.shape(v)))
 
 
-def calculate_normal_3d(polygon):
+def calculate_normal_3d_old(polygon):
     """Returns polygon normal vector for 3d polygon"""
     normal = np.array([0.0] * len(polygon[0]))
     for p1, p2 in looped_pairs(polygon):
@@ -67,8 +67,23 @@ def calculate_normal_3d(polygon):
     else:
         return normal
 
+def calculate_normal_3d(polygon):
+    """Returns polygon normal vector for 3d polygon"""
+    p1, p2 = np.roll(polygon, 1, axis=0), np.roll(polygon, -1, axis=0)
+    minus = p2 - p1
+    plus = p2 + p1
+    normal = np.empty(3)
+    normal[0] = (minus[:,1] * plus[:,2]).sum()
+    normal[1] = (minus[:,2] * plus[:,0]).sum()
+    normal[2] = (minus[:,0] * plus[:,1]).sum()
+    
+    if near_zero(normal):
+        raise ValueError("No normal found")
+    else:
+        return normal
 
-def calculate_normal_2d(polygon):
+
+def calculate_normal_2d_old(polygon):
     """Returns 'normal' of 2d polygon (-1 if clockwise, 1 if not)"""
     sum = 0
     for (x1, y1), (x2, y2) in looped_pairs(polygon):
@@ -80,6 +95,18 @@ def calculate_normal_2d(polygon):
     else:
         raise ValueError("No normal found")
 
+def calculate_normal_2d(polygon):
+    """Returns 'normal' of 2d polygon (-1 if clockwise, 1 if not)"""
+    x1, y1 = np.roll(polygon, 1, axis=0).T
+    x2, y2 = polygon.T
+    sum = ((x2 - x1) * (y2 + y1)).sum()
+    
+    if sum > 1E-6:
+        return 1
+    elif sum < -1E-6:
+        return -1
+    else:
+        raise ValueError("No normal found")
 
 def calculate_normal(polygon):
     """Returns polygon normal vector (or scalar if 2d)"""
@@ -121,7 +148,7 @@ def looped_slice_inv(seq, start, count):
         return chain(seq[:start], seq[start + count:])
 
 
-def any_point_in_triangle(triangle, points):
+def any_point_in_triangle_old(triangle, points):
     a, b, c = triangle
     s = b - a
     t = c - a
@@ -138,6 +165,22 @@ def any_point_in_triangle(triangle, points):
             return True
     return False
 
+def any_point_in_triangle(triangle, points):
+    a, b, c = triangle
+    s = b - a
+    t = c - a
+
+    stack = [s, t]
+    if len(s) == 3:
+        stack.append(np.cross(s, t))
+    mtrx = np.linalg.inv(np.vstack(stack).transpose())
+    if len(s) == 3:
+        mtrx = mtrx[:2]
+
+    ps, pt = np.dot(mtrx, (points - a).T)  # broadcast to all points
+    return np.any((ps >= 0) & (pt >= 0) & (ps + pt <= 1))  # check all points
+
+# check if its faster to use the current polygon is inside version
 
 def triangulate(polygon):
     """
