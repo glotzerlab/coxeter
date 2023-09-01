@@ -132,7 +132,7 @@ To build the documentation, first install Sphinx and the other required packages
    conda install -c conda-forge fresnel
 
 .. warning::
-   The `fresnel <https://fresnel.readthedocs.io/en/v0.13.5/>`_ package on conda forge must be used. The PyPI package *fresnel* is different and will not function properly.
+   The `fresnel <https://fresnel.readthedocs.io/>`_ package on conda-forge must be used. The PyPI package *fresnel* is different and will not function properly.
 
 You can then use Sphinx to create the actual documentation in either PDF or HTML form by running the following commands:
 
