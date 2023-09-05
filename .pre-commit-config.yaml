@@ -10,6 +10,7 @@ repos:
         exclude: '(?:setup.cfg.*|paper/.*)'
       - id: debug-statements
       - id: pretty-format-json
+        exclude: '\.ipynb$'
         args:
         - --indent
         - '4'
