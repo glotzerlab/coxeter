@@ -391,6 +391,11 @@ class Polyhedron(Shape3D):
         return self.vertices[self.edges[:, 1]] - self.vertices[self.edges[:, 0]]
 
     @property
+    def edge_lengths(self):
+        """:class:`numpy.ndarray`: Get the length of each edge of the polyhedron."""
+        return np.linalg.norm(self.edge_vectors, axis=1)
+
+    @property
     def num_edges(self):
         """int: Get the number of edges."""
         return len(self.edges)

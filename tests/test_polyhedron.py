@@ -392,6 +392,7 @@ def test_edge_lengths():
             poly.vertices[poly.edges[:, 1]] - poly.vertices[poly.edges[:, 0]], axis=1
         )
         assert np.allclose(veclens, edgelength)
+        assert np.allclose(poly.edge_lengths, edgelength)
         assert np.allclose(veclens, np.linalg.norm(poly.edge_vectors, axis=1))
 
 
