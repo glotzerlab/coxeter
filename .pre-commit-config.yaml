@@ -41,6 +41,9 @@ repos:
     hooks:
       - id: pydocstyle
         exclude: '(?:extern/.*|tests/.*|setup.py|conf.py)'
+        additional_dependencies: [
+          'tomli'
+        ]
   - repo: https://github.com/PyCQA/flake8
     rev: '6.0.0'
     hooks:
