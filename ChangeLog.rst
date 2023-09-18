@@ -22,6 +22,7 @@ Changed
 
 Added
 ~~~~~
+
 - New `edges` and `edge_vectors` properties for polyhedra.
 - New shape families for Archimedean, Catalan, and Johnson shapes.
 - New shape families for regular pyramids and dipyramids, and a selection of regular prisms and antiprisms.
