@@ -1,0 +1,27 @@
+name: Build and Publish to PyPI
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  build_and_publish:
+    name: Build and Publish to PyPI
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.x
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+    - name: Build source distribution and wheels
+      run: |
+        python --version
+        python -m pip install --progress-bar off twine wheel setuptools
+        python setup.py sdist
+        python setup.py bdist_wheel
+    - name: Publish to PyPI
+      run: |
+        python -m twine upload --username __token__ --password ${{
+        secrets.PYPI_API_TOKEN }} dist/*
