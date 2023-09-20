@@ -10,20 +10,45 @@ on:
       - "v*.*.*"
 
 jobs:
-  build_and_publish:
-    name: Build and Publish to PyPI
+  build_wheels_and_sdist:
+    name: Build wheels and sdist
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - name: Set up Python 3.x
+    - name: Set up Python 3.11
       uses: actions/setup-python@v4
       with:
-        python-version: '3.x'
-    - name: Build source distribution and wheels
+        python-version: '3.11'
+    - name: Install build dependencies
       run: |
         python --version
         python -m pip install --progress-bar off build
-        python -m build --sdist --wheel --outdir dist/ .
+    - name: Build wheels and sdist
+      run: python -m build --sdist --wheel --outdir dist/ .
+    - uses: actions/upload-artifact@v3.1.2
+      with:
+        name: wheel
+        path: dist/*.whl
+    - uses: actions/upload-artifact@v3.1.2
+      with:
+        name: sdist
+        path: dist/*.tar.gz
+
+  Publish:
+    name: Publish to PyPI
+    needs: [build_wheels_and_sdist]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download artifact sdist
+      uses: actions/download-artifact@v3.0.2
+      with:
+        name: sdist
+        path: dist
+    - name: Download artifact wheel
+      uses: actions/download-artifact@v3.0.2
+      with:
+        name: wheel
+        path: dist
     - name: Publish to PyPI
       if: startsWith(github.ref, 'refs/tags/v')
       uses: pypa/gh-action-pypi-publish@v1.8.10
