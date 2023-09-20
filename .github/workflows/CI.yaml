@@ -38,7 +38,7 @@ jobs:
         python --version
         python -c "import numpy; print('numpy', numpy.__version__)"
         python -c "import scipy; print('scipy', scipy.__version__)"
-        python -m pip install .[test] --progress-bar off
+        python -m pip install .[tests] --progress-bar off
     - name: Test with pytest
       shell: bash -l {0}
       run: |
