@@ -1,4 +1,4 @@
-name: Build and Publish to PyPI
+name: Build Project
 
 on:
   pull_request:
