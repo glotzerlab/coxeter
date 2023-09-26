@@ -39,6 +39,7 @@ To provide a reasonable balance between a high level of backwards compatibility 
     To avoid having commits fail in case you forget to run this, you can set up a git pre-commit hook using `pre-commit`_:
 
     .. code-block:: bash
+
         pre-commit install
 
 
