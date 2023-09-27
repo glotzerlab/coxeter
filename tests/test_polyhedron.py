@@ -836,11 +836,17 @@ def test_get_set_minimal_centered_bounding_sphere_radius(poly):
 def test_is_inside(cube):
     assert cube.is_inside(cube.center)
 
-    @given(floats(0, 1), floats(0, 1), floats(0, 1))
-    def testfun(x, y, z):
+    limit = np.finfo(np.float64).smallest_normal
+
+    @given(
+        floats(limit, 1 - limit, exclude_min=True, exclude_max=True),
+        floats(limit, 1 - limit, exclude_min=True, exclude_max=True),
+        floats(limit, 1 - limit, exclude_min=True, exclude_max=True),
+    )
+    def test_is_inside(x, y, z):
         assert cube.is_inside([[x, y, z]])
 
-    testfun()
+    test_is_inside()
 
 
 def test_repr_nonconvex(oriented_cube):

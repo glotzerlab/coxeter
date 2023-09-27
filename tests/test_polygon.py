@@ -507,9 +507,7 @@ def test_is_inside(convex_square):
     assert rotated_square.is_inside(rotated_square.center)
 
     # the smallest positive normalized floating-point number
-    import sys
-
-    limit = sys.float_info.min
+    limit = np.finfo(np.float64).smallest_normal
 
     @given(
         floats(limit, 1 - limit, exclude_min=True, exclude_max=True),

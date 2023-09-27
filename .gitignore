@@ -1,9 +1,12 @@
+# Editor and OS files
 *~
 *.swp
 .DS_Store
-# Packages
+
+# Packaging and distribution
 *.egg
 *.egg-info*
+*.whl
 dist
 build
 eggs
@@ -15,9 +18,18 @@ develop-eggs
 .installed.cfg
 lib
 lib64
-__pycache__
-.hypothesis
-.coverage
+
+# Compiled files
+__pycache__/
 *.pyc
+
+# Code coverage and testing
+.coverage*
+.hypothesis/
+.pytest_cache/
+
+# Documentation
 doc/source/bibtex.json
-.ipynb_checkpoints
+
+# Development tooling
+.ipynb_checkpoints/
