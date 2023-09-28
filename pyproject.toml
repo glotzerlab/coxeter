@@ -45,16 +45,6 @@ console_output_style = "progress"
 # Specify the tests folder to speed up collection.
 testpaths = ["tests"]
 
-#[tool.isort]
-#skip_glob = "*/extern/*"
-#multi_line_output = 3
-#include_trailing_comma = true
-#force_grid_wrap = 0
-#use_parentheses = true
-#line_length = 88
-#known_third_party = ["hypothesis","pytest"]
-#known_first_party = ["conftest","coxeter","utils"]
-
 [tool.black]
 exclude = '''
 (
@@ -78,10 +68,9 @@ select = [
     "D", # pydocstyle
     "I", # isort
 ]
-#
-#[tool.pydocstyle]
-#add-ignore =[
 ignore =[
+  "B904", # I think this one doesn't work as intended.
+  "B028", # this forces usage of stack level in warnings
   "D105", # Magic methods don't require documentation.
   "D107", # __init__ should be documented in class constructors.
   "D203", # incompatible with D211
@@ -89,10 +78,22 @@ ignore =[
   "D401", # This doesn't play nice with property docstrings of the form `type: ...`
   "D402", # This doesn't play nice with property docstrings of the form `type: ...`
   "D403", # This doesn't play nice with property docstrings of the form `type: ...`
+  "D404", # enables this as a starting docstring word
+  "D406", # section name ends in new line - is this needed? many docs fail this
+  "D407", # dashed underline missing after section - should I enable this? many docs fail this
+  "E721", # forces type comparisons to use isinstance
 ]
+
+[tool.ruff.pydocstyle]
+convention = "numpy"
+
+[tool.ruff.isort]
+known-third-party = ["hypothesis", "pytest"]
+known-first-party = ["conftest", "coxeter", "utils"]
 
 [tool.ruff.per-file-ignores]
 "coxeter/__init__.py" = ["F401"]
-"tests/*" = ["D"]
+"tests/*" = ["D", "B018"]
 "setup.py" = ["D"]
 "doc/source/conf.py" = ["D"]
+"*ipynb" = ["B", "E", "F", "N", "W", "D"]
