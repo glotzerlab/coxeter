@@ -1,18 +1,12 @@
 coxeter
 =======
 
-.. contents::
-   :local:
-
 |JOSS|
-|ReadTheDocs|
 |PyPI|
 |conda-forge|
 
 .. |JOSS| image:: https://joss.theoj.org/papers/10.21105/joss.03098/status.svg
    :target: https://doi.org/10.21105/joss.03098
-.. |ReadTheDocs| image:: https://readthedocs.org/projects/coxeter/badge/?version=latest
-    :target: http://coxeter.readthedocs.io/en/latest/?badge=latest
 .. |PyPI| image:: https://img.shields.io/pypi/v/coxeter.svg
     :target: https://pypi.org/project/coxeter/
 .. |conda-forge| image:: https://img.shields.io/conda/vn/conda-forge/coxeter.svg
