@@ -6,7 +6,6 @@ coxeter
 
 |JOSS|
 |ReadTheDocs|
-|CircleCI|
 |PyPI|
 |conda-forge|
 
