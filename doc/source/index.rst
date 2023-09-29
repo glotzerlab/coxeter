@@ -1,6 +1,3 @@
-Table of Contents
-=================
-
 .. include:: ../../README.rst
 
 
