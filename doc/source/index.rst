@@ -4,16 +4,28 @@
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Getting Started
 
+   introduction
+   installation
    quickstart
-   coxeter
    examples
+
+
+.. toctree::
+   :maxdepth: 2
+   :caption: API
+
+   package-shapes
+   package-families
+   module-shape-getters
+
 
 .. toctree::
    :maxdepth: 1
-   :caption: Reference:
+   :caption: Reference
 
+   genindex
    development
    changelog
    credits

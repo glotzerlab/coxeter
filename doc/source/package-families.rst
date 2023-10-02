@@ -1,4 +1,4 @@
-coxeter.families package
+Families Module
 ===============================
 
 .. rubric:: Overview
