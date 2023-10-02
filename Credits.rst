@@ -115,8 +115,11 @@ Jen Bradley
 * Added edges, edge_vectors, and num_edges methods.
 
 Domagoj Fijan
+
 * Rewrote point in polygon check to use NumPy vectorized operations.
 * Rewrote point in polyhedron check to use NumPy vectorized operations.
+* Ported CI to github actions.
+* Ported docs to Furo.
 
 Source code
 -----------
