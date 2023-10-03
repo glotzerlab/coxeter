@@ -81,7 +81,6 @@ ignore =[
   "D404", # enables this as a starting docstring word
   "D406", # section name ends in new line - is this needed? many docs fail this
   "D407", # dashed underline missing after section - should I enable this? many docs fail this
-  "E721", # forces type comparisons to use isinstance
 ]
 
 [tool.ruff.pydocstyle]

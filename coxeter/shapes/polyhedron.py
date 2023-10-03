@@ -443,7 +443,7 @@ class Polyhedron(Shape3D):
         """
         if faces is None:
             faces = range(len(self.faces))
-        elif type(faces) is int:
+        elif isinstance(faces, int):
             faces = [faces]
 
         areas = np.empty(len(faces))
