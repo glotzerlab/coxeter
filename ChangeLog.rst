@@ -8,6 +8,12 @@ Added
 
 - New `edge_lengths` method.
 
+Changed
+~~~~~~~
+
+- CI now uses GitHub Actions.
+- Docs ported to furo theme.
+
 v0.7.0 - 2023-09-18
 -------------------
 
