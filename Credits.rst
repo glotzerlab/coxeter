@@ -117,6 +117,8 @@ Jen Bradley
 Domagoj Fijan
 * Rewrote point in polygon check to use NumPy vectorized operations.
 * Rewrote point in polyhedron check to use NumPy vectorized operations.
+* Changed pre-commit to use ruff instead of flake8, pydocstyle, pyupgrade
+and isort.
 
 Source code
 -----------

@@ -8,6 +8,11 @@ Added
 
 - New `edge_lengths` method.
 
+Changed
+~~~~~~~
+
+- Pre-commit ruff now instead of flake8, pydocstyle, pyupgrade and isort.
+
 v0.7.0 - 2023-09-18
 -------------------
 
