@@ -35,7 +35,8 @@ class RegularNGonFamily(ShapeFamily):
             n (int):
                 The number of vertices (greater than or equal to 3).
 
-        Returns:
+        Returns
+        -------
              :class:`~.ConvexPolygon`: The corresponding regular polygon.
         """
         return ConvexPolygon(cls.make_vertices(n))
@@ -48,7 +49,8 @@ class RegularNGonFamily(ShapeFamily):
             n (int):
                 An integer greater than or equal to 3.
 
-        Returns:
+        Returns
+        -------
             :math:`(n, 3)` :class:`numpy.ndarray` of float: The vertices of the polygon.
         """
         if n < 3:

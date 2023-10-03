@@ -72,15 +72,6 @@ ignore =[
   "B904", # I think this one doesn't work as intended.
   "B028", # this forces usage of stack level in warnings
   "D105", # Magic methods don't require documentation.
-  "D107", # __init__ should be documented in class constructors.
-  "D203", # incompatible with D211
-  "D213", # incompatible with D212
-  "D401", # This doesn't play nice with property docstrings of the form `type: ...`
-  "D402", # This doesn't play nice with property docstrings of the form `type: ...`
-  "D403", # This doesn't play nice with property docstrings of the form `type: ...`
-  "D404", # enables this as a starting docstring word
-  "D406", # section name ends in new line - is this needed? many docs fail this
-  "D407", # dashed underline missing after section - should I enable this? many docs fail this
 ]
 
 [tool.ruff.pydocstyle]

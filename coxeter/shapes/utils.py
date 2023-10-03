@@ -40,7 +40,8 @@ def _generate_ax(ax=None, axes3d=False):
         axes3d (bool):
             Whether to use 3D axes (Default value: False).
 
-    Returns:
+    Returns
+    -------
         :class:`matplotlib.axes.Axes`: Axes to plot on.
     """
     if ax is None:

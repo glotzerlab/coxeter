@@ -25,7 +25,8 @@ def _is_convex(vertices, normal):
         normal (:math:`(3, )` :class:`numpy.ndarray`):
             The normal to the vertices.
 
-    Returns:
+    Returns
+    -------
         bool: ``True`` if ``vertices`` define a convex polygon.
 
     """

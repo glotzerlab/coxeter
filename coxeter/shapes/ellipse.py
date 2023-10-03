@@ -242,7 +242,8 @@ class Ellipse(Shape2D):
             points (:math:`(N, 3)` :class:`numpy.ndarray`):
                 The points to test.
 
-        Returns:
+        Returns
+        -------
             :math:`(N, )` :class:`numpy.ndarray`:
                 Boolean array indicating which points are contained in the
                 ellipsoid.
