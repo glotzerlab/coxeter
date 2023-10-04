@@ -115,10 +115,12 @@ Jen Bradley
 * Added edges, edge_vectors, edge_lengths, and num_edges methods.
 
 Domagoj Fijan
+
 * Rewrote point in polygon check to use NumPy vectorized operations.
 * Rewrote point in polyhedron check to use NumPy vectorized operations.
-* Changed pre-commit to use ruff instead of flake8, pydocstyle, pyupgrade
-and isort.
+* Pre-commit now uses ruff instead of flake8, pydocstyle, pyupgrade and isort.
+* Ported CI to github actions.
+* Ported docs to Furo.
 
 Source code
 -----------

@@ -1,4 +1,4 @@
-coxeter.shape\_getters module
+Shape Getters
 =============================
 
 .. automodule:: coxeter.shape_getters

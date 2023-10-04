@@ -1,23 +1,17 @@
 coxeter
 =======
 
-.. contents::
-   :local:
-
 |JOSS|
 |ReadTheDocs|
-|CircleCI|
 |PyPI|
 |conda-forge|
 
 .. |JOSS| image:: https://joss.theoj.org/papers/10.21105/joss.03098/status.svg
    :target: https://doi.org/10.21105/joss.03098
 .. |ReadTheDocs| image:: https://readthedocs.org/projects/coxeter/badge/?version=latest
-    :target: http://coxeter.readthedocs.io/en/latest/?badge=latest
-.. |CircleCI| image:: https://circleci.com/gh/glotzerlab/coxeter.svg?style=svg
-    :target: https://circleci.com/gh/glotzerlab/coxeter
+   :target: http://coxeter.readthedocs.io/en/latest/?badge=latest
 .. |PyPI| image:: https://img.shields.io/pypi/v/coxeter.svg
-    :target: https://pypi.org/project/coxeter/
+   :target: https://pypi.org/project/coxeter/
 .. |conda-forge| image:: https://img.shields.io/conda/vn/conda-forge/coxeter.svg
    :target: https://anaconda.org/conda-forge/coxeter
 
@@ -100,7 +94,7 @@ Testing
 -------
 
 The package is currently tested for Python >= 3.8 on Unix-like systems.
-Continuous integrated testing is performed using CircleCI on these Python versions.
+Continuous integrated testing is performed using Github actions on these Python versions.
 
 First, install the packages required to test coxeter (if not already done):
 
