@@ -70,10 +70,12 @@ All code should of course also follow the principles in `PEP 20 <https://www.pyt
     .. code-block:: bash
 
         black coxeter/ tests/
-        isort coxeter/ tests/
+
+        # From the root of the repository
+        ruff check . --fix
 
 .. _black: https://black.readthedocs.io/
-.. _isort: https://timothycrosley.github.io/isort/
+.. _ruff: https://docs.astral.sh/ruff/
 
 
 Documentation
