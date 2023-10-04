@@ -169,6 +169,7 @@ class ConvexPolygon(Polygon):
             "The incircle_from_center property is deprecated, use "
             "maximal_centered_bounded_circle instead.",
             DeprecationWarning,
+            stacklevel=2,
         )
         return self.maximal_centered_bounded_circle
 

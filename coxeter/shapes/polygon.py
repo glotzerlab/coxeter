@@ -466,6 +466,7 @@ class Polygon(Shape2D):
             "The bounding_circle property is deprecated, use "
             "minimal_bounding_circle instead",
             DeprecationWarning,
+            stacklevel=2,
         )
 
         return self.minimal_bounding_circle

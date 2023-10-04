@@ -591,6 +591,7 @@ class Polyhedron(Shape3D):
             "The bounding_sphere property is deprecated, use "
             "minimal_bounding_sphere instead",
             DeprecationWarning,
+            stacklevel=2,
         )
 
         return self.minimal_bounding_sphere
