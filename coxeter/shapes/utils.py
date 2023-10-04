@@ -47,8 +47,10 @@ def _generate_ax(ax=None, axes3d=False):
     if ax is None:
         try:
             import matplotlib.pyplot as plt
-        except ImportError as e:
-            raise ImportError("matplotlib must be installed for plotting.") from e
+        except ImportError as exception:
+            raise ImportError(
+                "matplotlib must be installed for plotting."
+            ) from exception
         fig = plt.figure()
         if not axes3d:
             ax = fig.subplots()
