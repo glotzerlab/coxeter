@@ -69,10 +69,12 @@ All code should of course also follow the principles in `PEP 20 <https://www.pyt
 
     .. code-block:: bash
 
-        black coxeter/ tests/
-
         # From the root of the repository
         ruff check . --fix
+
+        black coxeter/ tests/
+
+
 
 .. _black: https://black.readthedocs.io/
 .. _ruff: https://docs.astral.sh/ruff/
