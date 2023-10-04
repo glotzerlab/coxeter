@@ -184,10 +184,10 @@ class Shape(ABC):
                 import importlib
 
                 backend = importlib.import_module(f"plato.draw.{backend}")
-            except ImportError:
+            except ImportError as e:
                 raise ImportError(
                     f"Backend plato.draw.{backend} could not be imported."
-                )
+                ) from e
             if scene_kwargs is None:
                 scene_kwargs = {}
             prim = self._plato_primitive(backend)

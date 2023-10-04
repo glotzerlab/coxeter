@@ -69,7 +69,6 @@ select = [
     "I", # isort
 ]
 ignore =[
-  "B904", # I think this one doesn't work as intended.
   "B028", # This forces usage of stack level in warnings.
   "D105", # Magic methods don't require documentation.
 ]
