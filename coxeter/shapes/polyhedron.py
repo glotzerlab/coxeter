@@ -34,7 +34,8 @@ def _face_to_edges(face, reverse=False):
         reverse (bool):
             Whether to return the edges in reverse.
 
-    Returns:
+    Returns
+    -------
         list[tuple[int, int]]:
             A list of edges where each is a tuple of a pair of vertices.
     """
@@ -426,7 +427,8 @@ class Polyhedron(Shape3D):
                 find the area. If None, finds the area of all faces (Default
                 value: None).
 
-        Returns:
+        Returns
+        -------
             :class:`numpy.ndarray`: The area of each face.
 
         Example:
@@ -443,7 +445,7 @@ class Polyhedron(Shape3D):
         """
         if faces is None:
             faces = range(len(self.faces))
-        elif type(faces) is int:
+        elif isinstance(faces, int):
             faces = [faces]
 
         areas = np.empty(len(faces))
@@ -481,7 +483,8 @@ class Polyhedron(Shape3D):
 
         Distances that are <= 0 are inside and > 0 are outside.
 
-        Returns:
+        Returns
+        -------
             :math:`(N_{points}, N_{planes})` :class:`numpy.ndarray`: The
             distance from each point to each plane.
         """
@@ -588,6 +591,7 @@ class Polyhedron(Shape3D):
             "The bounding_sphere property is deprecated, use "
             "minimal_bounding_sphere instead",
             DeprecationWarning,
+            stacklevel=2,
         )
 
         return self.minimal_bounding_sphere
@@ -638,7 +642,8 @@ class Polyhedron(Shape3D):
         of linear equations defined by this constraint, and the circumsphere
         only exists if the resulting solution has no residual.
 
-        Raises:
+        Raises
+        ------
             RuntimeError: If no circumsphere exists for this polyhedron.
         """
         # The circumsphere is defined by center C and radius r. For vertex i
@@ -713,7 +718,8 @@ class Polyhedron(Shape3D):
             b (int):
                 The index of the second face.
 
-        Returns:
+        Returns
+        -------
             float: The dihedral angle in radians.
 
         Example:
@@ -867,7 +873,8 @@ class Polyhedron(Shape3D):
             points (:math:`(N, 3)` :class:`numpy.ndarray`):
                 The points to test.
 
-        Returns:
+        Returns
+        -------
             :math:`(N, )` :class:`numpy.ndarray`:
                 Boolean array indicating which points are contained in the
                 polyhedron.

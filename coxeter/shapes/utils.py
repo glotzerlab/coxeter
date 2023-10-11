@@ -40,14 +40,17 @@ def _generate_ax(ax=None, axes3d=False):
         axes3d (bool):
             Whether to use 3D axes (Default value: False).
 
-    Returns:
+    Returns
+    -------
         :class:`matplotlib.axes.Axes`: Axes to plot on.
     """
     if ax is None:
         try:
             import matplotlib.pyplot as plt
-        except ImportError:
-            raise ImportError("matplotlib must be installed for plotting.")
+        except ImportError as exception:
+            raise ImportError(
+                "matplotlib must be installed for plotting."
+            ) from exception
         fig = plt.figure()
         if not axes3d:
             ax = fig.subplots()
