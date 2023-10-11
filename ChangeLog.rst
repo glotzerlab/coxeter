@@ -8,6 +8,13 @@ Added
 
 - New `edge_lengths` method.
 
+Changed
+~~~~~~~
+
+- Pre-commit now uses ruff instead of flake8, pydocstyle, pyupgrade and isort.
+- CI now uses GitHub Actions.
+- Docs ported to furo theme.
+
 v0.7.0 - 2023-09-18
 -------------------
 

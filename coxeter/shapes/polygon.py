@@ -39,7 +39,8 @@ def _align_points_by_normal(normal, points):
         points (:math:`(N, 3)` :class:`numpy.ndarray`):
             The points that will be rotated and returned.
 
-    Returns:
+    Returns
+    -------
        :math:`(N, 3)` :class:`numpy.ndarray`: The rotated points.
     """
     # Since we are considering just a single vector, to avoid getting a pure
@@ -465,6 +466,7 @@ class Polygon(Shape2D):
             "The bounding_circle property is deprecated, use "
             "minimal_bounding_circle instead",
             DeprecationWarning,
+            stacklevel=2,
         )
 
         return self.minimal_bounding_circle
@@ -516,7 +518,8 @@ class Polygon(Shape2D):
         of linear equations defined by this constraint, and the circumcircle
         only exists if the resulting solution has no residual.
 
-        Raises:
+        Raises
+        ------
             RuntimeError: If no circumcircle exists for this polygon.
         """
         # The circumsphere is defined by center C and radius r. For vertex i
@@ -664,7 +667,7 @@ class Polygon(Shape2D):
         return form_factor
 
     def is_inside(self, points):
-        r"""Simple point-in-polygon algorithm based on winding number.
+        r"""Implement a simple point-in-polygon algorithm based on winding number.
 
         The code in this function is based on implementation in :cite:`Dickinson2019`
         which is licensed under the BSD-3 license.
@@ -703,7 +706,8 @@ class Polygon(Shape2D):
             points (:math:`(N, 3)` or :math:`(N, 2)` :class:`numpy.ndarray`):
                 The points to test.
 
-        Returns:
+        Returns
+        -------
             :math:`(N, )` :class:`numpy.ndarray`:
                 Boolean array indicating which points are contained in the
                 polyhedron.

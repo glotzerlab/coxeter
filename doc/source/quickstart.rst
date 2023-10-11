@@ -3,7 +3,7 @@
 Quickstart Tutorial
 ===================
 
-Once you have :ref:`installed <installing>` **coxeter**, most workflows involve creating an instance of a shape, such as a :class:`~coxeter.shapes.Polygon`:
+Once you have :ref:`installed <installation>` **coxeter**, most workflows involve creating an instance of a shape, such as a :class:`~coxeter.shapes.Polygon`:
 
 .. code-block:: python
 
