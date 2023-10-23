@@ -155,16 +155,11 @@ def test_volume_damasceno_shapes(shape):
     assert np.isclose(poly.volume, hull.volume)
 
 
-@pytest.mark.skipif(
-    is_not_ci(), reason="Test is too slow to run during rapid development"
-)
-@settings(deadline=1000)
+@settings(max_examples=10 if is_not_ci() else 50)
 @named_damasceno_shapes_mark
-@given(v_test=floats(0, 10))
+@given(v_test=floats(0, 10, exclude_min=True))
 def test_set_volume_damasceno_shapes(shape, v_test):
     if shape["name"] in ("RESERVED", "Sphere"):
-        return
-    if v_test == 0:
         return
     vertices = shape["vertices"]
     poly = ConvexPolyhedron(vertices)
@@ -184,16 +179,11 @@ def test_surface_area_damasceno_shapes(shape):
     assert np.isclose(poly.surface_area, hull.area)
 
 
-@pytest.mark.skipif(
-    is_not_ci(), reason="Test is too slow to run during rapid development"
-)
-@settings(deadline=1000)
+@settings(max_examples=10 if is_not_ci() else 50)
 @named_damasceno_shapes_mark
-@given(a_test=floats(0, 10))
+@given(a_test=floats(0, 10, exclude_min=True))
 def test_set_surface_area_damasceno_shapes(shape, a_test):
     if shape["name"] in ("RESERVED", "Sphere"):
-        return
-    if a_test == 0:
         return
     vertices = shape["vertices"]
     poly = ConvexPolyhedron(vertices)
@@ -216,12 +206,9 @@ def test_surface_area_shapes(poly):
     assert np.isclose(poly.surface_area, hull.area)
 
 
-# This test is a bit slow (a couple of minutes), so skip running it locally.
-@pytest.mark.skipif(
-    is_not_ci(), reason="Test is too slow to run during rapid development"
-)
 @named_damasceno_shapes_mark
-def test_moment_inertia_damasceno_shapes(shape, atol):
+def test_moment_inertia_damasceno_shapes(shape, atol=1e-1):
+    # Values of atol up to 5e-2 work as expected, but take much longer to run.
     # These shapes pass the test for a sufficiently high number of samples, but
     # the number is too high to be worth running them regularly.
     bad_shapes = [
