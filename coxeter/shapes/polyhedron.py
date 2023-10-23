@@ -387,8 +387,19 @@ class Polyhedron(Shape3D):
 
     @property
     def edge_vectors(self):
-        """:class:`numpy.ndarray`: Get the polyhedron's edges as vectors."""
+        """:class:`numpy.ndarray`: Get the polyhedron's edges as vectors.
+
+        :code:`edge_vectors` are returned in the same order as in :attr:`edges`.
+        """
         return self.vertices[self.edges[:, 1]] - self.vertices[self.edges[:, 0]]
+
+    @property
+    def edge_lengths(self):
+        """:class:`numpy.ndarray`: Get the length of each edge of the polyhedron.
+
+        :code:`edge_lengths` are returned in the same order as in :attr:`edges`.
+        """
+        return np.linalg.norm(self.edge_vectors, axis=1)
 
     @property
     def num_edges(self):

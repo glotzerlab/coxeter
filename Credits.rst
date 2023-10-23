@@ -112,7 +112,7 @@ Jen Bradley
 * Added shape families for Archimedean, Catalan, and Johnson solids.
 * Added shape family for prisms and antiprisms.
 * Added shape family for equilateral pyramids and dipyramids.
-* Added edges, edge_vectors, and num_edges methods.
+* Added edges, edge_vectors, edge_lengths, and num_edges methods.
 * Reimplemented ``find_equations``, ``_volume``, ``surface_area``, ``centroid``,
   ``_compute_inertia_tensor``, ``rescale``, and ``get_face_area`` methods for convex
   polyhedra using NumPy vectorized operations and polyhedron simplices.
@@ -124,8 +124,11 @@ Jen Bradley
 * Optimized pytest configurations for more efficient use of local and remote resources.
 
 Domagoj Fijan
+
 * Rewrote point in polygon check to use NumPy vectorized operations.
 * Rewrote point in polyhedron check to use NumPy vectorized operations.
+* Ported CI to github actions.
+* Ported docs to Furo.
 
 Source code
 -----------
