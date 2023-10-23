@@ -218,9 +218,7 @@ def test_surface_area_shapes(poly):
 
 # This test is a bit slow (a couple of minutes), so skip running it locally.
 @pytest.mark.skipif(
-    os.getenv("CI", "false") != "true"
-    and os.getenv("GITHUB_ACTIONS", "false") != "true",
-    reason="Test is too slow to run during rapid development",
+    is_not_ci(), reason="Test is too slow to run during rapid development"
 )
 @named_damasceno_shapes_mark
 def test_moment_inertia_damasceno_shapes(shape, atol):
