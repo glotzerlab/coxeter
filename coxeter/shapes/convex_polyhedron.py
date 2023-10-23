@@ -496,7 +496,6 @@ class ConvexPolyhedron(Polyhedron):
 
         This does NOT change the *order* of faces in the list.
         """
-
         # Get correct-quadrant angles about the face normal
         sorted_faces = []
 
