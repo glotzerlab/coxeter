@@ -29,12 +29,6 @@ class ConvexPolyhedron(Polyhedron):
     Args:
         vertices (:math:`(N, 3)` :class:`numpy.ndarray`):
             The vertices of the polyhedron.
-        fast (bool, optional):
-            Creation mode for the polyhedron. fast=False (default) will perform all
-            checks and precalculate most properties. fast=True  will precalculate some
-            properties, but will not find face neighbors or sort face indices. These
-            calculations will instead be performed when required by another method.
-            (Default value: False).
 
     Example:
         >>> cube = coxeter.shapes.ConvexPolyhedron(
@@ -94,7 +88,7 @@ class ConvexPolyhedron(Polyhedron):
 
     """
 
-    def __init__(self, vertices, fast=False):
+    def __init__(self, vertices):
         self._vertices = np.array(vertices, dtype=np.float64)
         self._ndim = self._vertices.shape[1]
         self._convex_hull = ConvexHull(self._vertices)
@@ -117,13 +111,8 @@ class ConvexPolyhedron(Polyhedron):
 
         # Sort simplices. This method also calculates simplex equations and the centroid
         self._sort_simplices()
-
-        # If mode is NOT fast, perform additional initializiation steps
-        if fast is False:
-            self._find_coplanar_simplices()
-            self.sort_faces()
-        else:
-            self._faces_are_sorted = False
+        self._find_coplanar_simplices()
+        self.sort_faces()
 
     def _consume_hull(self):
         """Extract data from ConvexHull.
@@ -461,8 +450,6 @@ class ConvexPolyhedron(Polyhedron):
     @property
     def faces(self):
         """list(:class:`numpy.ndarray`): Get the polyhedron's faces."""
-        if self._faces_are_sorted is False:
-            self.sort_faces()
         return self._faces
 
     def _find_face_centroids(self):
@@ -502,8 +489,6 @@ class ConvexPolyhedron(Polyhedron):
         element is an array of indices of faces that are neighbors of face
         :math:`i`.
         """
-        if self._faces_are_sorted is False:
-            self.sort_faces()
         return self._neighbors
 
     def sort_faces(self):
@@ -511,7 +496,6 @@ class ConvexPolyhedron(Polyhedron):
 
         This does NOT change the *order* of faces in the list.
         """
-        self._faces_are_sorted = True
 
         # Get correct-quadrant angles about the face normal
         sorted_faces = []
@@ -837,8 +821,6 @@ class ConvexPolyhedron(Polyhedron):
             >>> assert np.isclose(cube.get_dihedral(1, 2), np.pi / 2.)
 
         """
-        if self._faces_are_sorted is False:
-            self.sort_faces()
         if b not in self.neighbors[a]:
             raise ValueError("The two faces are not neighbors.")
         n1, n2 = self._equations[[a, b], :3]
