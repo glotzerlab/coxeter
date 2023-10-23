@@ -312,7 +312,8 @@ class ConvexPolyhedron(Polyhedron):
         volumes. The external volume property will always be a positive value, but
         accessing the signed volume can be useful for some mathematical operations.
 
-        Returns:
+        Returns
+        -------
             float: Signed volume of the polyhedron.
         """
         signed_volume = np.sum(np.linalg.det(self._vertices[self._simplices]) / 6)
@@ -328,7 +329,8 @@ class ConvexPolyhedron(Polyhedron):
                 find the area. If None, finds the area of all faces.
                 (Default value: None).
 
-        Returns:
+        Returns
+        -------
             :class:`numpy.ndarray`: The area of each face.
 
         Example:
@@ -474,7 +476,8 @@ class ConvexPolyhedron(Polyhedron):
     def face_centroids(self):
         """Calculate the centroid (center of mass) of each polygonal face.
 
-        Returns:
+        Returns
+        -------
             :math:`(N,3)` :class:`numpy.ndarray`:
                 Array of centroids for each face.
         """
@@ -528,7 +531,8 @@ class ConvexPolyhedron(Polyhedron):
     def _surface_triangulation(self):
         """Output the vertices of simplices composing the polyhedron's surface.
 
-        Returns:
+        Returns
+        -------
             :math:`(N,3,3)` :class:`numpy.ndarray`:
                 Array of vertices for simplices composing the polyhedron's surface.
         """
@@ -538,7 +542,8 @@ class ConvexPolyhedron(Polyhedron):
     def simplices(self):
         """Output the vertex indices of simplices composing the polyhedron's surface.
 
-        Returns:
+        Returns
+        -------
             :math:`(N,3)` :class:`numpy.ndarray`:
                 Array of vertex indices of simplices making up the polyhedron's surface.
         """
@@ -555,7 +560,8 @@ class ConvexPolyhedron(Polyhedron):
                 Whether the output should be summed.
                 (Default value: True).
 
-        Returns:
+        Returns
+        -------
             :math:`(N, )` :class:`numpy.ndarray` or float:
                 Boolean array indicating which points are contained in thepolyhedron.
                 If sum_result is True, a single value is returned.
@@ -807,7 +813,8 @@ class ConvexPolyhedron(Polyhedron):
             b (int):
                 The index of the second face.
 
-        Returns:
+        Returns
+        -------
             float: The dihedral angle in radians.
 
         Example:
