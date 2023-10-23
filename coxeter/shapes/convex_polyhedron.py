@@ -748,7 +748,8 @@ class ConvexPolyhedron(Polyhedron):
             points (:math:`(N, 3)` :class:`numpy.ndarray`):
                 The points to test.
 
-        Returns:
+        Returns
+        -------
             :math:`(N, )` :class:`numpy.ndarray`:
                 Boolean array indicating which points are contained in the
                 polyhedron.
@@ -762,6 +763,7 @@ class ConvexPolyhedron(Polyhedron):
             "The insphere_from_center property is deprecated, use "
             "maximal_centered_bounded_sphere instead",
             DeprecationWarning,
+            stacklevel=2,
         )
         return self.maximal_centered_bounded_sphere
 
@@ -777,6 +779,7 @@ class ConvexPolyhedron(Polyhedron):
             "The circumsphere_from_center property is deprecated, use "
             "minimal_centered_bounding_sphere instead",
             DeprecationWarning,
+            stacklevel=2,
         )
         return self.minimal_centered_bounding_sphere
 

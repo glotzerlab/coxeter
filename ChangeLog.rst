@@ -11,6 +11,7 @@ Added
 Changed
 ~~~~~~~
 
+- Pre-commit now uses ruff instead of flake8, pydocstyle, pyupgrade and isort.
 - CI now uses GitHub Actions.
 - Docs ported to furo theme.
 
