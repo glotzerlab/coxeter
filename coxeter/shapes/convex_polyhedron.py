@@ -101,10 +101,15 @@ class ConvexPolyhedron(Polyhedron):
         self._faces_are_convex = True
 
         if not len(self._convex_hull.vertices) == len(self._vertices):
-            warnings.warn("Not all vertices used for hull.", RuntimeWarning)
+            # Identify vertices that do not contribute to the convex hull
+            nonconvex_vertices = sorted(
+                set(range(len(self._vertices))) - set(self._convex_hull.vertices)
+            )
 
-            # Remove internal points
-            self._vertices = self._vertices[self._convex_hull.vertices]
+            raise ValueError(
+                "Input vertices must be a convex set. "
+                + f"Vertices {nonconvex_vertices} are inside the shape (or coplanar)."
+            )
 
         # Transfer data in from convex hull, then clean up the results.
         self._consume_hull()
