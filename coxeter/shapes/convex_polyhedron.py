@@ -306,7 +306,7 @@ class ConvexPolyhedron(Polyhedron):
         self._centroid_from_triangulated_surface()
 
     def _calculate_signed_volume(self):
-        """Internal method to calculate the signed volume of the polyhedron.
+        """Calculate the signed volume of the polyhedron.
 
         This class splits the shape into tetrahedra, then sums their contributing
         volumes. The external volume property will always be a positive value, but
