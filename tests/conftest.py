@@ -39,9 +39,12 @@ def combine_marks(*marks):
     return combined_mark
 
 
-# Define a function that checks if the script is running on CircleCI
-def is_not_ci_circleci():
-    if os.getenv("CI", "false") == "true" or os.getenv("CIRCLECI", "false") == "true":
+# Define a function that checks if the script is running on Github Actions
+def is_not_ci():
+    if (
+        os.getenv("CI", "false") == "true"
+        or os.getenv("GITHUB_ACTIONS", "false") == "true"
+    ):
         return False
     else:
         return True

@@ -20,7 +20,7 @@ from conftest import (
     combine_marks,
     get_oriented_cube_faces,
     get_oriented_cube_normals,
-    is_not_ci_circleci,
+    is_not_ci,
     named_archimedean_mark,
     named_catalan_mark,
     named_damasceno_shapes_mark,
@@ -156,7 +156,7 @@ def test_volume_damasceno_shapes(shape):
 
 
 @pytest.mark.skipif(
-    is_not_ci_circleci(), reason="Test is too slow to run during rapid development"
+    is_not_ci(), reason="Test is too slow to run during rapid development"
 )
 @settings(deadline=1000)
 @named_damasceno_shapes_mark
@@ -185,7 +185,7 @@ def test_surface_area_damasceno_shapes(shape):
 
 
 @pytest.mark.skipif(
-    is_not_ci_circleci(), reason="Test is too slow to run during rapid development"
+    is_not_ci(), reason="Test is too slow to run during rapid development"
 )
 @settings(deadline=1000)
 @named_damasceno_shapes_mark
@@ -216,10 +216,11 @@ def test_surface_area_shapes(poly):
     assert np.isclose(poly.surface_area, hull.area)
 
 
-# This test is slow at high precisions. Run fast locally, and test in detail on CircleCI
-@pytest.mark.parametrize(
-    "atol",
-    [1e-1 if is_not_ci_circleci() else 5e-2],
+# This test is a bit slow (a couple of minutes), so skip running it locally.
+@pytest.mark.skipif(
+    os.getenv("CI", "false") != "true"
+    and os.getenv("GITHUB_ACTIONS", "false") != "true",
+    reason="Test is too slow to run during rapid development",
 )
 @named_damasceno_shapes_mark
 def test_moment_inertia_damasceno_shapes(shape, atol):
@@ -412,6 +413,7 @@ def test_edge_lengths():
             poly.vertices[poly.edges[:, 1]] - poly.vertices[poly.edges[:, 0]], axis=1
         )
         assert np.allclose(veclens, edgelength)
+        assert np.allclose(poly.edge_lengths, edgelength)
         assert np.allclose(veclens, np.linalg.norm(poly.edge_vectors, axis=1))
 
 
@@ -860,7 +862,7 @@ def test_repr_convex(convex_cube):
 # Test fast locally, and in more depth on CircleCI
 @pytest.mark.parametrize(
     "atol",
-    [1e-2 if is_not_ci_circleci() else 5e-3],
+    [1e-2 if is_not_ci() else 5e-3],
 )
 @named_damasceno_shapes_mark
 def test_center(shape, atol):
