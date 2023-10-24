@@ -12,6 +12,7 @@ Added
   methods for the ConvexPolyhedron class.
 - ``simplices``, ``equations``, and ``face_centroids`` properties for the
   ConvexPolyhedron class.
+- Additional pytests for surface area, volume, centroid, moment of inertia, and equations properties.
 
 Changed
 ~~~~~~~
