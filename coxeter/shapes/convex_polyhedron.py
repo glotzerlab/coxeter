@@ -91,13 +91,13 @@ class ConvexPolyhedron(Polyhedron):
     def __init__(self, vertices):
         self._vertices = np.array(vertices, dtype=np.float64)
         self._ndim = self._vertices.shape[1]
-        self._convex_hull = ConvexHull(self._vertices)
+        hull = ConvexHull(self._vertices)
         self._faces_are_convex = True
 
-        if not len(self._convex_hull.vertices) == len(self._vertices):
+        if not len(hull.vertices) == len(self._vertices):
             # Identify vertices that do not contribute to the convex hull
             nonconvex_vertices = sorted(
-                set(range(len(self._vertices))) - set(self._convex_hull.vertices)
+                set(range(len(self._vertices))) - set(hull.vertices)
             )
 
             raise ValueError(
@@ -106,7 +106,7 @@ class ConvexPolyhedron(Polyhedron):
             )
 
         # Transfer data in from convex hull, then clean up the results.
-        self._consume_hull()
+        self._consume_hull(hull)
         self._combine_simplices()
 
         # Sort simplices. This method also calculates simplex equations and the centroid
@@ -114,27 +114,21 @@ class ConvexPolyhedron(Polyhedron):
         self._find_coplanar_simplices()
         self.sort_faces()
 
-    def _consume_hull(self):
+    def _consume_hull(self, hull):
         """Extract data from ConvexHull.
 
-        Data is moved from convex hull into private variables. This method deletes the
-        original hull in order to avoid double storage.
+        Data is moved from convex hull into private variables.
         """
         assert (
-            self._ndim == self._convex_hull.ndim
+            self._ndim == hull.ndim
         ), "Input points are coplanar or close to coplanar."
 
-        self._simplices = self._convex_hull.simplices[:]
-        self._simplex_equations = self._convex_hull.equations[:]
-        self._simplex_neighbors = self._convex_hull.neighbors[:]
-        self._volume = self._convex_hull.volume
-        self._area = self._convex_hull.area
-        self._maximal_extents = np.array(
-            [self._convex_hull.min_bound, self._convex_hull.max_bound]
-        )
-
-        # Clean up the result.
-        del self._convex_hull
+        self._simplices = hull.simplices[:]
+        self._simplex_equations = hull.equations[:]
+        self._simplex_neighbors = hull.neighbors[:]
+        self._volume = hull.volume
+        self._area = hull.area
+        self._maximal_extents = np.array([hull.min_bound, hull.max_bound])
 
     def _combine_simplices(self, rounding: int = 15):
         """Combine simplices into faces, merging based on simplex equations.
