@@ -25,7 +25,7 @@ Changed
   polyhedra using NumPy vectorized operations and polyhedron simplices.
 - [breaking] ``ConvexPolyhedron._surface_triangulation`` now returns sorted simplices,
   rather than running polytri. This can change the order of vertices and/or triangles.
-- [breaking] ``sort_faces`` may return faces in a different order than previously. Sorted faces will still be sorted such that curl and divergence theorems work properly.
+- [breaking] ``faces`` may return faces in a different order than previously. Faces are still sorted with ``sort_faces``, and will still be ordered such that curl and divergence theorems work properly.
 - ``volume``, ``surface_area``, and ``centroid`` properties now return stored values, rather than computing the quantity at each call.
 - ``rescale`` now computes the centroid to ensure the correct value is available when ``centroid`` is called.
 - Optimized pytest configurations for more efficient use of local and remote resources.
