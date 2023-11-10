@@ -683,7 +683,7 @@ class ConvexPolyhedron(Polyhedron):
                    [-1., -1., -1.]])
 
         """
-        principal_moments, principal_axes = np.linalg.eigh(self.inertia_tensor)
+        _, principal_axes = np.linalg.eigh(self.inertia_tensor)
         self._vertices = np.dot(self._vertices, principal_axes)
         self._sort_simplices()
 
