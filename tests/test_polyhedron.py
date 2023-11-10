@@ -349,9 +349,7 @@ def test___repr__():
     repr(icosidodecahedron)
 
 
-@combine_marks(
-    named_solids_mark,
-)
+@named_solids_mark
 def test_edges(poly):
     # Check that the first column is in ascending order.
     assert np.all(np.diff(poly.edges[:, 0]) >= 0)
