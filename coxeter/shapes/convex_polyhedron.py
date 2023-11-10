@@ -185,7 +185,7 @@ class ConvexPolyhedron(Polyhedron):
         self._coplanar_simplices = ragged_coplanar_indices
 
     def _sort_simplices(self):
-        """Reorder simplices counterclockwise relatative to the plane they lie on.
+        """Reorder simplices counterclockwise relative to the plane they lie on.
 
         This does NOT change the *order* of simplices in the list.
         """
