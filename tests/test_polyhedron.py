@@ -205,6 +205,25 @@ def test_surface_area_shapes(poly):
     assert np.isclose(poly.surface_area, hull.area)
 
 
+@named_solids_mark
+def test_surface_area_per_face(poly):
+    # Sum over all simplices
+    total_area = poly.get_face_area(face="total")
+    assert np.isclose(poly.surface_area, total_area)
+
+    # Compute per-face areas and check
+    face_areas = poly.get_face_area(face=None)
+    total_face_area = np.sum(face_areas)
+    assert np.isclose(poly.surface_area, total_face_area)
+
+    # Compute areas of each face and check that ordering is correct
+    for face_number in range(poly.num_faces):
+        current_face_area = poly.get_face_area(face=face_number)
+        assert current_face_area == face_areas[face_number]
+        total_face_area -= current_face_area
+    assert np.isclose(total_face_area, 0)
+
+
 @named_damasceno_shapes_mark
 def test_moment_inertia_damasceno_shapes(shape, atol=1e-1):
     # Values of atol up to 5e-2 work as expected, but take much longer to run.

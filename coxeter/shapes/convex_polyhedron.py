@@ -4,7 +4,6 @@
 """Defines a convex polyhedron."""
 
 import warnings
-from collections import defaultdict
 from numbers import Number
 
 import numpy as np
@@ -111,7 +110,6 @@ class ConvexPolyhedron(Polyhedron):
 
         # Sort simplices. This method also calculates simplex equations and the centroid
         self._sort_simplices()
-        self._find_coplanar_simplices()
         self.sort_faces()
 
     def _consume_hull(self, hull):
@@ -130,59 +128,41 @@ class ConvexPolyhedron(Polyhedron):
         self._area = hull.area
         self._maximal_extents = np.array([hull.min_bound, hull.max_bound])
 
-    def _combine_simplices(self, rounding: int = 15):
+    def _combine_simplices(self, tol: float = 2e-15):
         """Combine simplices into faces, merging based on simplex equations.
 
         Coplanar faces will have identical equations (within rounding tolerance). Values
-        should be slightly larger than machine epsilon (e.g. rounding=15 for ~1e-15)
+        should be about an order of magnitude greater than machine epsilon.
 
         Args:
-            rounding (int, optional):
-                Integer number of decimal places to round equations to.
-                (Default value: 15).
+            tol (float, optional):
+                Floating point tolerance within which values are considered identical.
+                (Default value: 2e-15).
 
         """
-        equation_groups = defaultdict(list)
+        is_coplanar = np.all(
+            np.abs(self._simplex_equations[:, None] - self._simplex_equations) < tol,
+            axis=2,
+        )
+        coplanar_indices = [[] for _ in range(len(self._simplices))]
 
-        # Iterate over all simplex equations
-        for i, equation in enumerate(self._simplex_equations):
-            # Convert to hashable key
-            equation_key = tuple(equation.round(rounding))
+        # Iterate over coplanar indices to build face index lists
+        for face, index in zip(*is_coplanar.nonzero()):
+            coplanar_indices[face].append(index)
 
-            # Store vertex indices from the new simplex under the correct equation key
-            equation_groups[equation_key].extend(self._simplices[i])
+        # Remove duplicate faces, then sort the face indices by their minimum value
+        coplanar_indices = sorted(set(map(tuple, coplanar_indices)), key=lambda x: x[0])
 
-        # Combine elements with the same plan equation and remove duplicate indices
-        ragged_faces = [
-            np.fromiter(set(group), np.int32) for group in equation_groups.values()
+        # Extract vertex indices from simplex indices and remove duplicates
+        faces = [np.unique(self.simplices[[ind]]) for ind in coplanar_indices]
+        self._faces = faces
+
+        # Copy the simplex equation for one of the simplices on each face
+        self._equations = self._simplex_equations[
+            [equation_index[0] for equation_index in coplanar_indices]
         ]
-        self._faces = ragged_faces
-        self._equations = np.array(list(equation_groups.keys()))
-
-    def _find_coplanar_simplices(self, rounding: int = 15):
-        """
-        Get lists of simplex indices for coplanar simplices.
-
-        Args:
-            rounding (int, optional):
-                Integer number of decimal places to round equations to.
-                (Default value: 15).
-
-
-        """
-        # Combine simplex indices
-        equation_groups = defaultdict(list)
-
-        # Iterate over all simplex equations
-        for i, equation in enumerate(self._simplex_equations):
-            # Convert equation into hashable tuple
-            equation_key = tuple(equation.round(rounding))
-            equation_groups[equation_key].append(i)
-        ragged_coplanar_indices = [
-            np.fromiter(set(group), np.int32) for group in equation_groups.values()
-        ]
-
-        self._coplanar_simplices = ragged_coplanar_indices
+        # Convert the simplex indices to numpy arrays and save
+        self._coplanar_simplices = list(map(np.array, coplanar_indices))
 
     def _sort_simplices(self):
         """Reorder simplices counterclockwise relative to the plane they lie on.
@@ -342,24 +322,23 @@ class ConvexPolyhedron(Polyhedron):
         self._simplex_areas = self._find_triangle_array_area(
             self._vertices[self._simplices], sum_result=False
         )
-        if not hasattr(self, "_coplanar_simplices"):
-            self._find_coplanar_simplices()
         if face is None:
+            # Return face area for every face.
             return [
                 np.sum(self._simplex_areas[self._coplanar_simplices[fac]])
                 for fac in range(self.num_faces)
             ]
-        elif face == "total":  # return total surface area
+        elif face == "total":
+            # Return total surface area
             return np.sum(self._simplex_areas)
         elif hasattr(face, "__len__"):
-            # For list of input vertices
-            # Combine coplanar simplices
+            # Return face areas for a list of faces
             return [
                 np.sum(self._simplex_areas[self._coplanar_simplices[fac]])
                 for fac in face
             ]
         else:
-            # For integer input (single face)
+            # Return face area of a single face
             return np.sum(self._simplex_areas[self._coplanar_simplices[face]])
 
     def _find_equations(self):
@@ -449,8 +428,6 @@ class ConvexPolyhedron(Polyhedron):
         return self._faces
 
     def _find_face_centroids(self):
-        if not hasattr(self, "_coplanar_simplices"):
-            self._find_coplanar_simplices()
         simplex_centroids = np.mean(self._vertices[self._simplices], axis=1)  # (N,3)
         self._simplex_areas = self._find_triangle_array_area(
             self._vertices[self._simplices], sum_result=False
