@@ -112,10 +112,15 @@ Jen Bradley
 * Added shape families for Archimedean, Catalan, and Johnson solids.
 * Added shape family for prisms and antiprisms.
 * Added shape family for equilateral pyramids and dipyramids.
-* Added edges, edge_vectors, and num_edges methods.
+* Added edges, edge_vectors, edge_lengths, and num_edges methods.
 
 Domagoj Fijan
+
 * Rewrote point in polygon check to use NumPy vectorized operations.
+* Rewrote point in polyhedron check to use NumPy vectorized operations.
+* Pre-commit now uses ruff instead of flake8, pydocstyle, pyupgrade and isort.
+* Ported CI to github actions.
+* Ported docs to Furo.
 
 Source code
 -----------
@@ -186,12 +191,11 @@ the MIT license::
     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
     OTHER DEALINGS IN THE SOFTWARE.
 
-The source of polyhedron (https://github.com/mdickinson/polyhedron) is included
-directly into the **coxeter** package. It is used for point in polyhedron
-checks for general polygons (specifically, to calculate the winding
-number). The code for point in polygon check is based on the same
-repository, but has been rewritten to utilize vectorized NumPy
-operations. This software is made available under the BSD-3 license::
+The code for point in polygon and point in polyhedron check is based on
+the polyhedron repository (https://github.com/mdickinson/polyhedron)
+which implements winding number calculator to check if points are in
+shapes, but has been rewritten to utilize vectorized NumPy operations.
+This software is made available under the BSD-3 license::
 
     BSD 3-Clause License
 

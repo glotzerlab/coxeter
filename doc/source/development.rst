@@ -39,6 +39,7 @@ To provide a reasonable balance between a high level of backwards compatibility 
     To avoid having commits fail in case you forget to run this, you can set up a git pre-commit hook using `pre-commit`_:
 
     .. code-block:: bash
+
         pre-commit install
 
 
@@ -68,11 +69,15 @@ All code should of course also follow the principles in `PEP 20 <https://www.pyt
 
     .. code-block:: bash
 
+        # From the root of the repository
+        ruff check . --fix
+
         black coxeter/ tests/
-        isort coxeter/ tests/
+
+
 
 .. _black: https://black.readthedocs.io/
-.. _isort: https://timothycrosley.github.io/isort/
+.. _ruff: https://docs.astral.sh/ruff/
 
 
 Documentation

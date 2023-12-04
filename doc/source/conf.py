@@ -22,8 +22,8 @@ copyright = "2015-2021, The Regents of the University of Michigan"
 author = "Vyas Ramasubramani"
 
 # The full version, including alpha/beta/rc tags
-version = "0.6.1"
-release = "0.6.1"
+version = "0.7.0"
+release = "0.7.0"
 
 
 # -- General configuration ---------------------------------------------------
@@ -76,9 +76,12 @@ default_role = "any"
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = "sphinx_rtd_theme"
+html_theme = "furo"
+html_theme_options = {
+    "sidebar_hide_name": True,
+}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-# html_static_path = ['_static']
+html_static_path = ["_static"]

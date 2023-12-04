@@ -1,20 +1,45 @@
 The format is based on `Keep a Changelog <http://keepachangelog.com/en/1.0.0/>`__.
 This project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`__.
 
-v0.6.2 - 202x-xx-xx
+v0.x.x - 20xx-xx-xx
+
+Added
+~~~~~
+
+- New `edge_lengths` method.
+
+Changed
+~~~~~~~
+
+- Pre-commit now uses ruff instead of flake8, pydocstyle, pyupgrade and isort.
+- CI now uses GitHub Actions.
+- Docs ported to furo theme.
+
+v0.7.0 - 2023-09-18
 -------------------
 
 Fixed
 ~~~~~
 
 - Numerical precision issues in tests.
+- GSD spec correctly outputs for `Polyhedron` objects.
+- Error in `__repr__` for polyhedra with multiple face degrees.
+- ReadTheDocs build errors resulting from `conda` memory usage.
 
 Changed
 ~~~~~~~
 
 - The minimum required Python version is now 3.8.
 - The minimum required NumPy version is now 1.19.
-- Speed up point in polygon using NumPy.
+- [breaking] Sped up point in polygon and point in polyhedron using NumPy.
+- Migrated to pyproject.toml.
+
+Added
+~~~~~
+
+- New `edges` and `edge_vectors` properties for polyhedra.
+- New shape families for Archimedean, Catalan, and Johnson shapes.
+- New shape families for regular pyramids and dipyramids, and a selection of regular prisms and antiprisms.
 
 v0.6.1 - 2021-07-15
 -------------------

@@ -58,7 +58,8 @@ class Shape(ABC):
             points (:math:`(N, 3)` :class:`numpy.ndarray`):
                 The points to test.
 
-        Returns:
+        Returns
+        -------
             :math:`(N, )` :class:`numpy.ndarray`:
                 Boolean array indicating which points are contained in the shape.
         """
@@ -118,7 +119,8 @@ class Shape(ABC):
                 Angles between :math:`0` and :math:`2 \pi` over which to
                 calculate the distances. :math:`d` is the number of dimensions.
 
-        Returns:
+        Returns
+        -------
             :math:`(N,)` :class:`numpy.ndarray`:
                 An array of distances from the center of the shape to its surface
                 at each of the given angles.
@@ -165,11 +167,13 @@ class Shape(ABC):
                 (Default value: None). Only used if ``scene`` is not provided
                 or None.
 
-        Returns:
+        Returns
+        -------
             :class:`plato.draw.Scene`:
                 A scene containing this shape.
 
-        Raises:
+        Raises
+        ------
             NotImplementedError:
                 If no plato primitive corresponds to this coxeter shape class.
             AttributeError:
@@ -181,10 +185,10 @@ class Shape(ABC):
                 import importlib
 
                 backend = importlib.import_module(f"plato.draw.{backend}")
-            except ImportError:
+            except ImportError as exception:
                 raise ImportError(
                     f"Backend plato.draw.{backend} could not be imported."
-                )
+                ) from exception
             if scene_kwargs is None:
                 scene_kwargs = {}
             prim = self._plato_primitive(backend)

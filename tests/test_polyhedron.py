@@ -195,7 +195,8 @@ def test_surface_area_shapes(poly):
 
 # This test is a bit slow (a couple of minutes), so skip running it locally.
 @pytest.mark.skipif(
-    os.getenv("CI", "false") != "true" and os.getenv("CIRCLECI", "false") != "true",
+    os.getenv("CI", "false") != "true"
+    and os.getenv("GITHUB_ACTIONS", "false") != "true",
     reason="Test is too slow to run during rapid development",
 )
 @named_damasceno_shapes_mark
@@ -392,6 +393,7 @@ def test_edge_lengths():
             poly.vertices[poly.edges[:, 1]] - poly.vertices[poly.edges[:, 0]], axis=1
         )
         assert np.allclose(veclens, edgelength)
+        assert np.allclose(poly.edge_lengths, edgelength)
         assert np.allclose(veclens, np.linalg.norm(poly.edge_vectors, axis=1))
 
 
@@ -830,11 +832,17 @@ def test_get_set_minimal_centered_bounding_sphere_radius(poly):
 def test_is_inside(cube):
     assert cube.is_inside(cube.center)
 
-    @given(floats(0, 1), floats(0, 1), floats(0, 1))
-    def testfun(x, y, z):
+    limit = np.finfo(np.float64).smallest_normal
+
+    @given(
+        floats(limit, 1 - limit, exclude_min=True, exclude_max=True),
+        floats(limit, 1 - limit, exclude_min=True, exclude_max=True),
+        floats(limit, 1 - limit, exclude_min=True, exclude_max=True),
+    )
+    def test_is_inside(x, y, z):
         assert cube.is_inside([[x, y, z]])
 
-    testfun()
+    test_is_inside()
 
 
 def test_repr_nonconvex(oriented_cube):

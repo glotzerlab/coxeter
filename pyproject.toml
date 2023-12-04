@@ -1,3 +1,50 @@
+[build-system]
+requires = ["setuptools","wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "coxeter"
+version = "0.7.0"
+requires-python = ">=3.8"
+description = "Tools for creating and manipulating shapes."
+readme = "README.rst"
+license = { file = "LICENSE" }
+authors = [
+    {name = "Vyas Ramasubramani", email = "vramasub@umich.edu"},
+    {name = "Bradley Dice", email = "bdice@umich.edu"},
+    {name = "Jen Bradley", email = "jenbrad@umich.edu"},
+]
+dependencies = ["numpy>=1.19.0","rowan>=1.2.0","scipy>1.0.0"]
+keywords = ["geometry"]
+dynamic = ["optional-dependencies"]
+
+[project.urls]
+Documentation = "https://coxeter.readthedocs.io"
+Download = "https://pypi.org/project/coxeter/"
+Source = "https://github.com/glotzerlab/coxeter"
+Issues = "https://github.com/glotzerlab/coxeter/issues"
+
+[tool.setuptools]
+# Build the contents of coxeter rather than the JOSS paper
+# Subpackages are enumerated to avoid circular imports
+packages=["coxeter",
+          "coxeter.shapes",
+          "coxeter.families",
+          "coxeter.extern.polytri",
+          "coxeter.extern.bentley_ottmann"]
+
+[tool.setuptools.dynamic]
+optional-dependencies = {tests = { file = ["tests/requirements.txt"] }, doc = { file = ["doc/requirements.txt"] }}
+
+[tool.pytest.ini_options]
+# Additional command line options for pytest
+addopts = "--doctest-modules -p coxeter.__doctest_fixtures"
+doctest_optionflags = "NORMALIZE_WHITESPACE ELLIPSIS"
+# Add percentage progress bar to the pytest console output
+console_output_style = "progress"
+# Specify the tests folder to speed up collection.
+testpaths = ["tests"]
+
 [tool.black]
 exclude = '''
 (
@@ -6,3 +53,35 @@ exclude = '''
   )/
 )
 '''
+
+[tool.ruff]
+include = ["*.py", "*.ipynb"]
+exclude = ["*/extern/*"]
+line-length = 88
+select = [
+    "UP", # pyupgrade
+    "B",
+    "E",
+    "F",
+    "N",
+    "W", # ruff supports W but, W503 is not supported!!
+    "D", # pydocstyle
+    "I", # isort
+]
+ignore =[
+  "D105", # Magic methods don't require documentation.
+]
+
+[tool.ruff.pydocstyle]
+convention = "numpy"
+
+[tool.ruff.isort]
+known-third-party = ["hypothesis", "pytest"]
+known-first-party = ["conftest", "coxeter", "utils"]
+
+[tool.ruff.per-file-ignores]
+"coxeter/__init__.py" = ["F401"]
+"tests/*" = ["D", "B018"]
+"setup.py" = ["D"]
+"doc/source/conf.py" = ["D"]
+"*ipynb" = ["B", "E", "F", "N", "W", "D"]
