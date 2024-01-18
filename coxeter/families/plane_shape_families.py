@@ -30,7 +30,10 @@ class TruncationPlaneShapeFamily(ShapeFamily):
       - :math:`c`
 
     See :cite:`Chen2014` for descriptions of these parameters. The bounds of
-    each parameter are set by the subclasses.
+    each parameter are set by the subclasses. Note that values of a, b, and c within
+    ~1e-6 of the minimum or maximum values for that parameter can result in nonconvex
+    shapes due to floating point imprecision. Setting the parameter to an exact value
+    (e.g. :math:`c`=3) for `Family423` will avoid these errors.
     """
 
     # Documentation for developers:
