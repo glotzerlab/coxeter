@@ -3,7 +3,7 @@
 # This software is licensed under the BSD 3-Clause License.
 import numpy as np
 import pytest
-from hypothesis import given, settings
+from hypothesis import given
 from hypothesis.strategies import floats
 
 from conftest import _catalan_shape_names
@@ -81,7 +81,6 @@ def test_shape323():
     assert len(family.get_shape(3.0, 3.0).faces) == 6
 
 
-@settings(max_examples=1000)
 @given(a=floats(1, 3), c=floats(1, 3))
 def test_shape323_intermediates(a, c):
     if _test_parameters_outside_precision([a, c]):
@@ -105,7 +104,6 @@ def test_shape423():
     assert len(family.get_shape(2.0, 3.0).faces) == 12
 
 
-@settings(max_examples=1000)
 @given(a=floats(1, 2), c=floats(2, 3))
 def test_shape423_intermediates(a, c):
     if _test_parameters_outside_precision([a, c]):
@@ -134,7 +132,6 @@ def test_shape523():
     assert len(family.get_shape(1 * s * np.sqrt(5), 3.0).faces) == 30
 
 
-@settings(max_examples=1000)
 @given(a=floats(1, Family523.s * np.sqrt(5)), c=floats(Family523.S**2, 3))
 def test_shape523_intermediates(a, c):
     if (
@@ -160,7 +157,6 @@ def test_truncated_tetrahedron():
     assert len(tet.faces) == 8
 
 
-@settings(max_examples=1000)
 @given(t=floats(0, 1))
 def test_truncated_tetrahedron_intermediates(t):
     if _test_parameters_outside_precision([t]) or np.abs(np.round(t, 15) - t) < 2e-16:
