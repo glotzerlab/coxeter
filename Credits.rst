@@ -110,6 +110,7 @@ Jen Bradley
 * Fixed error where ``__repr__`` would fail for polyhedra with multiple face types.
 * Increased accuracy of stored data for PlatonicFamily solids
 * Added shape families for Archimedean, Catalan, and Johnson solids.
+* Expanded on tests for shape families
 * Added shape family for prisms and antiprisms.
 * Added shape family for equilateral pyramids and dipyramids.
 * Added edges, edge_vectors, edge_lengths, and num_edges methods.
