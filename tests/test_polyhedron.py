@@ -1,7 +1,7 @@
 # Copyright (c) 2021 The Regents of the University of Michigan
 # All rights reserved.
 # This software is licensed under the BSD 3-Clause License.
-import os
+
 
 import numpy as np
 import pytest
@@ -19,13 +19,12 @@ from conftest import (
     combine_marks,
     get_oriented_cube_faces,
     get_oriented_cube_normals,
+    is_not_ci,
     named_archimedean_mark,
     named_catalan_mark,
     named_damasceno_shapes_mark,
-    named_johnson_mark,
     named_platonic_mark,
-    named_prismantiprism_mark,
-    named_pyramiddipyramid_mark,
+    named_solids_mark,
     sphere_isclose,
 )
 from coxeter.families import DOI_SHAPE_REPOSITORIES, ArchimedeanFamily, PlatonicFamily
@@ -155,6 +154,20 @@ def test_volume_damasceno_shapes(shape):
     assert np.isclose(poly.volume, hull.volume)
 
 
+@settings(max_examples=10 if is_not_ci() else 50)
+@named_damasceno_shapes_mark
+@given(v_test=floats(0, 10, exclude_min=True))
+def test_set_volume_damasceno_shapes(shape, v_test):
+    if shape["name"] in ("RESERVED", "Sphere"):
+        return
+    vertices = shape["vertices"]
+    poly = ConvexPolyhedron(vertices)
+    poly.volume = v_test
+    # Recalculate volume from simplices
+    calculated_volume = poly._calculate_signed_volume()
+    assert np.isclose(calculated_volume, v_test)
+
+
 @named_damasceno_shapes_mark
 def test_surface_area_damasceno_shapes(shape):
     if shape["name"] in ("RESERVED", "Sphere"):
@@ -165,56 +178,71 @@ def test_surface_area_damasceno_shapes(shape):
     assert np.isclose(poly.surface_area, hull.area)
 
 
-@combine_marks(
-    named_platonic_mark,
-    named_archimedean_mark,
-    named_catalan_mark,
-    named_johnson_mark,
-    named_prismantiprism_mark,
-    named_pyramiddipyramid_mark,
-)
+@settings(max_examples=10 if is_not_ci() else 50)
+@named_damasceno_shapes_mark
+@given(a_test=floats(0, 10, exclude_min=True))
+def test_set_surface_area_damasceno_shapes(shape, a_test):
+    if shape["name"] in ("RESERVED", "Sphere"):
+        return
+    vertices = shape["vertices"]
+    poly = ConvexPolyhedron(vertices)
+    poly.surface_area = a_test
+    calculated_area = poly._calculate_surface_area()
+    assert np.isclose(calculated_area, a_test)
+
+
+@named_solids_mark
 def test_volume_shapes(poly):
     vertices = poly.vertices
     hull = ConvexHull(vertices)
     assert np.isclose(poly.volume, hull.volume)
 
 
-@combine_marks(
-    named_platonic_mark,
-    named_archimedean_mark,
-    named_catalan_mark,
-    named_johnson_mark,
-    named_prismantiprism_mark,
-    named_pyramiddipyramid_mark,
-)
+@named_solids_mark
 def test_surface_area_shapes(poly):
     vertices = poly.vertices
     hull = ConvexHull(vertices)
     assert np.isclose(poly.surface_area, hull.area)
 
 
-# This test is a bit slow (a couple of minutes), so skip running it locally.
-@pytest.mark.skipif(
-    os.getenv("CI", "false") != "true"
-    and os.getenv("GITHUB_ACTIONS", "false") != "true",
-    reason="Test is too slow to run during rapid development",
-)
+@named_solids_mark
+def test_surface_area_per_face(poly):
+    # Sum over all simplices
+    total_area = poly.get_face_area(face="total")
+    assert np.isclose(poly.surface_area, total_area)
+
+    # Compute per-face areas and check
+    face_areas = poly.get_face_area(face=None)
+    total_face_area = np.sum(face_areas)
+    assert np.isclose(poly.surface_area, total_face_area)
+
+    # Compute areas of each face and check that ordering is correct
+    for face_number in range(poly.num_faces):
+        current_face_area = poly.get_face_area(face=face_number)
+        assert current_face_area == face_areas[face_number]
+        total_face_area -= current_face_area
+    assert np.isclose(total_face_area, 0)
+
+
 @named_damasceno_shapes_mark
-def test_moment_inertia_damasceno_shapes(shape):
+def test_moment_inertia_damasceno_shapes(shape, atol=1e-1):
+    # Values of atol up to 5e-2 work as expected, but take much longer to run.
     # These shapes pass the test for a sufficiently high number of samples, but
     # the number is too high to be worth running them regularly.
     bad_shapes = [
         "Augmented Truncated Dodecahedron",
         "Deltoidal Hexecontahedron",
         "Disdyakis Triacontahedron",
-        "Truncated Dodecahedron",
-        "Truncated Icosidodecahedron",
         "Metabiaugmented Truncated Dodecahedron",
-        "Pentagonal Hexecontahedron",
+        "Parabiaugmented Truncated Dodecahedron",
         "Paragyrate Diminished Rhombicosidodecahedron",
+        "Pentagonal Hexecontahedron",
+        "Rhombic Enneacontahedron",
         "Square Cupola",
         "Triaugmented Truncated Dodecahedron",
-        "Parabiaugmented Truncated Dodecahedron",
+        "Truncated Dodecahedron",
+        "Truncated Icosahedron",
+        "Truncated Icosidodecahedron",
     ]
     if shape["name"] in ["RESERVED", "Sphere"] + bad_shapes:
         return
@@ -229,7 +257,7 @@ def test_moment_inertia_damasceno_shapes(shape):
     while num_samples < 1e8:
         try:
             mc_result = compute_inertia_mc(poly.vertices, volume, num_samples)
-            assert np.allclose(coxeter_result, mc_result, atol=1e-1)
+            assert np.allclose(coxeter_result, mc_result, atol=atol)
             accept = True
             break
         except AssertionError:
@@ -340,14 +368,7 @@ def test___repr__():
     repr(icosidodecahedron)
 
 
-@combine_marks(
-    named_platonic_mark,
-    named_archimedean_mark,
-    named_catalan_mark,
-    named_johnson_mark,
-    named_prismantiprism_mark,
-    named_pyramiddipyramid_mark,
-)
+@named_solids_mark
 def test_edges(poly):
     # Check that the first column is in ascending order.
     assert np.all(np.diff(poly.edges[:, 0]) >= 0)
@@ -796,14 +817,7 @@ def test_form_factor(cube):
     )
 
 
-@combine_marks(
-    named_platonic_mark,
-    named_archimedean_mark,
-    named_catalan_mark,
-    named_johnson_mark,
-    named_prismantiprism_mark,
-    named_pyramiddipyramid_mark,
-)
+@named_solids_mark
 @pytest.mark.xfail(
     reason=(
         "Numerical precision problems with miniball. "
@@ -814,14 +828,7 @@ def test_get_set_minimal_bounding_sphere_radius(poly):
     _test_get_set_minimal_bounding_sphere_radius(poly)
 
 
-@combine_marks(
-    named_platonic_mark,
-    named_archimedean_mark,
-    named_catalan_mark,
-    named_johnson_mark,
-    named_prismantiprism_mark,
-    named_pyramiddipyramid_mark,
-)
+@named_solids_mark
 def test_get_set_minimal_centered_bounding_sphere_radius(poly):
     _test_get_set_minimal_bounding_sphere_radius(poly, True)
 
@@ -853,16 +860,21 @@ def test_repr_convex(convex_cube):
     assert str(convex_cube), str(eval(repr(convex_cube)))
 
 
+# Test fast locally, and in more depth on CircleCI
+@pytest.mark.parametrize(
+    "atol",
+    [1e-2 if is_not_ci() else 5e-3],
+)
 @named_damasceno_shapes_mark
-def test_center(shape):
+def test_center(shape, atol):
     poly = ConvexPolyhedron(shape["vertices"])
     coxeter_result = poly.center
-    num_samples = 1000
+    num_samples = 5000
     accept = False
-    while num_samples < 1e8:
+    while num_samples < 5e7:
         try:
             mc_result = compute_centroid_mc(shape["vertices"], num_samples)
-            assert np.allclose(coxeter_result, mc_result, atol=1e-1)
+            assert np.allclose(coxeter_result, mc_result, atol=atol)
             accept = True
             break
         except AssertionError:
@@ -875,3 +887,50 @@ def test_center(shape):
                 shape["name"], mc_result, coxeter_result
             )
         )
+
+
+@named_solids_mark
+@given(arrays(np.float64, (3,), elements=floats(-10, 10, width=64), unique=True))
+def test_set_centroid(poly, centroid_vector):
+    poly.centroid = centroid_vector
+    coxeter_result = poly.centroid
+    assert np.allclose(coxeter_result, centroid_vector, atol=1e-12)
+    poly.centroid = [0, 0, 0]
+    assert np.allclose(poly.centroid, [0, 0, 0], atol=1e-12)
+
+
+@named_platonic_mark
+def test_face_centroids(poly):
+    # For platonic solids, the centroid of a face is equal to the mean of its vertices
+    poly.centroid = [0, 0, 0]
+    coxeter_result = poly.face_centroids
+    for i, face in enumerate(poly.faces):
+        face_vertices = poly.vertices[face]
+        vertex_mean = np.mean(face_vertices, axis=0)
+        assert np.allclose(vertex_mean, coxeter_result[i])
+
+
+@given(EllipsoidSurfaceStrategy)
+def test_find_simplex_equations(points):
+    hull = ConvexHull(points)
+    poly = ConvexPolyhedron(points[hull.vertices])
+    # Check simplex equations are stored properly
+    assert np.allclose(hull.equations, poly._simplex_equations)
+
+    # Now recalculate and check answers are still correct
+    poly._find_simplex_equations()
+    assert np.allclose(hull.equations, poly._simplex_equations)
+
+
+@named_solids_mark
+def test_find_equations_and_normals(poly):
+    ppoly = Polyhedron(poly.vertices, poly.faces)
+    # Check face equations are stored properly
+    assert np.allclose(poly.equations, ppoly._equations)
+    assert np.allclose(poly.normals, ppoly.normals)
+
+    # Now recalculate and check answers are still correct
+    poly._find_equations()
+    ppoly._find_equations()
+    assert np.allclose(poly.equations, ppoly._equations)
+    assert np.allclose(poly.normals, ppoly.normals)

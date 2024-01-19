@@ -1,6 +1,8 @@
 # Copyright (c) 2021 The Regents of the University of Michigan
 # All rights reserved.
 # This software is licensed under the BSD 3-Clause License.
+import os
+
 import numpy as np
 import pytest
 import rowan
@@ -35,6 +37,17 @@ def combine_marks(*marks):
     )
 
     return combined_mark
+
+
+# Define a function that checks if the script is running on Github Actions
+def is_not_ci():
+    if (
+        os.getenv("CI", "false") == "true"
+        or os.getenv("GITHUB_ACTIONS", "false") == "true"
+    ):
+        return False
+    else:
+        return True
 
 
 # Need to declare this outside the fixture so that it can be used in multiple
@@ -325,6 +338,15 @@ named_damasceno_shapes_mark = pytest.mark.parametrize(
         f"{shape_id}: {_damasceno_data[shape_id]['name']}"
         for shape_id in _damasceno_shape_names
     ],
+)
+
+named_solids_mark = combine_marks(
+    named_platonic_mark,
+    named_archimedean_mark,
+    named_catalan_mark,
+    named_johnson_mark,
+    named_prismantiprism_mark,
+    named_pyramiddipyramid_mark,
 )
 
 data_filenames_mark = pytest.mark.parametrize(
