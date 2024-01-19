@@ -7,6 +7,12 @@ Added
 ~~~~~
 
 - New `edge_lengths` method.
+- ``combine_simplices``, ``find_simplex_equations``, ``_find_face_centroids``,
+  ``find_coplanar_simplices``, ``_find_face_centroids``, and ``calculate_signed_volume``
+  methods for the ConvexPolyhedron class.
+- ``simplices``, ``equations``, and ``face_centroids`` properties for the
+  ConvexPolyhedron class.
+- Additional pytests for surface area, volume, centroid, moment of inertia, and equations properties.
 
 Changed
 ~~~~~~~
@@ -14,6 +20,15 @@ Changed
 - Pre-commit now uses ruff instead of flake8, pydocstyle, pyupgrade and isort.
 - CI now uses GitHub Actions.
 - Docs ported to furo theme.
+- Reimplemented ``find_equations``, ``_volume``, ``surface_area``, ``centroid``,
+  ``_compute_inertia_tensor``, ``rescale``, and ``get_face_area`` methods for convex
+  polyhedra using NumPy vectorized operations and polyhedron simplices.
+- [breaking] ``ConvexPolyhedron._surface_triangulation`` now returns sorted simplices,
+  rather than running polytri. This can change the order of vertices and/or triangles.
+- [breaking] ``faces`` may return faces in a different order than previously. Faces are still sorted with ``sort_faces``, and will still be ordered such that curl and divergence theorems work properly.
+- ``volume``, ``surface_area``, and ``centroid`` properties now return stored values, rather than computing the quantity at each call.
+- ``rescale`` now computes the centroid to ensure the correct value is available when ``centroid`` is called.
+- Optimized pytest configurations for more efficient use of local and remote resources.
 
 v0.7.0 - 2023-09-18
 -------------------
