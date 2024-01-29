@@ -595,3 +595,21 @@ def test_repr_nonconvex(square):
 
 def test_repr_convex(convex_square):
     assert str(convex_square), str(eval(repr(convex_square)))
+
+
+@given(EllipseSurfaceStrategy)
+def test_to_hoomd(points):
+    hull = ConvexHull(points)
+    poly = polygon_from_hull(points[hull.vertices])
+    poly.centroid = [0, 0, 0]
+    dict_keys = ["vertices", "centroid", "sweep_radius", "area", "moment_inertia"]
+    dict_vals = [
+        poly.vertices,
+        [0, 0, 0],
+        0,
+        poly.area,
+        poly.inertia_tensor,
+    ]
+    hoomd_dict = poly.to_hoomd()
+    for key, val in zip(dict_keys, dict_vals):
+        assert np.allclose(hoomd_dict[key], val), f"{key}"

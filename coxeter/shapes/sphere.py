@@ -202,3 +202,39 @@ class Sphere(Shape3D):
             colors=np.array([[0.5, 0.5, 0.5, 1]]),
             radii=[self.radius],
         )
+
+    def to_hoomd(self):
+        """Get a dict of json-serializable subset of Sphere properties.
+
+        The json-serializable output of the to_hoomd method can be directly imported
+        into data management tools like Signac. This data can then be queried for use in
+        HOOMD simulations. Key naming matches HOOMD integrators: for example, the
+        moment_inertia key links to data from coxeter's inertia_tensor.
+
+        For a Sphere, the following properties are stored:
+
+        * diameter (float):
+            The diameter of the sphere, equal to twice the radius.
+        * centroid (list(float))
+            The centroid of the shape.
+            This is set to [0,0,0] to improve HOOMD performance.
+        * volume (float)
+            The volume of the shape.
+        * moment_inertia (list(list))
+            The shape's inertia tensor.
+
+        Returns
+        -------
+        dict
+            Dict containing a subset of shape properties.
+        """
+        old_centroid = self.centroid
+        self.centroid = np.array([0, 0, 0])
+        hoomd_dict = {
+            "diameter": self.radius * 2,
+            "centroid": self.centroid.tolist(),
+            "volume": self.volume,
+            "moment_inertia": self.inertia_tensor.tolist(),
+        }
+        self.centroid = old_centroid
+        return hoomd_dict

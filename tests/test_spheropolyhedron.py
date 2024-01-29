@@ -7,7 +7,8 @@ from hypothesis import given, settings
 from hypothesis.strategies import floats
 from pytest import approx
 
-from conftest import make_sphero_cube
+from conftest import make_sphero_cube, named_catalan_mark
+from coxeter.shapes import ConvexSpheropolyhedron
 
 
 @given(radius=floats(0.1, 1))
@@ -120,3 +121,20 @@ def test_inside_boundaries():
 def test_repr():
     sphero_cube = make_sphero_cube(radius=1)
     assert str(sphero_cube), str(eval(repr(sphero_cube)))
+
+
+@given(r=floats(0.01, 1))
+@named_catalan_mark
+def test_to_hoomd(poly, r):
+    poly.centroid = [0, 0, 0]
+    poly = ConvexSpheropolyhedron(poly.vertices, r)
+    dict_keys = ["vertices", "centroid", "sweep_radius", "volume"]
+    dict_vals = [
+        poly.vertices,
+        [0, 0, 0],
+        poly.radius,
+        poly.volume,
+    ]
+    hoomd_dict = poly.to_hoomd()
+    for key, val in zip(dict_keys, dict_vals):
+        assert np.allclose(hoomd_dict[key], val), f"{key}"

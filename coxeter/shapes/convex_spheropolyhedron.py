@@ -304,3 +304,39 @@ class ConvexSpheropolyhedron(Shape3D):
             vertices=self.vertices,
             radius=self.radius,
         )
+
+    def to_hoomd(self):
+        """Get a json-serializable subset of ConvexSpheropolyhedron properties.
+
+        The json-serializable output of the to_hoomd method can be directly imported
+        into data management tools like Signac. This data can then be queried for use in
+        HOOMD simulations. Key naming matches HOOMD integrators: for example, the
+        moment_inertia key links to data from coxeter's inertia_tensor.
+
+        For a ConvexSpheropolyhedron, the following properties are stored:
+
+        * vertices (list(list)):
+            The vertices of the shape.
+        * centroid (list(float))
+            The centroid of the shape.
+            This is set to [0,0,0] to improve HOOMD performance.
+        * sweep_radius (float):
+            The rounding radius of the shape.
+        * volume (float)
+            The volume of the shape.
+
+        Returns
+        -------
+        dict
+            Dict containing a subset of shape properties.
+        """
+        old_centroid = self._polyhedron.centroid
+        self._polyhedron.centroid = np.array([0, 0, 0])
+        hoomd_dict = {
+            "vertices": self.vertices.tolist(),
+            "centroid": self._polyhedron.centroid.tolist(),
+            "sweep_radius": self.radius,
+            "volume": self.volume,
+        }
+        self._polyhedron.centroid = old_centroid
+        return hoomd_dict

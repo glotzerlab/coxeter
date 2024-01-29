@@ -225,3 +225,45 @@ class Ellipsoid(Shape3D):
             f"coxeter.shapes.Ellipsoid(a={self.a}, b={self.b}, c={self.c}, "
             f"center={self.centroid.tolist()})"
         )
+
+    def to_hoomd(self):
+        """Get a json-serializable subset of Ellipsoid properties.
+
+        The json-serializable output of the to_hoomd method can be directly imported
+        into data management tools like Signac. This data can then be queried for use in
+        HOOMD simulations. Key naming matches HOOMD integrators: for example, the
+        moment_inertia key links to data from coxeter's inertia_tensor.
+
+        For an Ellipsoid, the following properties are stored:
+
+        * a (float):
+            half axis of ellipsoid in the x direction
+        * b (float):
+            half axis of ellipsoid in the y direction
+        * c (float):
+            half axis of ellipsoid in the z direction
+        * centroid (list(float))
+            The centroid of the shape.
+            This is set to [0,0,0] to improve HOOMD performance.
+        * volume (float)
+            The volume of the shape.
+        * moment_inertia (list(list))
+            The shape's inertia tensor.
+
+        Returns
+        -------
+        dict
+            Dict containing a subset of shape properties.
+        """
+        old_centroid = self.centroid
+        self.centroid = np.array([0, 0, 0])
+        hoomd_dict = {
+            "a": self.a,
+            "b": self.b,
+            "c": self.c,
+            "centroid": self.centroid.tolist(),
+            "volume": self.volume,
+            "moment_inertia": self.inertia_tensor.tolist(),
+        }
+        self.centroid = old_centroid
+        return hoomd_dict
