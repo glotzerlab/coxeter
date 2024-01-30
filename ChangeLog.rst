@@ -13,6 +13,7 @@ Added
 - ``simplices``, ``equations``, and ``face_centroids`` properties for the
   ConvexPolyhedron class.
 - Additional pytests for surface area, volume, centroid, moment of inertia, and equations properties.
+- Added ``to_hoomd`` export method for use with simulation tools
 
 Changed
 ~~~~~~~
