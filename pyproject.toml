@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "coxeter"
-version = "0.8.0"
+version = "0.7.0"
 requires-python = ">=3.8"
 description = "Tools for creating and manipulating shapes."
 readme = "README.rst"
