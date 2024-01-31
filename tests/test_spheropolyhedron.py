@@ -56,6 +56,27 @@ def test_surface_area_polyhedron(convex_cube):
     assert sphero_cube.surface_area == approx(convex_cube.surface_area)
 
 
+@given(radius=floats(0.1, 1))
+def test_mean_curvature(radius):
+    sphero_cube = make_sphero_cube(radius=radius)
+    h_cube = 3 / 4
+    h_sphere = radius
+    assert np.isclose(sphero_cube.mean_curvature, h_cube + h_sphere)
+
+
+def test_mean_curvature_polyhedron(convex_cube, cube_points):
+    """Ensure that zero radius gives the same result as a polyhedron."""
+    sphero_cube = make_sphero_cube(radius=0)
+    assert sphero_cube.mean_curvature == approx(convex_cube.mean_curvature)
+
+
+@given(value=floats(0.1, 1))
+def test_set_mean_curvature(value):
+    sphero_cube = make_sphero_cube(radius=0)
+    sphero_cube.mean_curvature = value
+    assert sphero_cube.mean_curvature == approx(value)
+
+
 @given(r=floats(0, 1.0))
 def test_radius_getter_setter(r):
     sphero_cube = make_sphero_cube(radius=r)
