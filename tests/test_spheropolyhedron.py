@@ -46,7 +46,7 @@ def test_surface_area(radius):
 def test_set_surface_area(value):
     sphero_cube = make_sphero_cube(radius=0)
     sphero_cube.surface_area = value
-    assert np.isclose(sphero_cube.surface_area, (value))
+    assert np.isclose(sphero_cube.surface_area, value)
 
 
 def test_surface_area_polyhedron(convex_cube):
