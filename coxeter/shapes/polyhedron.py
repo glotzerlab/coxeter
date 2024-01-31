@@ -4,12 +4,12 @@
 """Defines a polyhedron."""
 
 import warnings
+from functools import cached_property
 
 import numpy as np
 import rowan
 from scipy.sparse.csgraph import connected_components
 
-from ..extern.polyhedron.polyhedron import Polyhedron as PolyInside
 from ..extern.polytri import polytri
 from .base_classes import Shape3D
 from .convex_polygon import ConvexPolygon, _is_convex
@@ -34,7 +34,8 @@ def _face_to_edges(face, reverse=False):
         reverse (bool):
             Whether to return the edges in reverse.
 
-    Returns:
+    Returns
+    -------
         list[tuple[int, int]]:
             A list of edges where each is a tuple of a pair of vertices.
     """
@@ -70,8 +71,8 @@ class Polyhedron(Shape3D):
 
     Example:
         >>> cube = coxeter.shapes.ConvexPolyhedron(
-        ...   [[1, 1, 1], [1, -1, 1], [1, 1, -1], [1, -1, -1],
-        ...    [-1, 1, 1], [-1, -1, 1], [-1, 1, -1], [-1, -1, -1]])
+        ...   [[-1, -1, -1], [-1, -1, 1], [-1, 1, -1], [-1, 1, 1],
+        ...    [1, -1, -1], [1, -1, 1], [1, 1, -1], [1, 1, 1]])
         >>> cube = coxeter.shapes.Polyhedron(
         ...   vertices=cube.vertices, faces=cube.faces)
         >>> bounding_sphere = cube.minimal_bounding_sphere
@@ -80,16 +81,16 @@ class Polyhedron(Shape3D):
         >>> cube.center
         array([0., 0., 0.])
         >>> cube.faces
-        [array([4, 5, 1, 0], dtype=int32), array([0, 2, 6, 4], dtype=int32),
-        array([6, 7, 5, 4], dtype=int32), array([0, 1, 3, 2], dtype=int32),
-        array([5, 7, 3, 1], dtype=int32), array([2, 3, 7, 6], dtype=int32)]
+        [array([0, 2, 6, 4], dtype=int32), array([0, 4, 5, 1], dtype=int32),
+        array([4, 6, 7, 5], dtype=int32), array([0, 1, 3, 2], dtype=int32),
+        array([2, 3, 7, 6], dtype=int32), array([1, 5, 7, 3], dtype=int32)]
         >>> cube.gsd_shape_spec
-        {'type': 'Mesh', 'vertices': [[1.0, 1.0, 1.0], [1.0, -1.0, 1.0],
-        [1.0, 1.0, -1.0], [1.0, -1.0, -1.0], [-1.0, 1.0, 1.0],
-        [-1.0, -1.0, 1.0], [-1.0, 1.0, -1.0], [-1.0, -1.0, -1.0]], 'faces':
-        [array([4, 5, 1, 0], dtype=int32), array([0, 2, 6, 4], dtype=int32),
-        array([6, 7, 5, 4], dtype=int32), array([0, 1, 3, 2], dtype=int32),
-        array([5, 7, 3, 1], dtype=int32), array([2, 3, 7, 6], dtype=int32)]}
+        {'type': 'Mesh', 'vertices': [[-1.0, -1.0, -1.0], [-1.0, -1.0, 1.0],
+        [-1.0, 1.0, -1.0], [-1.0, 1.0, 1.0], [1.0, -1.0, -1.0], [1.0, -1.0, 1.0],
+        [1.0, 1.0, -1.0], [1.0, 1.0, 1.0]], 'indices':
+        [array([0, 2, 6, 4], dtype=int32), array([0, 4, 5, 1], dtype=int32),
+        array([4, 6, 7, 5], dtype=int32), array([0, 1, 3, 2], dtype=int32),
+        array([2, 3, 7, 6], dtype=int32), array([1, 5, 7, 3], dtype=int32)]}
         >>> assert np.allclose(
         ...   cube.inertia_tensor,
         ...   np.diag([16. / 3., 16. / 3., 16. / 3.]))
@@ -98,26 +99,26 @@ class Polyhedron(Shape3D):
         [array([1, 2, 3, 4]), array([0, 2, 3, 5]), array([0, 1, 4, 5]),
         array([0, 1, 4, 5]), array([0, 2, 3, 5]), array([1, 2, 3, 4])]
         >>> cube.normals
-        array([[ 0.,  0.,  1.],
-               [ 0.,  1., -0.],
-               [-1.,  0.,  0.],
-               [ 1., -0.,  0.],
+        array([[ 0.,  0., -1.],
                [ 0., -1.,  0.],
-               [ 0.,  0., -1.]])
+               [ 1.,  0., -0.],
+               [-1.,  0.,  0.],
+               [-0.,  1.,  0.],
+               [ 0., -0.,  1.]])
         >>> cube.num_faces
         6
         >>> cube.num_vertices
         8
         >>> assert np.isclose(cube.surface_area, 24.0)
         >>> cube.vertices
-        array([[ 1.,  1.,  1.],
-               [ 1., -1.,  1.],
-               [ 1.,  1., -1.],
-               [ 1., -1., -1.],
-               [-1.,  1.,  1.],
+        array([[-1., -1., -1.],
                [-1., -1.,  1.],
                [-1.,  1., -1.],
-               [-1., -1., -1.]])
+               [-1.,  1.,  1.],
+               [ 1., -1., -1.],
+               [ 1., -1.,  1.],
+               [ 1.,  1., -1.],
+               [ 1.,  1.,  1.]])
         >>> assert np.isclose(cube.volume, 8.0)
 
     """
@@ -184,7 +185,7 @@ class Polyhedron(Shape3D):
         return {
             "type": "Mesh",
             "vertices": self.vertices.tolist(),
-            "faces": self.faces,
+            "indices": self.faces,
         }
 
     def _rescale(self, scale):
@@ -356,8 +357,55 @@ class Polyhedron(Shape3D):
 
     @property
     def faces(self):
-        """list(:class:`numpy.ndarray`): Get the polyhedron's faces."""
+        """list(:class:`numpy.ndarray`): Get the polyhedron's faces.
+
+        Results returned as vertex index lists.
+        """
         return self._faces
+
+    @cached_property
+    def edges(self):
+        """:class:`numpy.ndarray`: Get the polyhedron's edges.
+
+        Results returned as vertex index pairs,  with each edge of the polyhedron
+        included exactly once.  Edge (i,j) pairs are ordered by vertex index with i<j.
+        """
+        ij_pairs = np.array(
+            [
+                [i, j]
+                for face in self.faces
+                for i, j in zip(face, np.roll(face, -1))
+                if i < j
+            ]
+        )
+        sorted_indices = np.lexsort(ij_pairs.T[::-1])
+        sorted_ij_pairs = ij_pairs[sorted_indices]
+        # Make edge data read-only so that the cached property of this instance
+        # cannot be edited
+        sorted_ij_pairs.flags.writeable = False
+
+        return sorted_ij_pairs
+
+    @property
+    def edge_vectors(self):
+        """:class:`numpy.ndarray`: Get the polyhedron's edges as vectors.
+
+        :code:`edge_vectors` are returned in the same order as in :attr:`edges`.
+        """
+        return self.vertices[self.edges[:, 1]] - self.vertices[self.edges[:, 0]]
+
+    @property
+    def edge_lengths(self):
+        """:class:`numpy.ndarray`: Get the length of each edge of the polyhedron.
+
+        :code:`edge_lengths` are returned in the same order as in :attr:`edges`.
+        """
+        return np.linalg.norm(self.edge_vectors, axis=1)
+
+    @property
+    def num_edges(self):
+        """int: Get the number of edges."""
+        return len(self.edges)
 
     @property
     def volume(self):
@@ -379,7 +427,8 @@ class Polyhedron(Shape3D):
                 find the area. If None, finds the area of all faces (Default
                 value: None).
 
-        Returns:
+        Returns
+        -------
             :class:`numpy.ndarray`: The area of each face.
 
         Example:
@@ -396,7 +445,7 @@ class Polyhedron(Shape3D):
         """
         if faces is None:
             faces = range(len(self.faces))
-        elif type(faces) is int:
+        elif isinstance(faces, int):
             faces = [faces]
 
         areas = np.empty(len(faces))
@@ -434,7 +483,8 @@ class Polyhedron(Shape3D):
 
         Distances that are <= 0 are inside and > 0 are outside.
 
-        Returns:
+        Returns
+        -------
             :math:`(N_{points}, N_{planes})` :class:`numpy.ndarray`: The
             distance from each point to each plane.
         """
@@ -541,6 +591,7 @@ class Polyhedron(Shape3D):
             "The bounding_sphere property is deprecated, use "
             "minimal_bounding_sphere instead",
             DeprecationWarning,
+            stacklevel=2,
         )
 
         return self.minimal_bounding_sphere
@@ -604,7 +655,8 @@ class Polyhedron(Shape3D):
         of linear equations defined by this constraint, and the circumsphere
         only exists if the resulting solution has no residual.
 
-        Raises:
+        Raises
+        ------
             RuntimeError: If no circumsphere exists for this polyhedron.
         """
         # The circumsphere is defined by center C and radius r. For vertex i
@@ -679,7 +731,8 @@ class Polyhedron(Shape3D):
             b (int):
                 The index of the second face.
 
-        Returns:
+        Returns
+        -------
             float: The dihedral angle in radians.
 
         Example:
@@ -821,55 +874,107 @@ class Polyhedron(Shape3D):
     def is_inside(self, points):
         """Determine whether points are contained in this polyhedron.
 
+        The code in this function is based on implementation in
+        :cite:`Dickinson2019` which is licensed under the BSD-3 license.
+        The computation is based on calculation of winding number.
+
         .. note::
 
-            Points on the boundary of the shape will return :code:`True`.
+            Points on the boundary of the shape will return :code:`False`.
 
         Args:
             points (:math:`(N, 3)` :class:`numpy.ndarray`):
                 The points to test.
 
-        Returns:
+        Returns
+        -------
             :math:`(N, )` :class:`numpy.ndarray`:
                 Boolean array indicating which points are contained in the
                 polyhedron.
+
         """
         # polytri generates a triangulation directly from the vertices. We need
         # to map this back to index positions to feed to the polyhedron winding
         # number calculation.
         vertex_to_index = {tuple(v): i for i, v in enumerate(self.vertices)}
 
-        triangles = [
-            [vertex_to_index[tuple(v)] for v in triangle]
-            for triangle in self._surface_triangulation()
-        ]
+        triangles = np.array(
+            [
+                [vertex_to_index[tuple(v)] for v in triangle]
+                for triangle in self._surface_triangulation()
+            ]
+        )
+        points = np.atleast_2d(points)
 
-        winding_number_calculator = PolyInside(triangles, self.vertices)
+        # triangle vertices
+        v0 = self.vertices[triangles[:, 0]]
+        v1 = self.vertices[triangles[:, 1]]
+        v2 = self.vertices[triangles[:, 2]]
+        v0_expanded = v0[:, None, :]
+        v1_expanded = v1[:, None, :]
+        v2_expanded = v2[:, None, :]
+        points_expanded = np.tile(points, (v0.shape[0], 1, 1))
 
-        def _check_inside(p):
-            """Check if point is inside, including boundary points.
+        # saving precomputed slices for speed
+        diff_x_v0 = v0_expanded[..., 0] - points_expanded[..., 0]
+        diff_y_v0 = v0_expanded[..., 1] - points_expanded[..., 1]
+        diff_z_v0 = v0_expanded[..., 2] - points_expanded[..., 2]
+        diff_x_v1 = v1_expanded[..., 0] - points_expanded[..., 0]
+        diff_y_v1 = v1_expanded[..., 1] - points_expanded[..., 1]
+        diff_z_v1 = v1_expanded[..., 2] - points_expanded[..., 2]
+        diff_x_v2 = v2_expanded[..., 0] - points_expanded[..., 0]
+        diff_y_v2 = v2_expanded[..., 1] - points_expanded[..., 1]
+        diff_z_v2 = v2_expanded[..., 2] - points_expanded[..., 2]
 
-            The polyhedron check will will raise a ValueError for points on the
-            boundary, which we want to be inside.
-            """
-            try:
-                return winding_number_calculator.winding_number(p) != 0
-            except ValueError as e:
-                if str(e) in (
-                    "vertex coincides with origin",
-                    "vertices collinear with origin",
-                    "vertices coplanar with origin",
-                ):
-                    return True
-                else:
-                    raise
+        def sign_or(a, b, c):
+            return np.where(a != 0, a, np.where(b != 0, b, c))
 
-        return np.array([_check_inside(p) for p in np.atleast_2d(points)])
+        v0sign = sign_or(np.sign(diff_x_v0), np.sign(diff_y_v0), np.sign(diff_z_v0))
+        v1sign = sign_or(np.sign(diff_x_v1), np.sign(diff_y_v1), np.sign(diff_z_v1))
+        v2sign = sign_or(np.sign(diff_x_v2), np.sign(diff_y_v2), np.sign(diff_z_v2))
+
+        mask01 = v0sign != v1sign
+        mask12 = v1sign != v2sign
+        mask20 = v2sign != v0sign
+
+        # this is equivalent to np.moveaxis(-np.cross(diff_i, diff_j,
+        # axis=2)[..., [2,1,0]], -1, 0)
+        # however the following is faster by a factor of 2
+        def compute_cross(diff_i, diff_j):
+            term_0 = diff_i[1] * diff_j[0] - diff_i[0] * diff_j[1]
+            term_1 = diff_i[2] * diff_j[0] - diff_i[0] * diff_j[2]
+            term_2 = diff_i[2] * diff_j[1] - diff_i[1] * diff_j[2]
+            return term_0, term_1, term_2
+
+        term0 = compute_cross(
+            (diff_x_v0, diff_y_v0, diff_z_v0), (diff_x_v1, diff_y_v1, diff_z_v1)
+        )
+        term1 = compute_cross(
+            (diff_x_v1, diff_y_v1, diff_z_v1), (diff_x_v2, diff_y_v2, diff_z_v2)
+        )
+        term2 = compute_cross(
+            (diff_x_v2, diff_y_v2, diff_z_v2), (diff_x_v0, diff_y_v0, diff_z_v0)
+        )
+
+        edge0 = sign_or(*[np.sign(term) for term in term0])
+        edge1 = sign_or(*[np.sign(term) for term in term1])
+        edge2 = sign_or(*[np.sign(term) for term in term2])
+
+        triangle_sign = np.sign(
+            -term0[0] * diff_z_v2 - term1[0] * diff_z_v0 - term2[0] * diff_z_v1
+        )
+        face_boundary = (mask01 * edge0) + (mask12 * edge1) + (mask20 * edge2)
+
+        triangle_chain_res = np.where(face_boundary != 0, triangle_sign, 0)
+
+        winding_number = np.sum(triangle_chain_res, axis=0) // 2
+
+        return winding_number != 0
 
     def __repr__(self):
         return (
             f"coxeter.shapes.Polyhedron(vertices={self.vertices.tolist()}, "
-            f"faces={np.asarray(self.faces).tolist()})"
+            f"faces={self.faces})"
         )
 
     def _plato_primitive(self, backend):

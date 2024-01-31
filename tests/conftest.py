@@ -1,14 +1,53 @@
 # Copyright (c) 2021 The Regents of the University of Michigan
 # All rights reserved.
 # This software is licensed under the BSD 3-Clause License.
+import os
+
 import numpy as np
 import pytest
 import rowan
 from hypothesis.strategies import builds, floats, integers
 from scipy.spatial import ConvexHull
 
-from coxeter.families import DOI_SHAPE_REPOSITORIES, PlatonicFamily, RegularNGonFamily
+from coxeter.families import (
+    DOI_SHAPE_REPOSITORIES,
+    ArchimedeanFamily,
+    CatalanFamily,
+    JohnsonFamily,
+    PlatonicFamily,
+    PrismAntiprismFamily,
+    PyramidDipyramidFamily,
+    RegularNGonFamily,
+)
 from coxeter.shapes import ConvexPolyhedron, ConvexSpheropolyhedron, Polyhedron, Shape2D
+
+
+# Define a function to combine marks in order to more compactly test shape families
+def combine_marks(*marks):
+    combinedargvalues = []
+    combinedids = []
+    for mark in marks:
+        argvalues, ids = mark.kwargs["argvalues"], mark.kwargs["ids"]
+        combinedargvalues.extend(argvalues)
+        combinedids.extend(ids)
+    combined_mark = pytest.mark.parametrize(
+        argnames="poly",
+        argvalues=combinedargvalues,
+        ids=combinedids,
+    )
+
+    return combined_mark
+
+
+# Define a function that checks if the script is running on Github Actions
+def is_not_ci():
+    if (
+        os.getenv("CI", "false") == "true"
+        or os.getenv("GITHUB_ACTIONS", "false") == "true"
+    ):
+        return False
+    else:
+        return True
 
 
 # Need to declare this outside the fixture so that it can be used in multiple
@@ -198,6 +237,72 @@ named_platonic_mark = pytest.mark.parametrize(
 )
 
 
+def archimedean_solids():
+    """Generate archimedean solids."""
+    for shape_name in ArchimedeanFamily.data:
+        yield ArchimedeanFamily.get_shape(shape_name)
+
+
+# A convenient mark decorator that also includes names for the polyhedra.
+# Assumes that the argument name is "poly".
+_archimedean_shape_names = ArchimedeanFamily.data.keys()
+named_archimedean_mark = pytest.mark.parametrize(
+    argnames="poly",
+    argvalues=[ArchimedeanFamily.get_shape(name) for name in _archimedean_shape_names],
+    ids=_archimedean_shape_names,
+)
+
+
+def catalan_solids():
+    """Generate catalan solids."""
+    for shape_name in CatalanFamily.data:
+        yield CatalanFamily.get_shape(shape_name)
+
+
+# A convenient mark decorator that also includes names for the polyhedra.
+# Assumes that the argument name is "poly".
+_catalan_shape_names = CatalanFamily.data.keys()
+named_catalan_mark = pytest.mark.parametrize(
+    argnames="poly",
+    argvalues=[CatalanFamily.get_shape(name) for name in _catalan_shape_names],
+    ids=_catalan_shape_names,
+)
+
+
+def johnson_solids():
+    """Generate johnson solids."""
+    for shape_name in JohnsonFamily.data:
+        yield JohnsonFamily.get_shape(shape_name)
+
+
+# A convenient mark decorator that also includes names for the polyhedra.
+# Assumes that the argument name is "poly".
+_johnson_shape_names = JohnsonFamily.data.keys()
+named_johnson_mark = pytest.mark.parametrize(
+    argnames="poly",
+    argvalues=[JohnsonFamily.get_shape(name) for name in _johnson_shape_names],
+    ids=_johnson_shape_names,
+)
+
+_prismantiprism_shape_names = PrismAntiprismFamily.data.keys()
+named_prismantiprism_mark = pytest.mark.parametrize(
+    argnames="poly",
+    argvalues=[
+        PrismAntiprismFamily.get_shape(name) for name in _prismantiprism_shape_names
+    ],
+    ids=_prismantiprism_shape_names,
+)
+
+_pyramiddipyramid_shape_names = PyramidDipyramidFamily.data.keys()
+named_pyramiddipyramid_mark = pytest.mark.parametrize(
+    argnames="poly",
+    argvalues=[
+        PyramidDipyramidFamily.get_shape(name) for name in _pyramiddipyramid_shape_names
+    ],
+    ids=_pyramiddipyramid_shape_names,
+)
+
+
 def regular_polygons(n=10):
     """Generate regular polygons."""
     for i in range(3, n + 1):
@@ -232,5 +337,26 @@ named_damasceno_shapes_mark = pytest.mark.parametrize(
     ids=[
         f"{shape_id}: {_damasceno_data[shape_id]['name']}"
         for shape_id in _damasceno_shape_names
+    ],
+)
+
+named_solids_mark = combine_marks(
+    named_platonic_mark,
+    named_archimedean_mark,
+    named_catalan_mark,
+    named_johnson_mark,
+    named_prismantiprism_mark,
+    named_pyramiddipyramid_mark,
+)
+
+data_filenames_mark = pytest.mark.parametrize(
+    argnames="family",
+    argvalues=[
+        "platonic",
+        "archimedean",
+        "catalan",
+        "johnson",
+        "prism_antiprism",
+        "pyramid_dipyramid",
     ],
 )

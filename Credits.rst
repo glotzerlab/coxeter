@@ -104,6 +104,33 @@ Tobias Dwyer
 * Added getter and setter tests to some of the shape classes.
 * Added examples for the shape classes.
 
+Jen Bradley
+
+* Bug fixes for ``gsd_shape_spec`` to correctly comply with GSD specifications.
+* Fixed error where ``__repr__`` would fail for polyhedra with multiple face types.
+* Increased accuracy of stored data for PlatonicFamily solids
+* Added shape families for Archimedean, Catalan, and Johnson solids.
+* Expanded on tests for shape families
+* Added shape family for prisms and antiprisms.
+* Added shape family for equilateral pyramids and dipyramids.
+* Added edges, edge_vectors, edge_lengths, and num_edges methods.
+* Reimplemented ``find_equations``, ``_volume``, ``surface_area``, ``centroid``,
+  ``_compute_inertia_tensor``, ``rescale``, and ``get_face_area`` methods for convex
+  polyhedra using NumPy vectorized operations and polyhedron simplices.
+* Added the ``combine_simplices``, ``find_simplex_equations``, ``_find_face_centroids``,
+  ``find_coplanar_simplices``, ``_find_face_centroids``, and ``calculate_signed_volume``
+  methods to the ConvexPolyhedron class.
+* Added ``simplices``, ``equations``, and ``face_centroids`` properties to the
+  ConvexPolyhedron class.
+* Optimized pytest configurations for more efficient use of local and remote resources.
+
+Domagoj Fijan
+
+* Rewrote point in polygon check to use NumPy vectorized operations.
+* Rewrote point in polyhedron check to use NumPy vectorized operations.
+* Pre-commit now uses ruff instead of flake8, pydocstyle, pyupgrade and isort.
+* Ported CI to github actions.
+* Ported docs to Furo.
 
 Source code
 -----------
@@ -174,10 +201,11 @@ the MIT license::
     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
     OTHER DEALINGS IN THE SOFTWARE.
 
-The source of polyhedron (https://github.com/mdickinson/polyhedron) is included
-directly into the **coxeter** package. It is used for point in polygon/polyhedron
-checks for general polygons and polyhedra (specifically, to calculate the winding
-number). This software is made available under the BSD-3 license::
+The code for point in polygon and point in polyhedron check is based on
+the polyhedron repository (https://github.com/mdickinson/polyhedron)
+which implements winding number calculator to check if points are in
+shapes, but has been rewritten to utilize vectorized NumPy operations.
+This software is made available under the BSD-3 license::
 
     BSD 3-Clause License
 

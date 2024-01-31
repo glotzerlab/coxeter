@@ -35,7 +35,8 @@ class RegularNGonFamily(ShapeFamily):
             n (int):
                 The number of vertices (greater than or equal to 3).
 
-        Returns:
+        Returns
+        -------
              :class:`~.ConvexPolygon`: The corresponding regular polygon.
         """
         return ConvexPolygon(cls.make_vertices(n))
@@ -48,7 +49,8 @@ class RegularNGonFamily(ShapeFamily):
             n (int):
                 An integer greater than or equal to 3.
 
-        Returns:
+        Returns
+        -------
             :math:`(n, 3)` :class:`numpy.ndarray` of float: The vertices of the polygon.
         """
         if n < 3:
@@ -75,11 +77,99 @@ class RegularNGonFamily(ShapeFamily):
 PlatonicFamily = TabulatedGSDShapeFamily.from_json_file(
     os.path.join(_DATA_FOLDER, "platonic.json"),
     classname="PlatonicFamily",
-    docstring="""The family of Platonic solids.
+    docstring="""The family of Platonic solids (5 total).
 
-The following parameters are required by this class:
+    Args:
+        name (str):
+                The name of the Platonic solid.
 
-    - name: The name of the Platonic solid. Options are "Cube", "Dodecahedron", \
-            "Icosahedron", "Octahedron", and "Tetrahedron".
+    Options are "Cube", "Dodecahedron", "Icosahedron", "Octahedron", and "Tetrahedron".
+""",
+)
+
+ArchimedeanFamily = TabulatedGSDShapeFamily.from_json_file(
+    os.path.join(_DATA_FOLDER, "archimedean.json"),
+    classname="ArchimedeanFamily",
+    docstring="""The family of Archimedean solids (13 total).
+
+    Args:
+        name (str):
+                The name of the Archimedean solid.
+
+    Options are "Cuboctahedron", "Icosidodecahedron", "Truncated Tetrahedron",
+    "Truncated Octahedron", "Truncated Cube", "Truncated Icosahedron", "Truncated
+    Dodecahedron", "Rhombicuboctahedron", "Rhombicosidodecahedron", "Truncated \
+    Cuboctahedron", "Truncated Icosidodecahedron", "Snub Cuboctahedron", and "Snub
+    Icosidodecahedron".
+""",
+)
+
+CatalanFamily = TabulatedGSDShapeFamily.from_json_file(
+    os.path.join(_DATA_FOLDER, "catalan.json"),
+    classname="CatalanFamily",
+    docstring="""The family of Catalan solids, also known as Archimedean duals \
+    (13 total).
+
+    Args:
+        name (str):
+                The name of the Catalan solid.
+
+    Options are "Deltoidal Hexecontahedron", "Deltoidal Icositetrahedron", "Disdyakis \
+    Dodecahedron", "Disdyakis Triacontahedron", "Pentagonal Hexecontahedron",
+    "Pentagonal Icositetrahedron", "Pentakis Dodecahedron", "Rhombic Dodecahedron",
+    "Rhombic Triacontahedron", "Triakis Octahedron", "Tetrakis Hexahedron", "Triakis
+    Icosahedron", and "Triakis Tetrahedron".
+""",
+)
+
+JohnsonFamily = TabulatedGSDShapeFamily.from_json_file(
+    os.path.join(_DATA_FOLDER, "johnson.json"),
+    classname="JohnsonFamily",
+    docstring="""The family of Johnson solids, as enumerated in \
+    :cite:`Johnson1966` (92 total).
+
+    Args:
+        name (str):
+                The name of the Johnson solid.
+
+    A full list of Johnson solids is available in :cite:`Johnson1966`. In general, shape
+    names should have the first character of each word capitalized, with spaces between
+    words (e.g. "Elongated Triangular Cupola"). Pyramids and dipyramids are named from
+    their base polygon (e.g. "Square Pyramid" or "Elongated Pentagonal Dipyramid").
+""",
+)
+
+PyramidDipyramidFamily = TabulatedGSDShapeFamily.from_json_file(
+    os.path.join(_DATA_FOLDER, "pyramid_dipyramid.json"),
+    classname="PyramidDipyramidFamily",
+    docstring="""The family of regular equilateral pyramids and dipyramids (6 total).
+
+    Args:
+        name (str):
+                The name of the pyramid or dipyramid.
+
+    Options for pyramids are "Triangular Pyramid", "Square Pyramid", and
+    "Pentagonal Pyramid". Options for dipyramids are "Triangular Dipyramid",
+    "Square Dipyramid", and "Pentagonal Dipyramid".
+""",
+)
+
+PrismAntiprismFamily = TabulatedGSDShapeFamily.from_json_file(
+    os.path.join(_DATA_FOLDER, "prism_antiprism.json"),
+    classname="PrismAntiprismFamily",
+    docstring="""The family of uniform n-prisms and n-antiprisms with n∈[3,10] \
+    (16 total).
+
+    Args:
+        name (str):
+                The name of the prism or antiprism.
+
+    Options for prisms are  \
+    "Triangular Prism", "Square Prism", "Pentagonal Prism", "Hexagonal Prism", \
+    "Heptagonal Prism", "Octagonal Prism", "Nonagonal Prism", and \
+    "Decagonal Prism". Options for antiprisms are "Triangular Antiprism", \
+    "Square Antiprism", "Pentagonal Antiprism", "Hexagonal Antiprism", \
+    "Heptagonal Antiprism", "Octagonal Antiprism","Nonagonal Antiprism", \
+    and "Decagonal Antiprism".
 """,
 )

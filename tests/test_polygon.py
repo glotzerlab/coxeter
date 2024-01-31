@@ -506,12 +506,87 @@ def test_is_inside(convex_square):
     assert convex_square.is_inside(convex_square.center)
     assert rotated_square.is_inside(rotated_square.center)
 
-    @given(floats(0, 1), floats(0, 1))
-    def testfun(x, y):
+    # the smallest positive normalized floating-point number
+    limit = np.finfo(np.float64).smallest_normal
+
+    @given(
+        floats(limit, 1 - limit, exclude_min=True, exclude_max=True),
+        floats(limit, 1 - limit, exclude_min=True, exclude_max=True),
+    )
+    def test_is_inside(x, y):
         assert convex_square.is_inside([[x, y, 0]])
         assert rotated_square.is_inside([[x, y, 0]])
 
-    testfun()
+    test_is_inside()
+
+
+def test_is_point_inside():
+    vertices = np.array([[0, 0], [1, 0], [1, 1], [0, 1]])
+    square = Polygon(vertices)
+
+    # Test single point inside
+    point = np.array([0.5, 0.5])
+    result = square.is_inside(point)
+    assert result[0], "Point should be inside the square"
+
+    # Test single point outside
+    point = np.array([2, 2])
+    result = square.is_inside(point)
+    assert not result[0], "Point should be outside the square"
+
+    # Test multiple points
+    points = np.array([[0.5, 0.5], [2, 2]])
+    result = square.is_inside(points)
+    assert np.array_equal(
+        result, [True, False]
+    ), "Unexpected results for multiple points"
+
+    # Test points on the edge
+    points = np.array([1, 1])
+    result = square.is_inside(points)
+    assert not (result[0]), "Point is not inside the square, but its on vertex"
+
+
+def test_point_in_concave_polygon():
+    vertices = np.array(
+        [
+            [-1.70710678e00, 7.07106781e-01],
+            [-1.70710678e00, 2.92893219e-01],
+            [-2.00000000e00, -2.64075513e-16],
+            [-1.70710678e00, -2.92893219e-01],
+            [-1.70710678e00, -7.07106781e-01],
+            [-1.41421356e00, -1.00000000e00],
+            [-1.41421356e00, -1.41421356e00],
+            [-1.00000000e00, -1.41421356e00],
+            [-7.07106781e-01, -1.70710678e00],
+            [-2.92893219e-01, -1.70710678e00],
+            [1.14409373e-15, -2.00000000e00],
+            [2.92893219e-01, -1.70710678e00],
+            [7.07106781e-01, -1.70710678e00],
+            [1.00000000e00, -1.41421356e00],
+            [1.41421356e00, -1.41421356e00],
+            [1.41421356e00, -1.00000000e00],
+            [1.70710678e00, -7.07106781e-01],
+            [1.70710678e00, -2.92893219e-01],
+            [2.00000000e00, 8.24890277e-16],
+            [1.70710678e00, 2.92893219e-01],
+            [1.70710678e00, 7.07106781e-01],
+            [1.41421356e00, 1.00000000e00],
+            [1.41421356e00, 1.41421356e00],
+            [1.00000000e00, 1.41421356e00],
+            [7.07106781e-01, 1.70710678e00],
+            [2.92893219e-01, 1.70710678e00],
+            [-5.29270782e-16, 2.00000000e00],
+            [-2.92893219e-01, 1.70710678e00],
+            [-7.07106781e-01, 1.70710678e00],
+            [-1.00000000e00, 1.41421356e00],
+            [-1.41421356e00, 1.41421356e00],
+            [-1.41421356e00, 1.00000000e00],
+        ]
+    )
+    polygon = Polygon(vertices)
+    points = np.array([[-1.85, -0.20], [-1.9, -0.125], [-1.9, 0.0]])
+    assert np.all(polygon.is_inside(points) == np.array([False, False, True]))
 
 
 def test_repr_nonconvex(square):

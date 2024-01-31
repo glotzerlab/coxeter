@@ -1,0 +1,43 @@
+name: Run Tests
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  # trigger on pull requests
+  pull_request:
+
+  # trigger on all commits to master
+  push:
+    branches:
+      - "master"
+
+  # trigger on request
+  workflow_dispatch:
+
+jobs:
+  run_tests:
+    name: Run tests on ubuntu-latest with Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.8","3.9","3.10","3.11"]
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install -r .github/requirements.txt
+    - name: Install package
+      run: |
+        python --version
+        python -c "import numpy; print('numpy', numpy.__version__)"
+        python -c "import scipy; print('scipy', scipy.__version__)"
+        python -m pip install . --progress-bar off
+    - name: Test with pytest
+      run: |
+        python -m pytest -v

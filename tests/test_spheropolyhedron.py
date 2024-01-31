@@ -3,7 +3,7 @@
 # This software is licensed under the BSD 3-Clause License.
 import numpy as np
 import pytest
-from hypothesis import given
+from hypothesis import given, settings
 from hypothesis.strategies import floats
 from pytest import approx
 
@@ -33,6 +33,7 @@ def test_set_volume(value):
     assert sphero_cube.volume == approx(value)
 
 
+@settings(deadline=1000)
 @given(radius=floats(0.1, 1))
 def test_surface_area(radius):
     sphero_cube = make_sphero_cube(radius=radius)
@@ -69,6 +70,7 @@ def test_invalid_radius(r):
         make_sphero_cube(radius=r)
 
 
+@settings(deadline=1000)
 @given(r=floats(-1000, -1))
 def test_invalid_radius_setter(r):
     sphero_cube = make_sphero_cube(1)

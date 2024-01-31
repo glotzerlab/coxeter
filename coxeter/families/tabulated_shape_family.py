@@ -48,7 +48,8 @@ class TabulatedShapeFamily(ShapeFamily):
             docstring (str, optional):
                 The docstring to apply to the class.
 
-        Returns:
+        Returns
+        -------
             A subclass of this one associated with the the provided data.
         """
 
@@ -79,7 +80,8 @@ class TabulatedShapeFamily(ShapeFamily):
             \*\*kwargs:
                 Passed on to :meth:`~.from_mapping`.
 
-        Returns:
+        Returns
+        -------
             A subclass of this one associated with the the provided data.
         """
         with open(filename) as f:
@@ -108,7 +110,8 @@ class TabulatedGSDShapeFamily(TabulatedShapeFamily):
             name (str):
                 The key of the desired shape in the data dict.
 
-        Returns:
+        Returns
+        -------
             :class:`~coxeter.shapes.Shape`: The requested shape.
         """
         return from_gsd_type_shapes(cls.data[name])

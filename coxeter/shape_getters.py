@@ -1,7 +1,7 @@
 # Copyright (c) 2021 The Regents of the University of Michigan
 # All rights reserved.
 # This software is licensed under the BSD 3-Clause License.
-"""This module defines various convenience functions for generating shapes.
+"""Module for defining various convenience functions for shape generation.
 
 The methods here provide routes for generating instances of
 :class:`~coxeter.shapes.Shape` based on certain pre-specified mappings.
@@ -42,7 +42,8 @@ def from_gsd_type_shapes(params, dimensions=3):  # noqa: C901
             instead of a :class:`~.shapes.Sphere` or
             :class:`~.shapes.Ellipsoid` (Default value: 3).
 
-    Returns:
+    Returns
+    -------
         :class:`~coxeter.shapes.Shape`:
             The desired shape.
     """
@@ -77,6 +78,6 @@ def from_gsd_type_shapes(params, dimensions=3):  # noqa: C901
         else:
             return ConvexPolyhedron(params["vertices"])
     elif params["type"] == "Mesh":
-        return Polyhedron(params["vertices"], params["faces"])
+        return Polyhedron(params["vertices"], params["indices"])
     else:
         raise ValueError("Unsupported shape type.")
