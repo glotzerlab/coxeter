@@ -5,7 +5,6 @@ import numpy as np
 import pytest
 from hypothesis import given, settings
 from hypothesis.strategies import floats
-from pytest import approx
 
 from conftest import make_sphero_cube
 
@@ -23,14 +22,14 @@ def test_volume(radius):
 def test_volume_polyhedron(convex_cube, cube_points):
     """Ensure that zero radius gives the same result as a polyhedron."""
     sphero_cube = make_sphero_cube(radius=0)
-    assert sphero_cube.volume == approx(convex_cube.volume)
+    assert np.isclose(sphero_cube.volume, convex_cube.volume)
 
 
 @given(value=floats(0.1, 1))
 def test_set_volume(value):
     sphero_cube = make_sphero_cube(radius=0)
     sphero_cube.volume = value
-    assert sphero_cube.volume == approx(value)
+    assert np.isclose(sphero_cube.volume, value)
 
 
 @settings(deadline=1000)
@@ -47,13 +46,34 @@ def test_surface_area(radius):
 def test_set_surface_area(value):
     sphero_cube = make_sphero_cube(radius=0)
     sphero_cube.surface_area = value
-    assert sphero_cube.surface_area == approx(value)
+    assert np.isclose(sphero_cube.surface_area, value)
 
 
 def test_surface_area_polyhedron(convex_cube):
     """Ensure that zero radius gives the same result as a polyhedron."""
     sphero_cube = make_sphero_cube(radius=0)
-    assert sphero_cube.surface_area == approx(convex_cube.surface_area)
+    assert np.isclose(sphero_cube.surface_area, convex_cube.surface_area)
+
+
+@given(radius=floats(0.1, 1))
+def test_mean_curvature(radius):
+    sphero_cube = make_sphero_cube(radius=radius)
+    h_cube = 3 / 4
+    h_sphere = radius
+    assert np.isclose(sphero_cube.mean_curvature, h_cube + h_sphere)
+
+
+def test_mean_curvature_polyhedron(convex_cube, cube_points):
+    """Ensure that zero radius gives the same result as a polyhedron."""
+    sphero_cube = make_sphero_cube(radius=0)
+    assert np.isclose(sphero_cube.mean_curvature, convex_cube.mean_curvature)
+
+
+@given(value=floats(0.1, 1))
+def test_set_mean_curvature(value):
+    sphero_cube = make_sphero_cube(radius=0)
+    sphero_cube.mean_curvature = value
+    assert np.isclose(sphero_cube.mean_curvature, value)
 
 
 @given(r=floats(0, 1.0))
