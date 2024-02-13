@@ -105,9 +105,9 @@ class ConvexSpheropolyhedron(Shape3D):
         # 2) The volume of the spherical caps on the vertices, which sum up to
         #    a single sphere with the spheropolyhedron's rounding radius.
         # 3) The volume of cylindrical wedges along the edges, which are
-        #    computed using a standard cylinder formula then using the dihedral
-        #    angle of the face to determine what fraction of the cylinder to
-        #    include.
+        #    computed using the standard formula for the volume of a cylinder
+        #    and using the dihedral angle of the face to determine what fraction
+        #    of the cylinder to include (the angle between the normals).
         # 4) The volume of the extruded faces, which is the surface area of
         #    each face multiplied by the rounding radius.
         v_poly = self.polyhedron.volume
@@ -123,7 +123,9 @@ class ConvexSpheropolyhedron(Shape3D):
             edge_length = np.linalg.norm(
                 self.polyhedron.vertices[edge[0]] - self.polyhedron.vertices[edge[1]]
             )
-            v_cyl += (np.pi * self.radius**2) * (phi / (2 * np.pi)) * edge_length
+            v_cyl += (
+                (np.pi * self.radius**2) * ((np.pi - phi) / (2 * np.pi)) * edge_length
+            )
 
         return v_poly + v_sphere + v_face + v_cyl
 
@@ -152,9 +154,9 @@ class ConvexSpheropolyhedron(Shape3D):
         # 2) The surface are of the spherical vertex caps, which is just the
         #    surface area of a single sphere with the rounding radius.
         # 3) The surface area of cylindrical wedges along the edges, which are
-        #    computed using a standard cylinder formula then using the dihedral
-        #    angle of the face to determine what fraction of the cylinder to
-        #    include.
+        #    computed using the standard formula for the volume of a cylinder
+        #    and using the dihedral angle of the face to determine what fraction
+        #    of the cylinder to include (the angle between the normals).
         a_poly = self.polyhedron.surface_area
         a_sphere = 4 * np.pi * self.radius**2
         a_cyl = 0
@@ -167,7 +169,9 @@ class ConvexSpheropolyhedron(Shape3D):
             edge_length = np.linalg.norm(
                 self.polyhedron.vertices[edge[0]] - self.polyhedron.vertices[edge[1]]
             )
-            a_cyl += (2 * np.pi * self.radius) * (phi / (2 * np.pi)) * edge_length
+            a_cyl += (
+                (2 * np.pi * self.radius) * ((np.pi - phi) / (2 * np.pi)) * edge_length
+            )
 
         return a_poly + a_sphere + a_cyl
 
@@ -178,6 +182,26 @@ class ConvexSpheropolyhedron(Shape3D):
             self._rescale(scale)
         else:
             raise ValueError("Surface area must be greater than zero.")
+
+    @property
+    def mean_curvature(self):
+        """float: Get the mean curvature."""
+        # Compute the mean curvature as the sum of 2 terms:
+        # 1) The mean curvature of the spherical vertex caps, which is just the
+        #    rounding radius of the spheropolyhedron.
+        # 2) The mean curvature of cylindrical wedges along the edges, which sum
+        #    to the mean curvature of the underlying polyhedron
+        h_sphere = self.radius
+        h_cyl = self.polyhedron.mean_curvature
+        return h_cyl + h_sphere
+
+    @mean_curvature.setter
+    def mean_curvature(self, value):
+        if value > 0:
+            scale = value / self.mean_curvature
+            self._rescale(scale)
+        else:
+            raise ValueError("Mean curvature must be greater than zero.")
 
     def is_inside(self, points):
         """Determine whether points are contained in this spheropolyhedron.
