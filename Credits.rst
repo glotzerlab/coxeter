@@ -123,6 +123,7 @@ Jen Bradley
 * Added ``simplices``, ``equations``, and ``face_centroids`` properties to the
   ConvexPolyhedron class.
 * Optimized pytest configurations for more efficient use of local and remote resources.
+* Added ``to_json`` and ``to_hoomd`` export methods.
 
 Domagoj Fijan
 

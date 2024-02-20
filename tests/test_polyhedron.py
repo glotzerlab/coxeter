@@ -934,3 +934,22 @@ def test_find_equations_and_normals(poly):
     ppoly._find_equations()
     assert np.allclose(poly.equations, ppoly._equations)
     assert np.allclose(poly.normals, ppoly.normals)
+
+
+@named_solids_mark
+def test_to_hoomd(poly):
+    poly.centroid = [0, 0, 0]
+    dict_keys = ["vertices", "centroid", "sweep_radius", "volume", "moment_inertia"]
+    dict_vals = [
+        poly.vertices,
+        [0, 0, 0],
+        0,
+        poly.volume,
+        poly.inertia_tensor,
+    ]
+    hoomd_dict = poly.to_hoomd()
+    for key, val in zip(dict_keys, dict_vals):
+        assert np.allclose(hoomd_dict[key], val), f"{key}"
+
+    for i, face in enumerate(poly.faces):
+        assert np.allclose(face, hoomd_dict["faces"][i])

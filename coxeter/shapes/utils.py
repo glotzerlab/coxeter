@@ -90,3 +90,27 @@ def _set_3d_axes_equal(ax, limits=None):
     ax.set_ylim3d([origin[1] - radius, origin[1] + radius])
     ax.set_zlim3d([origin[2] - radius, origin[2] + radius])
     return ax
+
+
+def _map_dict_keys(data, key_mapping):
+    """Rename a dict's keys based on a mapping dict.
+
+    If an instance of :class:`matplotlib.axes.Axes` is provided, it will be
+    passed through.
+
+    Args:
+        data (dict):
+            A dict with keys to be remapped
+        key_mapping (dict):
+            A dict of keys that should be renamed. The keys of this dict should
+            correspond with the keys of data that are to be changed, and the values
+            should correspond with the desired new keys.
+
+    Returns
+    -------
+        dict: A dict with the select keys renamed to the mapped values.
+    """
+    return {key_mapping.get(key, key): value for key, value in data.items()}
+
+
+_hoomd_dict_mapping = {"inertia_tensor": "moment_inertia", "radius": "sweep_radius"}

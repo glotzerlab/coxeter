@@ -219,3 +219,18 @@ def test_inertia(unit_rounded_square):
 
 def test_repr(unit_rounded_square):
     assert str(unit_rounded_square), str(eval(repr(unit_rounded_square)))
+
+
+def test_to_hoomd(unit_rounded_square):
+    """Test hoomd JSON calculation."""
+    shape = unit_rounded_square
+    dict_keys = ["vertices", "centroid", "sweep_radius", "area"]
+    dict_vals = [
+        shape.vertices,
+        [0, 0, 0],
+        1,
+        shape.area,
+    ]
+    hoomd_dict = shape.to_hoomd()
+    for key, val in zip(dict_keys, dict_vals):
+        assert np.allclose(hoomd_dict[key], val), f"{key}"
