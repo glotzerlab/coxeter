@@ -219,7 +219,7 @@ class Sphere(Shape3D):
         """Get a dict of JSON-serializable subset of Sphere properties.
 
         The JSON-serializable output of the to_hoomd method can be directly imported
-        into data management tools like Signac. This data can then be queried for use in
+        into data management tools like signac. This data can then be queried for use in
         HOOMD simulations. Key naming matches HOOMD integrators: for example, the
         moment_inertia key links to data from coxeter's inertia_tensor. Stored values
         are based on the shape with its centroid at the origin.
