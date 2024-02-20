@@ -12,7 +12,13 @@ from ..extern.bentley_ottmann import poly_point_isect
 from ..extern.polytri import polytri
 from .base_classes import Shape2D
 from .circle import Circle
-from .utils import _generate_ax, rotate_order2_tensor, translate_inertia_tensor
+from .utils import (
+    _generate_ax,
+    _hoomd_dict_mapping,
+    _map_dict_keys,
+    rotate_order2_tensor,
+    translate_inertia_tensor,
+)
 
 try:
     import miniball
@@ -768,7 +774,8 @@ class Polygon(Shape2D):
         The json-serializable output of the to_hoomd method can be directly imported
         into data management tools like Signac. This data can then be queried for use in
         HOOMD simulations. Key naming matches HOOMD integrators: for example, the
-        moment_inertia key links to data from coxeter's inertia_tensor.
+        moment_inertia key links to data from coxeter's inertia_tensor. Stored values
+        are based on the shape with its centroid at the origin.
 
         For a Polygon or ConvexPolygon, the following properties are stored:
 
@@ -791,12 +798,9 @@ class Polygon(Shape2D):
         """
         old_centroid = self.centroid
         self.centroid = np.array([0, 0, 0])
-        hoomd_dict = {
-            "vertices": self.vertices.tolist(),
-            "centroid": self.centroid.tolist(),
-            "sweep_radius": 0.0,
-            "area": self.area,
-            "moment_inertia": self.inertia_tensor.tolist(),
-        }
+        data = self.to_json(["vertices", "centroid", "area", "inertia_tensor"])
+        hoomd_dict = _map_dict_keys(data, key_mapping=_hoomd_dict_mapping)
+        hoomd_dict["sweep_radius"] = 0.0
+
         self.centroid = old_centroid
         return hoomd_dict

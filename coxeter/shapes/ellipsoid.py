@@ -8,7 +8,7 @@ from scipy.special import ellipeinc, ellipkinc
 
 from .base_classes import Shape3D
 from .sphere import Sphere
-from .utils import translate_inertia_tensor
+from .utils import _hoomd_dict_mapping, _map_dict_keys, translate_inertia_tensor
 
 
 class Ellipsoid(Shape3D):
@@ -227,12 +227,13 @@ class Ellipsoid(Shape3D):
         )
 
     def to_hoomd(self):
-        """Get a json-serializable subset of Ellipsoid properties.
+        """Get a JSON-serializable subset of Ellipsoid properties.
 
-        The json-serializable output of the to_hoomd method can be directly imported
+        The JSON-serializable output of the to_hoomd method can be directly imported
         into data management tools like Signac. This data can then be queried for use in
         HOOMD simulations. Key naming matches HOOMD integrators: for example, the
-        moment_inertia key links to data from coxeter's inertia_tensor.
+        moment_inertia key links to data from coxeter's inertia_tensor. Stored values
+        are based on the shape with its centroid at the origin.
 
         For an Ellipsoid, the following properties are stored:
 
@@ -257,13 +258,8 @@ class Ellipsoid(Shape3D):
         """
         old_centroid = self.centroid
         self.centroid = np.array([0, 0, 0])
-        hoomd_dict = {
-            "a": self.a,
-            "b": self.b,
-            "c": self.c,
-            "centroid": self.centroid.tolist(),
-            "volume": self.volume,
-            "moment_inertia": self.inertia_tensor.tolist(),
-        }
+        data = self.to_json(["a", "b", "c", "centroid", "volume", "inertia_tensor"])
+        hoomd_dict = _map_dict_keys(data, key_mapping=_hoomd_dict_mapping)
+
         self.centroid = old_centroid
         return hoomd_dict

@@ -15,7 +15,13 @@ from .base_classes import Shape3D
 from .convex_polygon import ConvexPolygon, _is_convex
 from .polygon import Polygon, _is_simple
 from .sphere import Sphere
-from .utils import _generate_ax, _set_3d_axes_equal, translate_inertia_tensor
+from .utils import (
+    _generate_ax,
+    _hoomd_dict_mapping,
+    _map_dict_keys,
+    _set_3d_axes_equal,
+    translate_inertia_tensor,
+)
 
 try:
     import miniball
@@ -975,12 +981,13 @@ class Polyhedron(Shape3D):
         )
 
     def to_hoomd(self):
-        """Get a json-serializable subset of Polyhedron properties.
+        """Get a JSON-serializable subset of Polyhedron properties.
 
-        The json-serializable output of the to_hoomd method can be directly imported
-        into data management tools like Signac. This data can then be queried for use in
+        The JSON-serializable output of the to_hoomd method can be directly imported
+        into data management tools like signac. This data can then be queried for use in
         HOOMD simulations. Key naming matches HOOMD integrators: for example, the
-        moment_inertia key links to data from coxeter's inertia_tensor.
+        moment_inertia key links to data from coxeter's inertia_tensor. Stored values
+        are based on the shape with its centroid at the origin.
 
         For a Polyhedron or ConvexPolyhedron, the following properties are stored:
 
@@ -1001,17 +1008,15 @@ class Polyhedron(Shape3D):
         Returns
         -------
         dict
-            Dict containing a subset of shape properties.
+            Dict containing a subset of shape properties required for HOOMD function.
         """
         old_centroid = self.centroid
         self.centroid = np.array([0, 0, 0])
-        hoomd_dict = {
-            "vertices": self.vertices.tolist(),
-            "faces": [face.tolist() for face in self.faces],
-            "centroid": self.centroid.tolist(),
-            "sweep_radius": 0.0,
-            "volume": self.volume,
-            "moment_inertia": self.inertia_tensor.tolist(),
-        }
+        data = self.to_json(
+            ["vertices", "faces", "centroid", "volume", "inertia_tensor"]
+        )
+        hoomd_dict = _map_dict_keys(data, key_mapping=_hoomd_dict_mapping)
+        hoomd_dict["sweep_radius"] = 0.0
+
         self.centroid = old_centroid
         return hoomd_dict

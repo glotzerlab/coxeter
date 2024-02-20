@@ -6,7 +6,7 @@
 import numpy as np
 
 from .base_classes import Shape3D
-from .utils import translate_inertia_tensor
+from .utils import _hoomd_dict_mapping, _map_dict_keys, translate_inertia_tensor
 
 
 class Sphere(Shape3D):
@@ -67,6 +67,18 @@ class Sphere(Shape3D):
             self._radius = value
         else:
             raise ValueError("Radius must be greater than zero.")
+
+    @property
+    def diameter(self):
+        """float: Get or set the radius of the sphere."""
+        return 2 * self._radius
+
+    @diameter.setter
+    def diameter(self, value):
+        if value > 0:
+            self._radius = value / 2
+        else:
+            raise ValueError("Diameter must be greater than zero.")
 
     def _rescale(self, scale):
         """Multiply length scale.
@@ -204,12 +216,13 @@ class Sphere(Shape3D):
         )
 
     def to_hoomd(self):
-        """Get a dict of json-serializable subset of Sphere properties.
+        """Get a dict of JSON-serializable subset of Sphere properties.
 
-        The json-serializable output of the to_hoomd method can be directly imported
+        The JSON-serializable output of the to_hoomd method can be directly imported
         into data management tools like Signac. This data can then be queried for use in
         HOOMD simulations. Key naming matches HOOMD integrators: for example, the
-        moment_inertia key links to data from coxeter's inertia_tensor.
+        moment_inertia key links to data from coxeter's inertia_tensor. Stored values
+        are based on the shape with its centroid at the origin.
 
         For a Sphere, the following properties are stored:
 
@@ -230,11 +243,8 @@ class Sphere(Shape3D):
         """
         old_centroid = self.centroid
         self.centroid = np.array([0, 0, 0])
-        hoomd_dict = {
-            "diameter": self.radius * 2,
-            "centroid": self.centroid.tolist(),
-            "volume": self.volume,
-            "moment_inertia": self.inertia_tensor.tolist(),
-        }
+        data = self.to_json(["diameter", "centroid", "volume", "inertia_tensor"])
+        hoomd_dict = _map_dict_keys(data, key_mapping=_hoomd_dict_mapping)
+
         self.centroid = old_centroid
         return hoomd_dict

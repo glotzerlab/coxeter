@@ -11,6 +11,7 @@ import numpy as np
 
 from .base_classes import Shape3D
 from .convex_polyhedron import ConvexPolyhedron
+from .utils import _hoomd_dict_mapping, _map_dict_keys
 
 
 class ConvexSpheropolyhedron(Shape3D):
@@ -330,12 +331,13 @@ class ConvexSpheropolyhedron(Shape3D):
         )
 
     def to_hoomd(self):
-        """Get a json-serializable subset of ConvexSpheropolyhedron properties.
+        """Get a JSON-serializable subset of ConvexSpheropolyhedron properties.
 
-        The json-serializable output of the to_hoomd method can be directly imported
-        into data management tools like Signac. This data can then be queried for use in
+        The JSON-serializable output of the to_hoomd method can be directly imported
+        into data management tools like signac. This data can then be queried for use in
         HOOMD simulations. Key naming matches HOOMD integrators: for example, the
-        moment_inertia key links to data from coxeter's inertia_tensor.
+        moment_inertia key links to data from coxeter's inertia_tensor. Stored values
+        are based on the shape with its centroid at the origin.
 
         For a ConvexSpheropolyhedron, the following properties are stored:
 
@@ -356,11 +358,9 @@ class ConvexSpheropolyhedron(Shape3D):
         """
         old_centroid = self._polyhedron.centroid
         self._polyhedron.centroid = np.array([0, 0, 0])
-        hoomd_dict = {
-            "vertices": self.vertices.tolist(),
-            "centroid": self._polyhedron.centroid.tolist(),
-            "sweep_radius": self.radius,
-            "volume": self.volume,
-        }
+        data = self.to_json(["vertices", "radius", "volume"])
+        hoomd_dict = _map_dict_keys(data, key_mapping=_hoomd_dict_mapping)
+        hoomd_dict["centroid"] = [0, 0, 0]
+
         self._polyhedron.centroid = old_centroid
         return hoomd_dict

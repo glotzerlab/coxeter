@@ -12,6 +12,7 @@ import numpy as np
 from .base_classes import Shape2D
 from .convex_polygon import ConvexPolygon, _is_convex
 from .polygon import _align_points_by_normal
+from .utils import _hoomd_dict_mapping, _map_dict_keys
 
 
 class ConvexSpheropolygon(Shape2D):
@@ -269,12 +270,13 @@ class ConvexSpheropolygon(Shape2D):
         )
 
     def to_hoomd(self):
-        """Get a json-serializable subset of ConvexSpheropolygon properties.
+        """Get a JSON-serializable subset of ConvexSpheropolygon properties.
 
-        The json-serializable output of the to_hoomd method can be directly imported
-        into data management tools like Signac. This data can then be queried for use in
+        The JSON-serializable output of the to_hoomd method can be directly imported
+        into data management tools like signac. This data can then be queried for use in
         HOOMD simulations. Key naming matches HOOMD integrators: for example, the
-        moment_inertia key links to data from coxeter's inertia_tensor.
+        moment_inertia key links to data from coxeter's inertia_tensor. Stored values
+        are based on the shape with its centroid at the origin.
 
         For a ConvexSpheropolygon, the following properties are stored:
 
@@ -287,22 +289,16 @@ class ConvexSpheropolygon(Shape2D):
             The rounding radius of the shape.
         * area (float)
             The area of the shape.
-        * moment_inertia (list(list))
-            The shape's inertia tensor.
 
         Returns
         -------
         dict
             Dict containing a subset of shape properties.
         """
-        old_centroid = self.centroid
-        self.centroid = np.array([0, 0, 0])
-        hoomd_dict = {
-            "vertices": self.vertices.tolist(),
-            "centroid": self.centroid.tolist(),
-            "sweep_radius": self.radius,
-            "area": self.area,
-            "moment_inertia": self.inertia_tensor.tolist(),
-        }
-        self.centroid = old_centroid
+        old_centroid = self._polygon.centroid
+        data = self.to_json(["vertices", "radius", "area"])
+        hoomd_dict = _map_dict_keys(data, key_mapping=_hoomd_dict_mapping)
+        hoomd_dict["centroid"] = [0, 0, 0]
+
+        self._polygon.centroid = old_centroid
         return hoomd_dict
