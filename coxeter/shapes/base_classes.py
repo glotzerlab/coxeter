@@ -197,6 +197,30 @@ class Shape(ABC):
             scene.add_primitive(prim)
         return scene
 
+    def to_json(self, attributes: list):
+        """Get a JSON-serializable subset of shape properties.
+
+        Args:
+            attributes (list):
+                List of attributes to export. Each element must be a valid attribute
+                of the class.
+
+        Returns
+        -------
+           dict
+                A dict containing the requested attributes.
+
+        Raises
+        ------
+            AttributeError:
+                If any keys in the input list are invalid.
+        """
+        export = {}
+        for attribute in attributes:
+            # If an invalid key is passed, this will raise an attribute error
+            export.update({attribute: getattr(self, attribute)})
+        return export
+
 
 class Shape2D(Shape):
     """An abstract representation of a shape in 2 dimensions."""
