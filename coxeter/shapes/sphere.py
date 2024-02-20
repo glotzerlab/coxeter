@@ -230,7 +230,7 @@ class Sphere(Shape3D):
             The diameter of the sphere, equal to twice the radius.
         * centroid (list(float))
             The centroid of the shape.
-            This is set to [0,0,0] to improve HOOMD performance.
+            This is set to [0,0,0] per HOOMD's spec.
         * volume (float)
             The volume of the shape.
         * moment_inertia (list(list))

@@ -997,7 +997,7 @@ class Polyhedron(Shape3D):
             The faces of the shape.
         * centroid (list(float))
             The centroid of the shape.
-            This is set to [0,0,0] to improve HOOMD performance.
+            This is set to [0,0,0] per HOOMD's spec.
         * sweep_radius (float):
             The rounding radius of the shape (0.0).
         * volume (float)

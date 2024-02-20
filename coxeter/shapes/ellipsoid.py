@@ -245,7 +245,7 @@ class Ellipsoid(Shape3D):
             half axis of ellipsoid in the z direction
         * centroid (list(float))
             The centroid of the shape.
-            This is set to [0,0,0] to improve HOOMD performance.
+            This is set to [0,0,0] per HOOMD's spec.
         * volume (float)
             The volume of the shape.
         * moment_inertia (list(list))
