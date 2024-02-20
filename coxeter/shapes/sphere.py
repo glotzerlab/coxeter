@@ -239,7 +239,7 @@ class Sphere(Shape3D):
         Returns
         -------
         dict
-            Dict containing a subset of shape properties.
+            Dict containing a subset of shape properties required for HOOMD function.
         """
         old_centroid = self.centroid
         self.centroid = np.array([0, 0, 0])

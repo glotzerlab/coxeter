@@ -293,7 +293,7 @@ class ConvexSpheropolygon(Shape2D):
         Returns
         -------
         dict
-            Dict containing a subset of shape properties.
+            Dict containing a subset of shape properties required for HOOMD function.
         """
         old_centroid = self._polygon.centroid
         data = self.to_json(["vertices", "radius", "area"])

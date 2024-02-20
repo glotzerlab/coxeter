@@ -354,7 +354,7 @@ class ConvexSpheropolyhedron(Shape3D):
         Returns
         -------
         dict
-            Dict containing a subset of shape properties.
+            Dict containing a subset of shape properties required for HOOMD function.
         """
         old_centroid = self._polyhedron.centroid
         self._polyhedron.centroid = np.array([0, 0, 0])
