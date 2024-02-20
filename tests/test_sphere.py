@@ -21,6 +21,14 @@ def test_radius_getter_setter(r):
     assert sphere.radius == r + 1
 
 
+@given(floats(0.1, 1000))
+def test_diameter_getter_setter(r):
+    sphere = Sphere(r)
+    assert sphere.diameter == 2 * r
+    sphere.diameter = 2 * r + 1
+    assert sphere.diameter == 2 * r + 1
+
+
 @given(floats(-1000, -1))
 def test_invalid_radius_setter(r):
     """Test setting an invalid Volume."""
