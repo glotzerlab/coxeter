@@ -11,6 +11,12 @@ repos:
       - id: debug-statements
       - id: check-builtin-literals
       - id: check-executables-have-shebangs
+      - id: pretty-format-json
+        exclude: '\.ipynb$'
+        args:
+        - --indent
+        - '4'
+        - --no-sort-keys
       - id: check-json
       - id: check-yaml
       - id: requirements-txt-fixer
