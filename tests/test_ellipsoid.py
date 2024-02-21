@@ -59,9 +59,7 @@ def test_surface_area(a, b, c):
     # https://en.wikipedia.org/wiki/Ellipsoid#Approximate_formula
     p = 1.6075
     approx_surface = (
-        4
-        * np.pi
-        * ((a**p * b**p + a**p * c**p + b**p * c**p) / 3) ** (1 / p)
+        4 * np.pi * ((a**p * b**p + a**p * c**p + b**p * c**p) / 3) ** (1 / p)
     )
 
     ellipsoid = Ellipsoid(a, b, c)

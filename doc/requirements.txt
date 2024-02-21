@@ -1,10 +1,10 @@
+autodocsumm
+furo
+jupyter
+matplotlib
+nbsphinx
 numpy
 rowan>=1.2
 scipy
-jupyter
 sphinx
-furo
 sphinxcontrib-bibtex>=2.0.0
-autodocsumm
-nbsphinx
-matplotlib
