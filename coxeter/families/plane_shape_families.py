@@ -441,7 +441,7 @@ class Family523(TruncationPlaneShapeFamily):
         """
         if not 1 <= a <= (cls.s * np.sqrt(5)):
             raise ValueError(
-                "The a parameter must be between 1 and s\u221A5 "
+                "The a parameter must be between 1 and s\u221a5 "
                 "(where s is the inverse of the golden ratio)."
             )
         if not cls.S**2 <= c <= 3:
