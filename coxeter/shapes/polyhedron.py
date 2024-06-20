@@ -1049,3 +1049,28 @@ class Polyhedron(Shape3D):
             for f in self.faces:
                 file.write(f"f {' '.join([str(i+1) for i in f])}\n")
 
+    def to_off(self, filename):
+        """Save Polyhedron to an Object File Format (OFF) file.
+        
+        Args:
+            filename (str, pathlib.Path, or os.PathLike):
+                The name or path of the output file, including the extension.
+
+        Raises
+        ------
+            OSError: If open() encounters a problem.
+        """
+        with open(filename, "w") as file:
+            file.write(f"OFF\n# OFF file written by Coxeter "
+                    f"version {__version__}\n"
+                    f"# {self.__class__.__name__}\n")
+
+            file.write(f"{len(self.vertices)} f{len(self.faces)} "
+                    f"{len(self.edges)}\n")
+
+            for v in self.vertices:
+                file.write(f"{' '.join([str(i) for i in v])}\n")
+
+            for f in self.faces:
+                file.write(f"{len(f)} {' '.join([str(i) for i in f])}\n")
+
