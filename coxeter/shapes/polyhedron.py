@@ -10,6 +10,7 @@ import numpy as np
 import rowan
 from scipy.sparse.csgraph import connected_components
 
+from .... import __version__
 from ..extern.polytri import polytri
 from .base_classes import Shape3D
 from .convex_polygon import ConvexPolygon, _is_convex
