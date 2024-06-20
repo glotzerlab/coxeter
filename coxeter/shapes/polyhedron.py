@@ -1021,3 +1021,31 @@ class Polyhedron(Shape3D):
 
         self.centroid = old_centroid
         return hoomd_dict
+
+    def to_obj(self, filename):
+        """Save Polyhedron to a wavefront OBJ file.
+        
+        Args:
+            filename (str, pathlib.Path, or os.PathLike):
+                The name or path of the output file, including the extension.
+
+        Note:
+            In OBJ files, vertices in face definitions are indexed from one.
+
+        Raises
+        ------
+            OSError: If open() encounters a problem.
+        """
+        with open(filename, "w") as file:
+            file.write(f"# wavefront obj file written by Coxeter "
+                    f"version {__version__}\n"
+                    f"# {self.__class__.__name__}\n\n")
+            
+            for v in self.vertices:
+                file.write(f"v {' '.join([str(i) for i in v])}\n")
+
+            file.write("\n")
+
+            for f in self.faces:
+                file.write(f"f {' '.join([str(i+1) for i in f])}\n")
+
