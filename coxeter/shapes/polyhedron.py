@@ -1115,3 +1115,35 @@ class Polyhedron(Shape3D):
                     file.write("\tendloop\nendfacet\n")
             
             file.write(f"endsolid {self.__class__.__name__}")
+
+    def to_ply(self, filename):
+        """Save Polyhedron to a Polygon File Format (PLY) file.
+        
+        Args:
+            filename (str, pathlib.Path, or os.PathLike):
+                The name or path of the output file, including the extension.
+
+        Note:
+            The output file is ASCII-encoded.
+                
+        Raises
+        ------
+            OSError: If open() encounters a problem.
+        """
+        with open(filename, "w") as file:
+            file.write(f"ply\nformat ascii 1.0\n"
+                    f"comment PLY file written by Coxeter "
+                    f"version {__version__}\n"
+                    f"comment {self.__class__.__name__}\n"
+                    f"element vertex {len(self.vertices)}\n"
+                    f"property float x\nproperty float y\nproperty float z\n"
+                    f"element face {len(self.faces)}\n"
+                    f"property list uchar uint vertex_indices\n"
+                    f"end_header\n")
+            
+            for v in self.vertices:
+                file.write(f"{' '.join([str(i) for i in v])}\n")
+            
+            for f in self.faces:
+                file.write(f"{len(f)} {' '.join([str(int(i)) for i in f])}\n")
+
