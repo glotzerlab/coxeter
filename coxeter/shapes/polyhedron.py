@@ -1074,3 +1074,44 @@ class Polyhedron(Shape3D):
             for f in self.faces:
                 file.write(f"{len(f)} {' '.join([str(i) for i in f])}\n")
 
+    def to_stl(self, filename):
+        """Save Polyhedron to a stereolithography (STL) file.
+        
+        Args:
+            filename (str, pathlib.Path, or os.PathLike):
+                The name or path of the output file, including the extension.
+
+        Note:
+            The output file is ASCII-encoded.
+
+        Raises
+        ------
+            OSError: If open() encounters a problem.
+        """
+        with open(filename, "w") as file:
+            # Shift vertices so all coordinates are positive
+            mins = np.amin(a=self.vertices, axis=0)
+            for i, m in enumerate(mins):
+                if m < 0:
+                    self.centroid[i] -= m
+            
+            # Write data
+            vs = self.vertices
+            file.write(f"solid {self.__class__.__name__}\n")
+
+            for f in self.faces:
+                # Decompose face into triangles
+                # ref: https://stackoverflow.com/a/66586936/15426433
+                triangles = [[vs[f[0]], vs[b], vs[c]] for b, c in zip(f[1:], f[2:])]
+                
+                for t in triangles:
+                    n = np.cross(t[1]-t[0], t[2]-t[1])  # order?
+
+                    file.write(f"facet normal {n[0]} {n[1]} {n[2]}\n"
+                            f"\touter loop\n")
+                    for point in t:
+                        file.write(f"\t\tvertex {point[0]} {point[1]} {point[2]}\n")
+                    
+                    file.write("\tendloop\nendfacet\n")
+            
+            file.write(f"endsolid {self.__class__.__name__}")
