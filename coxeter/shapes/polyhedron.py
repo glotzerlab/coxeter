@@ -1024,7 +1024,7 @@ class Polyhedron(Shape3D):
 
     def to_obj(self, filename):
         """Save Polyhedron to a wavefront OBJ file.
-        
+
         Args:
             filename (str, pathlib.Path, or os.PathLike):
                 The name or path of the output file, including the extension.
@@ -1037,10 +1037,12 @@ class Polyhedron(Shape3D):
             OSError: If open() encounters a problem.
         """
         with open(filename, "w") as file:
-            file.write(f"# wavefront obj file written by Coxeter "
-                    f"version {__version__}\n"
-                    f"# {self.__class__.__name__}\n\n")
-            
+            file.write(
+                f"# wavefront obj file written by Coxeter "
+                f"version {__version__}\n"
+                f"# {self.__class__.__name__}\n\n"
+            )
+
             for v in self.vertices:
                 file.write(f"v {' '.join([str(i) for i in v])}\n")
 
@@ -1051,7 +1053,7 @@ class Polyhedron(Shape3D):
 
     def to_off(self, filename):
         """Save Polyhedron to an Object File Format (OFF) file.
-        
+
         Args:
             filename (str, pathlib.Path, or os.PathLike):
                 The name or path of the output file, including the extension.
@@ -1061,12 +1063,15 @@ class Polyhedron(Shape3D):
             OSError: If open() encounters a problem.
         """
         with open(filename, "w") as file:
-            file.write(f"OFF\n# OFF file written by Coxeter "
-                    f"version {__version__}\n"
-                    f"# {self.__class__.__name__}\n")
+            file.write(
+                f"OFF\n# OFF file written by Coxeter "
+                f"version {__version__}\n"
+                f"# {self.__class__.__name__}\n"
+            )
 
-            file.write(f"{len(self.vertices)} f{len(self.faces)} "
-                    f"{len(self.edges)}\n")
+            file.write(
+                f"{len(self.vertices)} f{len(self.faces)} " f"{len(self.edges)}\n"
+            )
 
             for v in self.vertices:
                 file.write(f"{' '.join([str(i) for i in v])}\n")
@@ -1076,7 +1081,7 @@ class Polyhedron(Shape3D):
 
     def to_stl(self, filename):
         """Save Polyhedron to a stereolithography (STL) file.
-        
+
         Args:
             filename (str, pathlib.Path, or os.PathLike):
                 The name or path of the output file, including the extension.
@@ -1094,7 +1099,7 @@ class Polyhedron(Shape3D):
             for i, m in enumerate(mins):
                 if m < 0:
                     self.centroid[i] -= m
-            
+
             # Write data
             vs = self.vertices
             file.write(f"solid {self.__class__.__name__}\n")
@@ -1103,53 +1108,54 @@ class Polyhedron(Shape3D):
                 # Decompose face into triangles
                 # ref: https://stackoverflow.com/a/66586936/15426433
                 triangles = [[vs[f[0]], vs[b], vs[c]] for b, c in zip(f[1:], f[2:])]
-                
-                for t in triangles:
-                    n = np.cross(t[1]-t[0], t[2]-t[1])  # order?
 
-                    file.write(f"facet normal {n[0]} {n[1]} {n[2]}\n"
-                            f"\touter loop\n")
+                for t in triangles:
+                    n = np.cross(t[1] - t[0], t[2] - t[1])  # order?
+
+                    file.write(f"facet normal {n[0]} {n[1]} {n[2]}\n" f"\touter loop\n")
                     for point in t:
                         file.write(f"\t\tvertex {point[0]} {point[1]} {point[2]}\n")
-                    
+
                     file.write("\tendloop\nendfacet\n")
-            
+
             file.write(f"endsolid {self.__class__.__name__}")
 
     def to_ply(self, filename):
         """Save Polyhedron to a Polygon File Format (PLY) file.
-        
+
         Args:
             filename (str, pathlib.Path, or os.PathLike):
                 The name or path of the output file, including the extension.
 
         Note:
             The output file is ASCII-encoded.
-                
+
         Raises
         ------
             OSError: If open() encounters a problem.
         """
         with open(filename, "w") as file:
-            file.write(f"ply\nformat ascii 1.0\n"
-                    f"comment PLY file written by Coxeter "
-                    f"version {__version__}\n"
-                    f"comment {self.__class__.__name__}\n"
-                    f"element vertex {len(self.vertices)}\n"
-                    f"property float x\nproperty float y\nproperty float z\n"
-                    f"element face {len(self.faces)}\n"
-                    f"property list uchar uint vertex_indices\n"
-                    f"end_header\n")
-            
+            file.write(
+                f"ply\nformat ascii 1.0\n"
+                f"comment PLY file written by Coxeter "
+                f"version {__version__}\n"
+                f"comment {self.__class__.__name__}\n"
+                f"element vertex {len(self.vertices)}\n"
+                f"property float x\nproperty float y\nproperty float z\n"
+                f"element face {len(self.faces)}\n"
+                f"property list uchar uint vertex_indices\n"
+                f"end_header\n"
+            )
+
             for v in self.vertices:
                 file.write(f"{' '.join([str(i) for i in v])}\n")
-            
+
             for f in self.faces:
                 file.write(f"{len(f)} {' '.join([str(int(i)) for i in f])}\n")
 
     def to_x3d(self, filename):
         """Save Polyhedron to an Extensible 3D (X3D) file.
-        
+
         Args:
             filename (str, pathlib.Path, or os.PathLike):
                 The name or path of the output file, including the extension.
@@ -1162,18 +1168,23 @@ class Polyhedron(Shape3D):
 
         # Parent elements
         root = ET.Element(
-            "x3d", 
-            attrib={"profile": "Interchange", 
-                    "version": "4.0", 
-                    "xmlns:xsd": "http://www.w3.org/2001/XMLSchema-instance", 
-                    "xsd:noNamespaceSchemaLocation": "http://www.web3d.org/specifications/x3d-4.0.xsd"})
+            "x3d",
+            attrib={
+                "profile": "Interchange",
+                "version": "4.0",
+                "xmlns:xsd": "http://www.w3.org/2001/XMLSchema-instance",
+                "xsd:noNamespaceSchemaLocation": "http://www.web3d.org/specifications/x3d-4.0.xsd",
+            },
+        )
         x3d_scene = ET.SubElement(root, "Scene")
-        x3d_self = ET.SubElement(x3d_scene, "self", 
-                                attrib={"DEF": f"{self.__class__.__name__}"})
+        x3d_self = ET.SubElement(
+            x3d_scene, "self", attrib={"DEF": f"{self.__class__.__name__}"}
+        )
 
         x3d_appearance = ET.SubElement(x3d_self, "Appearance")
-        x3d_material = ET.SubElement(x3d_appearance, "Material", 
-                                    attrib={"diffuseColor": "#6495ED"})
+        x3d_material = ET.SubElement(
+            x3d_appearance, "Material", attrib={"diffuseColor": "#6495ED"}
+        )
 
         # Geometry data
         coordinate_indices = list(range(sum([len(f) for f in self.faces])))
@@ -1182,26 +1193,25 @@ class Polyhedron(Shape3D):
             coordinate_indices.insert(len(f) + prev_index, -1)
             prev_index += len(f) + 1
 
-        coordinate_points = [
-            v for f in self.faces for i in f for v in self.vertices[i]
-        ]
+        coordinate_points = [v for f in self.faces for i in f for v in self.vertices[i]]
 
         x3d_indexedfaceset = ET.SubElement(
-            x3d_self, 
+            x3d_self,
             "IndexedFaceSet",
-            attrib={"coordIndex": " ".join([str(i) for i in coordinate_indices])})
+            attrib={"coordIndex": " ".join([str(i) for i in coordinate_indices])},
+        )
         x3d_coordinate = ET.SubElement(
-            x3d_indexedfaceset, 
+            x3d_indexedfaceset,
             "Coordinate",
-            attrib={"point": " ".join([str(i) for i in coordinate_points])})
+            attrib={"point": " ".join([str(i) for i in coordinate_points])},
+        )
 
         # Write to file
         ET.ElementTree(root).write(filename, encoding="UTF-8")
 
-
     def to_vtk(self, filename):
         """Save Polyhedron to a legacy VTK file.
-        
+
         Args:
             filename (str, pathlib.Path, or os.PathLike):
                 The name or path of the output file, including the extension.
@@ -1212,14 +1222,15 @@ class Polyhedron(Shape3D):
         """
         content = ""
         # Title and Header
-        content += (f"# vtk DataFile Version 3.0\n"
-                    f"{self.__class__.__name__} created by "
-                    f"Coxeter version {__version__}\n"
-                    f"ASCII\n")
-        
+        content += (
+            f"# vtk DataFile Version 3.0\n"
+            f"{self.__class__.__name__} created by "
+            f"Coxeter version {__version__}\n"
+            f"ASCII\n"
+        )
+
         # Geometry
-        content += (f"DATASET POLYDATA\n"
-                    f"POINTS {len(self.vertices)} float\n")
+        content += f"DATASET POLYDATA\n" f"POINTS {len(self.vertices)} float\n"
         for v in self.vertices:
             content += f"{v[0]} {v[1]} {v[2]}\n"
 
@@ -1235,7 +1246,7 @@ class Polyhedron(Shape3D):
 
     def to_html(self, filename):
         """Save Polyhedron to an HTML file.
-        
+
         This method calls self.to_x3d to create a temporary X3D file, then
         parses that X3D file and creates an HTML file in its place.
 
@@ -1256,18 +1267,22 @@ class Polyhedron(Shape3D):
         html = ET.Element("html")
         head = ET.SubElement(html, "head")
         script = ET.SubElement(
-            head, 
-            "script", 
-            attrib={"type": "text/javascript", 
-                    "src": "http://x3dom.org/release/x3dom.js"}
+            head,
+            "script",
+            attrib={
+                "type": "text/javascript",
+                "src": "http://x3dom.org/release/x3dom.js",
+            },
         )
-        script.text = " "       # ensures the tag is not self-closing
+        script.text = " "  # ensures the tag is not self-closing
         link = ET.SubElement(
-            head, 
-            "link", 
-            attrib={"rel": "stylesheet", 
-                    "type": "text/css", 
-                    "href": "http://x3dom.org/release/x3dom.css"}
+            head,
+            "link",
+            attrib={
+                "rel": "stylesheet",
+                "type": "text/css",
+                "href": "http://x3dom.org/release/x3dom.css",
+            },
         )
 
         # HTML body
@@ -1276,4 +1291,3 @@ class Polyhedron(Shape3D):
 
         # Write file
         ET.ElementTree(html).write(filename, encoding="UTF-8")
-    
