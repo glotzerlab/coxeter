@@ -1147,3 +1147,54 @@ class Polyhedron(Shape3D):
             for f in self.faces:
                 file.write(f"{len(f)} {' '.join([str(int(i)) for i in f])}\n")
 
+    def to_x3d(self, filename):
+        """Save Polyhedron to an Extensible 3D (X3D) file.
+        
+        Args:
+            filename (str, pathlib.Path, or os.PathLike):
+                The name or path of the output file, including the extension.
+
+        Raises
+        ------
+            OSError: If open() encounters a problem.
+        """
+        # TODO: translate self so that its centroid is at the origin
+
+        # Parent elements
+        root = ET.Element(
+            "x3d", 
+            attrib={"profile": "Interchange", 
+                    "version": "4.0", 
+                    "xmlns:xsd": "http://www.w3.org/2001/XMLSchema-instance", 
+                    "xsd:noNamespaceSchemaLocation": "http://www.web3d.org/specifications/x3d-4.0.xsd"})
+        x3d_scene = ET.SubElement(root, "Scene")
+        x3d_self = ET.SubElement(x3d_scene, "self", 
+                                attrib={"DEF": f"{self.__class__.__name__}"})
+
+        x3d_appearance = ET.SubElement(x3d_self, "Appearance")
+        x3d_material = ET.SubElement(x3d_appearance, "Material", 
+                                    attrib={"diffuseColor": "#6495ED"})
+
+        # Geometry data
+        coordinate_indices = list(range(sum([len(f) for f in self.faces])))
+        prev_index = 0
+        for f in self.faces:
+            coordinate_indices.insert(len(f) + prev_index, -1)
+            prev_index += len(f) + 1
+
+        coordinate_points = [
+            v for f in self.faces for i in f for v in self.vertices[i]
+        ]
+
+        x3d_indexedfaceset = ET.SubElement(
+            x3d_self, 
+            "IndexedFaceSet",
+            attrib={"coordIndex": " ".join([str(i) for i in coordinate_indices])})
+        x3d_coordinate = ET.SubElement(
+            x3d_indexedfaceset, 
+            "Coordinate",
+            attrib={"point": " ".join([str(i) for i in coordinate_points])})
+
+        # Write to file
+        ET.ElementTree(root).write(filename, encoding="UTF-8")
+
