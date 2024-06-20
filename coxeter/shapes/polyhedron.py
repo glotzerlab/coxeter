@@ -1233,3 +1233,47 @@ class Polyhedron(Shape3D):
         with open(filename, "wb") as file:
             file.write(content.encode("ascii"))
 
+    def to_html(self, filename):
+        """Save Polyhedron to an HTML file.
+        
+        This method calls self.to_x3d to create a temporary X3D file, then
+        parses that X3D file and creates an HTML file in its place.
+
+        Args:
+            filename (str, pathlib.Path, or os.PathLike):
+                The name or path of the output file, including the extension.
+
+        Raises
+        ------
+            OSError: If open() encounters a problem.
+        """
+        # Create, parse, and remove x3d file
+        self.to_x3d(self, filename)
+        x3d = ET.parse(filename)
+        os.remove(filename)
+
+        # HTML Head
+        html = ET.Element("html")
+        head = ET.SubElement(html, "head")
+        script = ET.SubElement(
+            head, 
+            "script", 
+            attrib={"type": "text/javascript", 
+                    "src": "http://x3dom.org/release/x3dom.js"}
+        )
+        script.text = " "       # ensures the tag is not self-closing
+        link = ET.SubElement(
+            head, 
+            "link", 
+            attrib={"rel": "stylesheet", 
+                    "type": "text/css", 
+                    "href": "http://x3dom.org/release/x3dom.css"}
+        )
+
+        # HTML body
+        body = ET.SubElement(html, "body")
+        body.append(x3d.getroot())
+
+        # Write file
+        ET.ElementTree(html).write(filename, encoding="UTF-8")
+    
