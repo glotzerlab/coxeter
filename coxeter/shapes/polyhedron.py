@@ -1198,3 +1198,38 @@ class Polyhedron(Shape3D):
         # Write to file
         ET.ElementTree(root).write(filename, encoding="UTF-8")
 
+
+    def to_vtk(self, filename):
+        """Save Polyhedron to a legacy VTK file.
+        
+        Args:
+            filename (str, pathlib.Path, or os.PathLike):
+                The name or path of the output file, including the extension.
+
+        Raises
+        ------
+            OSError: If open() encounters a problem.
+        """
+        content = ""
+        # Title and Header
+        content += (f"# vtk DataFile Version 3.0\n"
+                    f"{self.__class__.__name__} created by "
+                    f"Coxeter version {__version__}\n"
+                    f"ASCII\n")
+        
+        # Geometry
+        content += (f"DATASET POLYDATA\n"
+                    f"POINTS {len(self.vertices)} float\n")
+        for v in self.vertices:
+            content += f"{v[0]} {v[1]} {v[2]}\n"
+
+        num_points = len(self.faces)
+        num_connections = sum([len(f) for f in self.faces])
+        content += f"POLYGONS {num_points} {num_points + num_connections}\n"
+        for f in self.faces:
+            content += f"{len(f)} {' '.join([str(i) for i in f])}\n"
+
+        # Write file
+        with open(filename, "wb") as file:
+            file.write(content.encode("ascii"))
+
