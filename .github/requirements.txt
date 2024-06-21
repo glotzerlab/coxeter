@@ -1,5 +1,5 @@
 hypothesis==6.86.2
-matplotlib==3.7.3
+matplotlib==3.8.4
 miniball==1.2.0
 numpy==2.0.0
 plato-draw==1.12.0
