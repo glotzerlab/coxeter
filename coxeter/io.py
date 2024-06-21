@@ -7,7 +7,7 @@ from coxeter import __version__
 
 
 def to_obj(shape, filename):
-    """Save Polyhedron to a wavefront OBJ file.
+    """Save shape to a wavefront OBJ file.
 
     Args:
         filename (str, pathlib.Path, or os.PathLike):
@@ -37,7 +37,7 @@ def to_obj(shape, filename):
 
 
 def to_off(shape, filename):
-    """Save Polyhedron to an Object File Format (OFF) file.
+    """Save shape to an Object File Format (OFF) file.
 
     Args:
         filename (str, pathlib.Path, or os.PathLike):
@@ -66,7 +66,7 @@ def to_off(shape, filename):
 
 
 def to_stl(shape, filename):
-    """Save Polyhedron to a stereolithography (STL) file.
+    """Save shape to a stereolithography (STL) file.
 
     Args:
         filename (str, pathlib.Path, or os.PathLike):
@@ -108,7 +108,7 @@ def to_stl(shape, filename):
 
 
 def to_ply(shape, filename):
-    """Save Polyhedron to a Polygon File Format (PLY) file.
+    """Save shape to a Polygon File Format (PLY) file.
 
     Args:
         filename (str, pathlib.Path, or os.PathLike):
@@ -142,7 +142,7 @@ def to_ply(shape, filename):
 
 
 def to_x3d(shape, filename):
-    """Save Polyhedron to an Extensible 3D (X3D) file.
+    """Save shape to an Extensible 3D (X3D) file.
 
     Args:
         filename (str, pathlib.Path, or os.PathLike):
@@ -199,7 +199,7 @@ def to_x3d(shape, filename):
 
 
 def to_vtk(shape, filename):
-    """Save Polyhedron to a legacy VTK file.
+    """Save shape to a legacy VTK file.
 
     Args:
         filename (str, pathlib.Path, or os.PathLike):
@@ -235,7 +235,7 @@ def to_vtk(shape, filename):
 
 
 def to_html(shape, filename):
-    """Save Polyhedron to an HTML file.
+    """Save shape to an HTML file.
 
     This method calls shape.to_x3d to create a temporary X3D file, then
     parses that X3D file and creates an HTML file in its place.
