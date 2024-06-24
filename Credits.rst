@@ -132,6 +132,7 @@ Domagoj Fijan
 * Pre-commit now uses ruff instead of flake8, pydocstyle, pyupgrade and isort.
 * Ported CI to github actions.
 * Ported docs to Furo.
+* Added support for Python 3.12 and numpy 2.0.
 
 Source code
 -----------

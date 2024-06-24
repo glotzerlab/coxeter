@@ -113,7 +113,9 @@ class TruncationPlaneShapeFamily(ShapeFamily):
         # those cases.
         dets = np.linalg.det(coeffs)
         solution_indices = np.abs(dets) > thresh
-        xs = np.linalg.solve(coeffs[solution_indices], bs[solution_indices])
+        xs = np.linalg.solve(coeffs[solution_indices], bs[solution_indices][..., None])[
+            ..., 0
+        ]
 
         # Reject any solutions that are intersections that lie beyond at least
         # one of the bounding planes.
