@@ -28,12 +28,12 @@ def to_obj(shape, filename):
         )
 
         for v in shape.vertices:
-            file.write(f"v {' '.join([str(i) for i in v])}\n")
+            file.write(f"v {' '.join([str(coord) for coord in v])}\n")
 
         file.write("\n")
 
         for f in shape.faces:
-            file.write(f"f {' '.join([str(i+1) for i in f])}\n")
+            file.write(f"f {' '.join([str(v_index+1) for v_index in f])}\n")
 
 
 def to_off(shape, filename):
@@ -59,10 +59,10 @@ def to_off(shape, filename):
         )
 
         for v in shape.vertices:
-            file.write(f"{' '.join([str(i) for i in v])}\n")
+            file.write(f"{' '.join([str(coord) for coord in v])}\n")
 
         for f in shape.faces:
-            file.write(f"{len(f)} {' '.join([str(i) for i in f])}\n")
+            file.write(f"{len(f)} {' '.join([str(v_index) for v_index in f])}\n")
 
 
 def to_stl(shape, filename):
@@ -134,10 +134,10 @@ def to_ply(shape, filename):
         )
 
         for v in shape.vertices:
-            file.write(f"{' '.join([str(i) for i in v])}\n")
+            file.write(f"{' '.join([str(coord) for coord in v])}\n")
 
         for f in shape.faces:
-            file.write(f"{len(f)} {' '.join([str(int(i)) for i in f])}\n")
+            file.write(f"{len(f)} {' '.join([str(int(v_index)) for v_index in f])}\n")
 
 
 def to_x3d(shape, filename):
@@ -174,23 +174,23 @@ def to_x3d(shape, filename):
     )
 
     # Geometry data
-    coordinate_indices = list(range(sum([len(f) for f in shape.faces])))
+    point_indices = list(range(sum([len(f) for f in shape.faces])))
     prev_index = 0
     for f in shape.faces:
-        coordinate_indices.insert(len(f) + prev_index, -1)
+        point_indices.insert(len(f) + prev_index, -1)
         prev_index += len(f) + 1
 
-    coordinate_points = [v for f in shape.faces for i in f for v in shape.vertices[i]]
+    points = [v for f in shape.faces for v_index in f for v in shape.vertices[v_index]]
 
     x3d_indexedfaceset = ElementTree.SubElement(
         x3d_shape,
         "IndexedFaceSet",
-        attrib={"coordIndex": " ".join([str(i) for i in coordinate_indices])},
+        attrib={"coordIndex": " ".join([str(c_index) for c_index in point_indices])},
     )
     ElementTree.SubElement(
         x3d_indexedfaceset,
         "Coordinate",
-        attrib={"point": " ".join([str(i) for i in coordinate_points])},
+        attrib={"point": " ".join([str(p) for p in points])},
     )
 
     # Write to file
@@ -226,7 +226,7 @@ def to_vtk(shape, filename):
     num_connections = sum([len(f) for f in shape.faces])
     content += f"POLYGONS {num_points} {num_points + num_connections}\n"
     for f in shape.faces:
-        content += f"{len(f)} {' '.join([str(i) for i in f])}\n"
+        content += f"{len(f)} {' '.join([str(v_index) for v_index in f])}\n"
 
     # Write file
     with open(filename, "wb") as file:
