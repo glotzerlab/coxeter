@@ -160,7 +160,7 @@ def to_x3d(shape, filename):
             "profile": "Interchange",
             "version": "4.0",
             "xmlns:xsd": "http://www.w3.org/2001/XMLSchema-instance",
-            "xsd:noNamespaceSchemaLocation": "http://www.web3d.org/specifications/x3d-4.0.xsd",
+            "xsd:schemaLocation": "http://www.web3d.org/specifications/x3d-4.0.xsd",
         },
     )
     x3d_scene = ElementTree.SubElement(root, "Scene")
@@ -253,7 +253,7 @@ def to_html(shape, filename):
     os.remove(filename)
 
     # HTML Head
-    html = ElementTree.Element("html")
+    html = ElementTree.Element("html", attrib={"xmlns": "http://www.w3.org/1999/xhtml"})
     head = ElementTree.SubElement(html, "head")
     script = ElementTree.SubElement(
         head,
