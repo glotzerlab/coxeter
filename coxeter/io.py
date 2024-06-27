@@ -1,5 +1,5 @@
 import os
-import xml.etree.ElementTree as ET
+from xml.etree import ElementTree
 
 import numpy as np
 
@@ -124,8 +124,7 @@ def to_ply(shape, filename):
     with open(filename, "w") as file:
         file.write(
             f"ply\nformat ascii 1.0\n"
-            f"comment PLY file written by Coxeter "
-            f"version {__version__}\n"
+            f"comment PLY file written by Coxeter version {__version__}\n"
             f"comment {shape.__class__.__name__}\n"
             f"element vertex {len(shape.vertices)}\n"
             f"property float x\nproperty float y\nproperty float z\n"
@@ -155,7 +154,7 @@ def to_x3d(shape, filename):
     # TODO: translate shape so that its centroid is at the origin
 
     # Parent elements
-    root = ET.Element(
+    root = ElementTree.Element(
         "x3d",
         attrib={
             "profile": "Interchange",
@@ -164,13 +163,15 @@ def to_x3d(shape, filename):
             "xsd:noNamespaceSchemaLocation": "http://www.web3d.org/specifications/x3d-4.0.xsd",
         },
     )
-    x3d_scene = ET.SubElement(root, "Scene")
-    x3d_shape = ET.SubElement(
+    x3d_scene = ElementTree.SubElement(root, "Scene")
+    x3d_shape = ElementTree.SubElement(
         x3d_scene, "shape", attrib={"DEF": f"{shape.__class__.__name__}"}
     )
 
-    _ = ET.SubElement(x3d_shape, "Appearance")
-    _ = ET.SubElement(x3d_appearance, "Material", attrib={"diffuseColor": "#6495ED"})
+    x3d_appearance = ElementTree.SubElement(x3d_shape, "Appearance")
+    x3d_material = ElementTree.SubElement(
+        x3d_appearance, "Material", attrib={"diffuseColor": "#6495ED"}
+    )
 
     # Geometry data
     coordinate_indices = list(range(sum([len(f) for f in shape.faces])))
@@ -181,19 +182,19 @@ def to_x3d(shape, filename):
 
     coordinate_points = [v for f in shape.faces for i in f for v in shape.vertices[i]]
 
-    x3d_indexedfaceset = ET.SubElement(
+    x3d_indexedfaceset = ElementTree.SubElement(
         x3d_shape,
         "IndexedFaceSet",
         attrib={"coordIndex": " ".join([str(i) for i in coordinate_indices])},
     )
-    x3d_coordinate = ET.SubElement(
+    x3d_coordinate = ElementTree.SubElement(
         x3d_indexedfaceset,
         "Coordinate",
         attrib={"point": " ".join([str(i) for i in coordinate_points])},
     )
 
     # Write to file
-    ET.ElementTree(root).write(filename, encoding="UTF-8")
+    ElementTree.ElementTree(root).write(filename, encoding="UTF-8")
 
 
 def to_vtk(shape, filename):
@@ -248,19 +249,19 @@ def to_html(shape, filename):
     """
     # Create, parse, and remove x3d file
     to_x3d(shape, filename)
-    x3d = ET.parse(filename)
+    x3d = ElementTree.parse(filename)
     os.remove(filename)
 
     # HTML Head
-    html = ET.Element("html")
-    head = ET.SubElement(html, "head")
-    script = ET.SubElement(
+    html = ElementTree.Element("html")
+    head = ElementTree.SubElement(html, "head")
+    script = ElementTree.SubElement(
         head,
         "script",
         attrib={"type": "text/javascript", "src": "http://x3dom.org/release/x3dom.js"},
     )
     script.text = " "  # ensures the tag is not shape-closing
-    link = ET.SubElement(
+    link = ElementTree.SubElement(
         head,
         "link",
         attrib={
@@ -271,8 +272,8 @@ def to_html(shape, filename):
     )
 
     # HTML body
-    body = ET.SubElement(html, "body")
+    body = ElementTree.SubElement(html, "body")
     body.append(x3d.getroot())
 
     # Write file
-    ET.ElementTree(html).write(filename, encoding="UTF-8")
+    ElementTree.ElementTree(html).write(filename, encoding="UTF-8")
