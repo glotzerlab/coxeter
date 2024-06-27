@@ -169,7 +169,7 @@ def to_x3d(shape, filename):
     )
 
     x3d_appearance = ElementTree.SubElement(x3d_shape, "Appearance")
-    x3d_material = ElementTree.SubElement(
+    ElementTree.SubElement(
         x3d_appearance, "Material", attrib={"diffuseColor": "#6495ED"}
     )
 
@@ -187,7 +187,7 @@ def to_x3d(shape, filename):
         "IndexedFaceSet",
         attrib={"coordIndex": " ".join([str(i) for i in coordinate_indices])},
     )
-    x3d_coordinate = ElementTree.SubElement(
+    ElementTree.SubElement(
         x3d_indexedfaceset,
         "Coordinate",
         attrib={"point": " ".join([str(i) for i in coordinate_points])},
@@ -261,7 +261,7 @@ def to_html(shape, filename):
         attrib={"type": "text/javascript", "src": "http://x3dom.org/release/x3dom.js"},
     )
     script.text = " "  # ensures the tag is not shape-closing
-    link = ElementTree.SubElement(
+    ElementTree.SubElement(
         head,
         "link",
         attrib={
