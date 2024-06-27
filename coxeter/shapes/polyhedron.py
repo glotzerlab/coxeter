@@ -22,6 +22,7 @@ from .utils import (
     _set_3d_axes_equal,
     translate_inertia_tensor,
 )
+from .. import io
 
 try:
     import miniball
@@ -1020,3 +1021,37 @@ class Polyhedron(Shape3D):
 
         self.centroid = old_centroid
         return hoomd_dict
+
+    def save(self, filetype, filename):
+        """Convenience method that calls the relevant function from the io module.
+
+        Args:
+            filetype (str):
+                The file format to export Polyhedron to. Must be one of the following:
+                OBJ, OFF, STL, PLY, VTK, X3D, HTML.
+
+            filename (str, pathlib.Path, or os.PathLike):
+                The name or path of the output file, including the extension.
+
+        Raises
+        ------
+            ValueError: If filetype is not one of the required strings.  
+        """
+        match filetype:
+            case "OBJ":
+                io.to_obj(self, filename)
+            case "OFF":
+                io.to_off(self, filename)
+            case "STL":
+                io.to_stl(self, filename)
+            case "PLY":
+                io.to_ply(self, filename)
+            case "VTK":
+                io.to_vtk(self, filename)
+            case "X3D":
+                io.to_x3d(self, filename)
+            case "HTML":
+                io.to_html(self, filename)
+            case _:
+                raise ValueError(f"filetype must be one of the following: OBJ, OFF, "
+                                 f"STL, PLY, VTK, X3D, HTML")
