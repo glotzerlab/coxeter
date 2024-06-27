@@ -1,3 +1,15 @@
+# Copyright (c) 2021 The Regents of the University of Michigan
+# All rights reserved.
+# This software is licensed under the BSD 3-Clause License.
+"""Import/Export utilities for shape classes.
+
+This module contains functions for saving shapes to disk and creating shapes from
+local files. Currently, the following formats are supported:
+- Import: OBJ, OFF, PLY, VTK
+- Export: OBJ, OFF, STL, PLY, VTK, X3D, HTML
+
+These functions currently only work with `Polyhedron` and its subclasses.
+"""
 import os
 from xml.etree import ElementTree
 
