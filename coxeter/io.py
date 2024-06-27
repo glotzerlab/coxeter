@@ -5,7 +5,6 @@
 
 This module contains functions for saving shapes to disk and creating shapes from
 local files. Currently, the following formats are supported:
-- Import: OBJ, OFF, PLY, VTK
 - Export: OBJ, OFF, STL, PLY, VTK, X3D, HTML
 
 These functions currently only work with `Polyhedron` and its subclasses.
