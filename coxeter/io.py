@@ -276,4 +276,6 @@ def to_html(shape, filename):
     body.append(x3d.getroot())
 
     # Write file
-    ElementTree.ElementTree(html).write(filename, encoding="UTF-8")
+    with open(filename, "w") as file:
+        file.write("<!DOCTYPE html>")
+        file.write(ElementTree.tostring(html, encoding="unicode"))
