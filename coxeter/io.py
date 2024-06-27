@@ -170,9 +170,7 @@ def to_x3d(shape, filename):
     )
 
     _ = ET.SubElement(x3d_shape, "Appearance")
-    _ = ET.SubElement(
-        x3d_appearance, "Material", attrib={"diffuseColor": "#6495ED"}
-    )
+    _ = ET.SubElement(x3d_appearance, "Material", attrib={"diffuseColor": "#6495ED"})
 
     # Geometry data
     coordinate_indices = list(range(sum([len(f) for f in shape.faces])))
