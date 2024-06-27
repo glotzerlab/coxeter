@@ -169,8 +169,8 @@ def to_x3d(shape, filename):
         x3d_scene, "shape", attrib={"DEF": f"{shape.__class__.__name__}"}
     )
 
-    x3d_appearance = ET.SubElement(x3d_shape, "Appearance")
-    x3d_material = ET.SubElement(
+    _ = ET.SubElement(x3d_shape, "Appearance")
+    _ = ET.SubElement(
         x3d_appearance, "Material", attrib={"diffuseColor": "#6495ED"}
     )
 
