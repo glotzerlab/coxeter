@@ -9,6 +9,7 @@ local files. Currently, the following formats are supported:
 
 These functions currently only work with `Polyhedron` and its subclasses.
 """
+
 import os
 from xml.etree import ElementTree
 
@@ -264,7 +265,7 @@ def to_html(shape, filename):
     os.remove(filename)
 
     # HTML Head
-    html = ElementTree.Element("html", attrib={"xmlns":"http://www.w3.org/1999/xhtml"})
+    html = ElementTree.Element("html", attrib={"xmlns": "http://www.w3.org/1999/xhtml"})
     head = ElementTree.SubElement(html, "head")
     script = ElementTree.SubElement(
         head,

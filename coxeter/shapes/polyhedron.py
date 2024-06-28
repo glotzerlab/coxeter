@@ -10,6 +10,7 @@ import numpy as np
 import rowan
 from scipy.sparse.csgraph import connected_components
 
+from .. import io
 from ..extern.polytri import polytri
 from .base_classes import Shape3D
 from .convex_polygon import ConvexPolygon, _is_convex
@@ -22,7 +23,6 @@ from .utils import (
     _set_3d_axes_equal,
     translate_inertia_tensor,
 )
-from .. import io
 
 try:
     import miniball
@@ -1035,7 +1035,7 @@ class Polyhedron(Shape3D):
 
         Raises
         ------
-            ValueError: If filetype is not one of the required strings.  
+            ValueError: If filetype is not one of the required strings.
         """
         match filetype:
             case "OBJ":
@@ -1053,5 +1053,7 @@ class Polyhedron(Shape3D):
             case "HTML":
                 io.to_html(self, filename)
             case _:
-                raise ValueError(f"filetype must be one of the following: OBJ, OFF, "
-                                 f"STL, PLY, VTK, X3D, HTML")
+                raise ValueError(
+                    "filetype must be one of the following: OBJ, OFF, "
+                    "STL, PLY, VTK, X3D, HTML"
+                )
