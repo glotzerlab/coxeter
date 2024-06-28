@@ -1052,5 +1052,7 @@ class Polyhedron(Shape3D):
         elif filetype == "HTML":
             io.to_html(self, filename)
         else:
-            raise ValueError(f"filetype must be one of the following: OBJ, OFF, "
-                             f"STL, PLY, VTK, X3D, HTML")
+            raise ValueError(
+                "filetype must be one of the following: OBJ, OFF, "
+                "STL, PLY, VTK, X3D, HTML"
+            )
