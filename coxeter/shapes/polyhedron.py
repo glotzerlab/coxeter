@@ -1036,6 +1036,7 @@ class Polyhedron(Shape3D):
         Raises
         ------
             ValueError: If filetype is not one of the required strings.
+            OSError: If open() encounters a problem.
         """
         if filetype == "OBJ":
             io.to_obj(self, filename)
