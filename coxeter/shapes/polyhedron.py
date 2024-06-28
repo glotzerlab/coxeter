@@ -1037,23 +1037,20 @@ class Polyhedron(Shape3D):
         ------
             ValueError: If filetype is not one of the required strings.
         """
-        match filetype:
-            case "OBJ":
-                io.to_obj(self, filename)
-            case "OFF":
-                io.to_off(self, filename)
-            case "STL":
-                io.to_stl(self, filename)
-            case "PLY":
-                io.to_ply(self, filename)
-            case "VTK":
-                io.to_vtk(self, filename)
-            case "X3D":
-                io.to_x3d(self, filename)
-            case "HTML":
-                io.to_html(self, filename)
-            case _:
-                raise ValueError(
-                    "filetype must be one of the following: OBJ, OFF, "
-                    "STL, PLY, VTK, X3D, HTML"
-                )
+        if filetype == "OBJ":
+            io.to_obj(self, filename)
+        elif filetype == "OFF":
+            io.to_off(self, filename)
+        elif filetype == "STL":
+            io.to_stl(self, filename)
+        elif filetype == "PLY":
+            io.to_ply(self, filename)
+        elif filetype == "VTK":
+            io.to_vtk(self, filename)
+        elif filetype == "X3D":
+            io.to_x3d(self, filename)
+        elif filetype == "HTML":
+            io.to_html(self, filename)
+        else:
+            raise ValueError(f"filetype must be one of the following: OBJ, OFF, "
+                             f"STL, PLY, VTK, X3D, HTML")
