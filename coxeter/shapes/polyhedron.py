@@ -1023,11 +1023,11 @@ class Polyhedron(Shape3D):
         return hoomd_dict
 
     def save(self, filetype, filename):
-        """Convenience method that calls the relevant function from the io module.
+        """Save the polyhedron object to a file using methods from ``coxeter.io``.
 
         Args:
             filetype (str):
-                The file format to export Polyhedron to. Must be one of the following:
+                The file format to export polyhedron to. Must be one of the following:
                 OBJ, OFF, STL, PLY, VTK, X3D, HTML.
 
             filename (str, pathlib.Path, or os.PathLike):
