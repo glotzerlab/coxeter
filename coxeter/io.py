@@ -11,11 +11,12 @@ These functions currently only work with `Polyhedron` and its subclasses.
 """
 
 import os
+from importlib.metadata import version
 from xml.etree import ElementTree
 
 import numpy as np
 
-from coxeter import __version__
+__version__ = version("coxeter")
 
 
 def to_obj(shape, filename):
