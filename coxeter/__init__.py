@@ -1,6 +1,6 @@
-# Copyright (c) 2021 The Regents of the University of Michigan
-# All rights reserved.
-# This software is licensed under the BSD 3-Clause License.
+# Copyright (c) 2015-2024 The Regents of the University of Michigan All rights reserved.
+# This file is from the coxeter project, released under the BSD 3-Clause License.
+
 """The coxeter package simplifies working with shapes in 2D and 3D.
 
 While many computational geometry tools exist, they almost exclusively aim to
