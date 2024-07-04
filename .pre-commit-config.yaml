@@ -25,13 +25,8 @@ repos:
     hooks:
       - id: fix-license-header
         name: Fix License Headers (Python)
-        exclude: |
-          (?x)(
-              ^doc/|
-              ^paper/|
-              ^coxeter/extern/|
-              )
-        types_or: [python, cython]
+        exclude: ^doc/|^paper/|^coxeter/extern/
+        types_or: [python]
         args:
           - --license-file=LICENSE
           - --start=2
