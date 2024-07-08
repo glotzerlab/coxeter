@@ -29,11 +29,10 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
-    - uses: glotzerlab/workflows/setup-uv@ea2e25d07af862a1c696a932c2bd6b242d142049
+    - uses: glotzerlab/workflows/setup-uv
     - name: Set up Python environment
       run: |
-        uv venv
-        uv pip sync ".github/requirements${{matrix.python-version}}.txt" --reinstall
+        uv pip sync ".github/requirements${{matrix.python-version}}.txt" --reinstall --system
     - name: Install package
       run: |
         python --version
