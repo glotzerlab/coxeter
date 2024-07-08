@@ -61,9 +61,6 @@ Fixed
 - Error in `__repr__` for polyhedra with multiple face degrees.
 - ReadTheDocs build errors resulting from `conda` memory usage.
 
-
-
-
 v0.6.1 - 2021-07-15
 -------------------
 
