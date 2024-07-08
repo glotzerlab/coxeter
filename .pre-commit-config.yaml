@@ -20,6 +20,19 @@ repos:
       - id: check-json
       - id: check-yaml
       - id: requirements-txt-fixer
+  - repo: https://github.com/glotzerlab/fix-license-header
+    rev: v0.3.2
+    hooks:
+      - id: fix-license-header
+        name: Fix License Headers (Python)
+        exclude: ^doc/|^paper/|^coxeter/extern/
+        types_or: [python]
+        args:
+          - --license-file=LICENSE
+          - --start=2
+          - --num=1
+          - --add=This file is from the coxeter project, released under the BSD 3-Clause License.
+          - --keep-before=#!
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.5.0
     hooks:
