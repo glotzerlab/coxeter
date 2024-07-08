@@ -21,6 +21,14 @@ def test_radius_getter_setter(r):
     assert sphere.radius == r + 1
 
 
+@given(floats(0.1, 1000))
+def test_diameter_getter_setter(r):
+    sphere = Sphere(r)
+    assert sphere.diameter == 2 * r
+    sphere.diameter = 2 * r + 1
+    assert sphere.diameter == 2 * r + 1
+
+
 @given(floats(-1000, -1))
 def test_invalid_radius_setter(r):
     """Test setting an invalid Volume."""
@@ -230,3 +238,18 @@ def test_get_set_minimal_centered_bounding_circle_radius(r, center):
 def test_repr():
     sphere = Sphere(1, [1, 2, 3])
     assert str(sphere), str(eval(repr(sphere)))
+
+
+@given(floats(0.1, 1000))
+def test_to_hoomd(r):
+    sphere = Sphere(r)
+    dict_keys = ["diameter", "centroid", "volume", "moment_inertia"]
+    dict_vals = [
+        sphere.radius * 2,
+        [0, 0, 0],
+        sphere.volume,
+        sphere.inertia_tensor,
+    ]
+    hoomd_dict = sphere.to_hoomd()
+    for key, val in zip(dict_keys, dict_vals):
+        assert np.allclose(hoomd_dict[key], val), f"{key}"

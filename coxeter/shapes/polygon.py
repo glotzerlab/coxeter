@@ -12,7 +12,13 @@ from ..extern.bentley_ottmann import poly_point_isect
 from ..extern.polytri import polytri
 from .base_classes import Shape2D
 from .circle import Circle
-from .utils import _generate_ax, rotate_order2_tensor, translate_inertia_tensor
+from .utils import (
+    _generate_ax,
+    _hoomd_dict_mapping,
+    _map_dict_keys,
+    rotate_order2_tensor,
+    translate_inertia_tensor,
+)
 
 try:
     import cyminiball
@@ -761,3 +767,40 @@ class Polygon(Shape2D):
             colors=np.array([[0.5, 0.5, 0.5, 1]]),
             vertices=verts[:, :2],
         )
+
+    def to_hoomd(self):
+        """Get a JSON-serializable subset of Polygon properties.
+
+        The JSON-serializable output of the to_hoomd method can be directly imported
+        into data management tools like signac. This data can then be queried for use in
+        HOOMD simulations. Key naming matches HOOMD integrators: for example, the
+        moment_inertia key links to data from coxeter's inertia_tensor. Stored values
+        are based on the shape with its centroid at the origin.
+
+        For a Polygon or ConvexPolygon, the following properties are stored:
+
+        * vertices (list(list)):
+            The vertices of the shape.
+        * centroid (list(float))
+            The centroid of the shape.
+            This is set to [0,0,0] per HOOMD's spec.
+        * sweep_radius (float):
+            The rounding radius of the shape (0.0).
+        * area (float)
+            The area of the shape.
+        * moment_inertia (list(list))
+            The shape's inertia tensor.
+
+        Returns
+        -------
+        dict
+            Dict containing a subset of shape properties required for HOOMD function.
+        """
+        old_centroid = self.centroid
+        self.centroid = np.array([0, 0, 0])
+        data = self.to_json(["vertices", "centroid", "area", "inertia_tensor"])
+        hoomd_dict = _map_dict_keys(data, key_mapping=_hoomd_dict_mapping)
+        hoomd_dict["sweep_radius"] = 0.0
+
+        self.centroid = old_centroid
+        return hoomd_dict

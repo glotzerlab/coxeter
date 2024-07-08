@@ -59,9 +59,7 @@ def test_surface_area(a, b, c):
     # https://en.wikipedia.org/wiki/Ellipsoid#Approximate_formula
     p = 1.6075
     approx_surface = (
-        4
-        * np.pi
-        * ((a**p * b**p + a**p * c**p + b**p * c**p) / 3) ** (1 / p)
+        4 * np.pi * ((a**p * b**p + a**p * c**p + b**p * c**p) / 3) ** (1 / p)
     )
 
     ellipsoid = Ellipsoid(a, b, c)
@@ -252,3 +250,20 @@ def test_get_set_minimal_centered_bounding_circle_radius(a, b, c, center):
 def test_repr():
     ellipsoid = Ellipsoid(1, 2, 3, [1, 2, 3])
     assert str(ellipsoid), str(eval(repr(ellipsoid)))
+
+
+@given(floats(0.1, 1000), floats(0.1, 1000), floats(0.1, 1000))
+def test_to_hoomd(a, b, c):
+    ellipsoid = Ellipsoid(a, b, c)
+    dict_keys = ["a", "b", "c", "centroid", "volume", "moment_inertia"]
+    dict_vals = [
+        ellipsoid.a,
+        ellipsoid.b,
+        ellipsoid.c,
+        [0, 0, 0],
+        ellipsoid.volume,
+        ellipsoid.inertia_tensor,
+    ]
+    hoomd_dict = ellipsoid.to_hoomd()
+    for key, val in zip(dict_keys, dict_vals):
+        assert np.allclose(hoomd_dict[key], val), f"{key}"

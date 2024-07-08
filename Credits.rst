@@ -123,6 +123,7 @@ Jen Bradley
 * Added ``simplices``, ``equations``, and ``face_centroids`` properties to the
   ConvexPolyhedron class.
 * Optimized pytest configurations for more efficient use of local and remote resources.
+* Added ``to_json`` and ``to_hoomd`` export methods.
 
 Domagoj Fijan
 
@@ -131,6 +132,7 @@ Domagoj Fijan
 * Pre-commit now uses ruff instead of flake8, pydocstyle, pyupgrade and isort.
 * Ported CI to github actions.
 * Ported docs to Furo.
+* Added support for Python 3.12 and numpy 2.0.
 
 Source code
 -----------

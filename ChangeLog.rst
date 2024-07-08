@@ -3,16 +3,19 @@ This project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html
 
 v0.x.x - 20xx-xx-xx
 
+v0.8.0 - 2024-02-21
+
 Added
 ~~~~~
 
-- New `edge_lengths` method.
+- New ``edge_lengths`` method.
 - ``combine_simplices``, ``find_simplex_equations``, ``_find_face_centroids``,
   ``find_coplanar_simplices``, ``_find_face_centroids``, and ``calculate_signed_volume``
   methods for the ConvexPolyhedron class.
 - ``simplices``, ``equations``, and ``face_centroids`` properties for the
   ConvexPolyhedron class.
 - Additional pytests for surface area, volume, centroid, moment of inertia, and equations properties.
+- New ``to_hoomd`` and ``to_json`` export methods for use with simulation tools
 
 Changed
 ~~~~~~~

@@ -3,36 +3,30 @@ ci:
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: 'v4.5.0'
+    rev: 'v4.6.0'
     hooks:
       - id: end-of-file-fixer
       - id: trailing-whitespace
         exclude: '(?:setup.cfg.*|paper/.*)'
       - id: debug-statements
+      - id: check-builtin-literals
+      - id: check-executables-have-shebangs
       - id: pretty-format-json
         exclude: '\.ipynb$'
         args:
         - --indent
         - '4'
         - --no-sort-keys
-      - id: check-builtin-literals
-      - id: check-executables-have-shebangs
       - id: check-json
       - id: check-yaml
+      - id: requirements-txt-fixer
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.1.9
+    rev: v0.5.0
     hooks:
+      # Run the linter.
       - id: ruff
+        types_or: [ python, pyi, jupyter ]
         args: [ --fix ]
-        types_or: [python, pyi, jupyter]
-  - repo: https://github.com/psf/black
-    rev: '23.12.1'
-    hooks:
-      - id: black
-        exclude: '(?:extern/.*)'
-  - repo: https://github.com/nbQA-dev/nbQA
-    rev: 1.7.1
-    hooks:
-      - id: nbqa-black
-        args:
-          - --nbqa-mutate
+      # Run the formatter.
+      - id: ruff-format
+        types_or: [ python, pyi, jupyter ]
