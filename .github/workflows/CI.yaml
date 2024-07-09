@@ -41,4 +41,4 @@ jobs:
         python -m pip install . --progress-bar off
     - name: Test with pytest
       run: |
-        python -m pytest -v
+        python -m pytest -v -n auto
