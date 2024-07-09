@@ -27,3 +27,4 @@ jobs:
         pipfile=".github/requirements${{matrix.python-version}}.txt"
         echo "#" $(python --version) > pipfile
         uv pip compile requirements.txt tests/requirements.txt >> pipfile
+        cat pipfile
