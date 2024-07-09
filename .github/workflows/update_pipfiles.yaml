@@ -1,0 +1,29 @@
+name: Update pipfiles
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  udpate_pipfiles:
+    name: Run tests on ubuntu-latest with Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.8","3.9","3.10","3.11","3.12"]
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+    - uses: glotzerlab/workflows/setup-uv
+    - name: Set up Python environment
+      run: |
+        pipfile=".github/requirements${{matrix.python-version}}.txt"
+        echo "#" $(python --version) > pipfile
+        uv pip compile requirements.txt tests/requirements.txt >> pipfile
