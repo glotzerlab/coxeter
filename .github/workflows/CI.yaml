@@ -38,7 +38,7 @@ jobs:
         python --version
         python -c "import numpy; print('numpy', numpy.__version__)"
         python -c "import scipy; print('scipy', scipy.__version__)"
-        python -m pip install . --progress-bar off
+        uv pip install . --no-build-isolation --no-deps -v
     - name: Test with pytest
       run: |
         python -m pytest -v -n auto
