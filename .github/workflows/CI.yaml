@@ -29,9 +29,9 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
-    - uses: glotzerlab/workflows/setup-uv@1fcb2b253bf794b4e47cdff43479b145633f99e1
+    - uses: glotzerlab/workflows/setup-uv@3573ddaebf3290e00bfb150b82a46412192a61d3
       with:
-        onlybinary: false
+        only-binary: ":none:"
         lockfile: ".github/requirements${{matrix.python-version}}.txt"
     - name: Install package
       run: |
