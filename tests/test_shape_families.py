@@ -1,6 +1,6 @@
-# Copyright (c) 2021 The Regents of the University of Michigan
-# All rights reserved.
-# This software is licensed under the BSD 3-Clause License.
+# Copyright (c) 2015-2024 The Regents of the University of Michigan.
+# This file is from the coxeter project, released under the BSD 3-Clause License.
+
 import numpy as np
 import pytest
 from hypothesis import given
