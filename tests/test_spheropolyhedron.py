@@ -143,8 +143,7 @@ def test_repr():
     assert str(sphero_cube), str(eval(repr(sphero_cube)))
 
 
-@pytest.mark.xfail(reason="Maximum rounding radius is shape-dependent.")
-@given(r=floats(0.01, 1))
+@given(r=floats(0.01, 0.95))
 @named_catalan_mark
 def test_to_hoomd(poly, r):
     poly.centroid = [0, 0, 0]
