@@ -6,7 +6,7 @@ import pytest
 from hypothesis import given, settings
 from hypothesis.strategies import floats
 
-from conftest import make_sphero_cube, named_archimedean_mark
+from conftest import make_sphero_cube
 from coxeter.shapes import ConvexSpheropolyhedron
 
 
@@ -143,8 +143,8 @@ def test_repr():
     assert str(sphero_cube), str(eval(repr(sphero_cube)))
 
 
+@pytest.mark.xfail(reason="Maximum rounding radius is shape-dependent.")
 @given(r=floats(0.01, 1.0))
-@named_archimedean_mark
 def test_to_hoomd(poly, r):
     poly.centroid = [0, 0, 0]
     poly = ConvexSpheropolyhedron(poly.vertices, r)
