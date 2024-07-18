@@ -4,3 +4,6 @@ miniball
 plato-draw
 pytest
 pytest-cov
+pytest-xdist
+setuptools
+wheel

@@ -1,0 +1,36 @@
+name: Update pipfiles
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  schedule:
+    - cron: '0 12 1 * *'
+
+  workflow_dispatch:
+
+jobs:
+  udpate_pipfiles:
+    name: Run tests on ubuntu-latest with Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: glotzerlab/workflows/setup-uv@1fcb2b253bf794b4e47cdff43479b145633f99e1
+    - name: Set up Python environment
+      run: |
+        for v in "3.8" "3.9" "3.10" "3.11" "3.12"; do
+          pipfile=".github/requirements$v.txt"
+          uv pip compile --python-version $v requirements.txt tests/requirements.txt > $pipfile
+        done
+    - name: Create pull request
+      uses: peter-evans/create-pull-request@c5a7806660adbe173f04e3e038b0ccdcd758773c # v6.1.0
+      with:
+        base: master
+        path: code
+        commit-message: "Update pip lockfiles"
+        branch: update-pip-lockfiles
+        delete-branch: true
+        title: Update pip lockfiles.
+        body: Automated changes by uv pip compile.
+        token: ${{ steps.generate-token.outputs.token }}
