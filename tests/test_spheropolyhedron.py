@@ -142,6 +142,7 @@ def test_repr():
     sphero_cube = make_sphero_cube(radius=1)
     assert str(sphero_cube), str(eval(repr(sphero_cube)))
 
+
 @pytest.mark.xfail(reason="Maximum rounding radius is shape-dependent.")
 @given(r=floats(0.01, 1))
 @named_catalan_mark
