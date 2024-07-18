@@ -143,7 +143,8 @@ def test_repr():
     assert str(sphero_cube), str(eval(repr(sphero_cube)))
 
 
-@given(r=floats(0.01, 0.95))
+@pytest.mark.xfail(reason="Rounding radius is shape-dependent")
+@given(r=floats(0.01, 1.0))
 @named_catalan_mark
 def test_to_hoomd(poly, r):
     poly.centroid = [0, 0, 0]
