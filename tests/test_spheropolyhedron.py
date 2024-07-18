@@ -6,7 +6,7 @@ import pytest
 from hypothesis import given, settings
 from hypothesis.strategies import floats
 
-from conftest import make_sphero_cube, named_catalan_mark
+from conftest import make_sphero_cube
 from coxeter.shapes import ConvexSpheropolyhedron
 
 
