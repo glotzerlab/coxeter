@@ -63,6 +63,9 @@ class TabulatedShapeFamily(ShapeFamily):
             NewTabulatedShapeFamily.__name__ = classname
         if docstring is not None:
             NewTabulatedShapeFamily.__doc__ = docstring
+
+        NewTabulatedShapeFamily.shapes = [*mapping.keys()]
+
         return NewTabulatedShapeFamily
 
     @classmethod

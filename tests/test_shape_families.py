@@ -16,6 +16,7 @@ from coxeter.families import (
     RegularNGonFamily,
     TruncatedTetrahedronFamily,
 )
+from coxeter.families.common import ArchimedeanFamily, JohnsonFamily, PlatonicFamily
 
 MIN_REALISTIC_PRECISION = 2e-6
 
@@ -48,6 +49,14 @@ def test_regular_ngon(n):
         )
         == 1
     )
+
+
+@pytest.mark.parametrize(
+    "family", [PlatonicFamily, ArchimedeanFamily, CatalanFamily, JohnsonFamily]
+)
+def test_named_family(family):
+    for name in family.shapes:
+        family.get_shape(name)
 
 
 def test_shape_repos():
