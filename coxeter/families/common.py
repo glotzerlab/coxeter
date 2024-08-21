@@ -145,7 +145,7 @@ JohnsonFamily = TabulatedGSDShapeFamily.from_json_file(
                 The name of the Johnson solid.
 
     A full list of Johnson solids is available in :cite:`Johnson1966`, and in the
-    ``cls.shape`` property. In general, shape names should have the first character of
+    ``names`` property. In general, shape names should have the first character of
     each word capitalized, with spaces between words (e.g. "Elongated Triangular
     Cupola"). Pyramids and dipyramids are named from their base polygon (e.g. "Square
     Pyramid" or "Elongated Pentagonal Dipyramid").
