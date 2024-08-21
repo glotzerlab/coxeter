@@ -97,7 +97,7 @@ PlatonicFamily = TabulatedGSDShapeFamily.from_json_file(
 
     Options are "Cube", "Dodecahedron", "Icosahedron", "Octahedron", and "Tetrahedron".
 """,
-)
+)()
 
 ArchimedeanFamily = TabulatedGSDShapeFamily.from_json_file(
     os.path.join(_DATA_FOLDER, "archimedean.json"),
@@ -114,7 +114,7 @@ ArchimedeanFamily = TabulatedGSDShapeFamily.from_json_file(
     Cuboctahedron", "Truncated Icosidodecahedron", "Snub Cuboctahedron", and "Snub
     Icosidodecahedron".
 """,
-)
+)()
 
 CatalanFamily = TabulatedGSDShapeFamily.from_json_file(
     os.path.join(_DATA_FOLDER, "catalan.json"),
@@ -132,7 +132,7 @@ CatalanFamily = TabulatedGSDShapeFamily.from_json_file(
     "Rhombic Triacontahedron", "Triakis Octahedron", "Tetrakis Hexahedron", "Triakis
     Icosahedron", and "Triakis Tetrahedron".
 """,
-)
+)()
 
 JohnsonFamily = TabulatedGSDShapeFamily.from_json_file(
     os.path.join(_DATA_FOLDER, "johnson.json"),
@@ -150,7 +150,7 @@ JohnsonFamily = TabulatedGSDShapeFamily.from_json_file(
     Cupola"). Pyramids and dipyramids are named from their base polygon (e.g. "Square
     Pyramid" or "Elongated Pentagonal Dipyramid").
 """,
-)
+)()
 
 PyramidDipyramidFamily = TabulatedGSDShapeFamily.from_json_file(
     os.path.join(_DATA_FOLDER, "pyramid_dipyramid.json"),
@@ -165,7 +165,7 @@ PyramidDipyramidFamily = TabulatedGSDShapeFamily.from_json_file(
     "Pentagonal Pyramid". Options for dipyramids are "Triangular Dipyramid",
     "Square Dipyramid", and "Pentagonal Dipyramid".
 """,
-)
+)()
 
 PrismAntiprismFamily = TabulatedGSDShapeFamily.from_json_file(
     os.path.join(_DATA_FOLDER, "prism_antiprism.json"),
@@ -185,4 +185,4 @@ PrismAntiprismFamily = TabulatedGSDShapeFamily.from_json_file(
     "Heptagonal Antiprism", "Octagonal Antiprism","Nonagonal Antiprism", \
     and "Decagonal Antiprism".
 """,
-)
+)()
