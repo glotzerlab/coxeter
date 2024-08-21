@@ -4,13 +4,43 @@
 """Certain common shape families that can be analytically generated."""
 
 import os
+from math import sin, sqrt
 
 import numpy as np
+from numpy import pi
 
 from ..shapes import ConvexPolygon
 from .doi_data_repositories import _DATA_FOLDER
 from .shape_family import ShapeFamily
 from .tabulated_shape_family import TabulatedGSDShapeFamily
+
+
+def _make_ngon(n, z=0, area=1, angle=0):
+    """Make a regular n-gon with a given area, z height, and rotation angle.
+
+    The initial vertex  lies on the :math:`x` axis by default, but can be rotated by
+    the angle parameter.
+
+    Args:
+        n (int): Number of vertices
+        z (int|float): z value for the polygon. Defaults to 0.
+        area (int|float|None, optional): Area of polygon. Defaults to 1.
+        angle (int|float, optional): Rotation angle, in radians. Defaults to 0.
+
+    Returns
+    -------
+        np.array: n-gon vertices
+    """
+    if n < 3:
+        raise ValueError("Cannot generate an n-gon with fewer than 3 vertices.")
+
+    theta = np.linspace(0, 2 * pi, num=n, endpoint=False) + angle
+    ngon_vertices = np.array([np.cos(theta), np.sin(theta), np.full_like(theta, z)]).T
+    if area is not None:
+        area_0 = 0.5 * n * sin(2 * pi / n)  # Area of the shape with circumradius = 1
+        ngon_vertices[:, :2] *= sqrt(area / area_0)  # Rescale coords to correct area
+
+    return ngon_vertices
 
 
 class RegularNGonFamily(ShapeFamily):
@@ -53,25 +83,7 @@ class RegularNGonFamily(ShapeFamily):
         -------
             :math:`(n, 3)` :class:`numpy.ndarray` of float: The vertices of the polygon.
         """
-        if n < 3:
-            raise ValueError("Cannot generate an n-gon with fewer than 3 vertices.")
-        r = 1  # The radius of the circle
-        theta = np.linspace(0, 2 * np.pi, num=n, endpoint=False)
-        pos = np.array([np.cos(theta), np.sin(theta)]).T
-
-        # First normalize to guarantee that the limiting case of an infinite
-        # number of vertices produces a circle of area r^2.
-        pos /= np.sqrt(np.pi) / r
-
-        # The area of an n-gon inscribed in a circle is given by:
-        # \frac{n r^2}{2} \sin(2\pi / n)
-        # The ratio of that n-gon area to its circumscribed circle area is:
-        a_circ_a_poly = np.pi / ((n / 2) * np.sin(2 * np.pi / n))
-
-        # Rescale the positions so that the final shape has area 1.
-        pos *= np.sqrt(a_circ_a_poly)
-
-        return pos
+        return _make_ngon(n, area=1, angle=0)
 
 
 PlatonicFamily = TabulatedGSDShapeFamily.from_json_file(
