@@ -17,6 +17,8 @@ from coxeter.families import (
     TruncatedTetrahedronFamily,
 )
 from coxeter.families.common import ArchimedeanFamily, JohnsonFamily, PlatonicFamily
+from coxeter.families.tabulated_shape_family import TabulatedGSDShapeFamily
+from coxeter.shapes.convex_polyhedron import ConvexPolyhedron
 
 MIN_REALISTIC_PRECISION = 2e-6
 
@@ -52,11 +54,15 @@ def test_regular_ngon(n):
 
 
 @pytest.mark.parametrize(
-    "family", [PlatonicFamily, ArchimedeanFamily, CatalanFamily, JohnsonFamily]
+    "family",
+    [PlatonicFamily, ArchimedeanFamily, CatalanFamily, JohnsonFamily],
+    ids=["PlatonicFamily", "ArchimedeanFamily", "CatalanFamily", "JohnsonFamily"],
 )
 def test_named_family(family):
-    for name in family.shapes:
-        family.get_shape(name)
+    assert isinstance(family, TabulatedGSDShapeFamily)
+    for name, shape in family:
+        assert isinstance(shape, ConvexPolyhedron)
+        np.testing.assert_allclose(family.get_shape(name).vertices, shape.vertices)
 
 
 def test_shape_repos():

@@ -51,7 +51,6 @@ class TabulatedGSDShapeFamily(ShapeFamily):
         -------
             A subclass of this one associated with the the provided data.
         """
-        print(filename)
         with open(filename) as f:
 
             class NewTabulatedShapeFamily(cls):
@@ -60,14 +59,11 @@ class TabulatedGSDShapeFamily(ShapeFamily):
 
                 _shape_names = [*data.keys()]
                 _shape_specs = [*data.values()]
-                print(_shape_names)
 
-        print()
         if classname is not None:
             NewTabulatedShapeFamily.__name__ = classname
         if docstring is not None:
             NewTabulatedShapeFamily.__doc__ = docstring
-
         return NewTabulatedShapeFamily
 
     @classmethod
@@ -83,8 +79,6 @@ class TabulatedGSDShapeFamily(ShapeFamily):
             :class:`~coxeter.shapes.Shape`: The requested shape.
         """
         # return from_gsd_type_shapes(self.names[name])
-        print(cls.__subclasses__())
-        print(cls._shape_names)
         if hasattr(cls, "_shape_names") and hasattr(cls, "_shape_specs"):
             if name in cls._shape_names:
                 index = cls._shape_names.index(name)
@@ -95,12 +89,13 @@ class TabulatedGSDShapeFamily(ShapeFamily):
         else:
             raise AttributeError(f"{cls.__name__} does not have shape data loaded.")
 
-    def __iter__(self):
+    @classmethod
+    def __iter__(cls):
         """Return an iterator that yields key-value pairs as tuples.
 
         Yields
         ------
             Iterator[Tuple[str, any]]: An iterator of key-value pairs.
         """
-        for key in self._shape_names:
-            yield (key, self.get_shape(key))
+        for key in cls._shape_names:
+            yield (key, cls.get_shape(key))
