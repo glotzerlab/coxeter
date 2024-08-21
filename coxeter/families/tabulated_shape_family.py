@@ -11,7 +11,6 @@ constructed from a JSON file that can be read into a dictionary with the
 appropriate formatting.
 """
 
-import copy
 import json
 
 from ..shape_getters import from_gsd_type_shapes
@@ -31,6 +30,21 @@ class TabulatedGSDShapeFamily(ShapeFamily):
             A dictionary containing valid shape definitions or a JSON file that
             can be read into such a dictionary.
     """
+
+    def __init__(self, data):
+        self._data = data
+        self._shape_names = [*data.keys()]
+        self._shape_specs = [*data.values()]
+
+    @property
+    def data(self):
+        """Raw JSON data for the class. Should not be used by users."""
+        return self._data
+
+    @property
+    def names(self):
+        """A list of names for the shapes in the family, in alphabetical order."""
+        return self._shape_names
 
     @classmethod
     def from_json_file(cls, filename, classname=None, docstring=None):
@@ -52,22 +66,14 @@ class TabulatedGSDShapeFamily(ShapeFamily):
             A subclass of this one associated with the the provided data.
         """
         with open(filename) as f:
-
-            class NewTabulatedShapeFamily(cls):
-                # Make a full copy to avoid modifying an input dictionary.
-                data = copy.deepcopy(json.load(f))
-
-                _shape_names = [*data.keys()]
-                _shape_specs = [*data.values()]
-
+            NewTabulatedShapeFamily = cls(data=json.load(f))  # noqa:  N806
         if classname is not None:
             NewTabulatedShapeFamily.__name__ = classname
         if docstring is not None:
             NewTabulatedShapeFamily.__doc__ = docstring
         return NewTabulatedShapeFamily
 
-    @classmethod
-    def get_shape(cls, name):
+    def get_shape(self, name):
         """Use the class's data to produce a shape for the given name.
 
         Args:
@@ -78,24 +84,14 @@ class TabulatedGSDShapeFamily(ShapeFamily):
         -------
             :class:`~coxeter.shapes.Shape`: The requested shape.
         """
-        # return from_gsd_type_shapes(self.names[name])
-        if hasattr(cls, "_shape_names") and hasattr(cls, "_shape_specs"):
-            if name in cls._shape_names:
-                index = cls._shape_names.index(name)
-                shape_data = cls._shape_specs[index]
-                return from_gsd_type_shapes(shape_data)
-            else:
-                raise ValueError(f"Shape '{name}' not found in {cls.__name__}.")
-        else:
-            raise AttributeError(f"{cls.__name__} does not have shape data loaded.")
+        return from_gsd_type_shapes(self.data[name])
 
-    @classmethod
-    def __iter__(cls):
+    def __iter__(self):
         """Return an iterator that yields key-value pairs as tuples.
 
         Yields
         ------
             Iterator[Tuple[str, any]]: An iterator of key-value pairs.
         """
-        for key in cls._shape_names:
-            yield (key, cls.get_shape(key))
+        for key in self.names:
+            yield (key, self.get_shape(key))
