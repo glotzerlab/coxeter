@@ -34,7 +34,7 @@ from .plane_shape_families import (
     TruncatedTetrahedronFamily,
 )
 from .shape_family import ShapeFamily
-from .tabulated_shape_family import TabulatedGSDShapeFamily, TabulatedShapeFamily
+from .tabulated_shape_family import TabulatedGSDShapeFamily  # , TabulatedShapeFamily
 
 # Note for devs: we want this object to be documented in the public API. The Sphinx
 # method for documenting a module-level constant is placing the docstring directly below
