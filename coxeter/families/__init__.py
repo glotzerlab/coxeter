@@ -67,15 +67,15 @@ Example:
 """
 
 from .common import (
-    AntiprismFamily,
     ArchimedeanFamily,
     CatalanFamily,
     JohnsonFamily,
     PlatonicFamily,
     PrismAntiprismFamily,
-    PrismFamily,
     PyramidDipyramidFamily,
     RegularNGonFamily,
+    UniformAntiprismFamily,
+    UniformPrismFamily,
 )
 from .doi_data_repositories import _doi_shape_collection_factory, _KeyedDefaultDict
 from .plane_shape_families import (
@@ -112,12 +112,12 @@ __all__ = [
     "Family423",
     "Family523",
     "PlatonicFamily",
-    "AntiprismFamily",
+    "UniformAntiprismFamily",
     "ArchimedeanFamily",
     "CatalanFamily",
     "JohnsonFamily",
     "PrismAntiprismFamily",
-    "PrismFamily",
+    "UniformPrismFamily",
     "PyramidDipyramidFamily",
     "RegularNGonFamily",
     "ShapeFamily",
