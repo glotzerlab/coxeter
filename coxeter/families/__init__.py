@@ -67,11 +67,13 @@ Example:
 """
 
 from .common import (
+    AntiprismFamily,
     ArchimedeanFamily,
     CatalanFamily,
     JohnsonFamily,
     PlatonicFamily,
     PrismAntiprismFamily,
+    PrismFamily,
     PyramidDipyramidFamily,
     RegularNGonFamily,
 )
@@ -110,10 +112,12 @@ __all__ = [
     "Family423",
     "Family523",
     "PlatonicFamily",
+    "AntiprismFamily",
     "ArchimedeanFamily",
     "CatalanFamily",
     "JohnsonFamily",
     "PrismAntiprismFamily",
+    "PrismFamily",
     "PyramidDipyramidFamily",
     "RegularNGonFamily",
     "ShapeFamily",

@@ -4,15 +4,41 @@
 """Certain common shape families that can be analytically generated."""
 
 import os
-from math import sin, sqrt
+import warnings
+from functools import wraps
+from math import cos, sin, sqrt, tan
 
 import numpy as np
-from numpy import pi
+from numpy import cbrt, pi
 
-from ..shapes import ConvexPolygon
+from ..shapes import ConvexPolygon, ConvexPolyhedron
 from .doi_data_repositories import _DATA_FOLDER
 from .shape_family import ShapeFamily
 from .tabulated_shape_family import TabulatedGSDShapeFamily
+
+
+# Allows us to monkeypatch an existing method with our choice of warning
+def _deprecated_method(func, deprecated="", replacement="", reason=""):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        warnings.warn(
+            (f"{deprecated} has been deprecated in favor of {replacement}. {reason}"),
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
+def sec(theta):
+    """Return the secant of an angle."""
+    return 1 / cos(theta)
+
+
+def cot(theta):
+    """Return the cotangent of an angle."""
+    return 1 / tan(theta)
 
 
 def _make_ngon(n, z=0, area=1, angle=0):
@@ -63,7 +89,7 @@ class RegularNGonFamily(ShapeFamily):
 
         Args:
             n (int):
-                The number of vertices (greater than or equal to 3).
+                The number of vertices (:math:`n>=3`).
 
         Returns
         -------
@@ -77,13 +103,97 @@ class RegularNGonFamily(ShapeFamily):
 
         Args:
             n (int):
-                An integer greater than or equal to 3.
+                The number of vertices of the polygon (:math:`n >= 3`).
 
         Returns
         -------
             :math:`(n, 3)` :class:`numpy.ndarray` of float: The vertices of the polygon.
         """
         return _make_ngon(n, area=1, angle=0)
+
+
+class PrismFamily(ShapeFamily):
+    """The infinite family of uniform right prisms."""
+
+    @classmethod
+    def get_shape(cls, n):
+        """Generate a uniform right n-prism of unit volume.
+
+        Args:
+            n (int):
+                The number of vertices of the base polygons (:math:`n>=3`).
+
+        Returns
+        -------
+             :class:`~.ConvexPolyhedron`: The corresponding convex polyhedron.
+        """
+        return ConvexPolyhedron(cls.make_vertices(n))
+
+    @classmethod
+    def make_vertices(cls, n):
+        """Generate the vertices of a uniform right n-prism with unit volume.
+
+        Args:
+            n (int):
+                The number of vertices of the base polygons (:math:`n >= 3`).
+
+        Returns
+        -------
+             :math:`(n*2, 3)` :class:`numpy.ndarray` of float:
+                 The vertices of the prism.
+        """
+        volume = 1
+        h = cbrt(volume * 4 / n * tan(pi / n))
+        area = volume / h  # Top and bottom face areas
+        vertices = np.concatenate(
+            [_make_ngon(n, z=-h / 2, area=area), _make_ngon(n, z=h / 2, area=area)]
+        )
+        return vertices
+
+
+class AntiprismFamily(ShapeFamily):
+    """The infinite family of uniform right antiprisms."""
+
+    @classmethod
+    def get_shape(cls, n):
+        """Generate a uniform right n-antiprism of unit volume.
+
+        Args:
+            n (int):
+                The number of vertices of the base polygons (:math:`n >= 3`).
+
+        Returns
+        -------
+             :class:`~.ConvexPolyhedron`: The corresponding convex polyhedron.
+        """
+        return ConvexPolyhedron(cls.make_vertices(n))
+
+    @classmethod
+    def make_vertices(cls, n):
+        """Generate the vertices of a uniform right n-antiprism with unit volume.
+
+        Args:
+            n (int):
+                The number of vertices of the base polygons (:math:`n >= 3`).
+
+        Returns
+        -------
+             :math:`(n*2, 3)` :class:`numpy.ndarray` of float:
+                 The vertices of the antiprism.
+        """
+        volume = 1
+        s = cbrt(
+            24
+            * volume
+            / (n * (cot(pi / (2 * n)) + cot(pi / n)) * sqrt(4 - sec(pi / (2 * n)) ** 2))
+        )
+        area = n / 4 * (cot(pi / n)) * s**2
+
+        h = sqrt(1 - 0.25 * sec(pi / (2 * n)) ** 2) * s
+        vertices = np.concatenate(
+            [_make_ngon(n, -h / 2, area, angle=pi / n), _make_ngon(n, h / 2, area)]
+        )
+        return vertices
 
 
 PlatonicFamily = TabulatedGSDShapeFamily._from_json_file(
@@ -161,4 +271,14 @@ PrismAntiprismFamily = TabulatedGSDShapeFamily._from_json_file(
     "Heptagonal Antiprism", "Octagonal Antiprism","Nonagonal Antiprism", \
     and "Decagonal Antiprism".
 """,
+)
+
+PrismAntiprismFamily.get_shape = _deprecated_method(
+    PrismAntiprismFamily.get_shape,
+    "PrismAntiprismFamily",
+    "UniformPrismFamily and UniformAntiprismFamily",
+    (
+        "These alternate classes have a simplified interface and support the "
+        "entire infinite family of geometries."
+    ),
 )

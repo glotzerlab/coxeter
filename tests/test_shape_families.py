@@ -8,16 +8,18 @@ from hypothesis.strategies import floats
 
 from coxeter.families import (
     DOI_SHAPE_REPOSITORIES,
+    ArchimedeanFamily,
     CatalanFamily,
     Family323Plus,
     Family423,
     Family523,
+    JohnsonFamily,
+    PlatonicFamily,
     RegularNGonFamily,
+    TabulatedGSDShapeFamily,
     TruncatedTetrahedronFamily,
 )
-from coxeter.families.common import ArchimedeanFamily, JohnsonFamily, PlatonicFamily
-from coxeter.families.tabulated_shape_family import TabulatedGSDShapeFamily
-from coxeter.shapes.convex_polyhedron import ConvexPolyhedron
+from coxeter.shapes import ConvexPolyhedron
 
 MIN_REALISTIC_PRECISION = 2e-6
 
