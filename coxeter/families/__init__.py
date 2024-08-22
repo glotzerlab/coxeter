@@ -11,6 +11,7 @@ some set of parameters that are used to construct a shape analytically. Discrete
 families -- those that contain a fixed number of individual shapes -- may be iterated
 over.
 
+
 Example:
 
     >>> from coxeter.families import PlatonicFamily
@@ -41,11 +42,28 @@ The `DOI_SHAPE_REPOSITORIES` variable provides convenient access to the shape fa
 families associated with different scientific publications. This dataset is useful for
 reproducing the exact set of shapes from publications.
 
+For convenience, shapes included in the paper *10.1126/science.1220869* may be accessed
+as a single family. These are indexed in a three character format consistent with the
+supplementary information of that publication.
+
+
 Example:
 
     >>> from coxeter.families import DOI_SHAPE_REPOSITORIES
     >>> DOI_SHAPE_REPOSITORIES["10.1103/PhysRevX.4.011024"]
-    ... [Family323Plus, Family423, Family523],
+    ... [Family323Plus, Family423, Family523]
+
+    >>> science_family = DOI_SHAPE_REPOSITORIES["10.1126/science.1220869"][0]
+    >>> for code, shape in science_family:
+    >>>     print(code, shape.num_vertices)
+    ... (P01, 4)  # Tetrahedron
+    ... (P02, 8)  # Octahedron
+    ... (P03, 6)  # Cube
+    ... (P04, 20) # Icosahedron
+    ... (P05, 12) # Dodecahedron
+    ... (A01, 14) # Cuboctahedron
+    ... ...
+
 """
 
 from .common import (
