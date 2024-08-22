@@ -112,7 +112,7 @@ class RegularNGonFamily(ShapeFamily):
         return _make_ngon(n, area=1, angle=0)
 
 
-class PrismFamily(ShapeFamily):
+class UniformPrismFamily(ShapeFamily):
     """The infinite family of uniform right prisms."""
 
     @classmethod
@@ -151,7 +151,7 @@ class PrismFamily(ShapeFamily):
         return vertices
 
 
-class AntiprismFamily(ShapeFamily):
+class UniformAntiprismFamily(ShapeFamily):
     """The infinite family of uniform right antiprisms."""
 
     @classmethod
