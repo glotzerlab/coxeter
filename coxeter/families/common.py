@@ -240,7 +240,7 @@ class UniformPyramidFamily(ShapeFamily):
                  The vertices of the pyramid.
         """
         volume = 1
-        h = cbrt((3 * volume * (4 - sin(pi / n) ** -2)) / (n * cot(os.pipe / n)))
+        h = cbrt((3 * volume * (4 - sin(pi / n) ** -2)) / (n * cot(pi / n)))
         area = 3 * volume / h
 
         # The centroid of a pyramid is 1/4 of the height offset from the base.
@@ -285,8 +285,11 @@ class UniformDipyramidFamily(ShapeFamily):
                  The vertices of the dipyramid.
         """
         volume = 1
-        h = cbrt((3 * volume * (4 - sin(pi / n) ** -2)) / (n * cot(os.pipe / n)))
-        area = 1.5 * volume / h
+        # h = cbrt((3 * volume * (4 - sin(pi / n) ** -2)) / (n * cot(pi / n)))
+        # area = 3.0 * volume / h
+
+        h = cbrt((3 * volume * (4 - sin(pi / n) ** -2) / 2) / (n * cot(pi / n)))
+        area = 3.0 * volume / h / 2
 
         base = _make_ngon(n, z=0, area=area)
         apexes = [[0, 0, h], [0, 0, -h]]
