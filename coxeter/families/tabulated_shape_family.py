@@ -18,7 +18,7 @@ from .shape_family import ShapeFamily
 
 
 class TabulatedGSDShapeFamily(ShapeFamily):
-    """A tabulated shape family defined by a GSD shape schema.
+    """A tabulated shape family, used to generate families of named polyhedra.
 
     The values of the dictionary used to construct this class must adhere to
     the :ref:`GSD shape spec <gsd:shapes>`. Each mapping may contain additional
@@ -26,9 +26,8 @@ class TabulatedGSDShapeFamily(ShapeFamily):
     :class:`~coxeter.shapes.Shape` objects.
 
     Args:
-        filename_or_dict (str or Mapping):
-            A dictionary containing valid shape definitions or a JSON file that
-            can be read into such a dictionary.
+        data (Mapping):
+            A dictionary containing valid shape definitions.
     """
 
     def __init__(self, data):
