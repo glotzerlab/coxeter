@@ -85,11 +85,11 @@ class RegularNGonFamily(ShapeFamily):
 
     @classmethod
     def get_shape(cls, n):
-        """Generate a unit area n-gon.
+        r"""Generate a unit area n-gon.
 
         Args:
             n (int):
-                The number of vertices (:math:`n>=3`).
+                The number of vertices (:math:`n \geq 3`).
 
         Returns
         -------
@@ -99,11 +99,11 @@ class RegularNGonFamily(ShapeFamily):
 
     @classmethod
     def make_vertices(cls, n):
-        """Generate vertices of a unit area n-gon.
+        r"""Generate vertices of a unit area n-gon.
 
         Args:
             n (int):
-                The number of vertices of the polygon (:math:`n >= 3`).
+                The number of vertices of the polygon (:math:`n \geq 3`).
 
         Returns
         -------
@@ -121,11 +121,11 @@ class UniformPrismFamily(ShapeFamily):
 
     @classmethod
     def get_shape(cls, n):
-        """Generate a uniform right n-prism of unit volume.
+        r"""Generate a uniform right n-prism of unit volume.
 
         Args:
             n (int):
-                The number of vertices of the base polygons (:math:`n>=3`).
+                The number of vertices of the base polygons (:math:`n \geq 3`).
 
         Returns
         -------
@@ -135,11 +135,11 @@ class UniformPrismFamily(ShapeFamily):
 
     @classmethod
     def make_vertices(cls, n):
-        """Generate the vertices of a uniform right n-prism with unit volume.
+        r"""Generate the vertices of a uniform right n-prism with unit volume.
 
         Args:
             n (int):
-                The number of vertices of the base polygons (:math:`n >= 3`).
+                The number of vertices of the base polygons (:math:`n \geq 3`).
 
         Returns
         -------
@@ -165,11 +165,11 @@ class UniformAntiprismFamily(ShapeFamily):
 
     @classmethod
     def get_shape(cls, n):
-        """Generate a uniform right n-antiprism of unit volume.
+        r"""Generate a uniform right n-antiprism of unit volume.
 
         Args:
             n (int):
-                The number of vertices of the base polygons (:math:`n >= 3`).
+                The number of vertices of the base polygons (:math:`n \geq 3`).
 
         Returns
         -------
@@ -179,11 +179,11 @@ class UniformAntiprismFamily(ShapeFamily):
 
     @classmethod
     def make_vertices(cls, n):
-        """Generate the vertices of a uniform right n-antiprism with unit volume.
+        r"""Generate the vertices of a uniform right n-antiprism with unit volume.
 
         Args:
             n (int):
-                The number of vertices of the base polygons (:math:`n >= 3`).
+                The number of vertices of the base polygons (:math:`n \geq 3`).
 
         Returns
         -------
@@ -214,11 +214,11 @@ class UniformPyramidFamily(ShapeFamily):
 
     @classmethod
     def get_shape(cls, n):
-        """Generate a uniform right n-pyramid of unit volume.
+        r"""Generate a uniform right n-pyramid of unit volume.
 
         Args:
             n (int):
-                The number of vertices of the base polygon (:math:`5 >= n >= 3`).
+                The number of vertices of the base polygon (:math:`3 \leq n \leq 5`).
 
         Returns
         -------
@@ -228,11 +228,11 @@ class UniformPyramidFamily(ShapeFamily):
 
     @classmethod
     def make_vertices(cls, n):
-        """Generate the vertices of a uniform right n-pyramid with unit volume.
+        r"""Generate the vertices of a uniform right n-pyramid with unit volume.
 
         Args:
             n (int):
-                The number of vertices of the base polygon (:math:`5 >= n >= 3`).
+                The number of vertices of the base polygon (:math:`3 \leq n \leq 5`).
 
         Returns
         -------
@@ -259,11 +259,11 @@ class UniformDipyramidFamily(ShapeFamily):
 
     @classmethod
     def get_shape(cls, n):
-        """Generate a uniform right n-dipyramid of unit volume.
+        r"""Generate a uniform right n-dipyramid of unit volume.
 
         Args:
             n (int):
-                The number of vertices of the base polygon (:math:`5 >= n >= 3`).
+                The number of vertices of the base polygon (:math:`3 \leq n \leq 5`).
 
         Returns
         -------
@@ -273,15 +273,15 @@ class UniformDipyramidFamily(ShapeFamily):
 
     @classmethod
     def make_vertices(cls, n):
-        """Generate the vertices of a uniform right n-dipyramid with unit volume.
+        r"""Generate the vertices of a uniform right n-dipyramid with unit volume.
 
         Args:
             n (int):
-                The number of vertices of the base polygon (:math:`5 >= n >= 3`).
+                The number of vertices of the base polygon (:math:`3 \leq n \leq 5`).
 
         Returns
         -------
-             :math:`(n+1, 3)` :class:`numpy.ndarray` of float:
+             :math:`(n+2, 3)` :class:`numpy.ndarray` of float:
                  The vertices of the dipyramid.
         """
         volume = 1
