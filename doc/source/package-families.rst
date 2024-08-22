@@ -15,7 +15,3 @@ Families Module
    :special-members: __iter__
 .. autoclass:: JohnsonFamily()
    :special-members: __iter__
-.. autoclass:: PyramidDipyramidFamily()
-   :special-members: __iter__
-.. autoclass:: PrismAntiprismFamily()
-   :special-members: __iter__

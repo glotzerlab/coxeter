@@ -75,7 +75,9 @@ from .common import (
     PyramidDipyramidFamily,
     RegularNGonFamily,
     UniformAntiprismFamily,
+    UniformDipyramidFamily,
     UniformPrismFamily,
+    UniformPyramidFamily,
 )
 from .doi_data_repositories import _doi_shape_collection_factory, _KeyedDefaultDict
 from .plane_shape_families import (
@@ -113,11 +115,13 @@ __all__ = [
     "Family523",
     "PlatonicFamily",
     "UniformAntiprismFamily",
+    "UniformDipyramidFamily",
+    "UniformPrismFamily",
+    "UniformPyramidFamily",
     "ArchimedeanFamily",
     "CatalanFamily",
     "JohnsonFamily",
     "PrismAntiprismFamily",
-    "UniformPrismFamily",
     "PyramidDipyramidFamily",
     "RegularNGonFamily",
     "ShapeFamily",

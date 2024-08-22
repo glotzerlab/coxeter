@@ -205,6 +205,95 @@ class UniformAntiprismFamily(ShapeFamily):
         return vertices
 
 
+class UniformPyramidFamily(ShapeFamily):
+    """The family of uniform right pyramids with unit volume.
+
+    As with the :class:`~.RegularNGonFamily`, the initial vertex of the base polygon
+    lies on the :math:`x` axis.
+    """
+
+    @classmethod
+    def get_shape(cls, n):
+        """Generate a uniform right n-pyramid of unit volume.
+
+        Args:
+            n (int):
+                The number of vertices of the base polygon (:math:`5 >= n >= 3`).
+
+        Returns
+        -------
+             :class:`~.ConvexPolyhedron`: The corresponding convex polyhedron.
+        """
+        return ConvexPolyhedron(cls.make_vertices(n))
+
+    @classmethod
+    def make_vertices(cls, n):
+        """Generate the vertices of a uniform right n-pyramid with unit volume.
+
+        Args:
+            n (int):
+                The number of vertices of the base polygon (:math:`5 >= n >= 3`).
+
+        Returns
+        -------
+             :math:`(n+1, 3)` :class:`numpy.ndarray` of float:
+                 The vertices of the pyramid.
+        """
+        volume = 1
+        h = cbrt((3 * volume * (4 - sin(pi / n) ** -2)) / (n * cot(os.pipe / n)))
+        area = 3 * volume / h
+
+        # The centroid of a pyramid is 1/4 of the height offset from the base.
+        base = _make_ngon(n, z=-h / 4, area=area)
+        apex = [[0, 0, 3 * h / 4]]
+        vertices = np.concatenate([base, apex])
+        return vertices
+
+
+class UniformDipyramidFamily(ShapeFamily):
+    """The family of uniform right dipyramids with unit volume.
+
+    As with the :class:`~.RegularNGonFamily`, the initial vertex of the base polygon
+    lies on the :math:`x` axis.
+    """
+
+    @classmethod
+    def get_shape(cls, n):
+        """Generate a uniform right n-dipyramid of unit volume.
+
+        Args:
+            n (int):
+                The number of vertices of the base polygon (:math:`5 >= n >= 3`).
+
+        Returns
+        -------
+             :class:`~.ConvexPolyhedron`: The corresponding convex polyhedron.
+        """
+        return ConvexPolyhedron(cls.make_vertices(n))
+
+    @classmethod
+    def make_vertices(cls, n):
+        """Generate the vertices of a uniform right n-dipyramid with unit volume.
+
+        Args:
+            n (int):
+                The number of vertices of the base polygon (:math:`5 >= n >= 3`).
+
+        Returns
+        -------
+             :math:`(n+1, 3)` :class:`numpy.ndarray` of float:
+                 The vertices of the dipyramid.
+        """
+        volume = 1
+        h = cbrt((3 * volume * (4 - sin(pi / n) ** -2)) / (n * cot(os.pipe / n)))
+        area = 1.5 * volume / h
+
+        base = _make_ngon(n, z=0, area=area)
+        apexes = [[0, 0, h], [0, 0, -h]]
+        vertices = np.concatenate([base, apexes])
+        return vertices
+
+
 PlatonicFamily = TabulatedGSDShapeFamily._from_json_file(
     os.path.join(_DATA_FOLDER, "platonic.json"),
     classname="PlatonicFamily",
@@ -292,10 +381,19 @@ PrismAntiprismFamily = TabulatedGSDShapeFamily._from_json_file(
 
 PrismAntiprismFamily.get_shape = _deprecated_method(
     PrismAntiprismFamily.get_shape,
-    "PrismAntiprismFamily",
-    "UniformPrismFamily and UniformAntiprismFamily",
-    (
+    deprecated="PrismAntiprismFamily",
+    replacement="UniformPrismFamily and UniformAntiprismFamily",
+    reason=(
         "These alternate classes have a simplified interface and support the "
         "entire infinite family of geometries."
+    ),
+)
+PyramidDipyramidFamily.get_shape = _deprecated_method(
+    PyramidDipyramidFamily.get_shape,
+    deprecated="PyramidDipyramidFamily",
+    replacement="UniformPyramidFamily and UniformDipyramidFamily",
+    reason=(
+        "These alternate classes have a simplified interface and better match the "
+        "naming conventions of coxeter."
     ),
 )
