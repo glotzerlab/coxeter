@@ -263,6 +263,14 @@ PrismAntiprismFamily = TabulatedGSDShapeFamily._from_json_file(
     docstring="""The family of uniform n-prisms and n-antiprisms with n∈[3,10] \
     (16 total).
 
+
+    .. warning::
+
+        This class has been deprecated in favor of the :class:`~.UniformPrismFamily`
+        and :class:`~.UniformAntiprismFamily`, as the new classes have a simplified API
+        and support the entire infinite shape family. Please transfer existing code to
+        use the new classes.
+
     Options for prisms are  \
     "Triangular Prism", "Square Prism", "Pentagonal Prism", "Hexagonal Prism", \
     "Heptagonal Prism", "Octagonal Prism", "Nonagonal Prism", and \
