@@ -289,7 +289,7 @@ class UniformDipyramidFamily(ShapeFamily):
         # area = 3.0 * volume / h
 
         h = cbrt((3 * volume * (4 - sin(pi / n) ** -2) / 2) / (n * cot(pi / n)))
-        area = 3.0 * volume / h / 2
+        area = 1.5 * volume / h
 
         base = _make_ngon(n, z=0, area=area)
         apexes = [[0, 0, h], [0, 0, -h]]
