@@ -113,7 +113,11 @@ class RegularNGonFamily(ShapeFamily):
 
 
 class UniformPrismFamily(ShapeFamily):
-    """The infinite family of uniform right prisms."""
+    """The infinite family of uniform right prisms with unit volume.
+
+    As with the :class:`~.RegularNGonFamily`, the initial vertex lies on the
+    :math:`x` axis.
+    """
 
     @classmethod
     def get_shape(cls, n):
@@ -152,7 +156,12 @@ class UniformPrismFamily(ShapeFamily):
 
 
 class UniformAntiprismFamily(ShapeFamily):
-    """The infinite family of uniform right antiprisms."""
+    r"""The infinite family of uniform right antiprisms with unit volume.
+
+    As with the :class:`~.RegularNGonFamily`, the initial vertex lies on the
+    :math:`x` axis. The bottom face of each antiprism is rotated :math:`\pi/n` radians
+    relative to the top face.
+    """
 
     @classmethod
     def get_shape(cls, n):
