@@ -6,7 +6,6 @@ import pytest
 from hypothesis import given
 from hypothesis.strategies import floats
 
-from conftest import _catalan_shape_names
 from coxeter.families import (
     DOI_SHAPE_REPOSITORIES,
     CatalanFamily,
@@ -21,6 +20,9 @@ from coxeter.families.tabulated_shape_family import TabulatedGSDShapeFamily
 from coxeter.shapes.convex_polyhedron import ConvexPolyhedron
 
 MIN_REALISTIC_PRECISION = 2e-6
+
+
+ScienceFamily = DOI_SHAPE_REPOSITORIES["10.1126/science.1220869"][0]
 
 
 def _test_parameters_outside_precision(params_list):
@@ -55,29 +57,52 @@ def test_regular_ngon(n):
 
 @pytest.mark.parametrize(
     "family",
-    [PlatonicFamily, ArchimedeanFamily, CatalanFamily, JohnsonFamily],
-    ids=["PlatonicFamily", "ArchimedeanFamily", "CatalanFamily", "JohnsonFamily"],
+    [PlatonicFamily, ArchimedeanFamily, CatalanFamily, JohnsonFamily, ScienceFamily],
+    ids=[
+        "PlatonicFamily",
+        "ArchimedeanFamily",
+        "CatalanFamily",
+        "JohnsonFamily",
+        "ScienceFamily",
+    ],
 )
 def test_named_family(family):
-    assert isinstance(family, TabulatedGSDShapeFamily)
-    for name, shape in family:
-        assert isinstance(shape, ConvexPolyhedron)
-        np.testing.assert_allclose(family.get_shape(name).vertices, shape.vertices)
+    def test_type(family):
+        assert isinstance(family, TabulatedGSDShapeFamily)
+
+    def test_iteration(family):
+        for name, shape in family:
+            assert isinstance(shape, ConvexPolyhedron)
+            np.testing.assert_allclose(family.get_shape(name).vertices, shape.vertices)
+
+    def test_names(family):
+        for name in family.names:
+            family.get_shape(name)
+
+    test_type(family)
+    test_iteration(family)
+    test_names(family)
 
 
-def test_shape_repos():
-    family = DOI_SHAPE_REPOSITORIES["10.1126/science.1220869"][0]
-    for shape in _catalan_shape_names:
-        for key in family.data:
-            if family.data[key]["name"] == shape:
-                break
-        else:
-            raise AssertionError(f"Could not find {shape} in the dataset.")
-        reference_poly = CatalanFamily.get_shape(shape)
-        test_poly = family.get_shape(key)
-        test_poly.merge_faces(1e-3)
-        assert reference_poly.num_vertices == test_poly.num_vertices
-        assert reference_poly.num_faces == test_poly.num_faces
+def test_science_family():
+    reference_mapping = {
+        "P": PlatonicFamily,
+        "A": ArchimedeanFamily,
+        "C": CatalanFamily,
+        "J": JohnsonFamily,
+        "O": None,
+    }
+    for name, shape in ScienceFamily:
+        reference = reference_mapping[name[0]]
+        if reference is not None:
+            try:
+                np.testing.assert_allclose(
+                    reference.get_shape(ScienceFamily.data[name]["name"]).vertices,
+                    shape.vertices,
+                )
+            except KeyError as e:
+                if name[0] != "J":
+                    raise KeyError from e
 
 
 def test_shape323():
