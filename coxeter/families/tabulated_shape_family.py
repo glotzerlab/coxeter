@@ -37,8 +37,7 @@ class TabulatedGSDShapeFamily(ShapeFamily):
         self._shape_specs = [*data.values()]
 
     @property
-    def data(self):
-        """Raw JSON data for the class. Should not be used by users."""
+    def data(self):  # noqa: D102
         return self._data
 
     @property
@@ -47,24 +46,7 @@ class TabulatedGSDShapeFamily(ShapeFamily):
         return self._shape_names
 
     @classmethod
-    def from_json_file(cls, filename, classname=None, docstring=None):
-        r"""Generate a subclass for a dataset from a JSON file.
-
-        This method simply loads the JSON file into a dictionary and calls
-        :meth:`~.from_mapping`, see that docstring for more information.
-
-        Args:
-            filename (str):
-                A JSON file containing valid shape definitions.
-            \*args:
-                Passed on to :meth:`~.from_mapping`.
-            \*\*kwargs:
-                Passed on to :meth:`~.from_mapping`.
-
-        Returns
-        -------
-            A subclass of this one associated with the the provided data.
-        """
+    def _from_json_file(cls, filename, classname=None, docstring=None):
         with open(filename) as f:
             NewTabulatedShapeFamily = cls(data=json.load(f))  # noqa:  N806
         if classname is not None:
@@ -82,16 +64,17 @@ class TabulatedGSDShapeFamily(ShapeFamily):
 
         Returns
         -------
-            :class:`~coxeter.shapes.Shape`: The requested shape.
+            :class:`~.ConvexPolyhedron`: The requested shape.
         """
         return from_gsd_type_shapes(self.data[name])
 
     def __iter__(self):
-        """Return an iterator that yields key-value pairs as tuples.
+        """Iterate over the names and geometries associated with the class.
 
         Yields
         ------
-            Iterator[Tuple[str, any]]: An iterator of key-value pairs.
+            tuple[str, :class:`~.ConvexPolyhedron`]:
+                An iterator of shape names and the related polyhedron objects.
         """
         for key in self.names:
             yield (key, self.get_shape(key))
