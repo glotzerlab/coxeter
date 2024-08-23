@@ -4,6 +4,24 @@ This project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html
 v0.x.x - 20xx-xx-xx
 -------------------
 
+Added
+~~~~~
+
+- ``TabulatedGSDShapeFamilies`` are now iterable, allowing easier access to shapes.
+- New ``UniformPrismFamily``, ``UniformAntiprismFamily``, ``UniformPyramidFamily``, and ``UniformDipyramidFamily``
+- New documentation to assist users initialize common geometries.
+
+Changed
+~~~~~~~
+
+- The data in ``DOI_SHAPE_REPOSITORIES`` for source :cite:`Damasceno2012` is now sorted to match the order described in the paper.
+- [breaking] The hidden ``TabulatedShapeFamily`` class has been removed, with functionality moved to ``TabulatedGSDShapeFamily``.
+
+Deprecated
+~~~~~~~~~~
+
+- The ``PrismAntiprismFamily`` and ``PyramidDipyramidFamily`` have been deprecated in favor of the new families added above, which are faster, more consistent, and present a simplified interface.
+
 v0.8.0 - 2024-02-21
 -------------------
 
