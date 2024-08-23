@@ -8,7 +8,7 @@ dependencies:
   - scipy
   - jupyter
   - sphinx
-  - furo
+  - furo>=2023.9.10
   - sphinxcontrib-bibtex>=2.0.0
   - autodocsumm
   - nbsphinx
