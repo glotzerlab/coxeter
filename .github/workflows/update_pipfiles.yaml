@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - uses: glotzerlab/workflows/setup-uv@3ac9374eb4f3c2c707651e3dfc52930e68be9d34
+    - uses: glotzerlab/workflows/setup-uv@33f1cd458d4d39d0101cfa67d13dd3a9e118eefd
     - name: Set up Python environment
       run: |
         for v in "3.8" "3.9" "3.10" "3.11" "3.12"; do
