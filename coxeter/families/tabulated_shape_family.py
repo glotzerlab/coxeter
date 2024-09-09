@@ -11,85 +11,14 @@ constructed from a JSON file that can be read into a dictionary with the
 appropriate formatting.
 """
 
-import copy
 import json
 
 from ..shape_getters import from_gsd_type_shapes
 from .shape_family import ShapeFamily
 
 
-class TabulatedShapeFamily(ShapeFamily):
-    """A shape family corresponding to a tabulated set of shapes.
-
-    Data can either be read from a file or provided in the form of a
-    dictionary. If a filename is provided, it must be a JSON file that can be
-    parsed into an appropriately formatted dictionary, namely a set of
-    key-value pairs such that the call operator of this class can generate
-    a :class:`~coxeter.shapes.Shape` from the dictionary. The raw parsed
-    JSON is accessible via the :attr:`~.data` attribute. Subclasses of this
-    class implement the call operator to define exactly how the dictionary
-    values are converted to a shape definition.
-    """
-
-    @classmethod
-    def from_mapping(cls, mapping, classname=None, docstring=None):
-        """Generate a subclass for a dataset from a mapping.
-
-        Notably, this method is a _class_ factory: rather than generating a new
-        instance, this method actually generates a new subclass. This design is
-        consistent with the usage :class:`~.ShapeFamily` subclasses by direct
-        interaction with the class (without instantiation).
-
-        Args:
-            mapping (Mapping):
-                A dict-like object containing valid shape definitions.
-            classname (str, optional):
-                The name of the new class to use if provided (Default value: None).
-            docstring (str, optional):
-                The docstring to apply to the class.
-
-        Returns
-        -------
-            A subclass of this one associated with the the provided data.
-        """
-
-        class NewTabulatedShapeFamily(cls):
-            # Make a full copy to avoid modifying an input dictionary.
-            data = copy.deepcopy(mapping)
-
-        # TODO: Consider dynamically setting attributes like __name__.
-
-        if classname is not None:
-            NewTabulatedShapeFamily.__name__ = classname
-        if docstring is not None:
-            NewTabulatedShapeFamily.__doc__ = docstring
-        return NewTabulatedShapeFamily
-
-    @classmethod
-    def from_json_file(cls, filename, *args, **kwargs):
-        r"""Generate a subclass for a dataset from a JSON file.
-
-        This method simply loads the JSON file into a dictionary and calls
-        :meth:`~.from_mapping`, see that docstring for more information.
-
-        Args:
-            filename (str):
-                A JSON file containing valid shape definitions.
-            \*args:
-                Passed on to :meth:`~.from_mapping`.
-            \*\*kwargs:
-                Passed on to :meth:`~.from_mapping`.
-
-        Returns
-        -------
-            A subclass of this one associated with the the provided data.
-        """
-        with open(filename) as f:
-            return cls.from_mapping(json.load(f), *args, **kwargs)
-
-
-class TabulatedGSDShapeFamily(TabulatedShapeFamily):
-    """A tabulated shape family defined by a GSD shape schema.
+class TabulatedGSDShapeFamily(ShapeFamily):
+    """A tabulated shape family, used to generate families of named polyhedra.
 
     The values of the dictionary used to construct this class must adhere to
     the :ref:`GSD shape spec <gsd:shapes>`. Each mapping may contain additional
@@ -97,13 +26,35 @@ class TabulatedGSDShapeFamily(TabulatedShapeFamily):
     :class:`~coxeter.shapes.Shape` objects.
 
     Args:
-        filename_or_dict (str or Mapping):
-            A dictionary containing valid shape definitions or a JSON file that
-            can be read into such a dictionary.
+        data (Mapping):
+            A dictionary containing valid shape definitions.
     """
 
+    def __init__(self, data):
+        self._data = data
+        self._shape_names = [*data.keys()]
+        self._shape_specs = [*data.values()]
+
+    @property
+    def data(self):  # noqa: D102
+        return self._data
+
+    @property
+    def names(self):
+        """A list of names for the shapes in the family, in alphabetical order."""
+        return self._shape_names
+
     @classmethod
-    def get_shape(cls, name):
+    def _from_json_file(cls, filename, classname=None, docstring=None):
+        with open(filename) as f:
+            NewTabulatedShapeFamily = cls(data=json.load(f))  # noqa:  N806
+        if classname is not None:
+            NewTabulatedShapeFamily.__name__ = classname
+        if docstring is not None:
+            NewTabulatedShapeFamily.__doc__ = docstring
+        return NewTabulatedShapeFamily
+
+    def get_shape(self, name):
         """Use the class's data to produce a shape for the given name.
 
         Args:
@@ -112,6 +63,17 @@ class TabulatedGSDShapeFamily(TabulatedShapeFamily):
 
         Returns
         -------
-            :class:`~coxeter.shapes.Shape`: The requested shape.
+            :class:`~.ConvexPolyhedron`: The requested shape.
         """
-        return from_gsd_type_shapes(cls.data[name])
+        return from_gsd_type_shapes(self.data[name])
+
+    def __iter__(self):
+        """Iterate over the names and geometries associated with the class.
+
+        Yields
+        ------
+            tuple[str, :class:`~.ConvexPolyhedron`]:
+                An iterator of shape names and the related polyhedron objects.
+        """
+        for key in self.names:
+            yield (key, self.get_shape(key))

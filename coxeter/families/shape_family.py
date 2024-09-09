@@ -30,9 +30,9 @@ class ShapeFamily(ABC):
     roughly like ``family.get_shape(n=6)``.
     """
 
-    @classmethod
+    @property
     @abstractmethod
-    def get_shape(cls):
+    def get_shape(self):
         """Generate a shape.
 
         Subclasses must define this function to accept whatever parameters are

@@ -49,7 +49,7 @@ def _doi_shape_collection_factory(doi):
     if doi in _DOI_TO_FILE:
         for fn in _DOI_TO_FILE[doi]:
             families.append(
-                TabulatedGSDShapeFamily.from_json_file(os.path.join(_DATA_FOLDER, fn))
+                TabulatedGSDShapeFamily._from_json_file(os.path.join(_DATA_FOLDER, fn))
             )
     if doi in _DOI_TO_FAMILY:
         for family_type in _DOI_TO_FAMILY[doi]:
