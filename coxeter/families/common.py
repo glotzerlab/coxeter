@@ -4,13 +4,69 @@
 """Certain common shape families that can be analytically generated."""
 
 import os
+import warnings
+from functools import wraps
+from math import cos, sin, sqrt, tan
 
 import numpy as np
+from numpy import cbrt, pi
 
-from ..shapes import ConvexPolygon
+from ..shapes import ConvexPolygon, ConvexPolyhedron
 from .doi_data_repositories import _DATA_FOLDER
 from .shape_family import ShapeFamily
 from .tabulated_shape_family import TabulatedGSDShapeFamily
+
+
+# Allows us to monkeypatch an existing method with our choice of warning
+def _deprecated_method(func, deprecated="", replacement="", reason=""):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        warnings.warn(
+            (f"{deprecated} has been deprecated in favor of {replacement}. {reason}"),
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
+def sec(theta):
+    """Return the secant of an angle."""
+    return 1 / cos(theta)
+
+
+def cot(theta):
+    """Return the cotangent of an angle."""
+    return 1 / tan(theta)
+
+
+def _make_ngon(n, z=0, area=1, angle=0):
+    """Make a regular n-gon with a given area, z height, and rotation angle.
+
+    The initial vertex  lies on the :math:`x` axis by default, but can be rotated by
+    the angle parameter.
+
+    Args:
+        n (int): Number of vertices
+        z (int|float): z value for the polygon. Defaults to 0.
+        area (int|float|None, optional): Area of polygon. Defaults to 1.
+        angle (int|float, optional): Rotation angle, in radians. Defaults to 0.
+
+    Returns
+    -------
+        np.array: n-gon vertices
+    """
+    if n < 3:
+        raise ValueError("Cannot generate an n-gon with fewer than 3 vertices.")
+
+    theta = np.linspace(0, 2 * pi, num=n, endpoint=False) + angle
+    ngon_vertices = np.array([np.cos(theta), np.sin(theta), np.full_like(theta, z)]).T
+    if area is not None:
+        area_0 = 0.5 * n * sin(2 * pi / n)  # Area of the shape with circumradius = 1
+        ngon_vertices[:, :2] *= sqrt(area / area_0)  # Rescale coords to correct area
+
+    return ngon_vertices
 
 
 class RegularNGonFamily(ShapeFamily):
@@ -29,11 +85,11 @@ class RegularNGonFamily(ShapeFamily):
 
     @classmethod
     def get_shape(cls, n):
-        """Generate a unit area n-gon.
+        r"""Generate a unit area n-gon.
 
         Args:
             n (int):
-                The number of vertices (greater than or equal to 3).
+                The number of vertices (:math:`n \geq 3`).
 
         Returns
         -------
@@ -43,58 +99,217 @@ class RegularNGonFamily(ShapeFamily):
 
     @classmethod
     def make_vertices(cls, n):
-        """Generate vertices of a unit area n-gon.
+        r"""Generate vertices of a unit area n-gon.
 
         Args:
             n (int):
-                An integer greater than or equal to 3.
+                The number of vertices of the polygon (:math:`n \geq 3`).
 
         Returns
         -------
             :math:`(n, 3)` :class:`numpy.ndarray` of float: The vertices of the polygon.
         """
-        if n < 3:
-            raise ValueError("Cannot generate an n-gon with fewer than 3 vertices.")
-        r = 1  # The radius of the circle
-        theta = np.linspace(0, 2 * np.pi, num=n, endpoint=False)
-        pos = np.array([np.cos(theta), np.sin(theta)]).T
-
-        # First normalize to guarantee that the limiting case of an infinite
-        # number of vertices produces a circle of area r^2.
-        pos /= np.sqrt(np.pi) / r
-
-        # The area of an n-gon inscribed in a circle is given by:
-        # \frac{n r^2}{2} \sin(2\pi / n)
-        # The ratio of that n-gon area to its circumscribed circle area is:
-        a_circ_a_poly = np.pi / ((n / 2) * np.sin(2 * np.pi / n))
-
-        # Rescale the positions so that the final shape has area 1.
-        pos *= np.sqrt(a_circ_a_poly)
-
-        return pos
+        return _make_ngon(n, area=1, angle=0)
 
 
-PlatonicFamily = TabulatedGSDShapeFamily.from_json_file(
+class UniformPrismFamily(ShapeFamily):
+    """The infinite family of uniform right prisms with unit volume.
+
+    As with the :class:`~.RegularNGonFamily`, the initial vertex lies on the
+    :math:`x` axis.
+    """
+
+    @classmethod
+    def get_shape(cls, n):
+        r"""Generate a uniform right n-prism of unit volume.
+
+        Args:
+            n (int):
+                The number of vertices of the base polygons (:math:`n \geq 3`).
+
+        Returns
+        -------
+             :class:`~.ConvexPolyhedron`: The corresponding convex polyhedron.
+        """
+        return ConvexPolyhedron(cls.make_vertices(n))
+
+    @classmethod
+    def make_vertices(cls, n):
+        r"""Generate the vertices of a uniform right n-prism with unit volume.
+
+        Args:
+            n (int):
+                The number of vertices of the base polygons (:math:`n \geq 3`).
+
+        Returns
+        -------
+             :math:`(n*2, 3)` :class:`numpy.ndarray` of float:
+                 The vertices of the prism.
+        """
+        volume = 1
+        h = cbrt(volume * 4 / n * tan(pi / n))
+        area = volume / h  # Top and bottom face areas
+        vertices = np.concatenate(
+            [_make_ngon(n, z=-h / 2, area=area), _make_ngon(n, z=h / 2, area=area)]
+        )
+        return vertices
+
+
+class UniformAntiprismFamily(ShapeFamily):
+    r"""The infinite family of uniform right antiprisms with unit volume.
+
+    As with the :class:`~.RegularNGonFamily`, the initial vertex lies on the
+    :math:`x` axis. The bottom face of each antiprism is rotated :math:`\pi/n` radians
+    relative to the top face.
+    """
+
+    @classmethod
+    def get_shape(cls, n):
+        r"""Generate a uniform right n-antiprism of unit volume.
+
+        Args:
+            n (int):
+                The number of vertices of the base polygons (:math:`n \geq 3`).
+
+        Returns
+        -------
+             :class:`~.ConvexPolyhedron`: The corresponding convex polyhedron.
+        """
+        return ConvexPolyhedron(cls.make_vertices(n))
+
+    @classmethod
+    def make_vertices(cls, n):
+        r"""Generate the vertices of a uniform right n-antiprism with unit volume.
+
+        Args:
+            n (int):
+                The number of vertices of the base polygons (:math:`n \geq 3`).
+
+        Returns
+        -------
+             :math:`(n*2, 3)` :class:`numpy.ndarray` of float:
+                 The vertices of the antiprism.
+        """
+        volume = 1
+        s = cbrt(
+            24
+            * volume
+            / (n * (cot(pi / (2 * n)) + cot(pi / n)) * sqrt(4 - sec(pi / (2 * n)) ** 2))
+        )
+        area = n / 4 * (cot(pi / n)) * s**2
+
+        h = sqrt(1 - 0.25 * sec(pi / (2 * n)) ** 2) * s
+        vertices = np.concatenate(
+            [_make_ngon(n, -h / 2, area, angle=pi / n), _make_ngon(n, h / 2, area)]
+        )
+        return vertices
+
+
+class UniformPyramidFamily(ShapeFamily):
+    """The family of uniform right pyramids with unit volume.
+
+    As with the :class:`~.RegularNGonFamily`, the initial vertex of the base polygon
+    lies on the :math:`x` axis.
+    """
+
+    @classmethod
+    def get_shape(cls, n):
+        r"""Generate a uniform right n-pyramid of unit volume.
+
+        Args:
+            n (int):
+                The number of vertices of the base polygon (:math:`3 \leq n \leq 5`).
+
+        Returns
+        -------
+             :class:`~.ConvexPolyhedron`: The corresponding convex polyhedron.
+        """
+        return ConvexPolyhedron(cls.make_vertices(n))
+
+    @classmethod
+    def make_vertices(cls, n):
+        r"""Generate the vertices of a uniform right n-pyramid with unit volume.
+
+        Args:
+            n (int):
+                The number of vertices of the base polygon (:math:`3 \leq n \leq 5`).
+
+        Returns
+        -------
+             :math:`(n+1, 3)` :class:`numpy.ndarray` of float:
+                 The vertices of the pyramid.
+        """
+        volume = 1
+        h = cbrt((3 * volume * (4 - sin(pi / n) ** -2)) / (n * cot(pi / n)))
+        area = 3 * volume / h
+
+        # The centroid of a pyramid is 1/4 of the height offset from the base.
+        base = _make_ngon(n, z=-h / 4, area=area)
+        apex = [[0, 0, 3 * h / 4]]
+        vertices = np.concatenate([base, apex])
+        return vertices
+
+
+class UniformDipyramidFamily(ShapeFamily):
+    """The family of uniform right dipyramids with unit volume.
+
+    As with the :class:`~.RegularNGonFamily`, the initial vertex of the base polygon
+    lies on the :math:`x` axis.
+    """
+
+    @classmethod
+    def get_shape(cls, n):
+        r"""Generate a uniform right n-dipyramid of unit volume.
+
+        Args:
+            n (int):
+                The number of vertices of the base polygon (:math:`3 \leq n \leq 5`).
+
+        Returns
+        -------
+             :class:`~.ConvexPolyhedron`: The corresponding convex polyhedron.
+        """
+        return ConvexPolyhedron(cls.make_vertices(n))
+
+    @classmethod
+    def make_vertices(cls, n):
+        r"""Generate the vertices of a uniform right n-dipyramid with unit volume.
+
+        Args:
+            n (int):
+                The number of vertices of the base polygon (:math:`3 \leq n \leq 5`).
+
+        Returns
+        -------
+             :math:`(n+2, 3)` :class:`numpy.ndarray` of float:
+                 The vertices of the dipyramid.
+        """
+        volume = 1
+        # h = cbrt((3 * volume * (4 - sin(pi / n) ** -2)) / (n * cot(pi / n)))
+        # area = 3.0 * volume / h
+
+        h = cbrt((3 * volume * (4 - sin(pi / n) ** -2) / 2) / (n * cot(pi / n)))
+        area = 1.5 * volume / h
+
+        base = _make_ngon(n, z=0, area=area)
+        apexes = [[0, 0, h], [0, 0, -h]]
+        vertices = np.concatenate([base, apexes])
+        return vertices
+
+
+PlatonicFamily = TabulatedGSDShapeFamily._from_json_file(
     os.path.join(_DATA_FOLDER, "platonic.json"),
     classname="PlatonicFamily",
     docstring="""The family of Platonic solids (5 total).
-
-    Args:
-        name (str):
-                The name of the Platonic solid.
 
     Options are "Cube", "Dodecahedron", "Icosahedron", "Octahedron", and "Tetrahedron".
 """,
 )
 
-ArchimedeanFamily = TabulatedGSDShapeFamily.from_json_file(
+ArchimedeanFamily = TabulatedGSDShapeFamily._from_json_file(
     os.path.join(_DATA_FOLDER, "archimedean.json"),
     classname="ArchimedeanFamily",
     docstring="""The family of Archimedean solids (13 total).
-
-    Args:
-        name (str):
-                The name of the Archimedean solid.
 
     Options are "Cuboctahedron", "Icosidodecahedron", "Truncated Tetrahedron",
     "Truncated Octahedron", "Truncated Cube", "Truncated Icosahedron", "Truncated
@@ -104,15 +319,11 @@ ArchimedeanFamily = TabulatedGSDShapeFamily.from_json_file(
 """,
 )
 
-CatalanFamily = TabulatedGSDShapeFamily.from_json_file(
+CatalanFamily = TabulatedGSDShapeFamily._from_json_file(
     os.path.join(_DATA_FOLDER, "catalan.json"),
     classname="CatalanFamily",
     docstring="""The family of Catalan solids, also known as Archimedean duals \
     (13 total).
-
-    Args:
-        name (str):
-                The name of the Catalan solid.
 
     Options are "Deltoidal Hexecontahedron", "Deltoidal Icositetrahedron", "Disdyakis \
     Dodecahedron", "Disdyakis Triacontahedron", "Pentagonal Hexecontahedron",
@@ -122,31 +333,24 @@ CatalanFamily = TabulatedGSDShapeFamily.from_json_file(
 """,
 )
 
-JohnsonFamily = TabulatedGSDShapeFamily.from_json_file(
+JohnsonFamily = TabulatedGSDShapeFamily._from_json_file(
     os.path.join(_DATA_FOLDER, "johnson.json"),
     classname="JohnsonFamily",
     docstring="""The family of Johnson solids, as enumerated in \
     :cite:`Johnson1966` (92 total).
 
-    Args:
-        name (str):
-                The name of the Johnson solid.
-
-    A full list of Johnson solids is available in :cite:`Johnson1966`. In general, shape
-    names should have the first character of each word capitalized, with spaces between
-    words (e.g. "Elongated Triangular Cupola"). Pyramids and dipyramids are named from
-    their base polygon (e.g. "Square Pyramid" or "Elongated Pentagonal Dipyramid").
+    A full list of Johnson solids is available in :cite:`Johnson1966`, and in the
+    ``names`` property. In general, shape names should have the first character of
+    each word capitalized, with spaces between words (e.g. "Elongated Triangular
+    Cupola"). Pyramids and dipyramids are named from their base polygon (e.g. "Square
+    Pyramid" or "Elongated Pentagonal Dipyramid").
 """,
 )
 
-PyramidDipyramidFamily = TabulatedGSDShapeFamily.from_json_file(
+PyramidDipyramidFamily = TabulatedGSDShapeFamily._from_json_file(
     os.path.join(_DATA_FOLDER, "pyramid_dipyramid.json"),
     classname="PyramidDipyramidFamily",
     docstring="""The family of regular equilateral pyramids and dipyramids (6 total).
-
-    Args:
-        name (str):
-                The name of the pyramid or dipyramid.
 
     Options for pyramids are "Triangular Pyramid", "Square Pyramid", and
     "Pentagonal Pyramid". Options for dipyramids are "Triangular Dipyramid",
@@ -154,15 +358,19 @@ PyramidDipyramidFamily = TabulatedGSDShapeFamily.from_json_file(
 """,
 )
 
-PrismAntiprismFamily = TabulatedGSDShapeFamily.from_json_file(
+PrismAntiprismFamily = TabulatedGSDShapeFamily._from_json_file(
     os.path.join(_DATA_FOLDER, "prism_antiprism.json"),
     classname="PrismAntiprismFamily",
     docstring="""The family of uniform n-prisms and n-antiprisms with n∈[3,10] \
     (16 total).
 
-    Args:
-        name (str):
-                The name of the prism or antiprism.
+
+    .. warning::
+
+        This class has been deprecated in favor of the :class:`~.UniformPrismFamily`
+        and :class:`~.UniformAntiprismFamily`, as the new classes have a simplified API
+        and support the entire infinite shape family. Please transfer existing code to
+        use the new classes.
 
     Options for prisms are  \
     "Triangular Prism", "Square Prism", "Pentagonal Prism", "Hexagonal Prism", \
@@ -172,4 +380,23 @@ PrismAntiprismFamily = TabulatedGSDShapeFamily.from_json_file(
     "Heptagonal Antiprism", "Octagonal Antiprism","Nonagonal Antiprism", \
     and "Decagonal Antiprism".
 """,
+)
+
+PrismAntiprismFamily.get_shape = _deprecated_method(
+    PrismAntiprismFamily.get_shape,
+    deprecated="PrismAntiprismFamily",
+    replacement="UniformPrismFamily and UniformAntiprismFamily",
+    reason=(
+        "These alternate classes have a simplified interface and support the "
+        "entire infinite family of geometries."
+    ),
+)
+PyramidDipyramidFamily.get_shape = _deprecated_method(
+    PyramidDipyramidFamily.get_shape,
+    deprecated="PyramidDipyramidFamily",
+    replacement="UniformPyramidFamily and UniformDipyramidFamily",
+    reason=(
+        "These alternate classes have a simplified interface and better match the "
+        "naming conventions of coxeter."
+    ),
 )

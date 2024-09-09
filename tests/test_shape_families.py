@@ -3,21 +3,36 @@
 
 import numpy as np
 import pytest
-from hypothesis import given
-from hypothesis.strategies import floats
+from hypothesis import given, settings
+from hypothesis.strategies import floats, integers
 
-from conftest import _catalan_shape_names
 from coxeter.families import (
     DOI_SHAPE_REPOSITORIES,
+    ArchimedeanFamily,
     CatalanFamily,
     Family323Plus,
     Family423,
     Family523,
+    JohnsonFamily,
+    PlatonicFamily,
+    PrismAntiprismFamily,
+    PyramidDipyramidFamily,
     RegularNGonFamily,
+    TabulatedGSDShapeFamily,
     TruncatedTetrahedronFamily,
+    UniformAntiprismFamily,
+    UniformDipyramidFamily,
+    UniformPrismFamily,
+    UniformPyramidFamily,
 )
+from coxeter.shapes import ConvexPolyhedron
 
+ATOL = 1e-15
 MIN_REALISTIC_PRECISION = 2e-6
+MAX_N_POLY = 102
+TEST_EXAMPLES = 32
+
+ScienceFamily = DOI_SHAPE_REPOSITORIES["10.1126/science.1220869"][0]
 
 
 def _test_parameters_outside_precision(params_list):
@@ -33,7 +48,8 @@ def _test_parameters_outside_precision(params_list):
     return any(is_close_to_shape_space_boundary(param) for param in params_list)
 
 
-@pytest.mark.parametrize("n", range(3, 100))
+@given(n=integers(3, MAX_N_POLY))
+@settings(max_examples=TEST_EXAMPLES)
 def test_regular_ngon(n):
     poly = RegularNGonFamily.get_shape(n)
     assert len(poly.vertices) == n
@@ -50,19 +66,54 @@ def test_regular_ngon(n):
     )
 
 
-def test_shape_repos():
-    family = DOI_SHAPE_REPOSITORIES["10.1126/science.1220869"][0]
-    for shape in _catalan_shape_names:
-        for key in family.data:
-            if family.data[key]["name"] == shape:
-                break
-        else:
-            raise AssertionError(f"Could not find {shape} in the dataset.")
-        reference_poly = CatalanFamily.get_shape(shape)
-        test_poly = family.get_shape(key)
-        test_poly.merge_faces(1e-3)
-        assert reference_poly.num_vertices == test_poly.num_vertices
-        assert reference_poly.num_faces == test_poly.num_faces
+@pytest.mark.parametrize(
+    "family",
+    [PlatonicFamily, ArchimedeanFamily, CatalanFamily, JohnsonFamily, ScienceFamily],
+    ids=[
+        "PlatonicFamily",
+        "ArchimedeanFamily",
+        "CatalanFamily",
+        "JohnsonFamily",
+        "ScienceFamily",
+    ],
+)
+def test_named_family(family):
+    def test_type(family):
+        assert isinstance(family, TabulatedGSDShapeFamily)
+
+    def test_iteration(family):
+        for name, shape in family:
+            assert isinstance(shape, ConvexPolyhedron)
+            np.testing.assert_allclose(family.get_shape(name).vertices, shape.vertices)
+
+    def test_names(family):
+        for name in family.names:
+            family.get_shape(name)
+
+    test_type(family)
+    test_iteration(family)
+    test_names(family)
+
+
+def test_science_family():
+    reference_mapping = {
+        "P": PlatonicFamily,
+        "A": ArchimedeanFamily,
+        "C": CatalanFamily,
+        "J": JohnsonFamily,
+        "O": None,
+    }
+    for name, shape in ScienceFamily:
+        reference = reference_mapping[name[0]]
+        if reference is not None:
+            try:
+                np.testing.assert_allclose(
+                    reference.get_shape(ScienceFamily.data[name]["name"]).vertices,
+                    shape.vertices,
+                )
+            except KeyError as e:
+                if name[0] != "J":
+                    raise KeyError from e
 
 
 def test_shape323():
@@ -162,3 +213,84 @@ def test_truncated_tetrahedron_intermediates(t):
     if _test_parameters_outside_precision([t]) or np.abs(np.round(t, 15) - t) < 2e-16:
         return
     TruncatedTetrahedronFamily.get_shape(t)
+
+
+@given(n=integers(3, MAX_N_POLY))
+@settings(max_examples=TEST_EXAMPLES)
+def test_uniform_prisms(n):
+    vertices = UniformPrismFamily.make_vertices(n=n)
+    shape = UniformPrismFamily.get_shape(n=n)
+
+    np.testing.assert_allclose(shape.centroid, 0.0, atol=ATOL)
+    np.testing.assert_allclose(shape.volume, 1.0, atol=ATOL)
+    np.testing.assert_allclose(shape.edge_lengths, shape.edge_lengths.mean(), atol=ATOL)
+    np.testing.assert_allclose(vertices, shape.vertices)
+
+
+@given(n=integers(3, MAX_N_POLY))
+@settings(max_examples=TEST_EXAMPLES)
+def test_uniform_antiprisms(n):
+    vertices = UniformAntiprismFamily.make_vertices(n=n)
+    shape = UniformAntiprismFamily.get_shape(n=n)
+
+    np.testing.assert_allclose(shape.centroid, 0.0, atol=ATOL)
+    np.testing.assert_allclose(shape.volume, 1.0, atol=ATOL)
+    np.testing.assert_allclose(shape.edge_lengths, shape.edge_lengths.mean(), atol=ATOL)
+    np.testing.assert_allclose(vertices, shape.vertices)
+
+
+@pytest.mark.parametrize("n", [3, 4, 5])
+def test_uniform_pyramids(n):
+    vertices = UniformPyramidFamily.make_vertices(n=n)
+    shape = UniformPyramidFamily.get_shape(n=n)
+
+    np.testing.assert_allclose(shape.centroid, 0.0, atol=ATOL)
+    np.testing.assert_allclose(shape.volume, 1.0, atol=ATOL)
+    np.testing.assert_allclose(shape.edge_lengths, shape.edge_lengths.mean(), atol=ATOL)
+    np.testing.assert_allclose(vertices, shape.vertices)
+
+
+@pytest.mark.parametrize("n", [3, 4, 5])
+def test_uniform_dipyramids(n):
+    vertices = UniformDipyramidFamily.make_vertices(n=n)
+    shape = UniformDipyramidFamily.get_shape(n=n)
+
+    np.testing.assert_allclose(shape.centroid, 0.0, atol=ATOL)
+    np.testing.assert_allclose(shape.volume, 1.0, atol=ATOL)
+    np.testing.assert_allclose(shape.edge_lengths, shape.edge_lengths.mean(), atol=ATOL)
+    np.testing.assert_allclose(vertices, shape.vertices)
+
+
+def test_new_prism_antiprism():
+    for i, nameshape in enumerate(PrismAntiprismFamily):
+        name, shape = nameshape
+
+        if "Anti" in name:
+            n = i + 3  # count + min_n
+            comparative_shape = UniformAntiprismFamily.get_shape(n)
+        else:
+            n = (i + 3) - 8  # count + min_n + n_prism
+            comparative_shape = UniformPrismFamily.get_shape(n)
+
+        np.testing.assert_allclose(shape.volume, comparative_shape.volume, atol=ATOL)
+        np.testing.assert_allclose(
+            shape.edge_lengths, comparative_shape.edge_lengths, atol=ATOL
+        )
+
+
+def test_new_pyramid_dipyramid():
+    for i, nameshape in enumerate(PyramidDipyramidFamily):
+        name, shape = nameshape
+
+        if "Di" in name:
+            n = i + 3  # count + min_n
+            comparative_shape = UniformDipyramidFamily.get_shape(n)
+        else:
+            n = (i + 3) - 3  # count + min_n + n_pyramid
+            comparative_shape = UniformPyramidFamily.get_shape(n)
+
+        np.testing.assert_allclose(comparative_shape.centroid, 0.0, atol=ATOL)
+        np.testing.assert_allclose(shape.volume, comparative_shape.volume, atol=ATOL)
+        np.testing.assert_allclose(
+            shape.edge_lengths, comparative_shape.edge_lengths, atol=ATOL
+        )
