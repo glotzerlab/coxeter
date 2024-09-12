@@ -6,9 +6,9 @@ repos:
     rev: 'v4.6.0'
     hooks:
       - id: end-of-file-fixer
-        exclude: ^tests/control/
+        exclude: '^tests/control/*'
       - id: trailing-whitespace
-        exclude: '(?:setup.cfg.*|paper/.*)|^tests/control/'
+        exclude: '(?:setup.cfg.*|paper/.*)|^tests/control/*'
       - id: debug-statements
       - id: check-builtin-literals
       - id: check-executables-have-shebangs
