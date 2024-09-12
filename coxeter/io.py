@@ -48,12 +48,11 @@ def to_obj(shape, filename):
 
     for f in shape.faces:
         content += f"f {' '.join([str(v_index+1) for v_index in f])}\n"
-    
+
     content = content[:-1]
 
     with open(filename, "w") as file:
         file.write(content)
-
 
 
 def to_off(shape, filename):
@@ -86,7 +85,6 @@ def to_off(shape, filename):
 
     with open(filename, "w") as file:
         file.write(content)
-
 
 
 def to_stl(shape, filename):
@@ -259,7 +257,7 @@ def to_vtk(shape, filename):
     content += f"POLYGONS {num_points} {num_points + num_connections}\n"
     for f in shape.faces:
         content += f"{len(f)} {' '.join([str(v_index) for v_index in f])}\n"
-    content = content.rstrip('\n')
+    content = content.rstrip("\n")
 
     # Write file
     with open(filename, "wb") as file:
