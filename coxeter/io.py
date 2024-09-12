@@ -13,7 +13,7 @@ These functions currently only work with `Polyhedron` and its subclasses.
 import os
 from importlib.metadata import version
 from xml.etree import ElementTree
-
+from copy import deepcopy
 import numpy as np
 
 __version__ = version("coxeter")
@@ -93,6 +93,9 @@ def to_stl(shape, filename):
         OSError: If open() encounters a problem.
     """
     with open(filename, "w") as file:
+        # Ensure shape is not mutated
+        shape = deepcopy(shape)
+
         # Shift vertices so all coordinates are positive
         mins = np.amin(a=shape.vertices, axis=0)
         for i, m in enumerate(mins):
