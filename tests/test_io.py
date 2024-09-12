@@ -60,7 +60,7 @@ SHAPES_BY_NAME = {
     ),
 }
 
-CONTROL_DIR = Path("/home/joseph/GlotzerGroup/coxeter/tests/control")
+CONTROL_DIR = Path("tests/control")
 
 
 @pytest.mark.parametrize(
