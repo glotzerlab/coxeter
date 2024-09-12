@@ -6,6 +6,7 @@ repos:
     rev: 'v4.6.0'
     hooks:
       - id: end-of-file-fixer
+        exclude: ^tests/control/
       - id: trailing-whitespace
         exclude: '(?:setup.cfg.*|paper/.*)'
       - id: debug-statements
