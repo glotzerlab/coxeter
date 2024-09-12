@@ -8,7 +8,7 @@ repos:
       - id: end-of-file-fixer
         exclude: ^tests/control/
       - id: trailing-whitespace
-        exclude: '(?:setup.cfg.*|paper/.*)'
+        exclude: '(?:setup.cfg.*|paper/.*)|^tests/control/'
       - id: debug-statements
       - id: check-builtin-literals
       - id: check-executables-have-shebangs
