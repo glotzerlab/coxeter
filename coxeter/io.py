@@ -11,9 +11,10 @@ These functions currently only work with `Polyhedron` and its subclasses.
 """
 
 import os
+from copy import deepcopy
 from importlib.metadata import version
 from xml.etree import ElementTree
-from copy import deepcopy
+
 import numpy as np
 
 __version__ = version("coxeter")
