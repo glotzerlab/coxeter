@@ -9,11 +9,17 @@
 import filecmp
 import tempfile
 from pathlib import Path
-
+from coxeter import io
+from coxeter.shapes import Polyhedron, ConvexPolyhedron
 import pytest
 
-from coxeter import io
-from coxeter.shapes import ConvexPolyhedron, Polyhedron
+def compare_text_files(file_path_1, file_path_2):
+    """Check whether two text files have identical contents, ignoring different 
+    newline characters."""
+    with open(file_path_1, "r") as file1, open(file_path_2, "r") as file2:
+        file1_contents, file2_contents = file1.read(), file2.read()
+        return file1_contents == file2_contents
+
 
 EXPORT_FUNCS_BY_FILE_TYPE = {
     "obj": io.to_obj,
@@ -80,7 +86,7 @@ def test_regression(file_type, export_func, shape_name):
         test_file_path = Path(tempdir) / f"test_{shape_name}.{file_type}"
         export_func(shape=shape, filename=test_file_path)
 
-        assert filecmp.cmp(control_file_path, test_file_path, shallow=False), (
+        assert compare_text_files(control_file_path, test_file_path), (
             f"During regression testing with the shape '{shape_name}' and "
             f"file type '{file_type}', {control_file_path.name} and "
             f"{test_file_path.name} were found to be not equivalent."
