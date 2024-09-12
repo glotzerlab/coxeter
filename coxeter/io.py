@@ -34,20 +34,26 @@ def to_obj(shape, filename):
     ------
         OSError: If open() encounters a problem.
     """
+    content = ""
+    content += (
+        f"# wavefront obj file written by Coxeter "
+        f"version {__version__}\n"
+        f"# {shape.__class__.__name__}\n\n"
+    )
+
+    for v in shape.vertices:
+        content += f"v {' '.join([str(coord) for coord in v])}\n"
+
+    content += "\n"
+
+    for f in shape.faces:
+        content += f"f {' '.join([str(v_index+1) for v_index in f])}\n"
+    
+    content = content[:-1]
+
     with open(filename, "w") as file:
-        file.write(
-            f"# wavefront obj file written by Coxeter "
-            f"version {__version__}\n"
-            f"# {shape.__class__.__name__}\n\n"
-        )
+        file.write(content)
 
-        for v in shape.vertices:
-            file.write(f"v {' '.join([str(coord) for coord in v])}\n")
-
-        file.write("\n")
-
-        for f in shape.faces:
-            file.write(f"f {' '.join([str(v_index+1) for v_index in f])}\n")
 
 
 def to_off(shape, filename):
@@ -61,22 +67,26 @@ def to_off(shape, filename):
     ------
         OSError: If open() encounters a problem.
     """
+    content = ""
+    content += (
+        f"OFF\n# OFF file written by Coxeter "
+        f"version {__version__}\n"
+        f"# {shape.__class__.__name__}\n"
+    )
+
+    content += f"{len(shape.vertices)} f{len(shape.faces)} " f"{len(shape.edges)}\n"
+
+    for v in shape.vertices:
+        content += f"{' '.join([str(coord) for coord in v])}\n"
+
+    for f in shape.faces:
+        content += f"{len(f)} {' '.join([str(v_index) for v_index in f])}\n"
+
+    content = content[:-1]
+
     with open(filename, "w") as file:
-        file.write(
-            f"OFF\n# OFF file written by Coxeter "
-            f"version {__version__}\n"
-            f"# {shape.__class__.__name__}\n"
-        )
+        file.write(content)
 
-        file.write(
-            f"{len(shape.vertices)} f{len(shape.faces)} " f"{len(shape.edges)}\n"
-        )
-
-        for v in shape.vertices:
-            file.write(f"{' '.join([str(coord) for coord in v])}\n")
-
-        for f in shape.faces:
-            file.write(f"{len(f)} {' '.join([str(v_index) for v_index in f])}\n")
 
 
 def to_stl(shape, filename):
@@ -138,23 +148,28 @@ def to_ply(shape, filename):
     ------
         OSError: If open() encounters a problem.
     """
+    content = ""
+    content += (
+        f"ply\nformat ascii 1.0\n"
+        f"comment PLY file written by Coxeter version {__version__}\n"
+        f"comment {shape.__class__.__name__}\n"
+        f"element vertex {len(shape.vertices)}\n"
+        f"property float x\nproperty float y\nproperty float z\n"
+        f"element face {len(shape.faces)}\n"
+        f"property list uchar uint vertex_indices\n"
+        f"end_header\n"
+    )
+
+    for v in shape.vertices:
+        content += f"{' '.join([str(coord) for coord in v])}\n"
+
+    for f in shape.faces:
+        content += f"{len(f)} {' '.join([str(int(v_index)) for v_index in f])}\n"
+
+    content = content[:-1]
+
     with open(filename, "w") as file:
-        file.write(
-            f"ply\nformat ascii 1.0\n"
-            f"comment PLY file written by Coxeter version {__version__}\n"
-            f"comment {shape.__class__.__name__}\n"
-            f"element vertex {len(shape.vertices)}\n"
-            f"property float x\nproperty float y\nproperty float z\n"
-            f"element face {len(shape.faces)}\n"
-            f"property list uchar uint vertex_indices\n"
-            f"end_header\n"
-        )
-
-        for v in shape.vertices:
-            file.write(f"{' '.join([str(coord) for coord in v])}\n")
-
-        for f in shape.faces:
-            file.write(f"{len(f)} {' '.join([str(int(v_index)) for v_index in f])}\n")
+        file.write(content)
 
 
 def to_x3d(shape, filename):
@@ -244,6 +259,7 @@ def to_vtk(shape, filename):
     content += f"POLYGONS {num_points} {num_points + num_connections}\n"
     for f in shape.faces:
         content += f"{len(f)} {' '.join([str(v_index) for v_index in f])}\n"
+    content = content.rstrip('\n')
 
     # Write file
     with open(filename, "wb") as file:
