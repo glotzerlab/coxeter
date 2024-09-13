@@ -103,3 +103,6 @@ filename="pyproject.toml"
 filename="doc/source/conf.py"
 [[tool.bumpversion.files]]
 filename="coxeter/__init__.py"
+
+# [tool.distutils.bdist_wheel]
+# python-tag = "py3"
