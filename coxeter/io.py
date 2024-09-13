@@ -14,10 +14,8 @@ import os
 from copy import deepcopy
 from importlib.metadata import version
 from xml.etree import ElementTree
-
 import numpy as np
-
-__version__ = version("coxeter")
+from coxeter import __version__
 
 
 def to_obj(shape, filename):
