@@ -90,3 +90,9 @@ known-first-party = ["conftest", "coxeter", "utils"]
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"
+
+[tool.bumpversion]
+# Configuration for https://github.com/callowayproject/bump-my-version
+tag = false
+commit = false
+message = "Bump up to version {new_version}."
