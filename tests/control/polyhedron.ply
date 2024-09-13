@@ -1,6 +1,6 @@
 ply
 format ascii 1.0
-comment PLY file written by Coxeter version 0.7.0
+comment PLY file written by Coxeter version 0.8.0
 comment Polyhedron
 element vertex 8
 property float x
