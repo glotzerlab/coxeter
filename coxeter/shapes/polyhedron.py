@@ -10,6 +10,7 @@ import numpy as np
 import rowan
 from scipy.sparse.csgraph import connected_components
 
+from .. import io
 from ..extern.polytri import polytri
 from .base_classes import Shape3D
 from .convex_polygon import ConvexPolygon, _is_convex
@@ -1020,3 +1021,39 @@ class Polyhedron(Shape3D):
 
         self.centroid = old_centroid
         return hoomd_dict
+
+    def save(self, filetype, filename):
+        """Save the polyhedron object to a file using methods from ``coxeter.io``.
+
+        Args:
+            filetype (str):
+                The file format to export polyhedron to. Must be one of the following:
+                OBJ, OFF, STL, PLY, VTK, X3D, HTML.
+
+            filename (str, pathlib.Path, or os.PathLike):
+                The name or path of the output file, including the extension.
+
+        Raises
+        ------
+            ValueError: If filetype is not one of the required strings.
+            OSError: If open() encounters a problem.
+        """
+        if filetype == "OBJ":
+            io.to_obj(self, filename)
+        elif filetype == "OFF":
+            io.to_off(self, filename)
+        elif filetype == "STL":
+            io.to_stl(self, filename)
+        elif filetype == "PLY":
+            io.to_ply(self, filename)
+        elif filetype == "VTK":
+            io.to_vtk(self, filename)
+        elif filetype == "X3D":
+            io.to_x3d(self, filename)
+        elif filetype == "HTML":
+            io.to_html(self, filename)
+        else:
+            raise ValueError(
+                "filetype must be one of the following: OBJ, OFF, "
+                "STL, PLY, VTK, X3D, HTML"
+            )
