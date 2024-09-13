@@ -6,17 +6,19 @@
 # This software is licensed under the BSD 3-Clause License.
 """Regression tests for the I/O module."""
 
-import filecmp
 import tempfile
 from pathlib import Path
-from coxeter import io
-from coxeter.shapes import Polyhedron, ConvexPolyhedron
+
 import pytest
 
+from coxeter import io
+from coxeter.shapes import ConvexPolyhedron, Polyhedron
+
+
 def compare_text_files(file_path_1, file_path_2):
-    """Check whether two text files have identical contents, ignoring different 
+    """Check whether two text files have identical contents, ignoring different
     newline characters."""
-    with open(file_path_1, "r") as file1, open(file_path_2, "r") as file2:
+    with open(file_path_1) as file1, open(file_path_2) as file2:
         file1_contents, file2_contents = file1.readlines(), file2.readlines()
         assert file1_contents == file2_contents
 

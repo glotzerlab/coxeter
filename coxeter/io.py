@@ -12,9 +12,10 @@ These functions currently only work with `Polyhedron` and its subclasses.
 
 import os
 from copy import deepcopy
-from importlib.metadata import version
 from xml.etree import ElementTree
+
 import numpy as np
+
 from coxeter import __version__
 
 
