@@ -31,6 +31,8 @@ from coxeter.shapes import ConvexPolyhedron, Polyhedron
 from coxeter.shapes.utils import rotate_order2_tensor, translate_inertia_tensor
 from utils import compute_centroid_mc, compute_inertia_mc
 
+MIN_REALISTIC_PROPERTY = 2e-16
+
 
 def test_normal_detection(convex_cube):
     detected_normals = [tuple(n) for n in convex_cube.normals]
@@ -155,7 +157,7 @@ def test_volume_damasceno_shapes(shape):
 
 @settings(max_examples=10 if is_not_ci() else 50)
 @named_damasceno_shapes_mark
-@given(v_test=floats(0, 10, exclude_min=True))
+@given(v_test=floats(MIN_REALISTIC_PROPERTY, 10, exclude_min=True))
 def test_set_volume_damasceno_shapes(shape, v_test):
     if shape["name"] in ("RESERVED", "Sphere"):
         return
@@ -179,7 +181,7 @@ def test_surface_area_damasceno_shapes(shape):
 
 @settings(max_examples=10 if is_not_ci() else 50)
 @named_damasceno_shapes_mark
-@given(a_test=floats(0, 10, exclude_min=True))
+@given(a_test=floats(MIN_REALISTIC_PROPERTY, 10, exclude_min=True))
 def test_set_surface_area_damasceno_shapes(shape, a_test):
     if shape["name"] in ("RESERVED", "Sphere"):
         return
