@@ -34,11 +34,11 @@ EXPORT_FUNCS_BY_FILE_TYPE = {
     "html": io.to_html,
 }
 
-mbri = JohnsonFamily.get_shape("Metabidiminished Rhombicosidodecahedron")
+epyr5 = JohnsonFamily.get_shape("Elongated Pentagonal Pyramid")
 
 SHAPES_BY_NAME = {
-    "polyhedron": Polyhedron(mbri.vertices, mbri.faces),
-    "convex_polyhedron": mbri,
+    "polyhedron": Polyhedron(epyr5.vertices, epyr5.faces),
+    "convex_polyhedron": epyr5,
 }
 
 CONTROL_DIR = Path("tests/control")
