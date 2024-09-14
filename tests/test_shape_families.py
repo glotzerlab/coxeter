@@ -262,35 +262,41 @@ def test_uniform_dipyramids(n):
 
 
 def test_new_prism_antiprism():
-    for i, nameshape in enumerate(PrismAntiprismFamily):
-        name, shape = nameshape
+    with pytest.warns(DeprecationWarning, match="deprecated in favor of"):
+        for i, nameshape in enumerate(PrismAntiprismFamily):
+            name, shape = nameshape
 
-        if "Anti" in name:
-            n = i + 3  # count + min_n
-            comparative_shape = UniformAntiprismFamily.get_shape(n)
-        else:
-            n = (i + 3) - 8  # count + min_n + n_prism
-            comparative_shape = UniformPrismFamily.get_shape(n)
+            if "Anti" in name:
+                n = i + 3  # count + min_n
+                comparative_shape = UniformAntiprismFamily.get_shape(n)
+            else:
+                n = (i + 3) - 8  # count + min_n + n_prism
+                comparative_shape = UniformPrismFamily.get_shape(n)
 
-        np.testing.assert_allclose(shape.volume, comparative_shape.volume, atol=ATOL)
-        np.testing.assert_allclose(
-            shape.edge_lengths, comparative_shape.edge_lengths, atol=ATOL
-        )
+            np.testing.assert_allclose(
+                shape.volume, comparative_shape.volume, atol=ATOL
+            )
+            np.testing.assert_allclose(
+                shape.edge_lengths, comparative_shape.edge_lengths, atol=ATOL
+            )
 
 
 def test_new_pyramid_dipyramid():
-    for i, nameshape in enumerate(PyramidDipyramidFamily):
-        name, shape = nameshape
+    with pytest.warns(DeprecationWarning, match="deprecated in favor of"):
+        for i, nameshape in enumerate(PyramidDipyramidFamily):
+            name, shape = nameshape
 
-        if "Di" in name:
-            n = i + 3  # count + min_n
-            comparative_shape = UniformDipyramidFamily.get_shape(n)
-        else:
-            n = (i + 3) - 3  # count + min_n + n_pyramid
-            comparative_shape = UniformPyramidFamily.get_shape(n)
+            if "Di" in name:
+                n = i + 3  # count + min_n
+                comparative_shape = UniformDipyramidFamily.get_shape(n)
+            else:
+                n = (i + 3) - 3  # count + min_n + n_pyramid
+                comparative_shape = UniformPyramidFamily.get_shape(n)
 
-        np.testing.assert_allclose(comparative_shape.centroid, 0.0, atol=ATOL)
-        np.testing.assert_allclose(shape.volume, comparative_shape.volume, atol=ATOL)
-        np.testing.assert_allclose(
-            shape.edge_lengths, comparative_shape.edge_lengths, atol=ATOL
-        )
+            np.testing.assert_allclose(comparative_shape.centroid, 0.0, atol=ATOL)
+            np.testing.assert_allclose(
+                shape.volume, comparative_shape.volume, atol=ATOL
+            )
+            np.testing.assert_allclose(
+                shape.edge_lengths, comparative_shape.edge_lengths, atol=ATOL
+            )
