@@ -15,11 +15,15 @@ from coxeter.families import (
     CatalanFamily,
     JohnsonFamily,
     PlatonicFamily,
-    PrismAntiprismFamily,
-    PyramidDipyramidFamily,
     RegularNGonFamily,
+    UniformAntiprismFamily,
+    UniformDipyramidFamily,
+    UniformPrismFamily,
+    UniformPyramidFamily,
 )
 from coxeter.shapes import ConvexPolyhedron, ConvexSpheropolyhedron, Polyhedron, Shape2D
+
+MAX_INFINITE_FAMILY_N = 11
 
 
 # Define a function to combine marks in order to more compactly test shape families
@@ -186,7 +190,7 @@ def assert_distance_to_surface_2d(shape, angles, computed_distance):
 
 def quaternion_from_axis_angle(x, y, z, theta):
     """Generate a quaternion from axis [x, y, z] and angle theta."""
-    if x == y == z == 0:
+    if np.allclose([x, y, z], 0):
         return np.array([1, 0, 0, 0])
     axis = np.array([x, y, z])
     axis /= np.linalg.norm(axis)
@@ -284,22 +288,28 @@ named_johnson_mark = pytest.mark.parametrize(
     ids=_johnson_shape_names,
 )
 
-_prismantiprism_shape_names = PrismAntiprismFamily.data.keys()
 named_prismantiprism_mark = pytest.mark.parametrize(
     argnames="poly",
     argvalues=[
-        PrismAntiprismFamily.get_shape(name) for name in _prismantiprism_shape_names
+        *[UniformPrismFamily.get_shape(n) for n in range(3, MAX_INFINITE_FAMILY_N)],
+        *[UniformAntiprismFamily.get_shape(n) for n in range(3, MAX_INFINITE_FAMILY_N)],
     ],
-    ids=_prismantiprism_shape_names,
+    ids=[
+        *[f"prism-{n}" for n in range(3, MAX_INFINITE_FAMILY_N)],
+        *[f"antiprism-{n}" for n in range(3, MAX_INFINITE_FAMILY_N)],
+    ],
 )
 
-_pyramiddipyramid_shape_names = PyramidDipyramidFamily.data.keys()
 named_pyramiddipyramid_mark = pytest.mark.parametrize(
     argnames="poly",
     argvalues=[
-        PyramidDipyramidFamily.get_shape(name) for name in _pyramiddipyramid_shape_names
+        *[UniformPyramidFamily.get_shape(n) for n in range(3, 6)],
+        *[UniformDipyramidFamily.get_shape(n) for n in range(3, 6)],
     ],
-    ids=_pyramiddipyramid_shape_names,
+    ids=[
+        *[f"pyramid-{n}" for n in range(3, 6)],
+        *[f"dipyramid-{n}" for n in range(3, 6)],
+    ],
 )
 
 

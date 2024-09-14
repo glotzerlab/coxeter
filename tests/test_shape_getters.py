@@ -4,6 +4,7 @@
 import json
 
 import numpy as np
+import pytest
 from pytest import approx
 
 from conftest import data_filenames_mark
@@ -117,6 +118,12 @@ def test_json_data_families(family):
             # Extract the stored shape keys
             shapes = list(fam_data.keys())
             for shape in shapes:
-                module_vertices = module.get_shape(shape).vertices
+                if "pyramid" in family or "prism" in family:
+                    with pytest.warns(
+                        DeprecationWarning, match="deprecated in favor of"
+                    ):
+                        module_vertices = module.get_shape(shape).vertices
+                else:
+                    module_vertices = module.get_shape(shape).vertices
                 json_vertices = fam_data[shape]["vertices"]
                 assert np.all(module_vertices == json_vertices)
