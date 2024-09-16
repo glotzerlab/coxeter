@@ -6,7 +6,7 @@ import pytest
 import rowan
 from hypothesis import assume, example, given, settings
 from hypothesis.extra.numpy import arrays
-from hypothesis.strategies import floats
+from hypothesis.strategies import builds, floats, integers
 from pytest import approx
 from scipy.spatial import ConvexHull
 
@@ -186,10 +186,9 @@ def test_convex_area(points):
     assert np.isclose(hull.volume, poly.area)
 
 
-@given(random_quat=arrays(np.float64, (4,), elements=floats(-1, 1, width=64)))
+@given(random_quat=builds(lambda i: rowan.random.rand(100)[i], integers(0, 99)))
 def test_rotation_signed_area(random_quat):
     """Ensure that rotating does not change the signed area."""
-    assume(not np.allclose(random_quat, 0))
     random_quat = rowan.normalize(random_quat)
     rotated_points = rowan.rotate(random_quat, get_square_points())
     poly = Polygon(rotated_points)
