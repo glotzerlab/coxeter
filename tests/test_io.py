@@ -12,7 +12,8 @@ from pathlib import Path
 import pytest
 
 from coxeter import io
-from coxeter.shapes import ConvexPolyhedron, Polyhedron
+from coxeter.families import JohnsonFamily
+from coxeter.shapes import Polyhedron
 
 
 def compare_text_files(file_path_1, file_path_2):
@@ -33,39 +34,11 @@ EXPORT_FUNCS_BY_FILE_TYPE = {
     "html": io.to_html,
 }
 
+epyr5 = JohnsonFamily.get_shape("Elongated Pentagonal Pyramid")
+
 SHAPES_BY_NAME = {
-    "polyhedron": Polyhedron(
-        vertices=[
-            [-1, -1, -1],
-            [-1, -1, 1],
-            [-1, 1, -1],
-            [-1, 1, 1],
-            [1, -1, -1],
-            [1, -1, 1],
-            [1, 1, -1],
-            [1, 1, 1],
-        ],
-        faces=[
-            [0, 1, 3, 2],
-            [0, 2, 6, 4],
-            [4, 6, 7, 5],
-            [1, 5, 7, 3],
-            [0, 4, 5, 1],
-            [6, 2, 3, 7],
-        ],
-    ),
-    "convex_polyhedron": ConvexPolyhedron(
-        vertices=[
-            [-1, -1, -1],
-            [-1, -1, 1],
-            [-1, 1, -1],
-            [-1, 1, 1],
-            [1, -1, -1],
-            [1, -1, 1],
-            [1, 1, -1],
-            [1, 1, 1],
-        ]
-    ),
+    "polyhedron": Polyhedron(epyr5.vertices, epyr5.faces),
+    "convex_polyhedron": epyr5,
 }
 
 CONTROL_DIR = Path("tests/control")
