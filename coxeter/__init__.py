@@ -16,7 +16,7 @@ is especially designed for calculations of interest in physics-based
 applications such as inertia tensors.
 """
 
-__version__ = "0.8.0"
+__version__ = "0.9.0"
 
 from . import families, io, shapes
 from .shape_getters import from_gsd_type_shapes

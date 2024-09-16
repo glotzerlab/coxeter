@@ -1,20 +1,25 @@
 The format is based on `Keep a Changelog <http://keepachangelog.com/en/1.0.0/>`__.
 This project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`__.
 
+
 v0.x.x - 20xx-xx-xx
+-------------------
+
+v0.9.0 - 2024-09-13
 -------------------
 
 Breaking
 ~~~~~
 
-- [breaking] The hidden ``TabulatedShapeFamily`` class has been removed, with functionality moved to ``TabulatedGSDShapeFamily``.
+- The private ``TabulatedShapeFamily`` class has been removed, with functionality moved to ``TabulatedGSDShapeFamily``.
 
 Added
 ~~~~~
 
 - ``TabulatedGSDShapeFamilies`` are now iterable, allowing easier access to shapes.
 - New ``UniformPrismFamily``, ``UniformAntiprismFamily``, ``UniformPyramidFamily``, and ``UniformDipyramidFamily``
-- New documentation to assist users initialize common geometries.
+- New documentation to help users initialize common geometries.
+- New methods to export Polyhedra as OBJ, OFF, STL, PLY, VTK, X3D, and HTML files.
 
 Changed
 ~~~~~~~
