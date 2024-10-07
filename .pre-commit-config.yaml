@@ -3,7 +3,7 @@ ci:
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: 'v4.6.0'
+    rev: 'v5.0.0'
     hooks:
       - id: end-of-file-fixer
         exclude: '^tests/control/.*'
@@ -22,7 +22,7 @@ repos:
       - id: check-yaml
       - id: requirements-txt-fixer
   - repo: https://github.com/glotzerlab/fix-license-header
-    rev: v0.4.0
+    rev: v0.4.1
     hooks:
       - id: fix-license-header
         name: Fix License Headers (Python)
@@ -35,7 +35,7 @@ repos:
           - --add=This file is from the coxeter project, released under the BSD 3-Clause License.
           - --keep-before=#!
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.6.5
+    rev: v0.6.9
     hooks:
       # Run the linter.
       - id: ruff
