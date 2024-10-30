@@ -603,7 +603,7 @@ def test_to_hoomd(points):
     poly.centroid = [0, 0, 0]
     dict_keys = ["vertices", "centroid", "sweep_radius", "area", "moment_inertia"]
     dict_vals = [
-        poly.vertices[:,:2],
+        poly.vertices[:, :2],
         [0, 0, 0],
         0,
         poly.area,
