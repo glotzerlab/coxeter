@@ -800,6 +800,7 @@ class Polygon(Shape2D):
         self.centroid = np.array([0, 0, 0])
         data = self.to_json(["vertices", "centroid", "area", "inertia_tensor"])
         hoomd_dict = _map_dict_keys(data, key_mapping=_hoomd_dict_mapping)
+        hoomd_dict |= {"vertices": self.vertices[:, :2]}
         hoomd_dict["sweep_radius"] = 0.0
 
         self.centroid = old_centroid
