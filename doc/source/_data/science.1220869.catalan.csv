@@ -1,0 +1,14 @@
+﻿ID,Name of the polyhedron,IQ,Structure(s),CN_{f},CN_{o}
+C01,Rhombic Dodecahedron [space filling: FCC],0.740,FCC,11.8,12.0
+C02,Rhombic Triacontahedron,0.887,FCC,12.3,12.0
+C03,Triakis Tetrahedron,0.646,Disordered,,13.1
+C04,Tetrakis Hexahedron,0.843,FCC,11.8,11.9
+C05,Triakis Octahedron,0.790,BCC,13.2,13.8
+C06,Pentakis Dodecahedron,0.940,FCC,11.4,11.8
+C07,Triakis Icosahedron,0.905,FCC,11.9,11.8
+C08,Deltoidal Icositetrahedron,0.870,FCC,11.9,12.0
+C09,Deltoidal Hexecontahedron,0.946,FCC,12.0,11.9
+C10,Disdyakis Dodecahedron,0.910,FCC,12.0,12.0
+C11,Disdyakis Triacontahedron,0.958,FCC,12.0,12.1
+C12,Pentagonal Icositetrahedron,0.873,FCC,11.6,12.0
+C13,Pentagonal Hexecontahedron,0.946,FCC,11.9,12.0

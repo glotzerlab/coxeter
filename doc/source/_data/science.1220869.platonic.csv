@@ -1,0 +1,6 @@
+﻿ID,Name of the polyhedron,IQ,Structure(s),CN_{f},CN_{o}
+P01,Tetrahedron,0.302,Dodecagonal Quasicrystal,3.5,4.1
+P02,Octahedron,0.605,Rhombohedral [densest packing],14.0,13.9
+P03,Cube [space filling: simple cubic],0.524,Cubic [densest packing],5.8,5.8
+P04,Icosahedron,0.829,FCC,11.6,11.9
+P05,Dodecahedron,0.755,Beta‐Mn,13.0,13.1

@@ -32,7 +32,12 @@
    license
    zreferences
 
+.. toctree::
+   :maxdepth: 1
+   :caption: tables
 
+   tables-families
+   
 Indices and tables
 ==================
 

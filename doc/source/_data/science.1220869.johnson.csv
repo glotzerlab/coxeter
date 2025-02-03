@@ -1,0 +1,106 @@
+﻿ID,Name of the polyhedron,IQ,Structure(s),CN_{f},CN_{o}
+J01,Pyramid 4 (Square Pyramid),0.308,Disordered (dimers),,0.8
+J02,Pyramid 5,0.175,Nematic,0.8,0.8
+J03,Triangular Cupola,0.399,Disordered (dimers),,1.0
+J04,Square Cupola,0.276,Nematic,0.9,0.9
+J05,Pentagonal Cupola,0.134,Nematic,0.6,0.6
+J06,Pentagonal Rotunda,0.485,Disordered (dimers),,0.6
+J07,Elongated Triangular Pyramid,0.324,Disordered (dimers),,2.6
+J08,Elongated Square Pyramid,0.566,Smectic,1.2,1.7
+J09,Elongated Pentagonal Pyramid,0.659,Disordered,,12.9
+J10,Gyroelongated Square Pyramid,0.676,Disordered,,13.4
+J11,Gyroelongated Pentagonal Pyramid,0.721,Disordered,,13.1
+J12,Dipyramid 3 (Triangular Dipyramid),0.358,Dodecagonal Quasicrystal,6.0,6.1
+J13,Dipyramid 5 (Pentagonal Dipyramid),0.507,Rhombohedral [densest packing],5.7,5.7
+J14,Elongated Triangular Dipyramid,0.288,Graphite [densest packing],2.3,2.9
+J15,Elongated Square Dipyramid,0.589,BCT [densest packing],4.0,4.1
+J16,Elongated Pentagonal Dipyramid,0.752,FCC,12.6,12.4
+J17,Gyroelongated Square Dipyramid,0.694,Disordered,,13.8
+J18,ElongatedTriangularCupola,0.681,BCC,13.7,14.0
+J19,Elongated Square Cupola,0.693,Disordered,,12.4
+J20,Elongated Pentagonal Cupola,0.604,Disordered (dimers),,0.9
+J21,Elongated Pentagonal Rotunda,0.713,Disordered,,13.2
+J22,Gyroelongated Triangular Cupola,0.711,Disordered,,13.1
+J23,Gyroelongated Square Cupola,0.69,Disordered,,13.1
+J24,Gyroelongated Pentagonal Cupola,0.579,Disordered (dimers),,0.8
+J25,Gyroelongated Pentagonal Rotunda,0.709,Disordered,,13.4
+J26,Gyrobifastigium [space filling: A5],0.45,A5 [densest packing],6.9,7.2
+J27,Triangular Orthobicupola,0.741,FCC,11.9,12.1
+J28,Square Orthobicupola,0.7,Disordered,12.7,12.7
+J29,Square Gyrobicupola,0.7,Disordered,12.7,12.7
+J30,Pentagonal Orthobicupola,0.435,Nematic + Sigma,1.8,1.9
+J31,Pentagonal Gyrobicupola,0.435,Nematic + Sigma,1.6,1.7
+J32,Pentagonal Orthocupolarotunda,0.741,Disordered,,13.1
+J33,Pentagonal Gyrocupolarotunda,0.741,Disordered,,14.2
+J34,Pentagonal Orthobirotunda,0.86,FCC,11.9,11.8
+J35,Elongated Triangular Orthobicupola,0.751,Disordered,,12.6
+J36,ElongatedTriangular Gyrobicupola,0.751,Disordered,,12.7
+J37,Elongated Square Gyrobicupola,0.868,FCC,11.5,11.9
+J38,Elongated Pentagonal Orthobicupola,0.804,Disordered,,13.1
+J39,Elongated Pentagonal Gyrobicupola,0.804,Disordered,,13.1
+J40,"Elongated Pentagonal
+Orthocupolarotunda",0.86,FCC,11.9,12.0
+J41,"Elongated Pentagonal
+Gyrocupolarotunda",0.86,FCC,12.0,12.0
+J42,Elongated Pentagonal Orthobirotunda,0.863,FCC,12.2,12.0
+J43,Elongated Pentagonal Gyrobirotunda,0.863,Disordered,,12.9
+J44,Gyroelongated Triangular Bicupola,0.791,Disordered,,12.6
+J45,Gyroelongated Square Bicupola,0.887,FCC,11.9,12.1
+J46,Gyroelongated Pentagonal Bicupola,0.796,Disordered,,12.5
+J47,"Gyroelongated Pentagonal
+Cupolarotunda",0.866,FCC,11.6,11.9
+J48,Gyroelongated Pentagonal Birotunda,0.876,FCC,11.7,11.9
+J49,Augmented Triangular Prism,0.52,Disordered,,15.7
+J50,Biaugmented Triangular Prism,0.611,Disordered,,15.0
+J51,Triaugmented Triangular Prism,0.66,Disordered,,13.7
+J52,Augmented Pentagonal Prism,0.561,Smectic,1.3,1.4
+J53,Biaugmented Pentagonal Prism,0.559,Disordered,,14.1
+J54,Augmented Hexagonal Prism,0.535,Smectic,1.0,1.2
+J55,Parabiaugmented Hexagonal Prism,0.525,Orthorhombic,0.9,0.9
+J56,Metabiaugmented Hexagonal Prism,0.525,Hexagonal,1.1,1.1
+J57,Triaugmented Hexagonal Prism,0.514,Honeycomb,1.0,1.0
+J58,Augmented Dodecahedron,0.765,Beta‐Mn,12.9,12.9
+J59,Parabiaugmented Dodecahedron,0.774,FCC + BCC,11.8,12.0
+J60,Metabiaugmented Dodecahedron,0.774,FCC,11.6,11.9
+J61,Triaugmented Dodecahedron,0.782,FCC,12.5,12.4
+J62,MetabidiminishedIcosahedron,0.601,Disordered,,14.6
+J63,Tridiminished Icosahedron,0.469,Disordered (dimers),,2.1
+J64,Augmented Tridiminished Icosahedron,0.4,Disordered (dimers),,2.4
+J65,Augmented Truncated Tetrahedron,0.59,Disordered,,15.5
+J66,Augmented Truncated Cube,0.675,Rhombohedral,14.2,14.3
+J67,Biaugmented Truncated Cube,0.726,BCT [densest packing],13.5,14.6
+J68,Augmented Truncated Dodecahedron,0.809,FCC,11.9,11.9
+J69,"Parabiaugmented Truncated
+Dodecahedron",0.824,FCC,11.9,12.0
+J70,"Metabiaugmented Truncated
+Dodecahedron",0.824,FCC + Beta‐Mn,12.9,11.9
+J71,"Triaugmented Truncated
+Dodecahedron",0.837,FCC,11.7,12.0
+J72,Gyrate Rhombicosidodecahedron,0.939,FCC,11.8,11.9
+J73,"Parabigyrate
+Rhombicosidodecahedron",0.939,FCC,10.9,11.1
+J74,Metabigyrate Rhombicosidodecahedron,0.939,FCC,12.2,12.2
+J75,Trigyrate Rhombicosidodecahedron,0.939,FCC,11.4,11.9
+J76,Diminished Rhombicosidodecahedron,0.890,FCC,11.8,12.0
+J77,"Paragyrate Diminished
+Rhombicosidodecahedron",0.890,FCC,11.6,11.9
+J78,"Metagyrate Diminished
+Rhombicosidodecahedron",0.890,FCC,11.9,12.0
+J79,Bigyrate Diminished Rhombicosidodecahedron,0.890,FCC,11.6,11.9
+J80,"Parabidiminished
+Rhombicosidodecahedron",0.838,FCC + A15,12.5,12.3
+J81,"Metabidiminished
+Rhombicosidodecahedron",0.838,FCC + BCC,13.1,13.1
+J82,"Gyrate Bidiminished
+Rhombicosidodecahedron",0.838,BCC,12.9,13.0
+J83,"Tridiminished
+Rhombicosidodecahedron",0.784,Gamma‐Brass,13.7,13.7
+J84,Snub Disphenoid,0.596,Disordered,,13.9
+J85,Snub Square Antiprism,0.771,Disordered,,12.6
+J86,Sphenocorona,0.697,Disordered,,13.5
+J87,Augmented Sphenocorona,0.696,Disordered,,13.5
+J88,Sphenomegacorona,0.603,Disordered,,13.1
+J89,Hebesphenomegacorona,0.763,Disordered,,13.1
+J90,Disphenocingulum,0.795,FCC,12.3,12.2
+J91,Bilunabirotunda,0.575,Hexagonal (random tiling),5.7,5.7
+J92,Triangular Hebesphenorotunda,0.671,Disordered,,12.7

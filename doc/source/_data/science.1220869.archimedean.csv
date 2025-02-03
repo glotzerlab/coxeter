@@ -1,0 +1,14 @@
+﻿ID,Name of the polyhedron,IQ,Structure(s),CN_{f},CN_{o}
+A01,Cuboctahedron,0.741,FCC + BCC,13.3,12.0
+A02,Icosidodecahedron,0.860,FCC,11.7,12.0
+A03,Truncated Tetrahedron,0.466,Diamond,3.0,3.9
+A04,Truncated Octahedron (space filling: BCC],0.753,BCC,11.8,13.9
+A05,Truncated Cube,0.613,Rhombohedral [densest packing],5.6,5.7
+A06,Truncated Icosahedron,0.903,FCC,11.3,11.9
+A07,Truncated Dodecahedron,0.794,Gamma‐Brass,12.1,12.4
+A08,Rhombicuboctahedron,0.868,FCC,11.4,11.8
+A09,Rhombicosidodecahedron,0.939,FCC,11.8,11.9
+A10,Truncated Cuboctahedron,0.839,FCC,12.0,12.0
+A11,Truncated Icosidodecahedron,0.914,FCC,11.9,12.0
+A12,Snub Cuboctahedron,0.899,FCC,11.6,11.9
+A13,Snub Icosidodecahedron,0.947,FCC,12.1,12.1
