@@ -19,7 +19,17 @@
    package-shapes
    package-families
    module-shape-getters
+   table-platonic
 
+.. toctree::
+   :maxdepth: 2
+   :caption: Shape Family Tables
+
+   table-platonic
+   table-archimedean
+   table-catalan
+   table-johnson
+   table-other
 
 .. toctree::
    :maxdepth: 1
@@ -31,12 +41,6 @@
    credits
    license
    zreferences
-
-.. toctree::
-   :maxdepth: 1
-   :caption: tables
-
-   tables-families
    
 Indices and tables
 ==================
