@@ -1,0 +1,7 @@
+Name,Vertices,Faces,Model
+Triangular Pyramid,4,4,:x3d-model:`_static/x3d/triangular_pyramid.x3d`
+Square Pyramid,5,5,:x3d-model:`_static/x3d/square_pyramid.x3d`
+Pentagonal Pyramid,6,6,:x3d-model:`_static/x3d/pentagonal_pyramid.x3d`
+Triangular Dipyramid,5,6,:x3d-model:`_static/x3d/triangular_dipyramid.x3d`
+Square Dipyramid,6,8,:x3d-model:`_static/x3d/square_dipyramid.x3d`
+Pentagonal Dipyramid,7,10,:x3d-model:`_static/x3d/pentagonal_dipyramid.x3d`

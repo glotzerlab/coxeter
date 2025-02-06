@@ -1,0 +1,17 @@
+Name,Vertices,Faces,Model
+Triangular Prism,6,5,:x3d-model:`_static/x3d/triangular_prism.x3d`
+Pentagonal Prism,10,7,:x3d-model:`_static/x3d/pentagonal_prism.x3d`
+Hexagonal Prism,12,8,:x3d-model:`_static/x3d/hexagonal_prism.x3d`
+Heptagonal Prism,14,9,:x3d-model:`_static/x3d/heptagonal_prism.x3d`
+Octagonal Prism,16,10,:x3d-model:`_static/x3d/octagonal_prism.x3d`
+Nonagonal Prism,18,11,:x3d-model:`_static/x3d/nonagonal_prism.x3d`
+Decagonal Prism,20,12,:x3d-model:`_static/x3d/decagonal_prism.x3d`
+Square Prism,8,6,:x3d-model:`_static/x3d/square_prism.x3d`
+Triangular Antiprism,6,8,:x3d-model:`_static/x3d/triangular_antiprism.x3d`
+Square Antiprism,8,10,:x3d-model:`_static/x3d/square_antiprism.x3d`
+Pentagonal Antiprism,10,12,:x3d-model:`_static/x3d/pentagonal_antiprism.x3d`
+Hexagonal Antiprism,12,14,:x3d-model:`_static/x3d/hexagonal_antiprism.x3d`
+Heptagonal Antiprism,14,16,:x3d-model:`_static/x3d/heptagonal_antiprism.x3d`
+Octagonal Antiprism,16,18,:x3d-model:`_static/x3d/octagonal_antiprism.x3d`
+Nonagonal Antiprism,18,20,:x3d-model:`_static/x3d/nonagonal_antiprism.x3d`
+Decagonal Antiprism,20,22,:x3d-model:`_static/x3d/decagonal_antiprism.x3d`
