@@ -31,6 +31,7 @@ release = "0.9.0"
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
+sys.path.insert(0, os.path.abspath('./_extensions'))
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
@@ -40,6 +41,7 @@ extensions = [
     "sphinxcontrib.bibtex",
     "autodocsumm",
     "nbsphinx",
+    "x3d_model_extension"
 ]
 
 # For sphincontrib.bibtex (as of v2.0).
