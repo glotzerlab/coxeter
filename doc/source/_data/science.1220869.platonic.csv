@@ -1,6 +1,6 @@
 ID,Name,Vertices,Faces,Model
-P01,Tetrahedron,4,4,:model:`_static/tetrahedron.x3d`
-P02,Octahedron,6,8,:model:`_static/octahedron.x3d`
-P03,Cube,8,6,:model:`_static/cube.x3d`
-P04,Icosahedron,12,20,:model:`_static/icosahedron.x3d`
-P05,Dodecahedron,20,12,:model:`_static/dodecahedron.x3d`
+P01,Tetrahedron,4,4,:x3d-model:`_static/tetrahedron.x3d`
+P02,Octahedron,6,8,:x3d-model:`_static/octahedron.x3d`
+P03,Cube,8,6,:x3d-model:`_static/cube.x3d`
+P04,Icosahedron,12,20,:x3d-model:`_static/icosahedron.x3d`
+P05,Dodecahedron,20,12,:x3d-model:`_static/dodecahedron.x3d`
