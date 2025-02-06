@@ -10,4 +10,4 @@ For implementation details see :py:class:`~coxeter.families.ArchimedeanFamily` a
 
 .. csv-table::
     :file: _data/science.1220869.archimedean.csv
-    :header-rows: 1 
+    :header-rows: 1

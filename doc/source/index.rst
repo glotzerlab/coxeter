@@ -43,7 +43,7 @@
    credits
    license
    zreferences
-   
+
 Indices and tables
 ==================
 

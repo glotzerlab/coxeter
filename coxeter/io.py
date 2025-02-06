@@ -180,7 +180,6 @@ def to_x3d(shape, filename):
     ------
         OSError: If open() encounters a problem.
     """
-
     # Parent elements
     root = ElementTree.Element(
         "x3d",
@@ -192,7 +191,7 @@ def to_x3d(shape, filename):
         },
     )
     x3d_scene = ElementTree.SubElement(root, "Scene")
-    
+
     # Faces
     x3d_shape_faces = ElementTree.SubElement(
         x3d_scene, "shape", attrib={"DEF": f"{shape.__class__.__name__} Faces"}
@@ -255,18 +254,19 @@ def to_x3d(shape, filename):
 
     # Position the camera
     try:
-        camera_pos_z = 3*shape.circumsphere_radius
+        camera_pos_z = 3 * shape.circumsphere_radius
     except RuntimeError:
         widths = np.max(shape.vertices, axis=0) - np.min(shape.vertices, axis=0)
-        camera_pos_z = (3/2)*(np.max(widths))
+        camera_pos_z = (3 / 2) * (np.max(widths))
 
     x3d_viewpoint = ElementTree.SubElement(
         x3d_scene,
         "Viewpoint",
         attrib={
-            "position": f"0,0,{camera_pos_z}",   # Note the hardcoded position
-            "centerOfRotation": ",".join(map(str, np.around(shape.centroid, 3)))
-        })
+            "position": f"0,0,{camera_pos_z}",  # Note the hardcoded position
+            "centerOfRotation": ",".join(map(str, np.around(shape.centroid, 3))),
+        },
+    )
 
     # Write to file
     ElementTree.ElementTree(root).write(filename, encoding="UTF-8")

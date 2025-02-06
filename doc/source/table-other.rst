@@ -7,4 +7,4 @@ For implementation details see :py:data:`~coxeter.families.DOI_SHAPE_REPOSITORIE
 
 .. csv-table::
     :file: _data/science.1220869.other.csv
-    :header-rows: 1 
+    :header-rows: 1

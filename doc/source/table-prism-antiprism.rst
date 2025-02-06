@@ -7,4 +7,4 @@ For implementation details see :py:class:`~coxeter.families.PrismAntiprismFamily
 
 .. csv-table::
     :file: _data/prismantiprism.csv
-    :header-rows: 1 
+    :header-rows: 1

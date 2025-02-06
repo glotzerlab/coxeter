@@ -7,4 +7,4 @@ For implementation details see :py:class:`~coxeter.families.PyramidDipyramidFami
 
 .. csv-table::
     :file: _data/pyramiddipyramid.csv
-    :header-rows: 1 
+    :header-rows: 1

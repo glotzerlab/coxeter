@@ -10,4 +10,4 @@ For implementation details see :py:class:`~coxeter.families.CatalanFamily` and :
 
 .. csv-table::
     :file: _data/science.1220869.catalan.csv
-    :header-rows: 1 
+    :header-rows: 1
