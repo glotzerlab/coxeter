@@ -1,14 +1,14 @@
 ID,Name,Vertices,Faces,Model
-C01,Rhombic Dodecahedron,14,12,:x3d-model:`_static/rhombic_dodecahedron.x3d`
-C02,Rhombic Triacontahedron,32,30,:x3d-model:`_static/rhombic_triacontahedron.x3d`
-C03,Triakis Tetrahedron,8,12,:x3d-model:`_static/triakis_tetrahedron.x3d`
-C04,Tetrakis Hexahedron,14,24,:x3d-model:`_static/tetrakis_hexahedron.x3d`
-C05,Triakis Octahedron,14,24,:x3d-model:`_static/triakis_octahedron.x3d`
-C06,Pentakis Dodecahedron,32,60,:x3d-model:`_static/pentakis_dodecahedron.x3d`
-C07,Triakis Icosahedron,32,60,:x3d-model:`_static/triakis_icosahedron.x3d`
-C08,Deltoidal Icositetrahedron,26,24,:x3d-model:`_static/deltoidal_icositetrahedron.x3d`
-C09,Deltoidal Hexecontahedron,62,60,:x3d-model:`_static/deltoidal_hexecontahedron.x3d`
-C10,Disdyakis Dodecahedron,26,48,:x3d-model:`_static/disdyakis_dodecahedron.x3d`
-C11,Disdyakis Triacontahedron,62,120,:x3d-model:`_static/disdyakis_triacontahedron.x3d`
-C12,Pentagonal Icositetrahedron,38,24,:x3d-model:`_static/pentagonal_icositetrahedron.x3d`
-C13,Pentagonal Hexecontahedron,92,60,:x3d-model:`_static/pentagonal_hexecontahedron.x3d`
+C01,Rhombic Dodecahedron,14,12,:x3d-model:`_static/x3d/rhombic_dodecahedron.x3d`
+C02,Rhombic Triacontahedron,32,30,:x3d-model:`_static/x3d/rhombic_triacontahedron.x3d`
+C03,Triakis Tetrahedron,8,12,:x3d-model:`_static/x3d/triakis_tetrahedron.x3d`
+C04,Tetrakis Hexahedron,14,24,:x3d-model:`_static/x3d/tetrakis_hexahedron.x3d`
+C05,Triakis Octahedron,14,24,:x3d-model:`_static/x3d/triakis_octahedron.x3d`
+C06,Pentakis Dodecahedron,32,60,:x3d-model:`_static/x3d/pentakis_dodecahedron.x3d`
+C07,Triakis Icosahedron,32,60,:x3d-model:`_static/x3d/triakis_icosahedron.x3d`
+C08,Deltoidal Icositetrahedron,26,24,:x3d-model:`_static/x3d/deltoidal_icositetrahedron.x3d`
+C09,Deltoidal Hexecontahedron,62,60,:x3d-model:`_static/x3d/deltoidal_hexecontahedron.x3d`
+C10,Disdyakis Dodecahedron,26,48,:x3d-model:`_static/x3d/disdyakis_dodecahedron.x3d`
+C11,Disdyakis Triacontahedron,62,120,:x3d-model:`_static/x3d/disdyakis_triacontahedron.x3d`
+C12,Pentagonal Icositetrahedron,38,24,:x3d-model:`_static/x3d/pentagonal_icositetrahedron.x3d`
+C13,Pentagonal Hexecontahedron,92,60,:x3d-model:`_static/x3d/pentagonal_hexecontahedron.x3d`

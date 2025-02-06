@@ -1,14 +1,14 @@
 ID,Name,Vertices,Faces,Model
-A01,Cuboctahedron,12,14,:x3d-model:`_static/cuboctahedron.x3d`
-A02,Icosidodecahedron,30,32,:x3d-model:`_static/icosidodecahedron.x3d`
-A03,Truncated Tetrahedron,12,8,:x3d-model:`_static/truncated_tetrahedron.x3d`
-A04,Truncated Octahedron,24,14,:x3d-model:`_static/truncated_octahedron.x3d`
-A05,Truncated Cube,24,14,:x3d-model:`_static/truncated_cube.x3d`
-A06,Truncated Icosahedron,60,32,:x3d-model:`_static/truncated_icosahedron.x3d`
-A07,Truncated Dodecahedron,60,32,:x3d-model:`_static/truncated_dodecahedron.x3d`
-A08,Rhombicuboctahedron,24,26,:x3d-model:`_static/rhombicuboctahedron.x3d`
-A09,Rhombicosidodecahedron,60,62,:x3d-model:`_static/rhombicosidodecahedron.x3d`
-A10,Truncated Cuboctahedron,48,26,:x3d-model:`_static/truncated_cuboctahedron.x3d`
-A11,Truncated Icosidodecahedron,120,62,:x3d-model:`_static/truncated_icosidodecahedron.x3d`
-A12,Snub Cuboctahedron,24,38,:x3d-model:`_static/snub_cuboctahedron.x3d`
-A13,Snub Icosidodecahedron,60,92,:x3d-model:`_static/snub_icosidodecahedron.x3d`
+A01,Cuboctahedron,12,14,:x3d-model:`_static/x3d/cuboctahedron.x3d`
+A02,Icosidodecahedron,30,32,:x3d-model:`_static/x3d/icosidodecahedron.x3d`
+A03,Truncated Tetrahedron,12,8,:x3d-model:`_static/x3d/truncated_tetrahedron.x3d`
+A04,Truncated Octahedron,24,14,:x3d-model:`_static/x3d/truncated_octahedron.x3d`
+A05,Truncated Cube,24,14,:x3d-model:`_static/x3d/truncated_cube.x3d`
+A06,Truncated Icosahedron,60,32,:x3d-model:`_static/x3d/truncated_icosahedron.x3d`
+A07,Truncated Dodecahedron,60,32,:x3d-model:`_static/x3d/truncated_dodecahedron.x3d`
+A08,Rhombicuboctahedron,24,26,:x3d-model:`_static/x3d/rhombicuboctahedron.x3d`
+A09,Rhombicosidodecahedron,60,62,:x3d-model:`_static/x3d/rhombicosidodecahedron.x3d`
+A10,Truncated Cuboctahedron,48,26,:x3d-model:`_static/x3d/truncated_cuboctahedron.x3d`
+A11,Truncated Icosidodecahedron,120,62,:x3d-model:`_static/x3d/truncated_icosidodecahedron.x3d`
+A12,Snub Cuboctahedron,24,38,:x3d-model:`_static/x3d/snub_cuboctahedron.x3d`
+A13,Snub Icosidodecahedron,60,92,:x3d-model:`_static/x3d/snub_icosidodecahedron.x3d`
