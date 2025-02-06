@@ -1,23 +1,23 @@
-﻿ID,Name of the polyhedron,IQ,Structure(s),CN_{f},CN_{o}
-O01,Triangular Prism (edge len. = 1) [space filling: honeycomb],0.367,Honeycomb [densest packing],2.5,2.6
-O02,Pentagonal Prism (edge len. = 1),0.557,Columnar,1.4,1.5
-O03,Hexagonal Prism (edge len. = 1) [space filling: hexagonal],0.544,Columnar,1.5,1.6
-O04,Heptagonal Prism (edge len. = 1),0.514,Columnar,1.0,1.4
-O05,Octagonal Prism (edge len. = 1),0.479,Columnar,1.4,1.7
-O06,Nonagonal Prism (edge len. = 1),0.443,Columnar,1.2,1.5
-O07,Decagonal Prism (edge len. = 1),0.409,Columnar,1.2,1.5
-O08,Square Antiprism (edge len. = 1),0.635,Disordered,,14.5
-O09,Pentagonal Antiprism (edge len. = 1),0.601,Columnar,0.9,1.5
-O10,Hexagonal Antiprism (edge len. = 1),0.551,Columnar,1.1,1.5
-O11,Heptagonal Antiprism (edge len. = 1),0.499,Columnar,1.2,1.7
-O12,Octagonal Antiprism (edge len. = 1),0.452,Columnar,1.2,1.7
-O13,Nonagonal Antiprism (edge len. = 1),0.409,Columnar,1.3,1.8
-O14,Decagonal Antiprism (edge len. = 1),0.37,Columnar,1.3,1.7
-O15,Squashed Dodecahedron,0.74,FCC,11.8,12.0
-O16,RhombicIcosahedron,0.749,Disordered,,12.2
-O17,Rhombic Enneacontahedron,0.949,FCC,11.5,11.9
-O18,Obtuse Golden Rhombohedron [space filling: rhombohedral],0.162,Nematic + Rhombohedral,2.9,2.9
-O19,Acute Golden Rhombohedron [space filling: rhombohedral],0.424,Rhombohedral [densest packing],14.1,14.1
-O20,Duerers Solid,0.568,Cubic,7.1,7.0
-O21,Elongated Dodecahedron [space filling: BCT],0.682,BCT [densest packing],15.2,15.3
-O22,Square pyramid (height = 1/2 edge length) [space filling: supercube],0.233,Supercube [densest packing],0.8,0.9
+ID,Name,Vertices,Faces,Model
+O01,Triangular Prism,6,5,:model:`_static/triangular_prism.x3d`
+O02,Pentagonal Prism,10,7,:model:`_static/pentagonal_prism.x3d`
+O03,Hexagonal Prism,12,8,:model:`_static/hexagonal_prism.x3d`
+O04,Heptagonal Prism,14,9,:model:`_static/heptagonal_prism.x3d`
+O05,Octagonal Prism,16,10,:model:`_static/octagonal_prism.x3d`
+O06,Nonagonal Prism,18,11,:model:`_static/nonagonal_prism.x3d`
+O07,Decagonal Prism,20,12,:model:`_static/decagonal_prism.x3d`
+O08,Square Antiprism,8,10,:model:`_static/square_antiprism.x3d`
+O09,Pentagonal Antiprism,10,12,:model:`_static/pentagonal_antiprism.x3d`
+O10,Hexagonal Antiprism,12,14,:model:`_static/hexagonal_antiprism.x3d`
+O11,Heptagonal Antiprism,14,16,:model:`_static/heptagonal_antiprism.x3d`
+O12,Octagonal Antiprism,16,18,:model:`_static/octagonal_antiprism.x3d`
+O13,Nonagonal Antiprism,18,20,:model:`_static/nonagonal_antiprism.x3d`
+O14,Decagonal Antiprism,20,22,:model:`_static/decagonal_antiprism.x3d`
+O15,Squashed Dodecahedron,14,21,:model:`_static/squashed_dodecahedron.x3d`
+O16,Rhombic Icosahedron,22,40,:model:`_static/rhombic_icosahedron.x3d`
+O17,Rhombic Enneacontahedron,92,161,:model:`_static/rhombic_enneacontahedron.x3d`
+O18,Obtuse Golden Rhombohedron,8,8,:model:`_static/obtuse_golden_rhombohedron.x3d`
+O19,Acute Golden Rhombohedron,8,8,:model:`_static/acute_golden_rhombohedron.x3d`
+O20,Duerers Solid,12,18,:model:`_static/duerers_solid.x3d`
+O21,Elongated Dodecahedron,18,12,:model:`_static/elongated_dodecahedron.x3d`
+O22,Square Pyramid,5,5,:model:`_static/square_pyramid.x3d`

@@ -1,14 +1,14 @@
-﻿ID,Name of the polyhedron,IQ,Structure(s),CN_{f},CN_{o}
-A01,Cuboctahedron,0.741,FCC + BCC,13.3,12.0
-A02,Icosidodecahedron,0.860,FCC,11.7,12.0
-A03,Truncated Tetrahedron,0.466,Diamond,3.0,3.9
-A04,Truncated Octahedron (space filling: BCC],0.753,BCC,11.8,13.9
-A05,Truncated Cube,0.613,Rhombohedral [densest packing],5.6,5.7
-A06,Truncated Icosahedron,0.903,FCC,11.3,11.9
-A07,Truncated Dodecahedron,0.794,Gamma‐Brass,12.1,12.4
-A08,Rhombicuboctahedron,0.868,FCC,11.4,11.8
-A09,Rhombicosidodecahedron,0.939,FCC,11.8,11.9
-A10,Truncated Cuboctahedron,0.839,FCC,12.0,12.0
-A11,Truncated Icosidodecahedron,0.914,FCC,11.9,12.0
-A12,Snub Cuboctahedron,0.899,FCC,11.6,11.9
-A13,Snub Icosidodecahedron,0.947,FCC,12.1,12.1
+ID,Name,Vertices,Faces,Model
+A01,Cuboctahedron,12,14,:model:`_static/cuboctahedron.x3d`
+A02,Icosidodecahedron,30,32,:model:`_static/icosidodecahedron.x3d`
+A03,Truncated Tetrahedron,12,8,:model:`_static/truncated_tetrahedron.x3d`
+A04,Truncated Octahedron,24,14,:model:`_static/truncated_octahedron.x3d`
+A05,Truncated Cube,24,14,:model:`_static/truncated_cube.x3d`
+A06,Truncated Icosahedron,60,32,:model:`_static/truncated_icosahedron.x3d`
+A07,Truncated Dodecahedron,60,32,:model:`_static/truncated_dodecahedron.x3d`
+A08,Rhombicuboctahedron,24,26,:model:`_static/rhombicuboctahedron.x3d`
+A09,Rhombicosidodecahedron,60,62,:model:`_static/rhombicosidodecahedron.x3d`
+A10,Truncated Cuboctahedron,48,26,:model:`_static/truncated_cuboctahedron.x3d`
+A11,Truncated Icosidodecahedron,120,62,:model:`_static/truncated_icosidodecahedron.x3d`
+A12,Snub Cuboctahedron,24,38,:model:`_static/snub_cuboctahedron.x3d`
+A13,Snub Icosidodecahedron,60,92,:model:`_static/snub_icosidodecahedron.x3d`
