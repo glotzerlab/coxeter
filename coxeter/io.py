@@ -180,7 +180,6 @@ def to_x3d(shape, filename):
     ------
         OSError: If open() encounters a problem.
     """
-    # TODO: translate shape so that its centroid is at the origin
 
     # Parent elements
     root = ElementTree.Element(
@@ -193,16 +192,18 @@ def to_x3d(shape, filename):
         },
     )
     x3d_scene = ElementTree.SubElement(root, "Scene")
-    x3d_shape = ElementTree.SubElement(
-        x3d_scene, "shape", attrib={"DEF": f"{shape.__class__.__name__}"}
+    
+    # Faces
+    x3d_shape_faces = ElementTree.SubElement(
+        x3d_scene, "shape", attrib={"DEF": f"{shape.__class__.__name__} Faces"}
     )
 
-    x3d_appearance = ElementTree.SubElement(x3d_shape, "Appearance")
+    x3d_appearance = ElementTree.SubElement(x3d_shape_faces, "Appearance")
     ElementTree.SubElement(
         x3d_appearance, "Material", attrib={"diffuseColor": "#6495ED"}
     )
 
-    # Geometry data
+    # Faces Geometry data
     point_indices = list(range(sum([len(f) for f in shape.faces])))
     prev_index = 0
     for f in shape.faces:
@@ -212,7 +213,7 @@ def to_x3d(shape, filename):
     points = [v for f in shape.faces for v_index in f for v in shape.vertices[v_index]]
 
     x3d_indexedfaceset = ElementTree.SubElement(
-        x3d_shape,
+        x3d_shape_faces,
         "IndexedFaceSet",
         attrib={"coordIndex": " ".join([str(c_index) for c_index in point_indices])},
     )
@@ -221,6 +222,51 @@ def to_x3d(shape, filename):
         "Coordinate",
         attrib={"point": " ".join([str(p) for p in points])},
     )
+
+    # Outline/Edges
+    x3d_shape_edges = ElementTree.SubElement(
+        x3d_scene, "shape", attrib={"DEF": f"{shape.__class__.__name__} Edges"}
+    )
+
+    x3d_appearance = ElementTree.SubElement(x3d_shape_edges, "Appearance")
+    ElementTree.SubElement(
+        x3d_appearance, "LineProperties", attrib={"linewidthScaleFactor": "0"}
+    )
+
+    # Outline/Edges Geometry data
+    point_indices = list(range(sum([len(f) for f in shape.faces])))
+    prev_index = 0
+    for f in shape.faces:
+        point_indices.insert(len(f) + prev_index, -1)
+        prev_index += len(f) + 1
+
+    points = [v for f in shape.faces for v_index in f for v in shape.vertices[v_index]]
+
+    x3d_indexedfaceset = ElementTree.SubElement(
+        x3d_shape_edges,
+        "IndexedLineSet",
+        attrib={"coordIndex": " ".join([str(c_index) for c_index in point_indices])},
+    )
+    ElementTree.SubElement(
+        x3d_indexedfaceset,
+        "Coordinate",
+        attrib={"point": " ".join([str(p) for p in points])},
+    )
+
+    # Position the camera
+    try:
+        camera_pos_z = 3*shape.circumsphere_radius
+    except RuntimeError:
+        widths = np.max(shape.vertices, axis=0) - np.min(shape.vertices, axis=0)
+        camera_pos_z = (3/2)*(np.max(widths))
+
+    x3d_viewpoint = ElementTree.SubElement(
+        x3d_scene,
+        "Viewpoint",
+        attrib={
+            "position": f"0,0,{camera_pos_z}",   # Note the hardcoded position
+            "centerOfRotation": ",".join(map(str, np.around(shape.centroid, 3)))
+        })
 
     # Write to file
     ElementTree.ElementTree(root).write(filename, encoding="UTF-8")
