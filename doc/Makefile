@@ -22,7 +22,7 @@ help:
 # 	Third line copies the X3D files from _static (Sphinx doesn't copy them correctly)
 #	Fourth line runs the sphinx build command
 %: Makefile
-	@echo "Creating ./$(BUILDDIR)/$@/$(STATICDIR)/x3d..."; 
+	@echo "Creating ./$(BUILDDIR)/$@/$(STATICDIR)/x3d...";
 	@mkdir -p "$(BUILDDIR)/$@/$(STATICDIR)/x3d"
 	@cp -r "./$(SOURCEDIR)/$(STATICDIR)/x3d" "./$(BUILDDIR)/$@/$(STATICDIR)"
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
