@@ -11,3 +11,5 @@ python:
     install:
         - method: pip
           path: .
+sphinx:
+    configuration: doc/source/conf.py
