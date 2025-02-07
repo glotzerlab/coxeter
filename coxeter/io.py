@@ -259,7 +259,7 @@ def to_x3d(shape, filename):
         widths = np.max(shape.vertices, axis=0) - np.min(shape.vertices, axis=0)
         camera_pos_z = (3 / 2) * (np.max(widths))
 
-    x3d_viewpoint = ElementTree.SubElement(
+    ElementTree.SubElement(
         x3d_scene,
         "Viewpoint",
         attrib={

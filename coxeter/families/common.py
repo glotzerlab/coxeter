@@ -358,7 +358,8 @@ PrismAntiprismFamily = TabulatedGSDShapeFamily._from_json_file(
         and support the entire infinite shape family. Please transfer existing code to
         use the new classes.
 
-    Options for prisms can be found in the :doc:`Prism-Antiprism Table<table-prism-antiprism>`.
+    Options for prisms can be found in the \
+    :doc:`Prism-Antiprism Table<table-prism-antiprism>`.
 """,
 )
 
