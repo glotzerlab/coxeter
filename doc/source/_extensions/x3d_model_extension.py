@@ -6,7 +6,7 @@ from docutils import nodes
 from docutils.parsers.rst import roles
 
 
-def x3d_model_role(name, rawtext, text, lineno, inliner, options, x3d_content):
+def x3d_model_role(name, rawtext, text, lineno, inliner, options={}, x3d_content=[]):
     """Define custom role for loarding X3D models from file into raw HTML nodes."""
     url = text.strip()
     with open(Path.cwd() / "build" / "html" / url, encoding="utf-8") as f:

@@ -56,7 +56,7 @@ exclude = '''
 
 [tool.ruff]
 include = ["*.py", "*.ipynb"]
-exclude = ["*/extern/*"]
+exclude = ["*/extern/*", "*/x3d_model_extension.py"]
 line-length = 88
 select = [
     "UP", # pyupgrade
