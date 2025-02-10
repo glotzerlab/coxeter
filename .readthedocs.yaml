@@ -4,10 +4,8 @@ build:
   tools:
     python: "mambaforge-4.10"
   jobs:
-    build:
-      html:
-        - echo "Copying static X3D files..."; mkdir -p $READTHEDOCS_OUTPUT/html/_static/x3d; cp -r ./doc/source/_static/x3d $READTHEDOCS_OUTPUT/html/_static
-        - python -m sphinx -c doc/source -T -b html -d _build/doctrees -D language=en . $READTHEDOCS_OUTPUT/html
+    pre_build:
+      - echo "Copying static X3D files..."; mkdir -p $READTHEDOCS_OUTPUT/html/_static/x3d; cp -r ./doc/source/_static/x3d $READTHEDOCS_OUTPUT/html/_static
 formats:
     - htmlzip
 conda:
