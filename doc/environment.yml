@@ -13,5 +13,5 @@ dependencies:
   - sphinxcontrib-bibtex>=2.0.0
   - autodocsumm
   - nbsphinx
-  - fresnel=0.12.0
+  - fresnel
   - matplotlib
