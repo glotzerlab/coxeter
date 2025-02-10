@@ -4,6 +4,7 @@ channels:
   - defaults
 dependencies:
   - numpy
+  - pandas
   - rowan>=1.2
   - scipy
   - jupyter
