@@ -5,7 +5,7 @@ channels:
 dependencies:
   - numpy
   - pandas
-  - plato
+  - plato-draw
   - rowan>=1.2
   - scipy
   - jupyter
