@@ -8,7 +8,7 @@ from docutils.parsers.rst import roles
 
 def x3d_model_role(name, rawtext, text, lineno, inliner, options={}, x3d_content=[], app=None):
     """Define custom role for loarding X3D models from file into raw HTML nodes.
-    
+
     Note: app is a required argument.
     """
     if app is not None:
