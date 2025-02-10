@@ -9,6 +9,8 @@ build:
         - echo "Copying static X3D files..."
         - mkdir -p $READTHEDOCS_OUTPUT/html/_static/x3d
         - cp -r ./doc/source/_static/x3d $READTHEDOCS_OUTPUT/html/_static/x3d
+        - echo "Source x3d files - "; ls -l ./doc/source/_static/x3d
+        - echo "Build x3d files after copying - "; ls -l $READTHEDOCS_OUTPUT/html/_static/x3d
         - python -m sphinx -c doc/source -T -b html -d _build/doctrees -D language=en . $READTHEDOCS_OUTPUT/html
 formats:
     - htmlzip
