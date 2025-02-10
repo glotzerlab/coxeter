@@ -20,6 +20,7 @@ Added
 - New ``UniformPrismFamily``, ``UniformAntiprismFamily``, ``UniformPyramidFamily``, and ``UniformDipyramidFamily``
 - New documentation to help users initialize common geometries.
 - New methods to export Polyhedra as OBJ, OFF, STL, PLY, VTK, X3D, and HTML files.
+- New documentation section: "Shape Family Tables"
 
 Changed
 ~~~~~~~
