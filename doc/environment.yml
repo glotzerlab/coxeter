@@ -5,7 +5,6 @@ channels:
 dependencies:
   - numpy
   - pandas
-  - plato-draw
   - rowan>=1.2
   - scipy
   - jupyter
@@ -16,3 +15,5 @@ dependencies:
   - nbsphinx
   - fresnel
   - matplotlib
+  - pip:
+    - plato-draw
