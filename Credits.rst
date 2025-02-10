@@ -134,6 +134,11 @@ Domagoj Fijan
 * Ported docs to Furo.
 * Added support for Python 3.12 and numpy 2.0.
 
+Joseph Burkhart
+
+* Created the `io` module
+* Created the interactive "Shape Family Tables" documentation
+
 Source code
 -----------
 
