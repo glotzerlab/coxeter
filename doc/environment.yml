@@ -14,3 +14,4 @@ dependencies:
   - nbsphinx
   - fresnel
   - matplotlib
+  - pandas
