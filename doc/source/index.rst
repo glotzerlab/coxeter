@@ -19,7 +19,6 @@
    package-shapes
    package-families
    module-shape-getters
-   table-platonic
 
 .. toctree::
    :maxdepth: 2
