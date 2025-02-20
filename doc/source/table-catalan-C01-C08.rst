@@ -11,4 +11,3 @@ For implementation details see :py:class:`~coxeter.families.CatalanFamily` and :
 .. csv-table::
     :file: _data/science.1220869.catalan_C01-C08.csv
     :header-rows: 1
-
