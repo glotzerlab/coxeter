@@ -137,7 +137,7 @@ Domagoj Fijan
 Joseph Burkhart
 
 * Created the `io` module
-* Created the interactive "Shape Family Tables" documentation
+* Created the interactive "Pre-Defined Shapes" documentation
 
 Source code
 -----------
