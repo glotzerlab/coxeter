@@ -1,9 +1,9 @@
 Prisms
 =====================
 
-Coxeter includes pre-defined shapes for 16 members of the infinite Prism-Antiprism family, each of which can be instantiated using :code:`families.PrismAntiprismFamily.get_shape(\<name\>)`. Some may also be found among the :doc:`Other Polyhedra<table-other>` from :cite:`Damasceno2012a`.
+Any of the infinite family of right uniform antiprisms can be generated with :code:`families.UniformPrismFamily.get_shape(n)`, where ``n`` is the number of vertices of the polar faces. A subset of this family is shown below.
 
-For implementation details see :py:class:`~coxeter.families.PrismAntiprismFamily`.
+For implementation details see :py:class:`~coxeter.families.UniformPrismFamily`.
 
 .. csv-table::
    :file: _data/prismantiprism_prisms.csv
