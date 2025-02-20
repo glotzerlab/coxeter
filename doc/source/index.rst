@@ -23,7 +23,7 @@
 
 .. toctree::
    :maxdepth: 2
-   :caption: Shape Family Tables
+   :caption: Pre-Defined Shapes
 
    table-platonic
    table-archimedean

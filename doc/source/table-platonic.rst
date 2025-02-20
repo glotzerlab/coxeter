@@ -1,7 +1,7 @@
 Platonic Solids
 ===================
 
-This table lists the 5 Platonic Solids. They can be instantiated in two ways:
+There are 5 Platonic Solids, each of which can be instantiated in two ways:
 
 - :code:`families.PlatonicFamily.get_shape(\<name\>)`
 - :code:`families.DOI_SHAPE_REPOSITORIES["10.1126/science.1220869"][0].get_shape(\<id\>)`

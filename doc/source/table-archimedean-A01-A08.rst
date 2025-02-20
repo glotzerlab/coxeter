@@ -1,4 +1,4 @@
-Archimedean Solids
+A01 -- A08
 ===================
 
 There are 13 Archimedean Solids, each of which can be instantiated in two ways:
@@ -8,8 +8,6 @@ There are 13 Archimedean Solids, each of which can be instantiated in two ways:
 
 For implementation details see :py:class:`~coxeter.families.ArchimedeanFamily` and :py:data:`~coxeter.families.DOI_SHAPE_REPOSITORIES`.
 
-Shape information is listed in the following tables.
-
-.. toctree::
-    table-archimedean-A01-A08
-    table-archimedean-A09-A13
+.. csv-table::
+    :file: _data/science.1220869.archimedean_A01-A08.csv
+    :header-rows: 1

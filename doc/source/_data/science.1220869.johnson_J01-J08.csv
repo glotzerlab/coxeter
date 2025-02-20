@@ -1,0 +1,9 @@
+ID,Name,Vertices,Faces,Model
+J01,Pyramid 4,5,5,:x3d-model:`_static/x3d/pyramid_4.x3d`
+J02,Pyramid 5,6,6,:x3d-model:`_static/x3d/pyramid_5.x3d`
+J03,Triangular Cupola,9,8,:x3d-model:`_static/x3d/triangular_cupola.x3d`
+J04,Square Cupola,12,10,:x3d-model:`_static/x3d/square_cupola.x3d`
+J05,Pentagonal Cupola,15,12,:x3d-model:`_static/x3d/pentagonal_cupola.x3d`
+J06,Pentagonal Rotunda,20,17,:x3d-model:`_static/x3d/pentagonal_rotunda.x3d`
+J07,Elongated Triangular Pyramid,7,7,:x3d-model:`_static/x3d/elongated_triangular_pyramid.x3d`
+J08,Elongated Square Pyramid,9,9,:x3d-model:`_static/x3d/elongated_square_pyramid.x3d`

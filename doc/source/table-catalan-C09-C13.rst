@@ -1,4 +1,4 @@
-Catalan Solids
+C09 -- C13
 ===================
 
 There are 13 Catalan Solids, each of which can be instantiated in two ways:
@@ -8,8 +8,6 @@ There are 13 Catalan Solids, each of which can be instantiated in two ways:
 
 For implementation details see :py:class:`~coxeter.families.CatalanFamily` and :py:data:`~coxeter.families.DOI_SHAPE_REPOSITORIES`.
 
-Shape information is listed in the following tables.
-
-.. toctree::
-   table-catalan-C01-C08
-   table-catalan-C09-C13
+.. csv-table::
+    :file: _data/science.1220869.catalan_C09-C13.csv
+    :header-rows: 1

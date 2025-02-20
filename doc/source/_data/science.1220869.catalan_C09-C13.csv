@@ -1,0 +1,6 @@
+ID,Name,Vertices,Faces,Model
+C09,Deltoidal Hexecontahedron,62,60,:x3d-model:`_static/x3d/deltoidal_hexecontahedron.x3d`
+C10,Disdyakis Dodecahedron,26,48,:x3d-model:`_static/x3d/disdyakis_dodecahedron.x3d`
+C11,Disdyakis Triacontahedron,62,120,:x3d-model:`_static/x3d/disdyakis_triacontahedron.x3d`
+C12,Pentagonal Icositetrahedron,38,24,:x3d-model:`_static/x3d/pentagonal_icositetrahedron.x3d`
+C13,Pentagonal Hexecontahedron,92,60,:x3d-model:`_static/x3d/pentagonal_hexecontahedron.x3d`

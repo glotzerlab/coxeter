@@ -1,0 +1,10 @@
+ID,Name,Vertices,Faces,Model
+J57,Triaugmented Hexagonal Prism,15,17,:x3d-model:`_static/x3d/triaugmented_hexagonal_prism.x3d`
+J58,Augmented Dodecahedron,21,16,:x3d-model:`_static/x3d/augmented_dodecahedron.x3d`
+J59,Parabiaugmented Dodecahedron,22,20,:x3d-model:`_static/x3d/parabiaugmented_dodecahedron.x3d`
+J60,Metabiaugmented Dodecahedron,22,20,:x3d-model:`_static/x3d/metabiaugmented_dodecahedron.x3d`
+J61,Triaugmented Dodecahedron,23,24,:x3d-model:`_static/x3d/triaugmented_dodecahedron.x3d`
+J62,Metabidiminished Icosahedron,10,12,:x3d-model:`_static/x3d/metabidiminished_icosahedron.x3d`
+J63,Tridiminished Icosahedron,9,8,:x3d-model:`_static/x3d/tridiminished_icosahedron.x3d`
+J64,Augmented Tridiminished Icosahedron,10,10,:x3d-model:`_static/x3d/augmented_tridiminished_icosahedron.x3d`
+

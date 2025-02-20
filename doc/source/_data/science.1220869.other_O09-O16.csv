@@ -1,0 +1,9 @@
+ID,Name,Vertices,Faces,Model
+O09,Pentagonal Antiprism,10,12,:x3d-model:`_static/x3d/pentagonal_antiprism.x3d`
+O10,Hexagonal Antiprism,12,14,:x3d-model:`_static/x3d/hexagonal_antiprism.x3d`
+O11,Heptagonal Antiprism,14,16,:x3d-model:`_static/x3d/heptagonal_antiprism.x3d`
+O12,Octagonal Antiprism,16,18,:x3d-model:`_static/x3d/octagonal_antiprism.x3d`
+O13,Nonagonal Antiprism,18,20,:x3d-model:`_static/x3d/nonagonal_antiprism.x3d`
+O14,Decagonal Antiprism,20,22,:x3d-model:`_static/x3d/decagonal_antiprism.x3d`
+O15,Squashed Dodecahedron,14,21,:x3d-model:`_static/x3d/squashed_dodecahedron.x3d`
+O16,Rhombic Icosahedron,22,40,:x3d-model:`_static/x3d/rhombic_icosahedron.x3d`
