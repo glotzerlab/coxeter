@@ -1,0 +1,9 @@
+ID,Name,Vertices,Faces,Model
+J49,Augmented Triangular Prism,7,8,:x3d-model:`_static/x3d/augmented_triangular_prism.x3d`
+J50,Biaugmented Triangular Prism,8,11,:x3d-model:`_static/x3d/biaugmented_triangular_prism.x3d`
+J51,Triaugmented Triangular Prism,9,14,:x3d-model:`_static/x3d/triaugmented_triangular_prism.x3d`
+J52,Augmented Pentagonal Prism,11,10,:x3d-model:`_static/x3d/augmented_pentagonal_prism.x3d`
+J53,Biaugmented Pentagonal Prism,12,13,:x3d-model:`_static/x3d/biaugmented_pentagonal_prism.x3d`
+J54,Augmented Hexagonal Prism,13,11,:x3d-model:`_static/x3d/augmented_hexagonal_prism.x3d`
+J55,Parabiaugmented Hexagonal Prism,14,14,:x3d-model:`_static/x3d/parabiaugmented_hexagonal_prism.x3d`
+J56,Metabiaugmented Hexagonal Prism,14,14,:x3d-model:`_static/x3d/metabiaugmented_hexagonal_prism.x3d`

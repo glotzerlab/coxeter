@@ -16,7 +16,7 @@ from .shape_family import ShapeFamily
 
 
 class TruncationPlaneShapeFamily(ShapeFamily):
-    """A shape famly defined by plane half-space intersections.
+    """A shape family defined by plane half-space intersections.
 
     This family of shapes is defined in :cite:`Chen2014`. A set of planes are
     symmetrically placed about a central point, and shapes are defined by the

@@ -229,7 +229,7 @@ class ConvexPolyhedron(Polyhedron):
                         break
                 visited_simplices.append(neighbor)
 
-        # Flip if calcualted volume is negative
+        # Flip if calculated volume is negative
         if self._calculate_signed_volume() < 0:
             self._simplices = self._simplices[:, ::-1, ...]
 

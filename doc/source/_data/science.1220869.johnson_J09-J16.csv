@@ -1,0 +1,9 @@
+ID,Name,Vertices,Faces,Model
+J09,Elongated Pentagonal Pyramid,11,11,:x3d-model:`_static/x3d/elongated_pentagonal_pyramid.x3d`
+J10,Gyroelongated Square Pyramid,9,13,:x3d-model:`_static/x3d/gyroelongated_square_pyramid.x3d`
+J11,Gyroelongated Pentagonal Pyramid,11,16,:x3d-model:`_static/x3d/gyroelongated_pentagonal_pyramid.x3d`
+J12,Dipyramid 3,5,6,:x3d-model:`_static/x3d/dipyramid_3.x3d`
+J13,Dipyramid 5,7,10,:x3d-model:`_static/x3d/dipyramid_5.x3d`
+J14,Elongated Triangular Dipyramid,8,9,:x3d-model:`_static/x3d/elongated_triangular_dipyramid.x3d`
+J15,Elongated Square Dipyramid,10,12,:x3d-model:`_static/x3d/elongated_square_dipyramid.x3d`
+J16,Elongated Pentagonal Dipyramid,12,15,:x3d-model:`_static/x3d/elongated_pentagonal_dipyramid.x3d`

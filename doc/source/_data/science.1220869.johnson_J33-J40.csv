@@ -1,0 +1,9 @@
+ID,Name,Vertices,Faces,Model
+J33,Pentagonal Gyrocupolarotunda,25,27,:x3d-model:`_static/x3d/pentagonal_gyrocupolarotunda.x3d`
+J34,Pentagonal Orthobirotunda,30,32,:x3d-model:`_static/x3d/pentagonal_orthobirotunda.x3d`
+J35,Elongated Triangular Orthobicupola,18,20,:x3d-model:`_static/x3d/elongated_triangular_orthobicupola.x3d`
+J36,Elongated Triangular Gyrobicupola,18,20,:x3d-model:`_static/x3d/elongated_triangular_gyrobicupola.x3d`
+J37,Elongated Square Gyrobicupola,24,26,:x3d-model:`_static/x3d/elongated_square_gyrobicupola.x3d`
+J38,Elongated Pentagonal Orthobicupola,30,32,:x3d-model:`_static/x3d/elongated_pentagonal_orthobicupola.x3d`
+J39,Elongated Pentagonal Gyrobicupola,30,32,:x3d-model:`_static/x3d/elongated_pentagonal_gyrobicupola.x3d`
+J40,Elongated Pentagonal Orthocupolarotunda,35,37,:x3d-model:`_static/x3d/elongated_pentagonal_orthocupolarotunda.x3d`

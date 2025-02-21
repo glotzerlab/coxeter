@@ -1,0 +1,9 @@
+ID,Name,Vertices,Faces,Model
+O01,Triangular Prism,6,5,:x3d-model:`_static/x3d/triangular_prism.x3d`
+O02,Pentagonal Prism,10,7,:x3d-model:`_static/x3d/pentagonal_prism.x3d`
+O03,Hexagonal Prism,12,8,:x3d-model:`_static/x3d/hexagonal_prism.x3d`
+O04,Heptagonal Prism,14,9,:x3d-model:`_static/x3d/heptagonal_prism.x3d`
+O05,Octagonal Prism,16,10,:x3d-model:`_static/x3d/octagonal_prism.x3d`
+O06,Nonagonal Prism,18,11,:x3d-model:`_static/x3d/nonagonal_prism.x3d`
+O07,Decagonal Prism,20,12,:x3d-model:`_static/x3d/decagonal_prism.x3d`
+O08,Square Antiprism,8,10,:x3d-model:`_static/x3d/square_antiprism.x3d`

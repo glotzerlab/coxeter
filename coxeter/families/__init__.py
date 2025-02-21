@@ -44,7 +44,14 @@ reproducing the exact set of shapes from publications.
 
 For convenience, shapes included in the paper *10.1126/science.1220869* may be accessed
 as a single family. These are indexed in a three character format consistent with the
-supplementary information of that publication.
+supplementary information of that publication. Interactive models for these shapes can
+be found in the following tables:
+
+- :doc:`Platonic Solids<table-platonic>`
+- :doc:`Archimedean Solids<table-archimedean>`
+- :doc:`Catalan Solids<table-catalan>`
+- :doc:`Johnson Solids<table-johnson>`
+- :doc:`Other Polyhedra<table-other>`
 
 
 Example:

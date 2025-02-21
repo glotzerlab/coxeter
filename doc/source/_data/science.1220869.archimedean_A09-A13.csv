@@ -1,0 +1,6 @@
+ID,Name,Vertices,Faces,Model
+A09,Rhombicosidodecahedron,60,62,:x3d-model:`_static/x3d/rhombicosidodecahedron.x3d`
+A10,Truncated Cuboctahedron,48,26,:x3d-model:`_static/x3d/truncated_cuboctahedron.x3d`
+A11,Truncated Icosidodecahedron,120,62,:x3d-model:`_static/x3d/truncated_icosidodecahedron.x3d`
+A12,Snub Cuboctahedron,24,38,:x3d-model:`_static/x3d/snub_cuboctahedron.x3d`
+A13,Snub Icosidodecahedron,60,92,:x3d-model:`_static/x3d/snub_icosidodecahedron.x3d`
