@@ -29,7 +29,6 @@
    table-catalan
    table-johnson
    table-other
-   table-prism-antiprism
    table-pyramid-dipyramid
 
 .. toctree::
