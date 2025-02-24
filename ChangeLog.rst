@@ -5,6 +5,21 @@ This project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html
 v0.x.x - 20xx-xx-xx
 -------------------
 
+v0.10.0 - 2025-02-24
+-------------------
+
+Added
+~~~~~
+
+- Support for Python 3.13
+- Rendered shape family tables in ReadTheDocs
+
+Fixed
+~~~~~
+
+- ``to_hoomd`` method now properly exports convex polygons
+- Warnings raised in test cases are now handled properly
+
 v0.9.0 - 2024-09-13
 -------------------
 
