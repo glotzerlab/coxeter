@@ -1,6 +1,6 @@
 ply
 format ascii 1.0
-comment PLY file written by Coxeter version 0.9.0
+comment PLY file written by Coxeter version 0.10.0
 comment ConvexPolyhedron
 element vertex 11
 property float x
