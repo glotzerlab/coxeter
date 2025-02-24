@@ -1,0 +1,9 @@
+ID,Name,Vertices,Faces,Model
+J17,Gyroelongated Square Dipyramid,10,16,:x3d-model:`_static/x3d/gyroelongated_square_dipyramid.x3d`
+J18,Elongated Triangular Cupola,15,14,:x3d-model:`_static/x3d/elongated_triangular_cupola.x3d`
+J19,Elongated Square Cupola,20,18,:x3d-model:`_static/x3d/elongated_square_cupola.x3d`
+J20,Elongated Pentagonal Cupola,25,22,:x3d-model:`_static/x3d/elongated_pentagonal_cupola.x3d`
+J21,Elongated Pentagonal Rotunda,30,27,:x3d-model:`_static/x3d/elongated_pentagonal_rotunda.x3d`
+J22,Gyroelongated Triangular Cupola,15,20,:x3d-model:`_static/x3d/gyroelongated_triangular_cupola.x3d`
+J23,Gyroelongated Square Cupola,20,26,:x3d-model:`_static/x3d/gyroelongated_square_cupola.x3d`
+J24,Gyroelongated Pentagonal Cupola,25,32,:x3d-model:`_static/x3d/gyroelongated_pentagonal_cupola.x3d`

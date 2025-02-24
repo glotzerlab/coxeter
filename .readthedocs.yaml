@@ -3,6 +3,9 @@ build:
   os: ubuntu-22.04
   tools:
     python: "mambaforge-4.10"
+  jobs:
+    pre_build:
+      - echo "Copying static X3D files..."; mkdir -p $READTHEDOCS_OUTPUT/html/_static/x3d; cp -r ./doc/source/_static/x3d $READTHEDOCS_OUTPUT/html/_static
 formats:
     - htmlzip
 conda:
@@ -11,3 +14,5 @@ python:
     install:
         - method: pip
           path: .
+sphinx:
+    configuration: doc/source/conf.py

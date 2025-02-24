@@ -1,0 +1,9 @@
+ID,Name,Vertices,Faces,Model
+J65,Augmented Truncated Tetrahedron,15,14,:x3d-model:`_static/x3d/augmented_truncated_tetrahedron.x3d`
+J66,Augmented Truncated Cube,28,22,:x3d-model:`_static/x3d/augmented_truncated_cube.x3d`
+J67,Biaugmented Truncated Cube,32,30,:x3d-model:`_static/x3d/biaugmented_truncated_cube.x3d`
+J68,Augmented Truncated Dodecahedron,65,42,:x3d-model:`_static/x3d/augmented_truncated_dodecahedron.x3d`
+J69,Parabiaugmented Truncated Dodecahedron,70,52,:x3d-model:`_static/x3d/parabiaugmented_truncated_dodecahedron.x3d`
+J70,Metabiaugmented Truncated Dodecahedron,70,52,:x3d-model:`_static/x3d/metabiaugmented_truncated_dodecahedron.x3d`
+J71,Triaugmented Truncated Dodecahedron,75,62,:x3d-model:`_static/x3d/triaugmented_truncated_dodecahedron.x3d`
+J72,Gyrate Rhombicosidodecahedron,60,62,:x3d-model:`_static/x3d/gyrate_rhombicosidodecahedron.x3d`

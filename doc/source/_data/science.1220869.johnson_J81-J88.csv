@@ -1,0 +1,9 @@
+ID,Name,Vertices,Faces,Model
+J81,Metabidiminished Rhombicosidodecahedron,50,42,:x3d-model:`_static/x3d/metabidiminished_rhombicosidodecahedron.x3d`
+J82,Gyrate Bidiminished Rhombicosidodecahedron,50,42,:x3d-model:`_static/x3d/gyrate_bidiminished_rhombicosidodecahedron.x3d`
+J83,Tridiminished Rhombicosidodecahedron,45,32,:x3d-model:`_static/x3d/tridiminished_rhombicosidodecahedron.x3d`
+J84,Snub Disphenoid,8,12,:x3d-model:`_static/x3d/snub_disphenoid.x3d`
+J85,Snub Square Antiprism,16,26,:x3d-model:`_static/x3d/snub_square_antiprism.x3d`
+J86,Sphenocorona,10,14,:x3d-model:`_static/x3d/sphenocorona.x3d`
+J87,Augmented Sphenocorona,11,17,:x3d-model:`_static/x3d/augmented_sphenocorona.x3d`
+J88,Sphenomegacorona,12,18,:x3d-model:`_static/x3d/sphenomegacorona.x3d`

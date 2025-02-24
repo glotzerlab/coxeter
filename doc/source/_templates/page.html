@@ -1,4 +1,13 @@
 {% extends "furo/page.html" %}
+
+{%- block extrahead %}
+
+<script type="text/javascript" src="https://x3dom.org/release/x3dom.js"> </script>
+<!-- <link rel="stylesheet" type="text/css" href="http://x3dom.org/release/x3dom.css" /> -->
+
+{% endblock %}
+
+{% set css_files = css_files + [ "_static/css/custom.css" ] %}
 {% block footer %}
 <div class="related-pages">
 {% if next -%}

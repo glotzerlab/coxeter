@@ -230,7 +230,7 @@ class ConvexPolygon(Polygon):
         )
 
         # Partition all angles into the angle ranges defined by the edges. For
-        # the edge verts[-1]->verts[0] need to agument the final value so that
+        # the edge verts[-1]->verts[0] need to augment the final value so that
         # values > angles_to_vertices[-1] will work.
         angles_shifted = np.roll(angles_to_vertices, shift=-1, axis=0)
         eps = 1e-6  # Need angles_shifted[-1] > 2*pi so that 2*pi is in range.

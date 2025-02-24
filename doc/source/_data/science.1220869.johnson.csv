@@ -1,0 +1,93 @@
+ID,Name,Vertices,Faces,Model
+J01,Pyramid 4,5,5,:x3d-model:`_static/x3d/pyramid_4.x3d`
+J02,Pyramid 5,6,6,:x3d-model:`_static/x3d/pyramid_5.x3d`
+J03,Triangular Cupola,9,8,:x3d-model:`_static/x3d/triangular_cupola.x3d`
+J04,Square Cupola,12,10,:x3d-model:`_static/x3d/square_cupola.x3d`
+J05,Pentagonal Cupola,15,12,:x3d-model:`_static/x3d/pentagonal_cupola.x3d`
+J06,Pentagonal Rotunda,20,17,:x3d-model:`_static/x3d/pentagonal_rotunda.x3d`
+J07,Elongated Triangular Pyramid,7,7,:x3d-model:`_static/x3d/elongated_triangular_pyramid.x3d`
+J08,Elongated Square Pyramid,9,9,:x3d-model:`_static/x3d/elongated_square_pyramid.x3d`
+J09,Elongated Pentagonal Pyramid,11,11,:x3d-model:`_static/x3d/elongated_pentagonal_pyramid.x3d`
+J10,Gyroelongated Square Pyramid,9,13,:x3d-model:`_static/x3d/gyroelongated_square_pyramid.x3d`
+J11,Gyroelongated Pentagonal Pyramid,11,16,:x3d-model:`_static/x3d/gyroelongated_pentagonal_pyramid.x3d`
+J12,Dipyramid 3,5,6,:x3d-model:`_static/x3d/dipyramid_3.x3d`
+J13,Dipyramid 5,7,10,:x3d-model:`_static/x3d/dipyramid_5.x3d`
+J14,Elongated Triangular Dipyramid,8,9,:x3d-model:`_static/x3d/elongated_triangular_dipyramid.x3d`
+J15,Elongated Square Dipyramid,10,12,:x3d-model:`_static/x3d/elongated_square_dipyramid.x3d`
+J16,Elongated Pentagonal Dipyramid,12,15,:x3d-model:`_static/x3d/elongated_pentagonal_dipyramid.x3d`
+J17,Gyroelongated Square Dipyramid,10,16,:x3d-model:`_static/x3d/gyroelongated_square_dipyramid.x3d`
+J18,Elongated Triangular Cupola,15,14,:x3d-model:`_static/x3d/elongated_triangular_cupola.x3d`
+J19,Elongated Square Cupola,20,18,:x3d-model:`_static/x3d/elongated_square_cupola.x3d`
+J20,Elongated Pentagonal Cupola,25,22,:x3d-model:`_static/x3d/elongated_pentagonal_cupola.x3d`
+J21,Elongated Pentagonal Rotunda,30,27,:x3d-model:`_static/x3d/elongated_pentagonal_rotunda.x3d`
+J22,Gyroelongated Triangular Cupola,15,20,:x3d-model:`_static/x3d/gyroelongated_triangular_cupola.x3d`
+J23,Gyroelongated Square Cupola,20,26,:x3d-model:`_static/x3d/gyroelongated_square_cupola.x3d`
+J24,Gyroelongated Pentagonal Cupola,25,32,:x3d-model:`_static/x3d/gyroelongated_pentagonal_cupola.x3d`
+J25,Gyroelongated Pentagonal Rotunda,30,37,:x3d-model:`_static/x3d/gyroelongated_pentagonal_rotunda.x3d`
+J26,Gyrobifastigium,8,8,:x3d-model:`_static/x3d/gyrobifastigium.x3d`
+J27,Triangular Orthobicupola,12,14,:x3d-model:`_static/x3d/triangular_orthobicupola.x3d`
+J28,Square Orthobicupola,16,18,:x3d-model:`_static/x3d/square_orthobicupola.x3d`
+J29,Square Gyrobicupola,16,18,:x3d-model:`_static/x3d/square_gyrobicupola.x3d`
+J30,Pentagonal Orthobicupola,20,22,:x3d-model:`_static/x3d/pentagonal_orthobicupola.x3d`
+J31,Pentagonal Gyrobicupola,20,22,:x3d-model:`_static/x3d/pentagonal_gyrobicupola.x3d`
+J32,Pentagonal Orthocupolarotunda,25,27,:x3d-model:`_static/x3d/pentagonal_orthocupolarotunda.x3d`
+J33,Pentagonal Gyrocupolarotunda,25,27,:x3d-model:`_static/x3d/pentagonal_gyrocupolarotunda.x3d`
+J34,Pentagonal Orthobirotunda,30,32,:x3d-model:`_static/x3d/pentagonal_orthobirotunda.x3d`
+J35,Elongated Triangular Orthobicupola,18,20,:x3d-model:`_static/x3d/elongated_triangular_orthobicupola.x3d`
+J36,Elongated Triangular Gyrobicupola,18,20,:x3d-model:`_static/x3d/elongated_triangular_gyrobicupola.x3d`
+J37,Elongated Square Gyrobicupola,24,26,:x3d-model:`_static/x3d/elongated_square_gyrobicupola.x3d`
+J38,Elongated Pentagonal Orthobicupola,30,32,:x3d-model:`_static/x3d/elongated_pentagonal_orthobicupola.x3d`
+J39,Elongated Pentagonal Gyrobicupola,30,32,:x3d-model:`_static/x3d/elongated_pentagonal_gyrobicupola.x3d`
+J40,Elongated Pentagonal Orthocupolarotunda,35,37,:x3d-model:`_static/x3d/elongated_pentagonal_orthocupolarotunda.x3d`
+J41,Elongated Pentagonal Gyrocupolarotunda,35,37,:x3d-model:`_static/x3d/elongated_pentagonal_gyrocupolarotunda.x3d`
+J42,Elongated Pentagonal Orthobirotunda,40,42,:x3d-model:`_static/x3d/elongated_pentagonal_orthobirotunda.x3d`
+J43,Elongated Pentagonal Gyrobirotunda,40,42,:x3d-model:`_static/x3d/elongated_pentagonal_gyrobirotunda.x3d`
+J44,Gyroelongated Triangular Bicupola,18,26,:x3d-model:`_static/x3d/gyroelongated_triangular_bicupola.x3d`
+J45,Gyroelongated Square Bicupola,24,34,:x3d-model:`_static/x3d/gyroelongated_square_bicupola.x3d`
+J46,Gyroelongated Pentagonal Bicupola,30,42,:x3d-model:`_static/x3d/gyroelongated_pentagonal_bicupola.x3d`
+J47,Gyroelongated Pentagonal Cupolarotunda,35,47,:x3d-model:`_static/x3d/gyroelongated_pentagonal_cupolarotunda.x3d`
+J48,Gyroelongated Pentagonal Birotunda,40,52,:x3d-model:`_static/x3d/gyroelongated_pentagonal_birotunda.x3d`
+J49,Augmented Triangular Prism,7,8,:x3d-model:`_static/x3d/augmented_triangular_prism.x3d`
+J50,Biaugmented Triangular Prism,8,11,:x3d-model:`_static/x3d/biaugmented_triangular_prism.x3d`
+J51,Triaugmented Triangular Prism,9,14,:x3d-model:`_static/x3d/triaugmented_triangular_prism.x3d`
+J52,Augmented Pentagonal Prism,11,10,:x3d-model:`_static/x3d/augmented_pentagonal_prism.x3d`
+J53,Biaugmented Pentagonal Prism,12,13,:x3d-model:`_static/x3d/biaugmented_pentagonal_prism.x3d`
+J54,Augmented Hexagonal Prism,13,11,:x3d-model:`_static/x3d/augmented_hexagonal_prism.x3d`
+J55,Parabiaugmented Hexagonal Prism,14,14,:x3d-model:`_static/x3d/parabiaugmented_hexagonal_prism.x3d`
+J56,Metabiaugmented Hexagonal Prism,14,14,:x3d-model:`_static/x3d/metabiaugmented_hexagonal_prism.x3d`
+J57,Triaugmented Hexagonal Prism,15,17,:x3d-model:`_static/x3d/triaugmented_hexagonal_prism.x3d`
+J58,Augmented Dodecahedron,21,16,:x3d-model:`_static/x3d/augmented_dodecahedron.x3d`
+J59,Parabiaugmented Dodecahedron,22,20,:x3d-model:`_static/x3d/parabiaugmented_dodecahedron.x3d`
+J60,Metabiaugmented Dodecahedron,22,20,:x3d-model:`_static/x3d/metabiaugmented_dodecahedron.x3d`
+J61,Triaugmented Dodecahedron,23,24,:x3d-model:`_static/x3d/triaugmented_dodecahedron.x3d`
+J62,Metabidiminished Icosahedron,10,12,:x3d-model:`_static/x3d/metabidiminished_icosahedron.x3d`
+J63,Tridiminished Icosahedron,9,8,:x3d-model:`_static/x3d/tridiminished_icosahedron.x3d`
+J64,Augmented Tridiminished Icosahedron,10,10,:x3d-model:`_static/x3d/augmented_tridiminished_icosahedron.x3d`
+J65,Augmented Truncated Tetrahedron,15,14,:x3d-model:`_static/x3d/augmented_truncated_tetrahedron.x3d`
+J66,Augmented Truncated Cube,28,22,:x3d-model:`_static/x3d/augmented_truncated_cube.x3d`
+J67,Biaugmented Truncated Cube,32,30,:x3d-model:`_static/x3d/biaugmented_truncated_cube.x3d`
+J68,Augmented Truncated Dodecahedron,65,42,:x3d-model:`_static/x3d/augmented_truncated_dodecahedron.x3d`
+J69,Parabiaugmented Truncated Dodecahedron,70,52,:x3d-model:`_static/x3d/parabiaugmented_truncated_dodecahedron.x3d`
+J70,Metabiaugmented Truncated Dodecahedron,70,52,:x3d-model:`_static/x3d/metabiaugmented_truncated_dodecahedron.x3d`
+J71,Triaugmented Truncated Dodecahedron,75,62,:x3d-model:`_static/x3d/triaugmented_truncated_dodecahedron.x3d`
+J72,Gyrate Rhombicosidodecahedron,60,62,:x3d-model:`_static/x3d/gyrate_rhombicosidodecahedron.x3d`
+J73,Parabigyrate Rhombicosidodecahedron,60,62,:x3d-model:`_static/x3d/parabigyrate_rhombicosidodecahedron.x3d`
+J74,Metabigyrate Rhombicosidodecahedron,60,62,:x3d-model:`_static/x3d/metabigyrate_rhombicosidodecahedron.x3d`
+J75,Trigyrate Rhombicosidodecahedron,60,62,:x3d-model:`_static/x3d/trigyrate_rhombicosidodecahedron.x3d`
+J76,Diminished Rhombicosidodecahedron,55,52,:x3d-model:`_static/x3d/diminished_rhombicosidodecahedron.x3d`
+J77,Paragyrate Diminished Rhombicosidodecahedron,55,52,:x3d-model:`_static/x3d/paragyrate_diminished_rhombicosidodecahedron.x3d`
+J78,Metagyrate Diminished Rhombicosidodecahedron,55,52,:x3d-model:`_static/x3d/metagyrate_diminished_rhombicosidodecahedron.x3d`
+J79,Bigyrate Diminished Rhombicosidodecahedron,55,52,:x3d-model:`_static/x3d/bigyrate_diminished_rhombicosidodecahedron.x3d`
+J80,Parabidiminished Rhombicosidodecahedron,50,42,:x3d-model:`_static/x3d/parabidiminished_rhombicosidodecahedron.x3d`
+J81,Metabidiminished Rhombicosidodecahedron,50,42,:x3d-model:`_static/x3d/metabidiminished_rhombicosidodecahedron.x3d`
+J82,Gyrate Bidiminished Rhombicosidodecahedron,50,42,:x3d-model:`_static/x3d/gyrate_bidiminished_rhombicosidodecahedron.x3d`
+J83,Tridiminished Rhombicosidodecahedron,45,32,:x3d-model:`_static/x3d/tridiminished_rhombicosidodecahedron.x3d`
+J84,Snub Disphenoid,8,12,:x3d-model:`_static/x3d/snub_disphenoid.x3d`
+J85,Snub Square Antiprism,16,26,:x3d-model:`_static/x3d/snub_square_antiprism.x3d`
+J86,Sphenocorona,10,14,:x3d-model:`_static/x3d/sphenocorona.x3d`
+J87,Augmented Sphenocorona,11,17,:x3d-model:`_static/x3d/augmented_sphenocorona.x3d`
+J88,Sphenomegacorona,12,18,:x3d-model:`_static/x3d/sphenomegacorona.x3d`
+J89,Hebesphenomegacorona,14,21,:x3d-model:`_static/x3d/hebesphenomegacorona.x3d`
+J90,Disphenocingulum,16,24,:x3d-model:`_static/x3d/disphenocingulum.x3d`
+J91,Bilunabirotunda,14,14,:x3d-model:`_static/x3d/bilunabirotunda.x3d`
+J92,Triangular Hebesphenorotunda,18,20,:x3d-model:`_static/x3d/triangular_hebesphenorotunda.x3d`

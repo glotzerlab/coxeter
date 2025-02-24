@@ -3,14 +3,18 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - numpy
+  - python==3.13.2
+  - numpy==2.2.3
+  - pandas==2.2.3
   - rowan>=1.2
   - scipy
   - jupyter
-  - sphinx
+  - sphinx==8.1.3
   - furo>=2023.9.10
   - sphinxcontrib-bibtex>=2.0.0
   - autodocsumm
-  - nbsphinx
+  - nbsphinx==0.9.6
   - fresnel
   - matplotlib
+  - pip:
+    - plato-draw

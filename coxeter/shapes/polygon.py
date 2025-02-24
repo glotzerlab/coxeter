@@ -330,7 +330,7 @@ class Polygon(Shape2D):
         areas = xi_yip1 - xip1_yi
 
         # These are the terms in the formulas for Ix and Iy, which are computed
-        # simulataneously since they're identical except that they use either
+        # simultaneously since they're identical except that they use either
         # the x or y coordinates.
         sv_sq = shifted_verts**2
         verts_sq = verts**2
@@ -406,7 +406,7 @@ class Polygon(Shape2D):
         in_plane_centroid = np.array([c_x, c_y, 0]) / (6 * self.area)
 
         # We've rotated into the plane, so the z position of all vertices
-        # should be equal. We take the average to improve numerical stablity.
+        # should be equal. We take the average to improve numerical stability.
         in_plane_centroid[2] = np.mean(verts[:, 2])
 
         # Revert the rotation into the plane.

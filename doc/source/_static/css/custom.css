@@ -1,0 +1,18 @@
+.x3d-model {
+    overflow: clip;
+    /* zoom: 200%; */
+    width: 100px;
+    height: 100px;
+    content-visibility: auto;
+}
+
+x3d {
+    width: 100% !important;
+    height: 100% !important;
+    display: inline-block !important;
+}
+x3d > canvas {
+    width: 100% !important;
+    height: 100% !important;
+    display: inline-block !important;
+}

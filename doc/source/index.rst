@@ -20,6 +20,16 @@
    package-families
    module-shape-getters
 
+.. toctree::
+   :maxdepth: 2
+   :caption: Pre-Defined Shapes
+
+   table-platonic
+   table-archimedean
+   table-catalan
+   table-johnson
+   table-other
+   table-pyramid-dipyramid
 
 .. toctree::
    :maxdepth: 1
@@ -31,7 +41,6 @@
    credits
    license
    zreferences
-
 
 Indices and tables
 ==================

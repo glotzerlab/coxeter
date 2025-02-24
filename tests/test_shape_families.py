@@ -103,17 +103,15 @@ def test_science_family():
         "J": JohnsonFamily,
         "O": None,
     }
-    for name, shape in ScienceFamily:
-        reference = reference_mapping[name[0]]
+    for id, shape in ScienceFamily:
+        reference = reference_mapping[id[0]]
         if reference is not None:
-            try:
-                np.testing.assert_allclose(
-                    reference.get_shape(ScienceFamily.data[name]["name"]).vertices,
-                    shape.vertices,
-                )
-            except KeyError as e:
-                if name[0] != "J":
-                    raise KeyError from e
+            if id in ("J01", "J02", "J12", "J13"):
+                continue
+            np.testing.assert_allclose(
+                reference.get_shape(ScienceFamily.data[id]["name"]).vertices,
+                shape.vertices,
+            )
 
 
 def test_shape323():

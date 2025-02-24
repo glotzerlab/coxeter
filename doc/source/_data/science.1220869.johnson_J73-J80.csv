@@ -1,0 +1,9 @@
+ID,Name,Vertices,Faces,Model
+J73,Parabigyrate Rhombicosidodecahedron,60,62,:x3d-model:`_static/x3d/parabigyrate_rhombicosidodecahedron.x3d`
+J74,Metabigyrate Rhombicosidodecahedron,60,62,:x3d-model:`_static/x3d/metabigyrate_rhombicosidodecahedron.x3d`
+J75,Trigyrate Rhombicosidodecahedron,60,62,:x3d-model:`_static/x3d/trigyrate_rhombicosidodecahedron.x3d`
+J76,Diminished Rhombicosidodecahedron,55,52,:x3d-model:`_static/x3d/diminished_rhombicosidodecahedron.x3d`
+J77,Paragyrate Diminished Rhombicosidodecahedron,55,52,:x3d-model:`_static/x3d/paragyrate_diminished_rhombicosidodecahedron.x3d`
+J78,Metagyrate Diminished Rhombicosidodecahedron,55,52,:x3d-model:`_static/x3d/metagyrate_diminished_rhombicosidodecahedron.x3d`
+J79,Bigyrate Diminished Rhombicosidodecahedron,55,52,:x3d-model:`_static/x3d/bigyrate_diminished_rhombicosidodecahedron.x3d`
+J80,Parabidiminished Rhombicosidodecahedron,50,42,:x3d-model:`_static/x3d/parabidiminished_rhombicosidodecahedron.x3d`
