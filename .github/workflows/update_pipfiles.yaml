@@ -26,7 +26,7 @@ jobs:
     - name: Create pull request
       uses: peter-evans/create-pull-request@67ccf781d68cd99b580ae25a5c18a1cc84ffff1f # v7.0.6
       with:
-        base: master
+        base: main
         path: code
         commit-message: "Update pip lockfiles"
         branch: update-pip-lockfiles
