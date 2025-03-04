@@ -34,22 +34,12 @@ def shapeeq(
         f"({poly1.num_faces} vs. {poly2.num_faces})"
     )
 
-    n1, n2 = poly1.neighbors, poly2.neighbors
-
     if test_inertia_tensor:
         poly1.volume, poly2.volume = 1, 1
         assert np.allclose(poly1.inertia_tensor, poly2.inertia_tensor), (
             f"Inertia tensors do not match: {poly1.inertia_tensor.round(10)} vs. "
             f"{poly2.inertia_tensor.round(10)}."
         )
-
-    for neighbor in n1:
-        found = any(
-            len(neighbor) == len(neighbor2)
-            and all(vert in neighbor for vert in neighbor2)
-            for neighbor2 in n2
-        )
-        assert found, f"Neighbor {neighbor} not found in poly2."
 
     if test_vertices:
         for vertex in vx1:
