@@ -7,7 +7,7 @@ import numpy as np
 from numpy.typing import ArrayLike
 from scipy.spatial import HalfspaceIntersection
 
-from ..shapes import ConvexPolyhedron
+from coxeter.shapes import ConvexPolyhedron
 
 
 def _truncate(poly: ConvexPolyhedron, t: float, degrees=None, filter_unique=False):
