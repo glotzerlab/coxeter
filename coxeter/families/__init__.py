@@ -75,6 +75,7 @@ Example:
 
 from .common import (
     ArchimedeanFamily,
+    CanonicalTrapezohedronFamily,
     CatalanFamily,
     JohnsonFamily,
     PlatonicFamily,
@@ -126,6 +127,7 @@ __all__ = [
     "UniformPrismFamily",
     "UniformPyramidFamily",
     "ArchimedeanFamily",
+    "CanonicalTrapezohedronFamily",
     "CatalanFamily",
     "JohnsonFamily",
     "PrismAntiprismFamily",

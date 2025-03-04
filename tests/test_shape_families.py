@@ -9,6 +9,7 @@ from hypothesis.strategies import floats, integers
 from coxeter.families import (
     DOI_SHAPE_REPOSITORIES,
     ArchimedeanFamily,
+    CanonicalTrapezohedronFamily,
     CatalanFamily,
     Family323Plus,
     Family423,
@@ -29,6 +30,7 @@ from coxeter.shapes import ConvexPolyhedron
 
 ATOL = 1e-15
 MIN_REALISTIC_PRECISION = 2e-6
+MIN_DECIMALS = 6
 MAX_N_POLY = 102
 TEST_EXAMPLES = 32
 
@@ -298,3 +300,18 @@ def test_new_pyramid_dipyramid():
             np.testing.assert_allclose(
                 shape.edge_lengths, comparative_shape.edge_lengths, atol=ATOL
             )
+
+
+@given(
+    integers(3, MAX_N_POLY),
+)
+def test_trapezohedra(n):
+    vertices = CanonicalTrapezohedronFamily.make_vertices(n)
+    poly = CanonicalTrapezohedronFamily.get_shape(n)
+    np.testing.assert_array_equal(vertices, poly.vertices)
+
+    assert np.isclose(poly.volume, 1.0)
+    assert len(np.unique(poly.edge_lengths.round(MIN_DECIMALS))) == 2 or np.allclose(
+        poly.edge_lengths, 1.0
+    )
+    assert all([len(face) == 4 for face in poly.faces])  # All faces are kites
