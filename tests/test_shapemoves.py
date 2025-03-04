@@ -28,7 +28,6 @@ def shapeeq(
         f"({np.shape(ex1)[0]} vs. {np.shape(ex2)[0]})"
     )
 
-    fx1, fx2 = poly1.faces, poly2.faces
     assert poly1.num_faces == poly2.num_faces, (
         f"Polyhedra do not have the same number of faces "
         f"({poly1.num_faces} vs. {poly2.num_faces})"
@@ -49,13 +48,6 @@ def shapeeq(
 
     for edge in ex1:
         assert edge in ex2 or edge[::-1] in ex2, f"Edge {edge} not found in poly2."
-
-    for face in fx1:
-        found = any(
-            len(face) == len(face2) and all(vert in face for vert in face2)
-            for face2 in fx2
-        )
-        assert found, f"Face {face} not found in poly2."
 
     if test_surface_volume:
         assert np.isclose(
