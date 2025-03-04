@@ -85,7 +85,7 @@ def dual(poly: ConvexPolyhedron):
     return new_poly
 
 
-def kis(poly: ConvexPolyhedron, k: float, degrees=None | ArrayLike):
+def kis(poly: ConvexPolyhedron, k: float, degrees=ArrayLike):
     """Pyramid-augment apolyhedron as defined by Conway's kis operator.
 
     This method is implemented as the sequence of operators `dtd` to ensure a pyramid of
