@@ -33,7 +33,7 @@ def _truncate(poly: ConvexPolyhedron, t: float, degrees=None, filter_unique=Fals
     return np.unique(new_vertices.reshape(-1, 3), axis=0)
 
 
-def vertex_truncate(poly: ConvexPolyhedron, t: float, degrees=None):
+def vertex_truncate(poly: ConvexPolyhedron, t: float, degrees: ArrayLike = None):
     """Truncate the vertices of a polyhedron.
 
     .. important::
