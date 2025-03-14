@@ -634,4 +634,10 @@ def test_edge_vectors(poly):
 
 @pytest.mark.parametrize("poly", regular_polygons())
 def test_edge_lengths(poly):
-    np.testing.assert_allclose(poly.edge_lengths, 1.0)
+    expected_edges = np.array(
+        [(i, (i + 1) % poly.num_vertices) for i in range(poly.num_vertices)]
+    )
+    lengths = np.linalg.norm(
+        np.diff(poly.vertices[expected_edges], axis=1).squeeze(), axis=1
+    )
+    np.testing.assert_allclose(poly.edge_lengths, lengths)
