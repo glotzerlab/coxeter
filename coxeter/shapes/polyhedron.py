@@ -744,7 +744,7 @@ class Polyhedron(Shape3D):
         n1, n2 = self._equations[[a, b], :3]
         return np.arccos(np.dot(-n1, n2))
 
-    def plot(self, ax=None, plot_verts=False, label_verts=False):
+    def plot(self, ax=None, plot_verts=False, label_verts=False, **kwargs):
         """Plot the polyhedron.
 
         Note that the ``ax`` argument should be a 3D axes object; passing in
@@ -767,7 +767,7 @@ class Polyhedron(Shape3D):
         for face in self.faces:
             verts = self.vertices[face]
             verts = np.concatenate((verts, verts[[0]]))
-            ax.plot(verts[:, 0], verts[:, 1], verts[:, 2])
+            ax.plot(verts[:, 0], verts[:, 1], verts[:, 2], **kwargs)
 
         if plot_verts:
             ax.scatter(self.vertices[:, 0], self.vertices[:, 1], self.vertices[:, 2])

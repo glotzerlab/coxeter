@@ -429,7 +429,9 @@ class Polygon(Shape2D):
         """
         yield from polytri.triangulate(self.vertices)
 
-    def plot(self, ax=None, center=False, plot_verts=False, label_verts=False):
+    def plot(
+        self, ax=None, center=False, plot_verts=False, label_verts=False, **kwargs
+    ):
         """Plot the polygon.
 
         Note that the polygon is always rotated into the :math:`xy` plane and
@@ -455,7 +457,7 @@ class Polygon(Shape2D):
         verts = np.concatenate((verts, verts[[0]]))
         x = verts[:, 0]
         y = verts[:, 1]
-        ax.plot(x, y)
+        ax.plot(x, y, **kwargs)
 
         if plot_verts:
             ax.scatter(x, y)
