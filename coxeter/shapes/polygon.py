@@ -571,16 +571,10 @@ class Polygon(Shape2D):
         # additional constraint that the circumcircle must lie in the plane of
         # the polygon.
         points = np.concatenate(
-            (
-                self.vertices[1:] - self.vertices[0],
-                self.normal[np.newaxis],
-            )
+            (self.vertices[1:] - self.vertices[0], self.normal[np.newaxis])
         )
         half_point_lengths = np.concatenate(
-            (
-                np.sum(points[:-1] * points[:-1], axis=1) / 2,
-                [0],
-            )
+            (np.sum(points[:-1] * points[:-1], axis=1) / 2, [0])
         )
         x, resids, _, _ = np.linalg.lstsq(points, half_point_lengths, None)
         if len(self.vertices) > 3 and not np.isclose(resids, 0):
