@@ -229,3 +229,6 @@ class Circle(Shape2D):
             colors=np.array([[0.5, 0.5, 0.5, 1]]),
             radii=[self.radius],
         )
+
+    def segment(self):
+        pass

@@ -1057,3 +1057,7 @@ class Polyhedron(Shape3D):
                 "filetype must be one of the following: OBJ, OFF, "
                 "STL, PLY, VTK, X3D, HTML"
             )
+
+    def triangulate(self, method):
+        """Note the almost-name-clash with Polyhedron._surface_triangulation()"""
+        pass

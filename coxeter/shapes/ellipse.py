@@ -268,3 +268,6 @@ class Ellipse(Shape2D):
             f"coxeter.shapes.Ellipse(a={self.a}, b={self.b}, "
             f"center={self.centroid.tolist()})"
         )
+
+    def segment(self):
+        pass

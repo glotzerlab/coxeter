@@ -248,3 +248,6 @@ class Sphere(Shape3D):
 
         self.centroid = old_centroid
         return hoomd_dict
+
+    def triangulate(self, method):
+        pass

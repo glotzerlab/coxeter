@@ -364,3 +364,6 @@ class ConvexSpheropolyhedron(Shape3D):
 
         self._polyhedron.centroid = old_centroid
         return hoomd_dict
+
+    def triangulate(self, method):
+        pass

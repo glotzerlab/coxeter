@@ -302,3 +302,6 @@ class ConvexSpheropolygon(Shape2D):
 
         self._polygon.centroid = old_centroid
         return hoomd_dict
+
+    def segment(self):
+        pass

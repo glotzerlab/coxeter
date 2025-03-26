@@ -805,3 +805,6 @@ class Polygon(Shape2D):
 
         self.centroid = old_centroid
         return hoomd_dict
+
+    def segment(self, method):
+        pass
