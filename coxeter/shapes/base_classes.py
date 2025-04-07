@@ -306,8 +306,7 @@ class Shape2D(Shape):
         circle. This property provides the smallest bounding circle of a shape.
         """
         raise NotImplementedError(
-            "The minimal bounding circle calculation is not implemented for "
-            "this shape."
+            "The minimal bounding circle calculation is not implemented for this shape."
         )
 
     @property
@@ -362,8 +361,7 @@ class Shape2D(Shape):
         named as an explicit analog to :attr:`~.minimal_bounding_circle`.
         """
         raise NotImplementedError(
-            "The maximal bounded circle calculation is not implemented for "
-            "this shape."
+            "The maximal bounded circle calculation is not implemented for this shape."
         )
 
     @property
@@ -459,8 +457,7 @@ class Shape3D(Shape):
         sphere of a shape.
         """
         raise NotImplementedError(
-            "The minimal bounding sphere calculation is not implemented for "
-            "this shape."
+            "The minimal bounding sphere calculation is not implemented for this shape."
         )
 
     @property
@@ -519,8 +516,7 @@ class Shape3D(Shape):
         named as an explicit analog to :attr:`~.minimal_bounding_sphere`.
         """
         raise NotImplementedError(
-            "The maximal bounded sphere calculation is not implemented for "
-            "this shape."
+            "The maximal bounded sphere calculation is not implemented for this shape."
         )
 
     @property
