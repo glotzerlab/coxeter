@@ -5,15 +5,10 @@ concurrency:
   cancel-in-progress: true
 
 on:
-  # trigger on pull requests
   pull_request:
-
-  # trigger on all commits to master
   push:
     branches:
-      - "master"
-
-  # trigger on request
+      - "main"
   workflow_dispatch:
 
 jobs:
