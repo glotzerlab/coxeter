@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - uses: glotzerlab/workflows/setup-uv@188b11d9d03a4ead9eacfbe301b84b672b5934af
+    - uses: glotzerlab/workflows/setup-uv@15478da2a551fa8773c7db77dc0b7aedb41d3eaa
     - name: Set up Python environment
       run: |
         for v in "3.8" "3.9" "3.10" "3.11" "3.12"; do
@@ -24,7 +24,7 @@ jobs:
           uv pip compile --python-version $v requirements.txt tests/requirements.txt > $pipfile
         done
     - name: Create pull request
-      uses: peter-evans/create-pull-request@dd2324fc52d5d43c699a5636bcf19fceaa70c284 # v7.0.7
+      uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v7.0.8
       with:
         base: main
         path: code

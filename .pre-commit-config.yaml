@@ -35,7 +35,7 @@ repos:
           - --add=This file is from the coxeter project, released under the BSD 3-Clause License.
           - --keep-before=#!
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.8.6
+    rev: v0.11.4
     hooks:
       # Run the linter.
       - id: ruff
