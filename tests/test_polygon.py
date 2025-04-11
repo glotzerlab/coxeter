@@ -612,3 +612,32 @@ def test_to_hoomd(points):
     hoomd_dict = poly.to_hoomd()
     for key, val in zip(dict_keys, dict_vals):
         assert np.allclose(hoomd_dict[key], val), f"{key}"
+
+
+@pytest.mark.parametrize("poly", regular_polygons())
+def test_edges(poly):
+    expected_edges = np.array(
+        [(i, (i + 1) % poly.num_vertices) for i in range(poly.num_vertices)]
+    )
+    np.testing.assert_array_equal(poly.edges, expected_edges)
+
+
+@pytest.mark.parametrize("poly", regular_polygons())
+def test_edge_vectors(poly):
+    expected_edges = np.array(
+        [(i, (i + 1) % poly.num_vertices) for i in range(poly.num_vertices)]
+    )
+    np.testing.assert_array_equal(
+        poly.edge_vectors, np.diff(poly.vertices[expected_edges], axis=1).squeeze()
+    )
+
+
+@pytest.mark.parametrize("poly", regular_polygons())
+def test_edge_lengths(poly):
+    expected_edges = np.array(
+        [(i, (i + 1) % poly.num_vertices) for i in range(poly.num_vertices)]
+    )
+    lengths = np.linalg.norm(
+        np.diff(poly.vertices[expected_edges], axis=1).squeeze(), axis=1
+    )
+    np.testing.assert_allclose(poly.edge_lengths, lengths)
