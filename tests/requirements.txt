@@ -1,3 +1,4 @@
+docutils
 hypothesis[numpy]
 matplotlib
 miniball
