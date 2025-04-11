@@ -31,7 +31,7 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Set up Python environment
-      uses: glotzerlab/workflows/setup-uv@188b11d9d03a4ead9eacfbe301b84b672b5934af
+      uses: glotzerlab/workflows/setup-uv@15478da2a551fa8773c7db77dc0b7aedb41d3eaa
       with:
         only-binary: ":none:"
         lockfile: ".github/requirements${{matrix.python-version}}.txt"

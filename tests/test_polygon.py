@@ -536,9 +536,9 @@ def test_is_point_inside():
     # Test multiple points
     points = np.array([[0.5, 0.5], [2, 2]])
     result = square.is_inside(points)
-    assert np.array_equal(
-        result, [True, False]
-    ), "Unexpected results for multiple points"
+    assert np.array_equal(result, [True, False]), (
+        "Unexpected results for multiple points"
+    )
 
     # Test points on the edge
     points = np.array([1, 1])
