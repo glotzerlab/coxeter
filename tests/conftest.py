@@ -3,6 +3,7 @@
 
 import os
 
+import hypothesis
 import numpy as np
 import pytest
 import rowan
@@ -24,6 +25,9 @@ from coxeter.families import (
 from coxeter.shapes import ConvexPolyhedron, ConvexSpheropolyhedron, Polyhedron, Shape2D
 
 MAX_INFINITE_FAMILY_N = 11
+
+hypothesis.settings.register_profile("fast", max_examples=32)
+hypothesis.settings.register_profile("extensive", max_examples=128)
 
 
 # Define a function to combine marks in order to more compactly test shape families
