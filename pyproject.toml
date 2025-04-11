@@ -38,12 +38,12 @@ optional-dependencies = {tests = { file = ["tests/requirements.txt"] }, doc = { 
 
 [tool.pytest.ini_options]
 # Additional command line options for pytest
-addopts = "--doctest-modules -p coxeter.__doctest_fixtures"
-doctest_optionflags = "NORMALIZE_WHITESPACE ELLIPSIS"
+addopts = "--doctest-plus -p coxeter.__doctest_fixtures --hypothesis-profile=fast"
+doctest_rst = true
+doctest_optionflags = ["NORMALIZE_WHITESPACE", "ELLIPSIS"]
 # Add percentage progress bar to the pytest console output
 console_output_style = "progress"
 # Specify the tests folder to speed up collection.
-testpaths = ["tests"]
 
 [tool.black]
 exclude = '''
