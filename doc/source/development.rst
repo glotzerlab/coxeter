@@ -17,7 +17,7 @@ General Guidelines
 All code contributed to **coxeter** must adhere to the following guidelines:
 
   * Use the OneFlow_ model of development:
-    - Both new features and bug fixes should be developed in branches based on ``master``.
+    - Both new features and bug fixes should be developed in branches based on ``main``.
     - Hotfixes (critical bugs that need to be released *fast*) should be developed in a branch based on the latest tagged release.
   * Avoid external dependencies wherever possible, and avoid introducing **any** hard dependencies outside the standard Python scientific stack (NumPy, SciPy, etc). Soft dependencies are allowed for specific functionality, but such dependencies cannot impede the installation of **coxeter** or the use of any other features.
   * All code should adhere to the source code conventions and satisfy the documentation and testing requirements discussed below.
@@ -108,16 +108,5 @@ To run the tests, simply execute ``pytest`` at the root of the repository.
 Release Guide
 =============
 
-To make a new release of **coxeter**, follow the following steps:
-
-#. Make a new branch off of master based on the expected new version, *e.g.*
-   release-2.3.1.
-#. Make any final changes as desired on this branch. Push the changes and
-   ensure all tests are passing as expected on the new branch.
-#. Once the branch is completely finalized, run bumpversion with the
-   appropriate type (patch, minor, major) so that the version now matches the
-   version number in the branch name.
-#. Merge the branch back into master, then push master and push tags. The
-   tagged commit will automatically trigger generation of binaries and upload
-   to PyPI and conda-forge.
-#. Delete the release branch both locally and on the remote.
+To make a new release of **coxeter**, see the release guide
+`<https://github.com/glotzerlab/coxeter/wiki/Creating-a-release>`_ in the coxeter wiki.
