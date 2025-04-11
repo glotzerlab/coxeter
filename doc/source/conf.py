@@ -43,6 +43,7 @@ extensions = [
     "nbsphinx",
     "x3d_model_extension",
 ]
+nbsphinx_allow_errors = True
 
 # For sphincontrib.bibtex (as of v2.0).
 bibtex_bibfiles = ["coxeter.bib"]

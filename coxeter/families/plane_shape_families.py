@@ -135,6 +135,9 @@ class TruncationPlaneShapeFamily(ShapeFamily):
 
         return verts
 
+    def __repr__(self):
+        return self.__class__.__name__
+
 
 class Family323Plus(TruncationPlaneShapeFamily):
     r"""The 323+ shape family defined in :cite:`Chen2014`.

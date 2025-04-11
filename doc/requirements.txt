@@ -4,6 +4,7 @@ jupyter
 matplotlib
 nbsphinx
 numpy
+pytest-doctestplus
 rowan>=1.2
 scipy
 sphinx
