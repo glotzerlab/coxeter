@@ -8,6 +8,8 @@ coverage==7.8.0
     # via pytest-cov
 cycler==0.12.1
     # via matplotlib
+docutils==0.21.2
+    # via -r tests/requirements.txt
 execnet==2.1.1
     # via pytest-xdist
 fonttools==4.57.0
