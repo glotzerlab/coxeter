@@ -25,4 +25,5 @@ import coxeter
 def setup_namespace(doctest_namespace):
     """Configure the global doctest_namespace fixture."""
     doctest_namespace["coxeter"] = coxeter
-    np.set_printoptions(legacy="1.25")
+    if tuple(np.version.version) >= ("1", "25"):
+        np.set_printoptions(legacy="1.25")
