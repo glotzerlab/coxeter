@@ -89,7 +89,13 @@ class ConvexPolyhedron(Polyhedron):
 
     def __init__(self, vertices):
         self._vertices = np.array(vertices, dtype=np.float64)
-        self._ndim = self._vertices.shape[1]
+        vertices_shape = self._vertices.shape
+        if len(vertices_shape) != 2 or vertices_shape[-1] != 3:
+            msg = (
+                f"Vertices array has wrong shape: expected (N, 3), got {vertices_shape}"
+            )
+            raise ValueError(msg)
+        self._ndim = vertices_shape[1]
         hull = ConvexHull(self._vertices)
         self._faces_are_convex = True
 
