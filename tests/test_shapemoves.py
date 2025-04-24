@@ -42,9 +42,9 @@ def shapeeq(
 
     if test_vertices:
         for vertex in vx1:
-            assert np.any(
-                [np.isclose(vertex, vertex2) for vertex2 in vx2]
-            ), f"Vertex {vertex} not found in poly2."
+            assert np.any([np.isclose(vertex, vertex2) for vertex2 in vx2]), (
+                f"Vertex {vertex} not found in poly2."
+            )
 
     for edge in ex1:
         assert edge in ex2 or edge[::-1] in ex2, f"Edge {edge} not found in poly2."
