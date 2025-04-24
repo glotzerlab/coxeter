@@ -19,7 +19,7 @@
 ## Checklist:
 <!-- Please select all items that apply either now or after creating the pull request. -->
 <!-- If you are unsure about any of these items, do not hesitate to ask! -->
-- [ ] I am familiar with the [**Contributing Guidelines**](https://github.com/glotzerlab/coxeter/blob/master/CONTRIBUTING.md).
-- [ ] I agree with the terms of the [**Contributor Agreement**](https://github.com/glotzerlab/coxeter/blob/master/ContributorAgreement.md).
+- [ ] I am familiar with the [**Contributing Guidelines**](https://github.com/glotzerlab/coxeter/blob/main/CONTRIBUTING.md).
+- [ ] I agree with the terms of the [**Contributor Agreement**](https://github.com/glotzerlab/coxeter/blob/main/ContributorAgreement.md).
 - [ ] The changes introduced by this pull request are covered by existing or newly introduced tests.
-- [ ] I have updated the [changelog](https://github.com/glotzerlab/coxeter/blob/master/ChangeLog.rst) and the [credits](https://github.com/glotzerlab/coxeter/blob/master/doc/source/credits.rst).
+- [ ] I have updated the [changelog](https://github.com/glotzerlab/coxeter/blob/main/ChangeLog.rst) and the [credits](https://github.com/glotzerlab/coxeter/blob/main/doc/source/credits.rst).

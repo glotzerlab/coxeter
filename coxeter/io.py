@@ -46,7 +46,7 @@ def to_obj(shape, filename):
     content += "\n"
 
     for f in shape.faces:
-        content += f"f {' '.join([str(v_index+1) for v_index in f])}\n"
+        content += f"f {' '.join([str(v_index + 1) for v_index in f])}\n"
 
     content = content[:-1]
 
@@ -72,7 +72,7 @@ def to_off(shape, filename):
         f"# {shape.__class__.__name__}\n"
     )
 
-    content += f"{len(shape.vertices)} f{len(shape.faces)} " f"{len(shape.edges)}\n"
+    content += f"{len(shape.vertices)} f{len(shape.faces)} {len(shape.edges)}\n"
 
     for v in shape.vertices:
         content += f"{' '.join([str(coord) for coord in v])}\n"
@@ -122,7 +122,7 @@ def to_stl(shape, filename):
             for t in triangles:
                 n = np.cross(t[1] - t[0], t[2] - t[1])  # order?
 
-                file.write(f"facet normal {n[0]} {n[1]} {n[2]}\n" f"\touter loop\n")
+                file.write(f"facet normal {n[0]} {n[1]} {n[2]}\n\touter loop\n")
                 for point in t:
                     file.write(f"\t\tvertex {point[0]} {point[1]} {point[2]}\n")
 
@@ -293,7 +293,7 @@ def to_vtk(shape, filename):
     )
 
     # Geometry
-    content += f"DATASET POLYDATA\n" f"POINTS {len(shape.vertices)} float\n"
+    content += f"DATASET POLYDATA\nPOINTS {len(shape.vertices)} float\n"
     for v in shape.vertices:
         content += f"{v[0]} {v[1]} {v[2]}\n"
 

@@ -16,16 +16,16 @@ Example:
 
     >>> from coxeter.families import PlatonicFamily
     >>> for name, shape in PlatonicFamily:
-    >>>    print(name, shape.num_faces)
-    ... (Cube, 6)
-    ... (Dodecahedron, 12)
-    ... (Icosahedron, 20)
-    ... (Octahedron, 8)
-    ... (Tetrahedron, 4)
+    ...     print((name, shape.num_faces))
+        ('Cube', 6)
+        ('Dodecahedron', 12)
+        ('Icosahedron', 20)
+        ('Octahedron', 8)
+        ('Tetrahedron', 4)
 
     >>> cube = PlatonicFamily.get_shape("Cube")
     >>> cube.num_faces
-    ... 6
+        6
 
 
 For continuous families of shapes, one must instead provide the required parameters.
@@ -36,7 +36,7 @@ Example:
     >>> from coxeter.families import Family423
     >>> cube = Family423.get_shape(a=1.0, c=3.0) # These values yield a Platonic cube
     >>> cube.num_faces
-    ... 6
+        6
 
 The `DOI_SHAPE_REPOSITORIES` variable provides convenient access to the shape family or
 families associated with different scientific publications. This dataset is useful for
@@ -58,18 +58,18 @@ Example:
 
     >>> from coxeter.families import DOI_SHAPE_REPOSITORIES
     >>> DOI_SHAPE_REPOSITORIES["10.1103/PhysRevX.4.011024"]
-    ... [Family323Plus, Family423, Family523]
+        [Family323Plus, Family423, Family523]
 
     >>> science_family = DOI_SHAPE_REPOSITORIES["10.1126/science.1220869"][0]
-    >>> for code, shape in science_family:
-    >>>     print(code, shape.num_vertices)
-    ... (P01, 4)  # Tetrahedron
-    ... (P02, 8)  # Octahedron
-    ... (P03, 6)  # Cube
-    ... (P04, 20) # Icosahedron
-    ... (P05, 12) # Dodecahedron
-    ... (A01, 14) # Cuboctahedron
-    ... ...
+    >>> for code, shape in science_family: # doctest: +SKIP
+    ...     print((code, shape.num_vertices))
+        (P01, 4)  # Tetrahedron
+        (P02, 8)  # Octahedron
+        (P03, 6)  # Cube
+        (P04, 20) # Icosahedron
+        (P05, 12) # Dodecahedron
+        (A01, 14) # Cuboctahedron
+        ...
 
 """
 

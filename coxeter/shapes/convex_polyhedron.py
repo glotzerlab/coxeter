@@ -117,9 +117,9 @@ class ConvexPolyhedron(Polyhedron):
 
         Data is moved from convex hull into private variables.
         """
-        assert (
-            self._ndim == hull.ndim
-        ), "Input points are coplanar or close to coplanar."
+        assert self._ndim == hull.ndim, (
+            "Input points are coplanar or close to coplanar."
+        )
 
         self._simplices = hull.simplices[:]
         self._simplex_equations = hull.equations[:]

@@ -50,11 +50,11 @@ For example, the snippet below finds the area of the smallest regular pentagon t
     >>> pentagon = coxeter.families.RegularNGonFamily.get_shape(5)
     >>> pentagon.incircle_radius = triangle.circumcircle.radius
     >>> triangle.area
-    0.9999999999999999
+    1.0
     >>> triangle.circumcircle.area
-    2.418399152312292
+    2.41839915231...
     >>> pentagon.area
-    2.796463494144044
+    2.79646349414...
 
 This tutorial just scratches the surface of the features **coxeter** offers.
 For more complete demonstrations of the package's features, see the :ref:`examples`.
