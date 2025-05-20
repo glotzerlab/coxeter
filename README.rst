@@ -85,7 +85,7 @@ To install coxeter and other optional dependencies, choose one of the following:
 Requirements
 ~~~~~~~~~~~~
 
--  Python >= 3.8
+-  Python >= 3.9
 -  NumPy >= 1.19.0
 -  SciPy >= 1.0.0
 -  rowan >= 1.2.0
