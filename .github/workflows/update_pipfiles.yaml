@@ -19,7 +19,7 @@ jobs:
     - uses: glotzerlab/workflows/setup-uv@5b540415ff505388627649e5671787bc3bf04f02
     - name: Set up Python environment
       run: |
-        for v in "3.8" "3.9" "3.10" "3.11" "3.12"; do
+        for v in "3.9" "3.10" "3.11" "3.12"; do
           pipfile=".github/requirements$v.txt"
           uv pip compile --python-version $v requirements.txt tests/requirements.txt > $pipfile
         done
