@@ -82,6 +82,7 @@ from .common import (
     PrismAntiprismFamily,
     PyramidDipyramidFamily,
     RegularNGonFamily,
+    TetragonalDisphenoidFamily,
     UniformAntiprismFamily,
     UniformDipyramidFamily,
     UniformPrismFamily,
@@ -135,5 +136,6 @@ __all__ = [
     "RegularNGonFamily",
     "ShapeFamily",
     "TabulatedGSDShapeFamily",
+    "TetragonalDisphenoidFamily",
     "TruncatedTetrahedronFamily",
 ]

@@ -107,7 +107,7 @@ class RegularNGonFamily(ShapeFamily):
 
         Returns
         -------
-             :class:`~.ConvexPolygon`: The corresponding regular polygon.
+            :class:`~coxeter.shapes.ConvexPolygon`:
         """
         return ConvexPolygon(cls.make_vertices(n))
 
@@ -143,7 +143,7 @@ class UniformPrismFamily(ShapeFamily):
 
         Returns
         -------
-             :class:`~.ConvexPolyhedron`: The corresponding convex polyhedron.
+            :class:`~coxeter.shapes.ConvexPolyhedron`:
         """
         return ConvexPolyhedron(cls.make_vertices(n))
 
@@ -187,7 +187,7 @@ class UniformAntiprismFamily(ShapeFamily):
 
         Returns
         -------
-             :class:`~.ConvexPolyhedron`: The corresponding convex polyhedron.
+            :class:`~coxeter.shapes.ConvexPolyhedron`:
         """
         return ConvexPolyhedron(cls.make_vertices(n))
 
@@ -236,7 +236,7 @@ class UniformPyramidFamily(ShapeFamily):
 
         Returns
         -------
-             :class:`~.ConvexPolyhedron`: The corresponding convex polyhedron.
+            :class:`~coxeter.shapes.ConvexPolyhedron`:
         """
         return ConvexPolyhedron(cls.make_vertices(n))
 
@@ -281,7 +281,7 @@ class UniformDipyramidFamily(ShapeFamily):
 
         Returns
         -------
-             :class:`~.ConvexPolyhedron`: The corresponding convex polyhedron.
+            :class:`~coxeter.shapes.ConvexPolyhedron`:
         """
         return ConvexPolyhedron(cls.make_vertices(n))
 
@@ -314,7 +314,7 @@ class UniformDipyramidFamily(ShapeFamily):
 class CanonicalTrapezohedronFamily(ShapeFamily):
     r"""The infinite family of canonical n-trapezohedra (antiprism duals).
 
-    Formulas for vertices are derived from :cite:`Rajpoot_2015` rather than via explicit
+    Formulas for vertices are derived from :cite:`Rajpoot2015` rather than via explicit
     canonicalization to ensure the method is deterministic and fast.
     """
 
@@ -327,7 +327,7 @@ class CanonicalTrapezohedronFamily(ShapeFamily):
 
         Returns
         -------
-             :class:`~.ConvexPolyhedron`: The corresponding convex polyhedron.
+            :class:`~coxeter.shapes.ConvexPolyhedron`:
         """
         return ConvexPolyhedron(cls.make_vertices(n))
 
@@ -381,6 +381,50 @@ class CanonicalTrapezohedronFamily(ShapeFamily):
 
         vo = 2 * n / 3 * short_edge_length * long_edge_length * h
         vertices *= cbrt(1 / vo)  # Rescale to unit volume
+        return vertices
+
+
+class TetragonalDisphenoidFamily(ShapeFamily):
+    r"""The infinite family of tetragonal disphenoids (irregular tetrahedra).
+
+    A disphenoid is a special case of an (irregular) tetrahedron which can be
+    inscribed in a cuboid. The special case of :math:`a=b=c` yields the Platonic
+    tetrahedron, which has :math:`T_d` symmetry. All other cases yield tetragonal
+    disphenoids with :math:`D_{2h}` symmetry. For the space-filling disphenoid
+    capable of forming the disphenoid tetrahedral honeycomb, set
+    :math:`a=b=1` and :math:`c=sqrt(2)`.
+    """
+
+    @classmethod
+    def get_shape(cls, a, b, c):
+        r"""Generate a disphenoid inscribed in a cuboid with edges a,b,c.
+
+        Args:
+            a (float): The extent of the inscribing cuboid along the :math:`x` axis.
+            b (float): The extent of the inscribing cuboid along the :math:`y` axis.
+            c (float): The extent of the inscribing cuboid along the :math:`z` axis.
+
+        Returns
+        -------
+            :class:`~coxeter.shapes.ConvexPolyhedron`:
+        """
+        return ConvexPolyhedron(cls.make_vertices(a, b, c))
+
+    @classmethod
+    def make_vertices(cls, a, b, c):
+        """Make the vertices of a disphenoid inscribed in a cuboid with edges a,b,c."""
+        isqrt2 = 1 / sqrt(2)
+        vertices = np.array(
+            [
+                [a, 0, -c * isqrt2],
+                [-a, 0, -c * isqrt2],
+                [0, b, c * isqrt2],
+                [0, -b, c * isqrt2],
+            ]
+        )
+
+        v0 = 2 * sqrt(2) / 3 * (a * b * c)
+        vertices *= cbrt(1 / v0)
         return vertices
 
 
