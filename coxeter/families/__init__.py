@@ -75,12 +75,14 @@ Example:
 
 from .common import (
     ArchimedeanFamily,
+    CanonicalTrapezohedronFamily,
     CatalanFamily,
     JohnsonFamily,
     PlatonicFamily,
     PrismAntiprismFamily,
     PyramidDipyramidFamily,
     RegularNGonFamily,
+    TetragonalDisphenoidFamily,
     UniformAntiprismFamily,
     UniformDipyramidFamily,
     UniformPrismFamily,
@@ -126,6 +128,7 @@ __all__ = [
     "UniformPrismFamily",
     "UniformPyramidFamily",
     "ArchimedeanFamily",
+    "CanonicalTrapezohedronFamily",
     "CatalanFamily",
     "JohnsonFamily",
     "PrismAntiprismFamily",
@@ -133,5 +136,6 @@ __all__ = [
     "RegularNGonFamily",
     "ShapeFamily",
     "TabulatedGSDShapeFamily",
+    "TetragonalDisphenoidFamily",
     "TruncatedTetrahedronFamily",
 ]

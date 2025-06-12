@@ -17,6 +17,14 @@ from .shape_family import ShapeFamily
 from .tabulated_shape_family import TabulatedGSDShapeFamily
 
 
+def csc(theta):
+    """Compute the cosecant of a value.
+
+    :meta private:
+    """
+    return 1 / sin(theta)
+
+
 # Allows us to monkeypatch an existing method with our choice of warning
 def _deprecated_method(func, deprecated="", replacement="", reason=""):
     @wraps(func)
@@ -32,16 +40,22 @@ def _deprecated_method(func, deprecated="", replacement="", reason=""):
 
 
 def sec(theta):
-    """Return the secant of an angle."""
+    """Return the secant of an angle.
+
+    :meta private:
+    """
     return 1 / cos(theta)
 
 
 def cot(theta):
-    """Return the cotangent of an angle."""
+    """Return the cotangent of an angle.
+
+    :meta private:
+    """
     return 1 / tan(theta)
 
 
-def _make_ngon(n, z=0, area=1, angle=0):
+def _make_ngon(n, z=0.0, area=1, angle=0):
     """Make a regular n-gon with a given area, z height, and rotation angle.
 
     The initial vertex  lies on the :math:`x` axis by default, but can be rotated by
@@ -93,7 +107,7 @@ class RegularNGonFamily(ShapeFamily):
 
         Returns
         -------
-             :class:`~.ConvexPolygon`: The corresponding regular polygon.
+            :class:`~coxeter.shapes.ConvexPolygon`:
         """
         return ConvexPolygon(cls.make_vertices(n))
 
@@ -129,7 +143,7 @@ class UniformPrismFamily(ShapeFamily):
 
         Returns
         -------
-             :class:`~.ConvexPolyhedron`: The corresponding convex polyhedron.
+            :class:`~coxeter.shapes.ConvexPolyhedron`:
         """
         return ConvexPolyhedron(cls.make_vertices(n))
 
@@ -173,7 +187,7 @@ class UniformAntiprismFamily(ShapeFamily):
 
         Returns
         -------
-             :class:`~.ConvexPolyhedron`: The corresponding convex polyhedron.
+            :class:`~coxeter.shapes.ConvexPolyhedron`:
         """
         return ConvexPolyhedron(cls.make_vertices(n))
 
@@ -222,7 +236,7 @@ class UniformPyramidFamily(ShapeFamily):
 
         Returns
         -------
-             :class:`~.ConvexPolyhedron`: The corresponding convex polyhedron.
+            :class:`~coxeter.shapes.ConvexPolyhedron`:
         """
         return ConvexPolyhedron(cls.make_vertices(n))
 
@@ -267,7 +281,7 @@ class UniformDipyramidFamily(ShapeFamily):
 
         Returns
         -------
-             :class:`~.ConvexPolyhedron`: The corresponding convex polyhedron.
+            :class:`~coxeter.shapes.ConvexPolyhedron`:
         """
         return ConvexPolyhedron(cls.make_vertices(n))
 
@@ -294,6 +308,123 @@ class UniformDipyramidFamily(ShapeFamily):
         base = _make_ngon(n, z=0, area=area)
         apexes = [[0, 0, h], [0, 0, -h]]
         vertices = np.concatenate([base, apexes])
+        return vertices
+
+
+class CanonicalTrapezohedronFamily(ShapeFamily):
+    r"""The infinite family of canonical n-trapezohedra (antiprism duals).
+
+    Formulas for vertices are derived from :cite:`Rajpoot2015` rather than via explicit
+    canonicalization to ensure the method is deterministic and fast.
+    """
+
+    @classmethod
+    def get_shape(cls, n: int):
+        r"""Generate a canonical n-antiprism of unit volume.
+
+        Args:
+            n (int): The number of vertices of the base polygons (:math:`n \geq 3`).
+
+        Returns
+        -------
+            :class:`~coxeter.shapes.ConvexPolyhedron`:
+        """
+        return ConvexPolyhedron(cls.make_vertices(n))
+
+    @classmethod
+    def make_vertices(cls, n):
+        r"""Generate the vertices of a uniform right n-antiprism with unit volume.
+
+        Args:
+            n (int): The number of vertices of the base polygons (:math:`n \geq 3`).
+
+        Returns
+        -------
+             :math:`(n*2 + 2, 3)` :class:`numpy.ndarray` of float:
+                 The vertices of the trapezohedron.
+        """
+        r = 0.5 * csc(np.pi / n)  # Midradius for canonical trapezohedron
+        area = r**2 * n / 2 * sin(2 * np.pi / n)  # Area of center polygons
+
+        # Height of center polygons
+        c = sqrt(4 - sec(np.pi / (2 * n)) ** 2) / (4 + 8 * cos(np.pi / n))
+
+        # Height of apexes
+        z = (
+            0.25
+            * cos(np.pi / (2 * n))
+            * cot(np.pi / (2 * n))
+            * csc(3 * np.pi / (2 * n))
+            * sqrt(4 - sec(np.pi / (2 * n)) ** 2)
+        )
+
+        top_center_polygon = _make_ngon(n, c, area, angle=np.pi / n)
+        bottom_center_polygon = _make_ngon(n, -c, area)
+
+        vertices = np.concatenate(
+            [
+                top_center_polygon,
+                bottom_center_polygon,
+                [[0, 0, z], [0, 0, -z]],
+            ]
+        )
+
+        # Compute height of (canonical) trapezohedron
+        h = 1 / 4 * csc(np.pi / (2 * n)) * sqrt(2 * cos(np.pi / n) + 1) / 2
+
+        # Compute edge lengths (required to compute the volume)
+        edge_length_ratio = 1 / (2 - 2 * cos(np.pi / n))
+        short_edge_length = np.linalg.norm(
+            top_center_polygon[0] - bottom_center_polygon[0]
+        )
+        long_edge_length = short_edge_length * edge_length_ratio
+
+        vo = 2 * n / 3 * short_edge_length * long_edge_length * h
+        vertices *= cbrt(1 / vo)  # Rescale to unit volume
+        return vertices
+
+
+class TetragonalDisphenoidFamily(ShapeFamily):
+    r"""The infinite family of tetragonal disphenoids (irregular tetrahedra).
+
+    A disphenoid is a special case of an (irregular) tetrahedron which can be
+    inscribed in a cuboid. The special case of :math:`a=b=c` yields the Platonic
+    tetrahedron, which has :math:`T_d` symmetry. All other cases yield tetragonal
+    disphenoids with :math:`D_{2h}` symmetry. For the space-filling disphenoid
+    capable of forming the disphenoid tetrahedral honeycomb, set
+    :math:`a=b=1` and :math:`c=sqrt(2)`.
+    """
+
+    @classmethod
+    def get_shape(cls, a, b, c):
+        r"""Generate a disphenoid inscribed in a cuboid with edges a,b,c.
+
+        Args:
+            a (float): The extent of the inscribing cuboid along the :math:`x` axis.
+            b (float): The extent of the inscribing cuboid along the :math:`y` axis.
+            c (float): The extent of the inscribing cuboid along the :math:`z` axis.
+
+        Returns
+        -------
+            :class:`~coxeter.shapes.ConvexPolyhedron`:
+        """
+        return ConvexPolyhedron(cls.make_vertices(a, b, c))
+
+    @classmethod
+    def make_vertices(cls, a, b, c):
+        """Make the vertices of a disphenoid inscribed in a cuboid with edges a,b,c."""
+        isqrt2 = 1 / sqrt(2)
+        vertices = np.array(
+            [
+                [a, 0, -c * isqrt2],
+                [-a, 0, -c * isqrt2],
+                [0, b, c * isqrt2],
+                [0, -b, c * isqrt2],
+            ]
+        )
+
+        v0 = 2 * sqrt(2) / 3 * (a * b * c)
+        vertices *= cbrt(1 / v0)
         return vertices
 
 
