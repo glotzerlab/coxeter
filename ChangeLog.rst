@@ -10,6 +10,11 @@ Added
 
 - ``edges``, ``edge_vectors``, and ``edge_lengths`` properties to ``Polygon``
 
+Changed
+~~~~~~~
+
+- The minimum required Python version is now 3.9.
+
 v0.10.0 - 2025-02-24
 -------------------
 
