@@ -20,6 +20,7 @@ from coxeter.families import (
     PyramidDipyramidFamily,
     RegularNGonFamily,
     TabulatedGSDShapeFamily,
+    TetragonalDisphenoidFamily,
     TruncatedTetrahedronFamily,
     UniformAntiprismFamily,
     UniformDipyramidFamily,
@@ -315,3 +316,18 @@ def test_trapezohedra(n):
         poly.edge_lengths, 1.0
     )
     assert all([len(face) == 4 for face in poly.faces])  # All faces are kites
+
+
+@given(
+    floats(MIN_REALISTIC_PRECISION, 10_000_000),
+    floats(MIN_REALISTIC_PRECISION, 10_000_000),
+    floats(MIN_REALISTIC_PRECISION, 10_000_000),
+)
+def test_tetragonal_trapezohedra(a, b, c):
+    vertices = TetragonalDisphenoidFamily.make_vertices(a, b, c)
+    poly = TetragonalDisphenoidFamily.get_shape(a, b, c)
+    np.testing.assert_array_equal(vertices, poly.vertices)
+
+    assert np.isclose(poly.volume, 1.0)
+    assert len(np.unique(poly.edge_lengths.round(MIN_DECIMALS))) in (1, 2, 3)
+    assert all([len(face) == 3 for face in poly.faces])  # All faces are triangles
