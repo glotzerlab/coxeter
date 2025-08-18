@@ -30,6 +30,7 @@ __pycache__/
 
 # Documentation
 doc/source/bibtex.json
+sphinxcontrib_bibtex-2.6.3
 
 # Development tooling
 .ipynb_checkpoints/
