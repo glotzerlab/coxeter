@@ -115,6 +115,8 @@ def test_science_family():
                 reference.get_shape(ScienceFamily.data[id]["name"]).vertices,
                 shape.vertices,
             )
+        if ScienceFamily.data[id]["name"] == "Squashed Dodecahedron":
+            assert shape.num_faces == 12
 
 
 def test_shape323():
