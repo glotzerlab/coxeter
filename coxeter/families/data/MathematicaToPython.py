@@ -54,7 +54,7 @@ def update_polyhedron_vertices_by_source(input_path):
             "plat" in source_file
             or "arch" in source_file
             or "catalan" in source_file
-            or "johnson" in source_file
+            or "other" in source_file
         ):
             continue
 
@@ -109,7 +109,7 @@ def update_polyhedron_vertices_by_source(input_path):
             # Load and update the source file data in memory, if not already loaded
             if source_file not in updated_source_data:
                 try:
-                    with open(source_file, encoding="utf-8") as f:
+                    with open(source_file) as f:
                         updated_source_data[source_file] = json.load(f)
                 except FileNotFoundError:
                     print("File not found: continuing")
@@ -129,7 +129,7 @@ def update_polyhedron_vertices_by_source(input_path):
     print(f"\n--- Writing to master file: '{input_path}' ---")
     if polyhedra_data:
         try:
-            with open(input_path, "w", encoding="utf-8") as f:
+            with open(input_path, "w") as f:
                 json.dump(polyhedra_data, f, indent=4)
             print(f"Successfully updated '{input_path}'.")
         except OSError as e:
@@ -142,7 +142,7 @@ def update_polyhedron_vertices_by_source(input_path):
         print(f"\n--- Writing to source file: '{source_file}' ---")
         if data:
             try:
-                with open(source_file, "w", encoding="utf-8") as f:
+                with open(source_file, "w") as f:
                     json.dump(data, f, indent=4)
                 print(f"Successfully updated '{source_file}'.")
             except OSError as e:
