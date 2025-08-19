@@ -98,36 +98,54 @@ def test_named_family(family):
     test_names(family)
 
 
-def test_science_family():
-    reference_mapping = {
-        "P": PlatonicFamily,
-        "A": ArchimedeanFamily,
-        "C": CatalanFamily,
-        "J": JohnsonFamily,
-        "O": None,
-    }
-    for id, shape in ScienceFamily:
-        reference = reference_mapping[id[0]]
-        if reference is not None:
-            if id in ("J01", "J02", "J12", "J13"):
-                continue
-            np.testing.assert_allclose(
-                reference.get_shape(ScienceFamily.data[id]["name"]).vertices,
-                shape.vertices,
-            )
-            np.testing.assert_allclose(shape.volume, 1.0)
-        if ScienceFamily.data[id]["name"] == "Squashed Dodecahedron":
-            assert shape.num_faces == 12
-        if ScienceFamily.data[id]["name"] == "Rhombic Icosahedron":
-            assert shape.num_faces == 20
-        if ScienceFamily.data[id]["name"] == "Rhombic Enneacontahedron":
-            assert shape.num_faces == 90
-        if ScienceFamily.data[id]["name"] == "Obtuse Golden Rhombohedron":
-            assert shape.num_faces == 6
-        if ScienceFamily.data[id]["name"] == "Acute Golden Rhombohedron":
-            assert shape.num_faces == 6
-        if ScienceFamily.data[id]["name"] == "Dürer's solid":
-            assert shape.num_faces == 8
+reference_mapping = {
+    "P": PlatonicFamily,
+    "A": ArchimedeanFamily,
+    "C": CatalanFamily,
+    "J": JohnsonFamily,
+    "O": None,
+}
+
+
+# The parametrize decorator handles the loop and provides the id and shape to the test function
+@pytest.mark.parametrize("id, shape", ScienceFamily)
+def test_science_family_properties(id, shape):
+    reference = reference_mapping[id[0]]
+    if reference is None:
+        return
+
+    # Skip specific shapes as in the original test
+    if id in ("J01", "J02", "J12", "J13"):
+        return
+
+    reference_shape = reference.get_shape(ScienceFamily.data[id]["name"])
+
+    # Test properties
+    np.testing.assert_allclose([shape.volume, reference_shape.volume], 1.0, rtol=1e-15)
+    np.testing.assert_allclose(
+        [shape.centroid, reference_shape.centroid], 0, atol=1e-15
+    )
+    np.testing.assert_allclose(
+        reference_shape.vertices, shape.vertices, err_msg=ScienceFamily.data[id]["name"]
+    )
+
+
+@pytest.mark.parametrize("id, shape", ScienceFamily)
+def test_science_family_faces(id, shape):
+    # Test specific shapes with hardcoded face counts
+    name = ScienceFamily.data[id]["name"]
+    if name == "Squashed Dodecahedron":
+        assert shape.num_faces == 12
+    elif name == "Rhombic Icosahedron":
+        assert shape.num_faces == 20
+    elif name == "Rhombic Enneacontahedron":
+        assert shape.num_faces == 90
+    elif name == "Obtuse Golden Rhombohedron":
+        assert shape.num_faces == 6
+    elif name == "Acute Golden Rhombohedron":
+        assert shape.num_faces == 6
+    elif name == "Dürer's solid":
+        assert shape.num_faces == 8
 
 
 def test_shape323():
