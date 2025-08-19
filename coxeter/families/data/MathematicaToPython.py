@@ -37,13 +37,20 @@ def update_polyhedron_vertices_by_source(input_path):
 
     # Iterate through the polyhedra in the master file and update their vertices
     for short_name, polyhedron_info in polyhedra_data.items():
-        full_name = polyhedron_info.get("name")
+        full_name = polyhedron_info.get("alternative_name")
+        if not full_name:
+            full_name = polyhedron_info.get("name")
+
+        # full_name = polyhedron_info.get("name")
         source_file = polyhedron_info.get("source")
 
         if not full_name or not source_file:
             print(
-                f"Warning: Skipping {short_name} due to missing 'name' or 'source' field."
+                f"Warning: Skipping {short_name} due to missing field (name, source)"
+                f"({full_name}, {source_file})",
             )
+            continue
+        if "plat" in source_file or "arch" in source_file or "catalan" in source_file: 
             continue
 
         # Remove spaces from the name for the WolframScript command
@@ -96,17 +103,8 @@ def update_polyhedron_vertices_by_source(input_path):
 
             # Load and update the source file data in memory, if not already loaded
             if source_file not in updated_source_data:
-                try:
-                    with open(source_file, encoding="utf-8") as f:
-                        updated_source_data[source_file] = json.load(f)
-                except FileNotFoundError:
-                    print(f"Warning: Source file '{source_file}' not found. Skipping.")
-                    continue
-                except json.JSONDecodeError:
-                    print(
-                        f"Warning: Could not decode JSON from '{source_file}'. Skipping."
-                    )
-                    continue
+                with open(source_file, encoding="utf-8") as f:
+                    updated_source_data[source_file] = json.load(f)
 
             # Update the source file's data in memory
             if full_name in updated_source_data[source_file]:
@@ -114,7 +112,7 @@ def update_polyhedron_vertices_by_source(input_path):
                 print(f"   Successfully updated source file data for '{full_name}'.")
             else:
                 print(
-                    f"Warning: Could not find '{full_name}' in '{source_file}'. Skipping source file update."
+                    f"Warning: Could not find '{full_name}' in '{source_file}'"
                 )
 
         except subprocess.CalledProcessError as e:
