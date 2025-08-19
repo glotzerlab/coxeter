@@ -294,36 +294,48 @@ def test_uniform_dipyramids(n):
 
 
 def generate_prism_antiprism_params():
-    # Assuming PrismAntiprismFamily is a list or iterable
-    # and UniformAntiprismFamily and UniformPrismFamily are classes
-    # with a get_shape method.
-    for i, nameshape in enumerate(PrismAntiprismFamily):
-        name, _ = nameshape
-        if "Anti" in name:
-            n = i + 3
-            n_edges = 4 * n
-            n_faces = 4 * n
-        else:
-            n = (i + 3) - 8
-            n_edges = 3 * n
-            n_faces = 3 * n
-        yield pytest.param(nameshape, n, n_edges, n_faces, id=name)
+    # Map from numerical n to the string name
+    number_to_name = {
+        3: "Triangular",
+        4: "Square",
+        5: "Pentagonal",
+        6: "Hexagonal",
+        7: "Heptagonal",
+        8: "Octagonal",
+        9: "Nonagonal",
+        10: "Decagonal",
+    }
+
+    shape_map = {name: shape for name, shape in PrismAntiprismFamily}
+
+    for n in range(3, 11):
+        name_prefix = number_to_name.get(n)
+        if not name_prefix:
+            continue
+
+        prism_name = f"{name_prefix} Prism"
+        prism_shape = shape_map.get(prism_name)
+        if prism_shape:
+            yield pytest.param(prism_shape, n, "prism", id=prism_name)
+
+        antiprism_name = f"{name_prefix} Antiprism"
+        antiprism_shape = shape_map.get(antiprism_name)
+        if antiprism_shape:
+            yield pytest.param(antiprism_shape, n, "antiprism", id=antiprism_name)
 
 
-@pytest.mark.parametrize(
-    "nameshape, n, n_edges, n_faces", generate_prism_antiprism_params()
-)
-def test_new_prism_antiprism(nameshape, n, n_edges, n_faces):
-    name, shape = nameshape
-    print(n)
-    if "Anti" in name:
+@pytest.mark.parametrize("shape, n, shape_type", generate_prism_antiprism_params())
+def test_new_prism_antiprism(shape, n, shape_type):
+    if shape_type == "antiprism":
         comparative_shape = UniformAntiprismFamily.get_shape(n)
+        n_edges = 4 * n
+        n_faces = 2 + 2 * n
     else:
         comparative_shape = UniformPrismFamily.get_shape(n)
+        n_edges = 3 * n
+        n_faces = 2 + n
 
     assert shape.num_edges == n_edges
-    print(shape.vertices, comparative_shape.vertices)
-
     assert shape.num_faces == n_faces
     np.testing.assert_allclose(shape.volume, comparative_shape.volume, atol=ATOL)
     np.testing.assert_allclose(
