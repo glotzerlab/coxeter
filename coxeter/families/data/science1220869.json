@@ -17986,7 +17986,6 @@
         "name": "Triangular Prism",
         "short_name": "O01",
         "alternative_name": null,
-        "comment": "edge length=1",
         "source": "prism_antiprism.json"
     },
     "O02": {
@@ -18046,7 +18045,6 @@
         "name": "Pentagonal Prism",
         "short_name": "O02",
         "alternative_name": null,
-        "comment": "edge length=2",
         "source": "prism_antiprism.json"
     },
     "O03": {
@@ -18116,7 +18114,6 @@
         "name": "Hexagonal Prism",
         "short_name": "O03",
         "alternative_name": null,
-        "comment": "edge length=3",
         "source": "prism_antiprism.json"
     },
     "O04": {
@@ -18196,7 +18193,6 @@
         "name": "Heptagonal Prism",
         "short_name": "O04",
         "alternative_name": null,
-        "comment": "edge length=4",
         "source": "prism_antiprism.json"
     },
     "O05": {
@@ -18286,7 +18282,6 @@
         "name": "Octagonal Prism",
         "short_name": "O05",
         "alternative_name": null,
-        "comment": "edge length=5",
         "source": "prism_antiprism.json"
     },
     "O06": {
@@ -18386,7 +18381,6 @@
         "name": "Nonagonal Prism",
         "short_name": "O06",
         "alternative_name": null,
-        "comment": "edge length=6",
         "source": "prism_antiprism.json"
     },
     "O07": {
@@ -18496,7 +18490,6 @@
         "name": "Decagonal Prism",
         "short_name": "O07",
         "alternative_name": null,
-        "comment": "edge length=7",
         "source": "prism_antiprism.json"
     },
     "O08": {
@@ -18546,7 +18539,6 @@
         "name": "Square Antiprism",
         "short_name": "O08",
         "alternative_name": null,
-        "comment": "edge length=8",
         "source": "prism_antiprism.json"
     },
     "O09": {
@@ -18606,7 +18598,6 @@
         "name": "Pentagonal Antiprism",
         "short_name": "O09",
         "alternative_name": null,
-        "comment": "edge length=9",
         "source": "prism_antiprism.json"
     },
     "O10": {
@@ -18676,7 +18667,6 @@
         "name": "Hexagonal Antiprism",
         "short_name": "O10",
         "alternative_name": null,
-        "comment": "edge length=10",
         "source": "prism_antiprism.json"
     },
     "O11": {
@@ -18756,7 +18746,6 @@
         "name": "Heptagonal Antiprism",
         "short_name": "O11",
         "alternative_name": null,
-        "comment": "edge length=11",
         "source": "prism_antiprism.json"
     },
     "O12": {
@@ -18846,7 +18835,6 @@
         "name": "Octagonal Antiprism",
         "short_name": "O12",
         "alternative_name": null,
-        "comment": "edge length=12",
         "source": "prism_antiprism.json"
     },
     "O13": {
@@ -18946,7 +18934,6 @@
         "name": "Nonagonal Antiprism",
         "short_name": "O13",
         "alternative_name": null,
-        "comment": "edge length=13",
         "source": "prism_antiprism.json"
     },
     "O14": {
@@ -19056,7 +19043,6 @@
         "name": "Decagonal Antiprism",
         "short_name": "O14",
         "alternative_name": null,
-        "comment": "edge length=14",
         "source": "prism_antiprism.json"
     },
     "O15": {
@@ -19135,6 +19121,7 @@
         ],
         "name": "Squashed Dodecahedron",
         "short_name": "O15",
+        "source": "other.json",
         "alternative_name": null,
         "comment": null
     },
@@ -19254,6 +19241,7 @@
         ],
         "name": "Rhombic Icosahedron",
         "short_name": "O16",
+        "source": "other.json",
         "alternative_name": null,
         "comment": null
     },
@@ -19723,6 +19711,7 @@
         ],
         "name": "Rhombic Enneacontahedron",
         "short_name": "O17",
+        "source": "other.json",
         "alternative_name": null,
         "comment": null
     },
@@ -19772,6 +19761,7 @@
         ],
         "name": "Obtuse Golden Rhombohedron",
         "short_name": "O18",
+        "source": "other.json",
         "alternative_name": null,
         "comment": null
     },
@@ -19821,6 +19811,7 @@
         ],
         "name": "Acute Golden Rhombohedron",
         "short_name": "O19",
+        "source": "other.json",
         "alternative_name": null,
         "comment": null
     },
@@ -19890,6 +19881,7 @@
         ],
         "name": "D\u00fcrer's Solid",
         "short_name": "O20",
+        "source": "other.json",
         "alternative_name": null,
         "comment": null
     },
@@ -19989,6 +19981,7 @@
         ],
         "name": "Elongated Dodecahedron",
         "short_name": "O21",
+        "source": "other.json",
         "alternative_name": null,
         "comment": null
     },
@@ -20023,8 +20016,8 @@
         ],
         "name": "Square Pyramid",
         "short_name": "O22",
+        "source": "other.json",
         "alternative_name": null,
-        "comment": "height/edge length=1/2",
-        "source": "pyramid_dipyramid.json"
+        "comment": "height/edge length=1/2"
     }
 }
