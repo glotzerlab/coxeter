@@ -306,7 +306,8 @@ def generate_prism_antiprism_params():
         10: "Decagonal",
     }
 
-    shape_map = {name: shape for name, shape in PrismAntiprismFamily}
+    with pytest.warns(DeprecationWarning, match="deprecated in favor of"):
+        shape_map = {name: shape for name, shape in PrismAntiprismFamily}
 
     for n in range(3, 11):
         name_prefix = number_to_name.get(n)
