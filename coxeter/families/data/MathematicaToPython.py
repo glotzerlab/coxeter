@@ -50,7 +50,12 @@ def update_polyhedron_vertices_by_source(input_path):
                 f"({full_name}, {source_file})",
             )
             continue
-        if "plat" in source_file or "arch" in source_file or "catalan" in source_file or "johnson" in source_file: 
+        if (
+            "plat" in source_file
+            or "arch" in source_file
+            or "catalan" in source_file
+            or "johnson" in source_file
+        ):
             continue
 
         # Remove spaces from the name for the WolframScript command
@@ -115,9 +120,7 @@ def update_polyhedron_vertices_by_source(input_path):
                 updated_source_data[source_file][full_name]["vertices"] = new_vertices
                 print(f"   Successfully updated source file data for '{full_name}'.")
             else:
-                print(
-                    f"Warning: Could not find '{full_name}' in '{source_file}'"
-                )
+                print(f"Warning: Could not find '{full_name}' in '{source_file}'")
 
         except subprocess.CalledProcessError as e:
             print(f"Error running wolframscript for '{full_name}': {e.stderr.strip()}")
