@@ -18,6 +18,7 @@ repos:
         - --indent=2
         - --no-ensure-ascii
         - --autofix
+        - --no-sort-keys
       - id: check-json
       - id: check-yaml
       - id: requirements-txt-fixer
