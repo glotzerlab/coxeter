@@ -98,7 +98,7 @@ def test_named_family(family):
     test_names(family)
 
 
-reference_mapping = {
+REFERENCE_MAPPING = {
     "P": PlatonicFamily,
     "A": ArchimedeanFamily,
     "C": CatalanFamily,
@@ -107,20 +107,20 @@ reference_mapping = {
 }
 
 
-# The parametrize decorator handles the loop and provides the id and shape to the test function
 @pytest.mark.parametrize("id, shape", ScienceFamily)
 def test_science_family_properties(id, shape):
-    reference = reference_mapping[id[0]]
+    reference = REFERENCE_MAPPING[id[0]]
     if reference is None:
         return
 
     # Skip specific shapes as in the original test
     if id in ("J01", "J02", "J12", "J13"):
-        return
+        reference_shape = reference.get_shape(
+            ScienceFamily.data[id]["alternative_name"]
+        )
+    else:
+        reference_shape = reference.get_shape(ScienceFamily.data[id]["name"])
 
-    reference_shape = reference.get_shape(ScienceFamily.data[id]["name"])
-
-    # Test properties
     np.testing.assert_allclose([shape.volume, reference_shape.volume], 1.0, rtol=1e-15)
     np.testing.assert_allclose(
         [shape.centroid, reference_shape.centroid], 0, atol=1e-15
