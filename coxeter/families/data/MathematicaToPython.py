@@ -19,6 +19,10 @@ to Python isn't as easy.  E.g.
 ExportString[N[PolyhedronData["ObtuseGoldenRhombohedron",
 "VertexCoordinates"]], "Table", "FieldSeparators" -> ", "]
 
+import numpy as np
+
+from coxeter.shapes.convex_polyhedron import ConvexPolyhedron
+
 
 <<<<<<< HEAD
 UPDATE 08/2025: the following code is simpler and less brittle
@@ -72,16 +76,24 @@ def update_polyhedron_vertices_by_source(input_path):
             # Remove spaces from the name for the WolframScript command
             wolfram_name = re.sub(r"\s+", "", full_name)
 
-            # Construct the wolframscript command
             command = [
                 "wolframscript",
                 "-c",
-                (
-                    f'ExportString[N[PolyhedronData["{wolfram_name}"'
-                    ', "VertexCoordinates"] / '
-                    f'PolyhedronData["{wolfram_name}", "Volume"]^(1/3), 32], '
-                    '"RawJSON", "Compact" -> False"]'
-                ),
+                f"""
+                (*Must evaluate twice, as the real algebra is prohibitively slow.*)
+                vertices = N[
+                    PolyhedronData["{wolfram_name}", "VertexCoordinates"] /
+                    CubeRoot[PolyhedronData["{wolfram_name}", "Volume"]]
+                    , 36 (*Save a few extra decimals so our result is exact to 32.*)
+                ];
+                (*Center the shape on the origin*)
+                vertices -= First[RegionCentroid @ ConvexHullRegion[vertices]];
+                (*Export the shape as a json serializable object.*)
+                ExportString[
+                    (*Replace values close to 0 with 0*)
+                    N[vertices/. x_ /; Abs[x] < 1*^-16 -> 0.0, 32], "RawJSON"
+                ]
+            """,
             ]
 
             print(f"-> Updating vertices for '{full_name}'...")
@@ -95,28 +107,22 @@ def update_polyhedron_vertices_by_source(input_path):
 
                 # Parse the JSON string to get a Python list of vertices
                 new_vertices = json.loads(vertices_json_string)
-                print(new_vertices)
+                np.testing.assert_allclose(ConvexPolyhedron(new_vertices).volume, 1)
 
                 if full_name in source_data:
                     source_data[full_name]["vertices"] = new_vertices
                     print(f"   Successfully updated '{full_name}'.")
                 else:
-                    print(
-                        f"Warning: Could not find '{full_name}' in '{source_file}'."
-                    )
+                    print(f"Warning: Could not find '{full_name}' in '{source_file}'.")
 
             except subprocess.CalledProcessError as e:
                 print(
                     f"Error running wolframscript for '{full_name}': {e.stderr.strip()}"
                 )
             except json.JSONDecodeError:
-                print(
-                    f"Error: Failed to parse JSON output for '{full_name}'."
-                )
+                print(f"Error: Failed to parse JSON output for '{full_name}'.")
             except FileNotFoundError:
-                print(
-                    "Error: 'wolframscript' command not found."
-                )
+                print("Error: 'wolframscript' command not found.")
                 return
 
         if source_data:
