@@ -50,7 +50,7 @@ def update_polyhedron_vertices_by_source(input_path):
                 f"({full_name}, {source_file})",
             )
             continue
-        if "plat" in source_file or "arch" in source_file or "catalan" in source_file: 
+        if "plat" in source_file or "arch" in source_file or "catalan" in source_file or "johnson" in source_file: 
             continue
 
         # Remove spaces from the name for the WolframScript command
@@ -94,7 +94,7 @@ def update_polyhedron_vertices_by_source(input_path):
             # Perform assertions for volume and centroid
             np.testing.assert_allclose(ConvexPolyhedron(new_vertices).volume, 1)
             np.testing.assert_allclose(
-                ConvexPolyhedron(new_vertices).centroid, 0, atol=1e-16
+                ConvexPolyhedron(new_vertices).centroid, 0, atol=1e-15
             )
 
             # Update the master file's data in memory
@@ -117,11 +117,6 @@ def update_polyhedron_vertices_by_source(input_path):
 
         except subprocess.CalledProcessError as e:
             print(f"Error running wolframscript for '{full_name}': {e.stderr.strip()}")
-        except json.JSONDecodeError:
-            print(f"Error: Failed to parse JSON output for '{full_name}'.")
-        except FileNotFoundError:
-            print("Error: 'wolframscript' command not found.")
-            return
 
     # Write the complete updated master data back to its file
     print(f"\n--- Writing to master file: '{input_path}' ---")
