@@ -119,7 +119,7 @@ def test_science_family():
             assert shape.num_faces == 12
         if ScienceFamily.data[id]["name"] == "Rhombic Icosahedron":
             assert shape.num_faces == 20
-        if ScienceFamily.data[id]["name"] == "Rhombic enneacontrahedron":
+        if ScienceFamily.data[id]["name"] == "Rhombic Enneacontahedron":
             assert shape.num_faces == 90
         if ScienceFamily.data[id]["name"] == "Obtuse Golden Rhombohedron":
             assert shape.num_faces == 6
