@@ -103,8 +103,12 @@ def update_polyhedron_vertices_by_source(input_path):
 
             # Load and update the source file data in memory, if not already loaded
             if source_file not in updated_source_data:
-                with open(source_file, encoding="utf-8") as f:
-                    updated_source_data[source_file] = json.load(f)
+                try:
+                    with open(source_file, encoding="utf-8") as f:
+                        updated_source_data[source_file] = json.load(f)
+                except FileNotFoundError:
+                    print("File not found: continuing")
+                    updated_source_data[source_file] = ""
 
             # Update the source file's data in memory
             if full_name in updated_source_data[source_file]:
