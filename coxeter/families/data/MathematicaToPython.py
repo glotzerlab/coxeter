@@ -18,6 +18,13 @@ Numeric interpretation of Mathematica data may be necessary where translation
 to Python isn't as easy.  E.g.
 ExportString[N[PolyhedronData["ObtuseGoldenRhombohedron",
 "VertexCoordinates"]], "Table", "FieldSeparators" -> ", "]
+
+
+UPDATE 08/2028: the following code is simpler and less brittle
+ExportString[
+    N[PolyhedronData["AcuteGoldenRhombohedron", "VertexCoordinates"], 32],
+    "RawJSON", "Compact" -> False
+]
 """
 
 
