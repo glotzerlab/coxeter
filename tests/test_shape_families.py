@@ -117,6 +117,16 @@ def test_science_family():
             )
         if ScienceFamily.data[id]["name"] == "Squashed Dodecahedron":
             assert shape.num_faces == 12
+        if ScienceFamily.data[id]["name"] == "Rhombic Icosahedron":
+            assert shape.num_faces == 20
+        if ScienceFamily.data[id]["name"] == "Rhombic enneacontrahedron":
+            assert shape.num_faces == 90
+        if ScienceFamily.data[id]["name"] == "Obtuse Golden Rhombohedron":
+            assert shape.num_faces == 6
+        if ScienceFamily.data[id]["name"] == "Acute Golden Rhombohedron":
+            assert shape.num_faces == 6
+        if ScienceFamily.data[id]["name"] == "Dürer's solid":
+            assert shape.num_faces == 8
 
 
 def test_shape323():
