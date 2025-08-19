@@ -5640,6 +5640,7 @@
         ],
         "name": "Pyramid 4",
         "short_name": "J01",
+        "source": "johnson.json",
         "alternative_name": "Square Pyramid",
         "comment": null
     },
@@ -5679,7 +5680,8 @@
         ],
         "name": "Pyramid 5",
         "short_name": "J02",
-        "alternative_name": null,
+        "alternative_name": "Pentagonal Pyramid",
+        "source": "johnson.json",
         "comment": null
     },
     "J03": {
@@ -6319,6 +6321,7 @@
         "name": "Dipyramid 3",
         "short_name": "J12",
         "alternative_name": "Triangular Dipyramid",
+        "source_file": "johnson.json",
         "comment": null
     },
     "J13": {
@@ -6363,6 +6366,7 @@
         "name": "Dipyramid 5",
         "short_name": "J13",
         "alternative_name": "Pentagonal Dipyramid",
+        "source_file": "johnson.json",
         "comment": null
     },
     "J14": {
