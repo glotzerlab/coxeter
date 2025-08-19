@@ -18,6 +18,7 @@ def update_polyhedron_vertices_by_source(input_path):
     Args:
         input_path (str): The path to the master JSON file.
     """
+    # Load the data from the master JSON file
     try:
         with open(input_path, encoding="utf-8") as f:
             polyhedra_data = json.load(f)
@@ -28,103 +29,121 @@ def update_polyhedron_vertices_by_source(input_path):
         print(f"Error: Could not decode JSON from '{input_path}'")
         return
 
-    # Group polyhedra by their source file
-    polyhedra_by_source = {}
-    for polyhedron_info in polyhedra_data.values():
+    # A dictionary to hold the updated data for each source file,
+    # so we only load and write each source file once.
+    updated_source_data = {}
+
+    print(f"Found {len(polyhedra_data)} polyhedra.")
+
+    # Iterate through the polyhedra in the master file and update their vertices
+    for short_name, polyhedron_info in polyhedra_data.items():
+        full_name = polyhedron_info.get("name")
         source_file = polyhedron_info.get("source")
-        if source_file:
-            if source_file not in polyhedra_by_source:
-                polyhedra_by_source[source_file] = []
-            polyhedra_by_source[source_file].append(polyhedron_info)
 
-    print(f"Found {len(polyhedra_data)} polyhedra in {len(polyhedra_by_source)} files.")
-
-    for source_file, polyhedra_list in polyhedra_by_source.items():
-        print(f"\n--- Processing source file: '{source_file}' ---")
-
-        # Load the existing data from the current source file
-        try:
-            with open(source_file, encoding="utf-8") as f:
-                source_data = json.load(f)
-        except FileNotFoundError:
-            print(f"Error: Source file '{source_file}' not found. Skipping.")
-            continue
-        except json.JSONDecodeError:
-            print(f"Error: Could not decode JSON from '{source_file}'. Skipping.")
+        if not full_name or not source_file:
+            print(
+                f"Warning: Skipping {short_name} due to missing 'name' or 'source' field."
+            )
             continue
 
-        # Iterate through the polyhedra for this source file and update vertices
-        for polyhedron_info in polyhedra_list:
-            full_name = polyhedron_info.get("name")
-            if not full_name:
-                print("Warning: Skipping a polyhedron due to missing 'name' field.")
-                continue
+        # Remove spaces from the name for the WolframScript command
+        wolfram_name = re.sub(r"\s+", "", full_name)
 
-            # Remove spaces from the name for the WolframScript command
-            wolfram_name = re.sub(r"\s+", "", full_name)
+        # Construct the wolframscript command with volume normalization and centering
+        command = [
+            "wolframscript",
+            "-c",
+            f"""
+            (*Must evaluate numerically, as real algebra is prohibitively slow.*)
+            vertices = N[
+                PolyhedronData["{wolfram_name}", "VertexCoordinates"] /
+                CubeRoot[PolyhedronData["{wolfram_name}", "Volume"]],
+                36 (*Make sure future results are accurate to 32 decimals.*)
+            ];
+            (*Center the shape on the origin*)
+            centroid = RegionCentroid @ ConvexHullRegion[vertices];
+            vertices = Map[
+                # - centroid&, vertices
+            ];
 
-            # Construct the wolframscript command with volume normalization and centering
-            command = [
-                "wolframscript",
-                "-c",
-                f"""
-                (*Must evaluate numerically, as real algebra is prohibitively slow.*)
-                vertices = N[
-                    PolyhedronData["{wolfram_name}", "VertexCoordinates"] /
-                    CubeRoot[PolyhedronData["{wolfram_name}", "Volume"]],
-                    36 (*Make sure future results are accurate to 32 decimals.*)
-                ];
-                (*Center the shape on the origin*)
-                centroid = RegionCentroid @ ConvexHullRegion[vertices];
-                vertices = Map[
-                    # - centroid&, vertices
-                ];
-
-                ExportString[
-                    (*Replace values close to 0 with 0*)
-                    N[vertices/. x_ /; Abs[x] < 1*^-16 -> 0.0, 32]
-                    ,"RawJSON"
-                ]
-                """,
+            ExportString[
+                (*Replace values close to 0 with 0*)
+                N[vertices/. x_ /; Abs[x] < 1*^-16 -> 0.0, 32]
+                ,"RawJSON"
             ]
+            """,
+        ]
 
-            print(f"-> Updating vertices for '{full_name}'...")
+        print(f"-> Updating vertices for '{full_name}' ({short_name})...")
 
-            # Execute the command and capture the output
-            try:
-                result = subprocess.run(
-                    command, capture_output=True, text=True, check=True
-                )
-                vertices_json_string = result.stdout.strip()
+        # Execute the command and capture the output
+        try:
+            result = subprocess.run(command, capture_output=True, text=True, check=True)
+            vertices_json_string = result.stdout.strip()
 
-                # Parse the JSON string to get a Python list of vertices
-                new_vertices = json.loads(vertices_json_string)
+            # Parse the JSON string to get a Python list of vertices
+            new_vertices = json.loads(vertices_json_string)
 
-                np.testing.assert_allclose(ConvexPolyhedron(new_vertices).volume, 1)
-                np.testing.assert_allclose(
-                    ConvexPolyhedron(new_vertices).centroid, 0, atol=1e-16
-                )
+            # Perform assertions for volume and centroid
+            np.testing.assert_allclose(ConvexPolyhedron(new_vertices).volume, 1)
+            np.testing.assert_allclose(
+                ConvexPolyhedron(new_vertices).centroid, 0, atol=1e-16
+            )
 
-                if full_name in source_data:
-                    source_data[full_name]["vertices"] = new_vertices
-                    print(f"   Successfully updated '{full_name}'.")
-                else:
-                    print(f"Warning: Could not find '{full_name}' in '{source_file}'.")
+            # Update the master file's data in memory
+            polyhedra_data[short_name]["vertices"] = new_vertices
+            print(f"   Successfully updated master file data for '{full_name}'.")
 
-            except subprocess.CalledProcessError as e:
+            # Load and update the source file data in memory, if not already loaded
+            if source_file not in updated_source_data:
+                try:
+                    with open(source_file, encoding="utf-8") as f:
+                        updated_source_data[source_file] = json.load(f)
+                except FileNotFoundError:
+                    print(f"Warning: Source file '{source_file}' not found. Skipping.")
+                    continue
+                except json.JSONDecodeError:
+                    print(
+                        f"Warning: Could not decode JSON from '{source_file}'. Skipping."
+                    )
+                    continue
+
+            # Update the source file's data in memory
+            if full_name in updated_source_data[source_file]:
+                updated_source_data[source_file][full_name]["vertices"] = new_vertices
+                print(f"   Successfully updated source file data for '{full_name}'.")
+            else:
                 print(
-                    f"Error running wolframscript for '{full_name}': {e.stderr.strip()}"
+                    f"Warning: Could not find '{full_name}' in '{source_file}'. Skipping source file update."
                 )
-            except json.JSONDecodeError:
-                print(f"Error: Failed to parse JSON output for '{full_name}'.")
-            except FileNotFoundError:
-                print("Error: 'wolframscript' command not found.")
-                return
 
-        if source_data:
+        except subprocess.CalledProcessError as e:
+            print(f"Error running wolframscript for '{full_name}': {e.stderr.strip()}")
+        except json.JSONDecodeError:
+            print(f"Error: Failed to parse JSON output for '{full_name}'.")
+        except FileNotFoundError:
+            print("Error: 'wolframscript' command not found.")
+            return
+
+    # Write the complete updated master data back to its file
+    print(f"\n--- Writing to master file: '{input_path}' ---")
+    if polyhedra_data:
+        try:
+            with open(input_path, "w", encoding="utf-8") as f:
+                json.dump(polyhedra_data, f, indent=4)
+            print(f"Successfully updated '{input_path}'.")
+        except OSError as e:
+            print(f"Error: Could not write to file '{input_path}'. Reason: {e}")
+    else:
+        print(f"No data to write for '{input_path}'. The file was not modified.")
+
+    # Write the complete updated source data back to each source file
+    for source_file, data in updated_source_data.items():
+        print(f"\n--- Writing to source file: '{source_file}' ---")
+        if data:
             try:
                 with open(source_file, "w", encoding="utf-8") as f:
-                    json.dump(source_data, f, indent=4)
+                    json.dump(data, f, indent=4)
                 print(f"Successfully updated '{source_file}'.")
             except OSError as e:
                 print(f"Error: Could not write to file '{source_file}'. Reason: {e}")
