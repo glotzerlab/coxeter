@@ -293,24 +293,42 @@ def test_uniform_dipyramids(n):
     np.testing.assert_allclose(vertices, shape.vertices)
 
 
-def test_new_prism_antiprism():
-    with pytest.warns(DeprecationWarning, match="deprecated in favor of"):
-        for i, nameshape in enumerate(PrismAntiprismFamily):
-            name, shape = nameshape
+def generate_prism_antiprism_params():
+    # Assuming PrismAntiprismFamily is a list or iterable
+    # and UniformAntiprismFamily and UniformPrismFamily are classes
+    # with a get_shape method.
+    for i, nameshape in enumerate(PrismAntiprismFamily):
+        name, _ = nameshape
+        if "Anti" in name:
+            n = i + 3
+            n_edges = 4 * n
+            n_faces = 4 * n
+        else:
+            n = (i + 3) - 8
+            n_edges = 3 * n
+            n_faces = 3 * n
+        yield pytest.param(nameshape, n, n_edges, n_faces, id=name)
 
-            if "Anti" in name:
-                n = i + 3  # count + min_n
-                comparative_shape = UniformAntiprismFamily.get_shape(n)
-            else:
-                n = (i + 3) - 8  # count + min_n + n_prism
-                comparative_shape = UniformPrismFamily.get_shape(n)
 
-            np.testing.assert_allclose(
-                shape.volume, comparative_shape.volume, atol=ATOL
-            )
-            np.testing.assert_allclose(
-                shape.edge_lengths, comparative_shape.edge_lengths, atol=ATOL
-            )
+@pytest.mark.parametrize(
+    "nameshape, n, n_edges, n_faces", generate_prism_antiprism_params()
+)
+def test_new_prism_antiprism(nameshape, n, n_edges, n_faces):
+    name, shape = nameshape
+    print(n)
+    if "Anti" in name:
+        comparative_shape = UniformAntiprismFamily.get_shape(n)
+    else:
+        comparative_shape = UniformPrismFamily.get_shape(n)
+
+    assert shape.num_edges == n_edges
+    print(shape.vertices, comparative_shape.vertices)
+
+    assert shape.num_faces == n_faces
+    np.testing.assert_allclose(shape.volume, comparative_shape.volume, atol=ATOL)
+    np.testing.assert_allclose(
+        shape.edge_lengths, comparative_shape.edge_lengths, atol=ATOL
+    )
 
 
 def test_new_pyramid_dipyramid():
