@@ -1,8 +1,12 @@
+# Copyright (c) 2015-2025 The Regents of the University of Michigan.
+# This file is from the coxeter project, released under the BSD 3-Clause License.
+
 import json
-import subprocess
-import os
 import re
+import subprocess
+
 import numpy as np
+
 from coxeter.shapes import ConvexPolyhedron
 
 
@@ -70,7 +74,7 @@ def update_polyhedron_vertices_by_source(input_path):
                     36 (*Make sure future results are accurate to 32 decimals.*)
                 ];
                 (*Center the shape on the origin*)
-                centroid = RegionCentroid @ ConvexHullRegion[vertices]; 
+                centroid = RegionCentroid @ ConvexHullRegion[vertices];
                 vertices = Map[
                     # - centroid&, vertices
                 ];
