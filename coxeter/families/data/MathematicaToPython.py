@@ -50,7 +50,9 @@ def update_polyhedron_vertices_by_source(input_path):
                 f"({full_name}, {source_file})",
             )
             continue
-        if "plat" in source_file or "arch" in source_file or "catalan" in source_file: 
+        # if "plat" in source_file or "arch" in source_file or "catalan" in source_file: 
+        #     continue
+        if "corona" not in full_name:
             continue
 
         # Remove spaces from the name for the WolframScript command
