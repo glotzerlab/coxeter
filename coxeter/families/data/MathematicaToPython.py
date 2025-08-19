@@ -63,15 +63,16 @@ def update_polyhedron_vertices_by_source(input_path):
                 "wolframscript",
                 "-c",
                 f"""
-                (*Must evaluate numerically, as the real algebra is prohibitively slow.*)
+                (*Must evaluate numerically, as real algebra is prohibitively slow.*)
                 vertices = N[
                     PolyhedronData["{wolfram_name}", "VertexCoordinates"] /
                     CubeRoot[PolyhedronData["{wolfram_name}", "Volume"]],
                     36 (*Make sure future results are accurate to 32 decimals.*)
                 ];
                 (*Center the shape on the origin*)
+                centroid = RegionCentroid @ ConvexHullRegion[vertices]; 
                 vertices = Map[
-                    # - RegionCentroid @ ConvexHullRegion[vertices] &, vertices
+                    # - centroid&, vertices
                 ];
 
                 ExportString[
