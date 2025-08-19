@@ -1,20 +1,27 @@
 import json
-import re
 import subprocess
-
+import os
+import re
 import numpy as np
-
-from coxeter.shapes.convex_polyhedron import ConvexPolyhedron
+from coxeter.shapes import ConvexPolyhedron
 
 
 def update_polyhedron_vertices_by_source(input_path):
-    """Update the stored JSON shapes via wolframscript calls.
+    """
+    Update the stored JSON shapes via wolframscript calls.
 
     Args:
-        input_path (str): The path science1220869.json
+        input_path (str): The path to the master JSON file.
     """
-    with open(input_path, encoding="utf-8") as f:
-        polyhedra_data = json.load(f)
+    try:
+        with open(input_path, encoding="utf-8") as f:
+            polyhedra_data = json.load(f)
+    except FileNotFoundError:
+        print(f"Error: The master file '{input_path}' was not found.")
+        return
+    except json.JSONDecodeError:
+        print(f"Error: Could not decode JSON from '{input_path}'")
+        return
 
     # Group polyhedra by their source file
     polyhedra_by_source = {}
@@ -51,24 +58,28 @@ def update_polyhedron_vertices_by_source(input_path):
             # Remove spaces from the name for the WolframScript command
             wolfram_name = re.sub(r"\s+", "", full_name)
 
+            # Construct the wolframscript command with volume normalization and centering
             command = [
                 "wolframscript",
                 "-c",
                 f"""
-                (*Must evaluate twice, as the real algebra is prohibitively slow.*)
+                (*Must evaluate numerically, as the real algebra is prohibitively slow.*)
                 vertices = N[
                     PolyhedronData["{wolfram_name}", "VertexCoordinates"] /
-                    CubeRoot[PolyhedronData["{wolfram_name}", "Volume"]]
-                    , 36 (*Save a few extra decimals so our result is exact to 32.*)
+                    CubeRoot[PolyhedronData["{wolfram_name}", "Volume"]],
+                    36 (*Make sure future results are accurate to 32 decimals.*)
                 ];
                 (*Center the shape on the origin*)
-                vertices -= First[RegionCentroid @ ConvexHullRegion[vertices]];
-                (*Export the shape as a json serializable object.*)
+                vertices = Map[
+                    # - RegionCentroid @ ConvexHullRegion[vertices] &, vertices
+                ];
+
                 ExportString[
                     (*Replace values close to 0 with 0*)
-                    N[vertices/. x_ /; Abs[x] < 1*^-16 -> 0.0, 32], "RawJSON"
+                    N[vertices/. x_ /; Abs[x] < 1*^-16 -> 0.0, 32]
+                    ,"RawJSON"
                 ]
-            """,
+                """,
             ]
 
             print(f"-> Updating vertices for '{full_name}'...")
@@ -82,7 +93,11 @@ def update_polyhedron_vertices_by_source(input_path):
 
                 # Parse the JSON string to get a Python list of vertices
                 new_vertices = json.loads(vertices_json_string)
+
                 np.testing.assert_allclose(ConvexPolyhedron(new_vertices).volume, 1)
+                np.testing.assert_allclose(
+                    ConvexPolyhedron(new_vertices).centroid, 0, atol=1e-16
+                )
 
                 if full_name in source_data:
                     source_data[full_name]["vertices"] = new_vertices
@@ -111,7 +126,6 @@ def update_polyhedron_vertices_by_source(input_path):
             print(f"No data to write for '{source_file}'. The file was not modified.")
 
 
-# Run the update function
 if __name__ == "__main__":
     import sys
 
