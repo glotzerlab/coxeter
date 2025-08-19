@@ -4,6 +4,7 @@
 import json
 import re
 import subprocess
+import sys
 
 import numpy as np
 
@@ -132,6 +133,4 @@ def update_polyhedron_vertices_by_source(input_path):
 
 
 if __name__ == "__main__":
-    import sys
-
     update_polyhedron_vertices_by_source(sys.argv[1])
