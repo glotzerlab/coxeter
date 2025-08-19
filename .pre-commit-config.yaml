@@ -16,8 +16,10 @@ repos:
         exclude: '\.ipynb$'
         args:
         - --indent
-        - '4'
-        - --no-sort-keys
+        - "2"
+        - --top-keys
+        - "type, vertices"
+        - --no-ensure-ascii
       - id: check-json
       - id: check-yaml
       - id: requirements-txt-fixer
