@@ -115,6 +115,7 @@ def test_science_family():
                 reference.get_shape(ScienceFamily.data[id]["name"]).vertices,
                 shape.vertices,
             )
+            np.testing.assert_allclose(shape.volume, 1.0)
         if ScienceFamily.data[id]["name"] == "Squashed Dodecahedron":
             assert shape.num_faces == 12
         if ScienceFamily.data[id]["name"] == "Rhombic Icosahedron":
