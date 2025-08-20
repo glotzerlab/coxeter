@@ -14,6 +14,10 @@ Changed
 ~~~~~~~
 
 - The minimum required Python version is now 3.9.
+- The script that saves geometric data from Mathematica for the `Families` module is more robust.
+- Vertices of shapes in the `Families` module now have greater precision.
+- A specific test now ensures that shapes O15-O20 have the correct numbers of faces.
+- "Dürer's Solid" is now spelled correctly.
 
 v0.10.0 - 2025-02-24
 -------------------
