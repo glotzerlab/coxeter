@@ -41,7 +41,7 @@ SHAPES_BY_NAME = {
     "convex_polyhedron": epyr5,
 }
 
-CONTROL_DIR = Path("tests/control")
+CONTROL_DIR = Path(__file__).parent / "control"
 
 
 @pytest.mark.parametrize(
@@ -68,5 +68,5 @@ if __name__ == "__main__":
     # Generate new control files
     for name in SHAPES_BY_NAME.keys():
         for ft, func in EXPORT_FUNCS_BY_FILE_TYPE.items():
-            control_file_path = Path("control") / f"{name}.{ft}"
+            control_file_path = CONTROL_DIR / f"{name}.{ft}"
             func(shape=SHAPES_BY_NAME[name], filename=control_file_path)
