@@ -124,6 +124,7 @@ Jen Bradley
   ConvexPolyhedron class.
 * Optimized pytest configurations for more efficient use of local and remote resources.
 * Added ``to_json`` and ``to_hoomd`` export methods.
+* Fixed errors in reference data.
 
 Domagoj Fijan
 
@@ -136,8 +137,9 @@ Domagoj Fijan
 
 Joseph Burkhart
 
-* Created the `io` module
-* Created the interactive "Pre-Defined Shapes" documentation
+* Created the `io` module.
+* Created the interactive "Pre-Defined Shapes" documentation.
+* Fixed errors in reference data.
 
 Source code
 -----------
