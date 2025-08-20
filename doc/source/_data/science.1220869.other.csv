@@ -13,11 +13,11 @@ O11,Heptagonal Antiprism,14,16,:x3d-model:`_static/x3d/heptagonal_antiprism.x3d`
 O12,Octagonal Antiprism,16,18,:x3d-model:`_static/x3d/octagonal_antiprism.x3d`
 O13,Nonagonal Antiprism,18,20,:x3d-model:`_static/x3d/nonagonal_antiprism.x3d`
 O14,Decagonal Antiprism,20,22,:x3d-model:`_static/x3d/decagonal_antiprism.x3d`
-O15,Squashed Dodecahedron,14,21,:x3d-model:`_static/x3d/squashed_dodecahedron.x3d`
-O16,Rhombic Icosahedron,22,40,:x3d-model:`_static/x3d/rhombic_icosahedron.x3d`
-O17,Rhombic Enneacontahedron,92,161,:x3d-model:`_static/x3d/rhombic_enneacontahedron.x3d`
-O18,Obtuse Golden Rhombohedron,8,8,:x3d-model:`_static/x3d/obtuse_golden_rhombohedron.x3d`
-O19,Acute Golden Rhombohedron,8,8,:x3d-model:`_static/x3d/acute_golden_rhombohedron.x3d`
-O20,Duerers Solid,12,18,:x3d-model:`_static/x3d/duerers_solid.x3d`
+O15,Squashed Dodecahedron,14,12,:x3d-model:`_static/x3d/squashed_dodecahedron.x3d`
+O16,Rhombic Icosahedron,22,20,:x3d-model:`_static/x3d/rhombic_icosahedron.x3d`
+O17,Rhombic Enneacontahedron,92,90,:x3d-model:`_static/x3d/rhombic_enneacontahedron.x3d`
+O18,Obtuse Golden Rhombohedron,8,6,:x3d-model:`_static/x3d/obtuse_golden_rhombohedron.x3d`
+O19,Acute Golden Rhombohedron,8,6,:x3d-model:`_static/x3d/acute_golden_rhombohedron.x3d`
+O20,Dürer's Solid,12,8,:x3d-model:`_static/x3d/duerers_solid.x3d`
 O21,Elongated Dodecahedron,18,12,:x3d-model:`_static/x3d/elongated_dodecahedron.x3d`
 O22,Square Pyramid,5,5,:x3d-model:`_static/x3d/square_pyramid.x3d`

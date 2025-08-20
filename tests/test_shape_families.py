@@ -98,23 +98,54 @@ def test_named_family(family):
     test_names(family)
 
 
-def test_science_family():
-    reference_mapping = {
-        "P": PlatonicFamily,
-        "A": ArchimedeanFamily,
-        "C": CatalanFamily,
-        "J": JohnsonFamily,
-        "O": None,
-    }
-    for id, shape in ScienceFamily:
-        reference = reference_mapping[id[0]]
-        if reference is not None:
-            if id in ("J01", "J02", "J12", "J13"):
-                continue
-            np.testing.assert_allclose(
-                reference.get_shape(ScienceFamily.data[id]["name"]).vertices,
-                shape.vertices,
-            )
+REFERENCE_MAPPING = {
+    "P": PlatonicFamily,
+    "A": ArchimedeanFamily,
+    "C": CatalanFamily,
+    "J": JohnsonFamily,
+    "O": None,
+}
+
+
+@pytest.mark.parametrize("id, shape", ScienceFamily)
+def test_science_family_properties(id, shape):
+    reference = REFERENCE_MAPPING[id[0]]
+    if reference is None:
+        return
+
+    # Skip specific shapes as in the original test
+    if id in ("J01", "J02", "J12", "J13"):
+        reference_shape = reference.get_shape(
+            ScienceFamily.data[id]["alternative_name"]
+        )
+    else:
+        reference_shape = reference.get_shape(ScienceFamily.data[id]["name"])
+
+    np.testing.assert_allclose([shape.volume, reference_shape.volume], 1.0, rtol=1e-15)
+    np.testing.assert_allclose(
+        [shape.centroid, reference_shape.centroid], 0, atol=1e-15
+    )
+    np.testing.assert_allclose(
+        reference_shape.vertices, shape.vertices, err_msg=ScienceFamily.data[id]["name"]
+    )
+
+
+@pytest.mark.parametrize("id, shape", ScienceFamily)
+def test_science_family_faces(id, shape):
+    # Test specific shapes with hardcoded face counts
+    name = ScienceFamily.data[id]["name"]
+    if name == "Squashed Dodecahedron":
+        assert shape.num_faces == 12
+    elif name == "Rhombic Icosahedron":
+        assert shape.num_faces == 20
+    elif name == "Rhombic Enneacontahedron":
+        assert shape.num_faces == 90
+    elif name == "Obtuse Golden Rhombohedron":
+        assert shape.num_faces == 6
+    elif name == "Acute Golden Rhombohedron":
+        assert shape.num_faces == 6
+    elif name == "Dürer's solid":
+        assert shape.num_faces == 8
 
 
 def test_shape323():
@@ -262,24 +293,55 @@ def test_uniform_dipyramids(n):
     np.testing.assert_allclose(vertices, shape.vertices)
 
 
-def test_new_prism_antiprism():
+def generate_prism_antiprism_params():
+    # Map from numerical n to the string name
+    number_to_name = {
+        3: "Triangular",
+        4: "Square",
+        5: "Pentagonal",
+        6: "Hexagonal",
+        7: "Heptagonal",
+        8: "Octagonal",
+        9: "Nonagonal",
+        10: "Decagonal",
+    }
+
     with pytest.warns(DeprecationWarning, match="deprecated in favor of"):
-        for i, nameshape in enumerate(PrismAntiprismFamily):
-            name, shape = nameshape
+        shape_map = {name: shape for name, shape in PrismAntiprismFamily}
 
-            if "Anti" in name:
-                n = i + 3  # count + min_n
-                comparative_shape = UniformAntiprismFamily.get_shape(n)
-            else:
-                n = (i + 3) - 8  # count + min_n + n_prism
-                comparative_shape = UniformPrismFamily.get_shape(n)
+    for n in range(3, 11):
+        name_prefix = number_to_name.get(n)
+        if not name_prefix:
+            continue
 
-            np.testing.assert_allclose(
-                shape.volume, comparative_shape.volume, atol=ATOL
-            )
-            np.testing.assert_allclose(
-                shape.edge_lengths, comparative_shape.edge_lengths, atol=ATOL
-            )
+        prism_name = f"{name_prefix} Prism"
+        prism_shape = shape_map.get(prism_name)
+        if prism_shape:
+            yield pytest.param(prism_shape, n, "prism", id=prism_name)
+
+        antiprism_name = f"{name_prefix} Antiprism"
+        antiprism_shape = shape_map.get(antiprism_name)
+        if antiprism_shape:
+            yield pytest.param(antiprism_shape, n, "antiprism", id=antiprism_name)
+
+
+@pytest.mark.parametrize("shape, n, shape_type", generate_prism_antiprism_params())
+def test_new_prism_antiprism(shape, n, shape_type):
+    if shape_type == "antiprism":
+        comparative_shape = UniformAntiprismFamily.get_shape(n)
+        n_edges = 4 * n
+        n_faces = 2 + 2 * n
+    else:
+        comparative_shape = UniformPrismFamily.get_shape(n)
+        n_edges = 3 * n
+        n_faces = 2 + n
+
+    assert shape.num_edges == n_edges
+    assert shape.num_faces == n_faces
+    np.testing.assert_allclose(shape.volume, comparative_shape.volume, atol=ATOL)
+    np.testing.assert_allclose(
+        shape.edge_lengths, comparative_shape.edge_lengths, atol=ATOL
+    )
 
 
 def test_new_pyramid_dipyramid():

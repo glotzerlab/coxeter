@@ -15,8 +15,9 @@ repos:
       - id: pretty-format-json
         exclude: '\.ipynb$'
         args:
-        - --indent
-        - '4'
+        - --indent=2
+        - --no-ensure-ascii
+        - --autofix
         - --no-sort-keys
       - id: check-json
       - id: check-yaml
