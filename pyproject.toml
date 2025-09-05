@@ -34,7 +34,7 @@ packages=["coxeter",
           "coxeter.extern.bentley_ottmann"]
 
 [tool.setuptools.dynamic]
-optional-dependencies = {tests = { file = ["tests/requirements.txt"] }, doc = { file = ["doc/requirements.txt"] }}
+optional-dependencies = {tests = { file = ["tests/requirements.in"] }, doc = { file = ["doc/requirements.in"] }}
 
 [tool.pytest.ini_options]
 # Additional command line options for pytest

@@ -100,7 +100,7 @@ First, install the packages required to test coxeter (if not already done):
 
 .. code:: bash
 
-   pip install -r tests/requirements.txt
+   pip install -r tests/requirements.in
 
 To run the packaged unit tests, execute the following line from the root of the repository:
 
@@ -122,7 +122,7 @@ To build the documentation, first install Sphinx and the other required packages
 
 .. code:: bash
 
-   pip install -r doc/requirements.txt
+   pip install -r doc/requirements.in
    conda install -c conda-forge fresnel
 
 .. warning::
