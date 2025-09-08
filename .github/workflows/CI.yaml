@@ -1,7 +1,7 @@
 name: Run Tests
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
 on:
@@ -39,3 +39,15 @@ jobs:
     - name: Test with pytest
       run: |
         python -m pytest -v -n auto
+
+  # This job is used to provide a single requirement for branch merge conditions.
+  tests_complete:
+    name: Unit test
+    if: always()
+    needs: [run_tests]
+    runs-on: ubuntu-latest
+
+    steps:
+    - run: jq --exit-status 'all(.result == "success")' <<< '${{ toJson(needs) }}'
+    - name: Done
+      run: exit 0
