@@ -16,12 +16,12 @@ General Guidelines
 
 All code contributed to **coxeter** must adhere to the following guidelines:
 
-  * Use the OneFlow_ model of development:
-    - Both new features and bug fixes should be developed in branches based on ``main``.
-    - Hotfixes (critical bugs that need to be released *fast*) should be developed in a branch based on the latest tagged release.
-  * Avoid external dependencies wherever possible, and avoid introducing **any** hard dependencies outside the standard Python scientific stack (NumPy, SciPy, etc). Soft dependencies are allowed for specific functionality, but such dependencies cannot impede the installation of **coxeter** or the use of any other features.
-  * All code should adhere to the source code conventions and satisfy the documentation and testing requirements discussed below.
-  * Preserve backwards-compatibility whenever possible. Make clear if something must change, and notify package maintainers that merging such changes will require a major release.
+* Use the OneFlow_ model of development:
+  - Both new features and bug fixes should be developed in branches based on ``main``.
+  - Hotfixes (critical bugs that need to be released *fast*) should be developed in a branch based on the latest tagged release.
+* Avoid external dependencies wherever possible, and avoid introducing **any** hard dependencies outside the standard Python scientific stack (NumPy, SciPy, etc). Soft dependencies are allowed for specific functionality, but such dependencies cannot impede the installation of **coxeter** or the use of any other features.
+* All code should adhere to the source code conventions and satisfy the documentation and testing requirements discussed below.
+* Preserve backwards-compatibility whenever possible. Make clear if something must change, and notify package maintainers that merging such changes will require a major release.
 
 To provide a reasonable balance between a high level of backwards compatibility and a reasonable maintenance burden, **coxeter** has adopted `NEP 29`_ to limit the Python and NumPy versions that will be supported.
 
