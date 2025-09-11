@@ -13,8 +13,8 @@ on:
 
 jobs:
   run_tests:
-    name: Run tests on ubuntu-latest with Python ${{ matrix.python-version }}
-    runs-on: ubuntu-latest
+    name: Run tests on ubuntu with Python ${{ matrix.python-version }}
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
         python-version: ["3.9","3.10","3.11","3.12","3.13"]
@@ -45,7 +45,7 @@ jobs:
     name: Unit test
     if: always()
     needs: [run_tests]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
     - run: jq --exit-status 'all(.result == "success")' <<< '${{ toJson(needs) }}'
