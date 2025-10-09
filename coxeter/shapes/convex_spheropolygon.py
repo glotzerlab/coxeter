@@ -14,6 +14,13 @@ from .convex_polygon import ConvexPolygon, _is_convex
 from .polygon import _align_points_by_normal
 from .utils import _hoomd_dict_mapping, _map_dict_keys
 
+from ._distance2d import (
+    get_vert_zones,
+    get_edge_zones,
+    get_face_zones,
+    spheropolygon_shortest_displacement_to_surface
+)
+
 
 class ConvexSpheropolygon(Shape2D):
     """A convex spheropolygon.
@@ -56,6 +63,10 @@ class ConvexSpheropolygon(Shape2D):
         self._polygon = ConvexPolygon(vertices, normal)
         if not _is_convex(self.vertices, self._polygon.normal):
             raise ValueError("The vertices do not define a convex polygon.")
+        
+        self._vertex_zones = None
+        self._edge_zones = None
+        self._face_zones = None
 
     @property
     def polygon(self):
@@ -107,6 +118,9 @@ class ConvexSpheropolygon(Shape2D):
         """
         self.polygon._vertices *= scale
         self.radius *= scale
+        self._vertex_zones = None
+        self._edge_zones = None
+        self._face_zones = None
 
     @property
     def signed_area(self):
@@ -302,3 +316,99 @@ class ConvexSpheropolygon(Shape2D):
 
         self._polygon.centroid = old_centroid
         return hoomd_dict
+
+
+    @property
+    def vertex_zones(self):
+        """dict: Get the constraints and bounds needed to partition the
+        volume surrounding a polygon into zones where the shortest
+        distance from any point that is within a vertex zone is the
+        distance between the point and the corresponding vertex.
+        """
+        if self._vertex_zones is None:
+            self._vertex_zones = get_vert_zones(self)
+        return self._vertex_zones
+    
+    @property
+    def edge_zones(self):
+        """dict: Get the constraints and bounds needed to partition
+        the volume surrounding a polygon into zones where the
+        shortest distance from any point that is within an edge zone
+        is the distance between the point and the corresponding edge.
+        """
+        if self._edge_zones is None:
+            self._edge_zones = get_edge_zones(self)
+        return self._edge_zones
+    
+    @property
+    def face_zones(self):
+        """dict: Get the constraints and bounds needed to partition
+        the volume surrounding a polygon into zones where the shortest
+        distance from any point that is within the face zone
+        is the distance between the point and the face of the polygon.
+        """
+        if self._face_zones is None:
+            self._face_zones = get_face_zones(self)
+        return self._face_zones
+    
+    def shortest_distance_to_surface(self, points, translation_vector=np.array([0,0,0])):
+        """
+        Solves for the shortest distance (magnitude) between points and 
+        the surface of a polygon.
+
+        This function calculates the shortest distance by partitioning
+        the space around a polygon into zones: vertex, edge, and face.
+        Determining the zone(s) a point lies in, determines the distance
+        calculation(s) done. For a vertex zone,the distance is calculated
+        between a point and the vertex. For an edge zone, the distance is
+        calculated between a point and the edge. For a face zone, the
+        distance is calculated between a point and the face. Zones are
+        allowed to overlap, and points can be in more than one zone. By
+        taking the minimum of all the calculated distances, the shortest
+        distances are found.
+
+        Args:
+            points (list or :class:`numpy.ndarray`):
+                positions of the points [shape = (n_points,3) or (n_points,2)]
+            translation_vector (list or :class:`numpy.ndarray`):
+                translation vector of the polygon [shape = (3,) of (2,)]
+                (Default value: [0,0,0])
+
+        Returns
+        -------
+            :class:`numpy.ndarray`:
+                the shortest distance of each point to the surface
+                [shape = (n_points,)]
+        """
+        return np.linalg.norm(spheropolygon_shortest_displacement_to_surface(self, points, translation_vector), axis=1)
+    
+    def shortest_displacement_to_surface(self, points, translation_vector=np.array([0,0,0])):
+        """
+        Solves for the shortest displacement (vector) between points and
+        the surface of a polygon.
+
+        This function calculates the shortest displacement by partitioning
+        the space around a polygon into zones: vertex, edge, and face.
+        Determining the zone(s) a point lies in, determines the displacement
+        calculation(s) done. For a vertex zone, the displacement is
+        calculated between a point and the vertex. For an edge zone, the
+        displacement is calculated between a point and the edge. For a face
+        zone, the displacement is calculated between a point and the face.
+        Zones are allowed to overlap, and points can be in more than one
+        zone. By taking the minimum of all the distances of the calculated
+        displacements, the shortest displacements are found.
+
+        Args:
+            points (list or :class:`numpy.ndarray`):
+                positions of the points [shape = (n_points,3) or (n_points,2)]
+            translation_vector (list or :class:`numpy.ndarray`):
+                translation vector of the polygon [shape = (3,) or (2,)]
+                (Default value: [0,0,0])
+
+        Returns
+        -------
+            :class:`numpy.ndarray`:
+                the shortest displacement of each point to the surface
+                [shape = (n_points, 3)]
+        """
+        return spheropolygon_shortest_displacement_to_surface(self, points, translation_vector)
