@@ -81,7 +81,7 @@ six==1.17.0
     # via python-dateutil
 sortedcontainers==2.4.0
     # via hypothesis
-tomli==2.2.1
+tomli==2.3.0
     # via
     #   coverage
     #   pytest
