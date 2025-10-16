@@ -31,6 +31,8 @@ from ._distance3d import (
     get_face_zones,
     get_vert_normals,
     get_edge_normals,
+    get_weighted_edge_normals,
+    get_weighted_vert_normals,
     shortest_displacement_to_surface,
     shortest_distance_to_surface
 )
@@ -1138,7 +1140,7 @@ class Polyhedron(Shape3D):
     
     @property
     def vertex_normals(self):
-        """:class:`numpy.ndarray`: Get the unit vector normals of vertices
+        """:class:`numpy.ndarray`: Get the unit vector normals of vertices.
         
         The normals point outwards from the polyhedron.
         """
@@ -1148,7 +1150,7 @@ class Polyhedron(Shape3D):
     
     @property
     def edge_normals(self):
-        """:class:`numpy.ndarray`: Get the unit vector normals of edges
+        """:class:`numpy.ndarray`: Get the unit vector normals of edges.
         
         The normals point outwards from the polyhedron.
         """
@@ -1156,6 +1158,23 @@ class Polyhedron(Shape3D):
             self._edge_normals = get_edge_normals(self)
         return self._edge_normals
     
+    @property
+    def weighted_vertex_normals(self):
+        """:class:`numpy.ndarray`: Get the weighted normals of vertices.
+        
+        The normals point outwards from the polyhedron.
+        """
+        return get_weighted_vert_normals(self)
+
+    @property
+    def weighted_edge_normals(self):
+        """:class:`numpy.ndarray`: Get the weighted normals of edges.
+        
+        The normals point outwards from the polyhedron.
+        """
+        return get_weighted_edge_normals(self)
+    
+
     def shortest_distance_to_surface(self, points, translation_vector=np.array([0,0,0])):
         """
         Solves for the shortest distance (magnitude) between points and 

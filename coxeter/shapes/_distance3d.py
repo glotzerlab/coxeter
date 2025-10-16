@@ -4,7 +4,7 @@ import numpy.linalg as LA
 
 #TODO: update docstrings
 
-#good input
+#good?
 def get_edge_face_neighbors (shape: Polyhedron) -> np.ndarray:
     '''
     Gets the indices of the faces that are adjacent to each edge.
@@ -157,7 +157,7 @@ def point_to_face_displacement(point: np.ndarray, vert: np.ndarray, face_normal:
 
     return disp
 
-#good input
+#good?
 def get_vert_zones (shape: Polyhedron):
     '''
     Gets the constraints and bounds needed to partition the volume surrounding a polyhedron into zones 
@@ -165,9 +165,7 @@ def get_vert_zones (shape: Polyhedron):
     point and the corresponding vertex.
 
     Args:
-        vertices (np.ndarray): vertices of the shape
-        edges (np.ndarray): the vectors that correspond to each edge of the shape
-        ev_neighbors (np.ndarray): the indices of the vertices that correspond to each edge [shape = (n_edge, 2)]
+        shape (Polyhedron): the polyhedron that is being looked at (can be convex or concave)
 
     Returns:
         dict: "constraint": np.ndarray [shape = (n_verts, n_edges, 3)], "bounds": np.ndarray [shape = (n_verts, n_edges)]
@@ -203,7 +201,7 @@ def get_vert_zones (shape: Polyhedron):
 
     return {"constraint":vert_constraint, "bounds":vert_bounds}
 
-#good input
+#good?
 def get_edge_zones (shape: Polyhedron,):
     '''
     Gets the constraints and bounds needed to partition the volume surrounding a polyhedron into zones 
@@ -211,12 +209,7 @@ def get_edge_zones (shape: Polyhedron,):
     point and the corresponding edge.
 
     Args:
-        shp_verts (np.ndarray): vertices of the shape
-        shp_edges (np.ndarray): the vectors that correspond to each edge of the shape
-        shp_faces (np.ndarray): the normals that correspond to each face of the shape
-        shp_edge_vert (np.ndarray): the indices of the vertices that correspond to each edge [shape = (n_edge, 2)]
-        shp_edge_face (np.ndarray): the indices of the faces that correspond to each edge [shape = (n_edge, 2)]
-        n_edges (int): the number of total edges for this shape
+        shape (Polyhedron): the polyhedron that is being looked at (can be convex or concave)
 
     Returns:
         dict: "constraint": np.ndarray [shape = (n_edges, 4, 3)], "bounds": np.ndarray [shape = (n_edges, 4)]
@@ -244,7 +237,7 @@ def get_edge_zones (shape: Polyhedron,):
 
     return {"constraint":edge_constraint, "bounds":edge_bounds}
 
-#good input
+#good?
 def get_face_zones (shape: Polyhedron):
     '''
     Gets the constraints and bounds needed to partition the volume surrounding a polyhedron into zones 
@@ -286,15 +279,14 @@ def get_face_zones (shape: Polyhedron):
 
     return {"constraint":face_constraint, "bounds":face_bounds, "face_points":face_one_vertex, "normals": tri_face_normals}
 
-#good input
+#good?
 def get_edge_normals(shape: Polyhedron) -> np.ndarray:
     '''
     Gets the analogous normals of the edges of the polyhedron. The normals point outwards from the polyhedron 
     and are used to determine whether an edge zone is outside or inside the polyhedron.
 
     Args:
-        ef_neighbors (np.ndarray): the indices of the faces that correspond to each edge [shape = (n_edge, 2)]
-        face_normals (np.ndarray): the normals of the faces of the polyhedron [shape = (n_faces, 3)]
+        shape (Polyhedron): the polyhedron that is being looked at (can be convex or concave)
 
     Returns:
         np.ndarray: analogous edge normals [shape = (n_edges, 3)]
@@ -308,15 +300,14 @@ def get_edge_normals(shape: Polyhedron) -> np.ndarray:
     #returning the unit vectors of the edge normals
     return edge_normals / np.expand_dims(LA.norm(edge_normals, axis=1), axis=1)
 
-#good input
+#good?
 def get_vert_normals(shape: Polyhedron) -> np.ndarray:
     '''
     Gets the analogous normals of the vertices of the polyhedron. The normals point outwards from the polyhedron 
     and are used to determine whether a vertex zone is outside or inside the polyhedron.
 
     Args:
-        ev_neighbors (np.ndarray): the indices of the vertices that correspond to each edge [shape = (n_edge, 2)]
-        edge_normals (np.ndarray): the analogous normals of the edges of the polyhedron [shape = (n_edges, 3)]
+        shape (Polyhedron): the polyhedron that is being looked at (can be convex or concave)
 
     Returns:
         np.ndarray: analogous vertex normals [shape = (n_verts, 3)]
@@ -341,6 +332,54 @@ def get_vert_normals(shape: Polyhedron) -> np.ndarray:
 
     #returning the unit vectors of the vertex normals
     return vert_normals / np.expand_dims(LA.norm(vert_normals, axis=1), axis=1)
+
+
+def get_weighted_edge_normals(shape: Polyhedron) -> np.ndarray:
+    '''
+    Gets the weighted normals of the edges of the polyhedron. The normals point outwards from the polyhedron.
+
+    Args:
+        shape (Polyhedron): the polyhedron that is being looked at (can be convex or concave)
+
+    Returns:
+        np.ndarray: analogous edge normals [shape = (n_edges, 3)]
+    '''
+    face_1 = shape.normals[shape.edge_face_neighbors[:,0]] 
+    face_2 = shape.normals[shape.edge_face_neighbors[:,1]] 
+
+    edge_normals = face_1 + face_2 #sum of the adjacent face normals for each edge
+
+    return edge_normals 
+
+def get_weighted_vert_normals(shape: Polyhedron) -> np.ndarray:
+    '''
+    Gets the weighted normals of the vertices of the polyhedron. The normals point outwards from the polyhedron.
+
+    Args:
+        shape (Polyhedron): the polyhedron that is being looked at (can be convex or concave)
+
+    Returns:
+        np.ndarray: analogous vertex normals [shape = (n_verts, 3)]
+    '''
+    n_edges = len(shape.edge_normals)
+    n_verts = np.max(shape.edges) +1
+
+    #Tiling for set up
+    nverts_edge_vert0 = np.tile(shape.edges[:,0], (n_verts, 1))
+    nverts_edge_vert1 = np.tile(shape.edges[:,1], (n_verts, 1))
+    vert_inds = np.arange(0, n_verts, 1).reshape((n_verts, 1))
+    nverts_tile_edges = np.tile(shape.weighted_edge_normals, (n_verts, 1)).reshape((n_verts, n_edges, 3))
+
+    #Creating the bools needed to get the edges that correspond to each vertex
+    evbool0 = (np.expand_dims(nverts_edge_vert0 == vert_inds, axis=2)).astype(int)
+    evbool1 = (np.expand_dims(nverts_edge_vert1 == vert_inds, axis=2)).astype(int)
+
+    #Applying the bools to find the corresponding edges
+    vert_edges = nverts_tile_edges * evbool0 + nverts_tile_edges * evbool1
+
+    vert_normals = np.sum(vert_edges, axis=1) #sum of the adjacent weighted edge normals for each vertex
+
+    return vert_normals
 
 
 
