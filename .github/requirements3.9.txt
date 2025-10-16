@@ -18,7 +18,7 @@ execnet==2.1.1
     # via pytest-xdist
 fonttools==4.60.1
     # via matplotlib
-hypothesis==6.140.3
+hypothesis==6.141.1
     # via -r tests/requirements.in
 importlib-resources==6.5.2
     # via matplotlib
