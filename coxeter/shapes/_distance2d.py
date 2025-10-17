@@ -1,5 +1,3 @@
-from .polygon import Polygon
-from .convex_spheropolygon import ConvexSpheropolygon
 import numpy as np
 import numpy.linalg as LA
 
@@ -90,7 +88,7 @@ def point_to_face_displacement(point: np.ndarray, vert: np.ndarray, face_normal:
     return disp
 
 #good input
-def get_vert_zones (shape: Polygon):
+def get_vert_zones (shape):
     '''
     Gets the constraints and bounds needed to partition the volume surrounding a polygon into zones 
     where the shortest distance from any point that is within a vertex zone is the distance between the 
@@ -112,7 +110,7 @@ def get_vert_zones (shape: Polygon):
     return {"constraint": vert_constraint, "bounds":vert_bounds}
 
 #good input
-def get_edge_zones (shape: Polygon):
+def get_edge_zones (shape):
     '''
     Gets the constraints and bounds needed to partition the volume surrounding a polygon into zones 
     where the shortest distance from any point that is within an edge zone is the distance between the 
@@ -140,7 +138,7 @@ def get_edge_zones (shape: Polygon):
     return {"constraint":edge_constraint, "bounds":edge_bounds}
 
 #good input
-def get_face_zones (shape: Polygon):
+def get_face_zones (shape):
     '''
     Gets the constraints and bounds needed to partition the volume surrounding a polygon into zones 
     where the shortest distance from any point that is within a triangulated face zone is the distance between the 
@@ -180,7 +178,7 @@ def get_face_zones (shape: Polygon):
 # --- User Available Functions ---
 #good input
 def shortest_distance_to_surface (
-        shape: Polygon,
+        shape,
         points: np.ndarray,
         translation_vector: np.ndarray,
 
@@ -224,9 +222,9 @@ def shortest_distance_to_surface (
         translation_vector = np.append(translation_vector, [0])
 
     #Updating bounds with the position of the polyhedron
-    vert_bounds = shape._vertex_zones["bounds"] + (shape._vertex_zones["constraint"] @ translation_vector)
-    edge_bounds = shape._edge_zones["bounds"] + (shape._edge_zones["constraint"] @ translation_vector)
-    face_bounds = shape._face_zones["bounds"] + (shape._face_zones["constraint"] @ translation_vector)
+    vert_bounds = shape.vertex_zones["bounds"] + (shape.vertex_zones["constraint"] @ translation_vector)
+    edge_bounds = shape.edge_zones["bounds"] + (shape.edge_zones["constraint"] @ translation_vector)
+    face_bounds = shape.face_zones["bounds"] + (shape.face_zones["constraint"] @ translation_vector)
 
 
     points_trans = np.transpose(points)
@@ -236,7 +234,7 @@ def shortest_distance_to_surface (
     min_dist_arr = np.ones((len(points),1))*max_value
 
     #Solving for the distances between the points and any relevant vertices
-    vert_bool = np.all((shape._vertex_zones["constraint"] @ points_trans) <= np.expand_dims(vert_bounds, axis=2), axis=1) #<--- shape = (number_of_vertex_zones, number_of_points)
+    vert_bool = np.all((shape.vertex_zones["constraint"] @ points_trans) <= np.expand_dims(vert_bounds, axis=2), axis=1) #<--- shape = (number_of_vertex_zones, number_of_points)
     if np.any(vert_bool):
 
          #v--- shape = (number of True in vert_bool,) ---v
@@ -254,7 +252,7 @@ def shortest_distance_to_surface (
 
 
 #   Solving for the distances between the points and any relevant edges
-    edge_bool = np.all((shape._edge_zones["constraint"] @ points_trans) <= np.expand_dims(edge_bounds, axis=2), axis=1) #<--- shape = (number_of_edge_zones, number_of_points)
+    edge_bool = np.all((shape.edge_zones["constraint"] @ points_trans) <= np.expand_dims(edge_bounds, axis=2), axis=1) #<--- shape = (number_of_edge_zones, number_of_points)
     if np.any(edge_bool):
 
         #v--- shape = (number of True in edge_bool,) ---v
@@ -274,7 +272,7 @@ def shortest_distance_to_surface (
         min_dist_arr = np.concatenate((min_dist_arr, edge_dist), axis=1)
 
 
-    face_bool = np.all((shape._face_zones["constraint"] @ points_trans) <= np.expand_dims(face_bounds, axis=2), axis=1) #<--- shape = (number_of_face_zones, number_of_points)
+    face_bool = np.all((shape.face_zones["constraint"] @ points_trans) <= np.expand_dims(face_bounds, axis=2), axis=1) #<--- shape = (number_of_face_zones, number_of_points)
     if np.any(face_bool):
 
         vert_on_face = shape.vertices[0] + translation_vector
@@ -290,7 +288,7 @@ def shortest_distance_to_surface (
 
 #good input
 def shortest_displacement_to_surface (
-        shape: Polygon,
+        shape,
         points: np.ndarray,
         translation_vector: np.ndarray,
 ) -> np.ndarray:
@@ -333,9 +331,9 @@ def shortest_displacement_to_surface (
         translation_vector = np.append(translation_vector, [0])
 
     #Updating bounds with the position of the polyhedron
-    vert_bounds = shape._vertex_zones["bounds"] + (shape._vertex_zones["constraint"] @ translation_vector)
-    edge_bounds = shape._edge_zones["bounds"] + (shape._edge_zones["constraint"] @ translation_vector)
-    face_bounds = shape._face_zones["bounds"] + (shape._face_zones["constraint"] @ translation_vector)
+    vert_bounds = shape.vertex_zones["bounds"] + (shape.vertex_zones["constraint"] @ translation_vector)
+    edge_bounds = shape.edge_zones["bounds"] + (shape.edge_zones["constraint"] @ translation_vector)
+    face_bounds = shape.face_zones["bounds"] + (shape.face_zones["constraint"] @ translation_vector)
 
 
     points_trans = np.transpose(points)
@@ -345,7 +343,7 @@ def shortest_displacement_to_surface (
     min_disp_arr = np.ones((n_points,1, 3))*max_value
 
     #Solving for the distances between the points and any relevant vertices
-    vert_bool = np.all((shape._vertex_zones["constraint"] @ points_trans) <= np.expand_dims(vert_bounds, axis=2), axis=1) #<--- shape = (number_of_vertex_zones, number_of_points)
+    vert_bool = np.all((shape.vertex_zones["constraint"] @ points_trans) <= np.expand_dims(vert_bounds, axis=2), axis=1) #<--- shape = (number_of_vertex_zones, number_of_points)
     if np.any(vert_bool):
 
         #v--- shape = (number of True in vert_bool,) ---v
@@ -363,7 +361,7 @@ def shortest_displacement_to_surface (
 
 
 #   Solving for the distances between the points and any relevant edges
-    edge_bool = np.all((shape._edge_zones["constraint"] @ points_trans) <= np.expand_dims(edge_bounds, axis=2), axis=1) #<--- shape = (number_of_edge_zones, number_of_points)
+    edge_bool = np.all((shape.edge_zones["constraint"] @ points_trans) <= np.expand_dims(edge_bounds, axis=2), axis=1) #<--- shape = (number_of_edge_zones, number_of_points)
     if np.any(edge_bool):
 
         #v--- shape = (number of True in edge_bool,) ---v
@@ -383,7 +381,7 @@ def shortest_displacement_to_surface (
         min_disp_arr = np.concatenate((min_disp_arr, edge_disp), axis=1)
 
 
-    face_bool = np.all((shape._face_zones["constraint"] @ points_trans) <= np.expand_dims(face_bounds, axis=2), axis=1) #<--- shape = (number_of_face_zones, number_of_points)
+    face_bool = np.all((shape.face_zones["constraint"] @ points_trans) <= np.expand_dims(face_bounds, axis=2), axis=1) #<--- shape = (number_of_face_zones, number_of_points)
     if np.any(face_bool):
 
         face_disp = point_to_face_displacement(points, shape.vertices[0]+translation_vector, shape.normal) + np.repeat(np.expand_dims((max_value*(np.any(face_bool,axis=0) == False).astype(int)), axis=1), 3, axis=1)
@@ -398,7 +396,7 @@ def shortest_displacement_to_surface (
 
 #think it is right/will work correctly?
 def spheropolygon_shortest_displacement_to_surface (
-        shape: ConvexSpheropolygon,
+        shape,
         points: np.ndarray,
         translation_vector: np.ndarray,
 ) -> np.ndarray:
@@ -441,9 +439,9 @@ def spheropolygon_shortest_displacement_to_surface (
         translation_vector = np.append(translation_vector, [0])
 
     #Updating bounds with the position of the polyhedron
-    vert_bounds = shape._vertex_zones["bounds"] + (shape._vertex_zones["constraint"] @ translation_vector)
-    edge_bounds = shape._edge_zones["bounds"] + (shape._edge_zones["constraint"] @ translation_vector)
-    face_bounds = shape._face_zones["bounds"] + (shape._face_zones["constraint"] @ translation_vector)
+    vert_bounds = shape.vertex_zones["bounds"] + (shape.vertex_zones["constraint"] @ translation_vector)
+    edge_bounds = shape.edge_zones["bounds"] + (shape.edge_zones["constraint"] @ translation_vector)
+    face_bounds = shape.face_zones["bounds"] + (shape.face_zones["constraint"] @ translation_vector)
 
 
     points_trans = np.transpose(points)
@@ -453,7 +451,7 @@ def spheropolygon_shortest_displacement_to_surface (
     min_disp_arr = np.ones((n_points,1, 3))*max_value
 
     #Solving for the distances between the points and any relevant vertices
-    vert_bool = np.all((shape._vertex_zones["constraint"] @ points_trans) <= np.expand_dims(vert_bounds, axis=2), axis=1) #<--- shape = (number_of_vertex_zones, number_of_points)
+    vert_bool = np.all((shape.vertex_zones["constraint"] @ points_trans) <= np.expand_dims(vert_bounds, axis=2), axis=1) #<--- shape = (number_of_vertex_zones, number_of_points)
     if np.any(vert_bool):
 
         #v--- shape = (number of True in vert_bool,) ---v
@@ -477,7 +475,7 @@ def spheropolygon_shortest_displacement_to_surface (
 
 
 #   Solving for the distances between the points and any relevant edges
-    edge_bool = np.all((shape._edge_zones["constraint"] @ points_trans) <= np.expand_dims(edge_bounds, axis=2), axis=1) #<--- shape = (number_of_edge_zones, number_of_points)
+    edge_bool = np.all((shape.edge_zones["constraint"] @ points_trans) <= np.expand_dims(edge_bounds, axis=2), axis=1) #<--- shape = (number_of_edge_zones, number_of_points)
     if np.any(edge_bool):
 
         #v--- shape = (number of True in edge_bool,) ---v
@@ -503,7 +501,7 @@ def spheropolygon_shortest_displacement_to_surface (
         min_disp_arr = np.concatenate((min_disp_arr, edge_disp), axis=1)
 
 
-    face_bool = np.all((shape._face_zones["constraint"] @ points_trans) <= np.expand_dims(face_bounds, axis=2), axis=1) #<--- shape = (number_of_face_zones, number_of_points)
+    face_bool = np.all((shape.face_zones["constraint"] @ points_trans) <= np.expand_dims(face_bounds, axis=2), axis=1) #<--- shape = (number_of_face_zones, number_of_points)
     if np.any(face_bool):
 
         face_disp = point_to_face_displacement(points, shape.vertices[0]+translation_vector, shape.normal) + np.repeat(np.expand_dims((max_value*(np.any(face_bool,axis=0) == False).astype(int)), axis=1), 3, axis=1)

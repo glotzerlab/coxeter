@@ -1,11 +1,10 @@
-from .polyhedron import Polyhedron
 import numpy as np
 import numpy.linalg as LA
 
 #TODO: update docstrings
 
 #good?
-def get_edge_face_neighbors (shape: Polyhedron) -> np.ndarray:
+def get_edge_face_neighbors (shape) -> np.ndarray:
     '''
     Gets the indices of the faces that are adjacent to each edge.
 
@@ -158,7 +157,7 @@ def point_to_face_displacement(point: np.ndarray, vert: np.ndarray, face_normal:
     return disp
 
 #good?
-def get_vert_zones (shape: Polyhedron):
+def get_vert_zones (shape):
     '''
     Gets the constraints and bounds needed to partition the volume surrounding a polyhedron into zones 
     where the shortest distance from any point that is within a vertex zone is the distance between the 
@@ -202,7 +201,7 @@ def get_vert_zones (shape: Polyhedron):
     return {"constraint":vert_constraint, "bounds":vert_bounds}
 
 #good?
-def get_edge_zones (shape: Polyhedron,):
+def get_edge_zones (shape):
     '''
     Gets the constraints and bounds needed to partition the volume surrounding a polyhedron into zones 
     where the shortest distance from any point that is within an edge zone is the distance between the 
@@ -238,7 +237,7 @@ def get_edge_zones (shape: Polyhedron,):
     return {"constraint":edge_constraint, "bounds":edge_bounds}
 
 #good?
-def get_face_zones (shape: Polyhedron):
+def get_face_zones (shape):
     '''
     Gets the constraints and bounds needed to partition the volume surrounding a polyhedron into zones 
     where the shortest distance from any point that is within a triangulated face zone is the distance between the 
@@ -280,7 +279,7 @@ def get_face_zones (shape: Polyhedron):
     return {"constraint":face_constraint, "bounds":face_bounds, "face_points":face_one_vertex, "normals": tri_face_normals}
 
 #good?
-def get_edge_normals(shape: Polyhedron) -> np.ndarray:
+def get_edge_normals(shape) -> np.ndarray:
     '''
     Gets the analogous normals of the edges of the polyhedron. The normals point outwards from the polyhedron 
     and are used to determine whether an edge zone is outside or inside the polyhedron.
@@ -301,7 +300,7 @@ def get_edge_normals(shape: Polyhedron) -> np.ndarray:
     return edge_normals / np.expand_dims(LA.norm(edge_normals, axis=1), axis=1)
 
 #good?
-def get_vert_normals(shape: Polyhedron) -> np.ndarray:
+def get_vert_normals(shape) -> np.ndarray:
     '''
     Gets the analogous normals of the vertices of the polyhedron. The normals point outwards from the polyhedron 
     and are used to determine whether a vertex zone is outside or inside the polyhedron.
@@ -334,7 +333,7 @@ def get_vert_normals(shape: Polyhedron) -> np.ndarray:
     return vert_normals / np.expand_dims(LA.norm(vert_normals, axis=1), axis=1)
 
 
-def get_weighted_edge_normals(shape: Polyhedron) -> np.ndarray:
+def get_weighted_edge_normals(shape) -> np.ndarray:
     '''
     Gets the weighted normals of the edges of the polyhedron. The normals point outwards from the polyhedron.
 
@@ -351,7 +350,7 @@ def get_weighted_edge_normals(shape: Polyhedron) -> np.ndarray:
 
     return edge_normals 
 
-def get_weighted_vert_normals(shape: Polyhedron) -> np.ndarray:
+def get_weighted_vert_normals(shape) -> np.ndarray:
     '''
     Gets the weighted normals of the vertices of the polyhedron. The normals point outwards from the polyhedron.
 
@@ -385,7 +384,7 @@ def get_weighted_vert_normals(shape: Polyhedron) -> np.ndarray:
 
 #good input
 def shortest_distance_to_surface (
-        shp: Polyhedron,
+        shp,
         points: np.ndarray,
         translation_vector: np.ndarray,
 ) -> np.ndarray:
@@ -506,7 +505,7 @@ def shortest_distance_to_surface (
 
 #good input
 def shortest_displacement_to_surface (
-        shp: Polyhedron,
+        shp,
         points: np.ndarray,
         translation_vector: np.ndarray
 ) -> np.ndarray:
