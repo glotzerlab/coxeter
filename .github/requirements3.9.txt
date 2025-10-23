@@ -65,7 +65,7 @@ pytest==8.4.2
     #   pytest-xdist
 pytest-cov==7.0.0
     # via -r tests/requirements.in
-pytest-doctestplus==1.4.0
+pytest-doctestplus==1.5.0
     # via -r tests/requirements.in
 pytest-xdist==3.8.0
     # via -r tests/requirements.in

@@ -14,9 +14,9 @@ execnet==2.1.1
     # via pytest-xdist
 fonttools==4.60.1
     # via matplotlib
-hypothesis==6.141.1
+hypothesis==6.142.3
     # via -r tests/requirements.in
-iniconfig==2.1.0
+iniconfig==2.3.0
     # via pytest
 kiwisolver==1.4.9
     # via matplotlib
@@ -59,7 +59,7 @@ pytest==8.4.2
     #   pytest-xdist
 pytest-cov==7.0.0
     # via -r tests/requirements.in
-pytest-doctestplus==1.4.0
+pytest-doctestplus==1.5.0
     # via -r tests/requirements.in
 pytest-xdist==3.8.0
     # via -r tests/requirements.in
