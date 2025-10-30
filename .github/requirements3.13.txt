@@ -14,7 +14,7 @@ execnet==2.1.1
     # via pytest-xdist
 fonttools==4.60.1
     # via matplotlib
-hypothesis==6.142.3
+hypothesis==6.142.4
     # via -r tests/requirements.in
 iniconfig==2.3.0
     # via pytest
@@ -69,7 +69,7 @@ rowan==1.3.2
     # via
     #   -r requirements.in
     #   plato-draw
-scipy==1.16.2
+scipy==1.16.3
     # via
     #   -r requirements.in
     #   plato-draw
