@@ -8,7 +8,7 @@ coverage==7.10.7
     # via pytest-cov
 cycler==0.12.1
     # via matplotlib
-docutils==0.22.2
+docutils==0.22.3
     # via -r tests/requirements.in
 exceptiongroup==1.3.0
     # via
