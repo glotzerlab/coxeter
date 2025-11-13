@@ -2,7 +2,7 @@
 #    uv pip compile --python-version=3.10 requirements.in tests/requirements.in --output-file=.github/requirements3.10.txt
 contourpy==1.3.2
     # via matplotlib
-coverage==7.11.0
+coverage==7.11.3
     # via pytest-cov
 cycler==0.12.1
     # via matplotlib
@@ -12,11 +12,11 @@ exceptiongroup==1.3.0
     # via
     #   hypothesis
     #   pytest
-execnet==2.1.1
+execnet==2.1.2
     # via pytest-xdist
 fonttools==4.60.1
     # via matplotlib
-hypothesis==6.146.0
+hypothesis==6.147.0
     # via -r tests/requirements.in
 iniconfig==2.3.0
     # via pytest
@@ -53,7 +53,7 @@ pygments==2.19.2
     # via pytest
 pyparsing==3.2.5
     # via matplotlib
-pytest==8.4.2
+pytest==9.0.1
     # via
     #   -r tests/requirements.in
     #   pytest-cov
