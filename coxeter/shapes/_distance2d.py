@@ -62,7 +62,7 @@ def point_to_face_distance(point: np.ndarray, vert: np.ndarray, face_normal: np.
         np.ndarray: distances [shape = (n_points,)]
     '''
     
-    vert_point_vect = -1*vert + point
+    vert_point_vect = vert - point
     face_unit = face_normal / LA.norm(face_normal) #unit vector of the normal of the polygon
     dist = abs(vert_point_vect@np.transpose(face_unit))
 
@@ -81,9 +81,9 @@ def point_to_face_displacement(point: np.ndarray, vert: np.ndarray, face_normal:
     Returns:
         np.ndarray: displacements (n_points, 3)
     '''
-    vert_point_vect = -1*vert + point
+    vert_point_vect = vert - point
     face_unit = face_normal / LA.norm(face_normal) #unit vector of the normal of the polygon
-    disp = np.expand_dims(np.sum(vert_point_vect*face_unit, axis=1), axis=1) * face_unit *(-1)
+    disp = np.expand_dims(np.sum(vert_point_vect*face_unit, axis=1), axis=1) * face_unit #*(-1)
 
     return disp
 
@@ -466,9 +466,9 @@ def spheropolygon_shortest_displacement_to_surface (
         vert_disp = np.take_along_axis(vert_disp, vert_disp_min, axis=1)
 
         #for spheropolygon
-        vert_projection = vert_disp - np.expand_dims(vert_disp @ (shape.normal/np.linalg.norm(shape.normal)), axis=1) * (shape.normal/np.linalg.norm(shape.normal))
+        vert_projection = np.squeeze(vert_disp - np.expand_dims(vert_disp @ (shape.normal/np.linalg.norm(shape.normal)), axis=1) * (shape.normal/np.linalg.norm(shape.normal)), axis=1)
         v_projection_bool = np.linalg.norm(vert_projection, axis=1) > shape.radius
-        vert_projection[v_projection_bool] = shape.radius * vert_projection[v_projection_bool]/np.linalg.norm(vert_projection[v_projection_bool], axis=1)
+        vert_projection[v_projection_bool] = shape.radius * vert_projection[v_projection_bool]/np.expand_dims(np.linalg.norm(vert_projection[v_projection_bool], axis=1), axis=1)
         vert_disp = vert_disp - vert_projection
 
         min_disp_arr = np.concatenate((min_disp_arr, vert_disp), axis=1)
@@ -493,9 +493,9 @@ def spheropolygon_shortest_displacement_to_surface (
         edge_disp = np.take_along_axis(edge_disp, edge_disp_arg, axis=1)
 
         #for spheropolygon
-        edge_projection = edge_disp - np.expand_dims(edge_disp @ (shape.normal/np.linalg.norm(shape.normal)), axis=1) * (shape.normal/np.linalg.norm(shape.normal))
+        edge_projection = np.squeeze(edge_disp - np.expand_dims(edge_disp @ (shape.normal/np.linalg.norm(shape.normal)), axis=1) * (shape.normal/np.linalg.norm(shape.normal)), axis=1)
         e_projection_bool = np.linalg.norm(edge_projection, axis=1) > shape.radius
-        edge_projection[e_projection_bool] = shape.radius * edge_projection[e_projection_bool]/np.linalg.norm(edge_projection[e_projection_bool], axis=1)
+        edge_projection[e_projection_bool] = shape.radius * edge_projection[e_projection_bool]/np.expand_dims(np.linalg.norm(edge_projection[e_projection_bool], axis=1), axis=1)
         edge_disp = edge_disp - edge_projection
 
         min_disp_arr = np.concatenate((min_disp_arr, edge_disp), axis=1)

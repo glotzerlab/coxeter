@@ -118,6 +118,14 @@ class ConvexPolyhedron(Polyhedron):
         self._sort_simplices()
         self.sort_faces()
 
+        # For shortest distance functions
+        self._edge_face_neighbors = None
+        self._vertex_zones = None
+        self._edge_zones = None
+        self._face_zones = None
+        self._vertex_normals = None
+        self._edge_normals = None
+
     def _consume_hull(self, hull):
         """Extract data from ConvexHull.
 

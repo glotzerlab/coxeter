@@ -124,10 +124,10 @@ def point_to_face_distance(point: np.ndarray, vert: np.ndarray, face_normal: np.
     Returns:
         np.ndarray: distances [shape = (n,)]
     '''
-    vert_point_vect = point - vert #displacements between the points and relevent vertices
+    vert_point_vect = vert - point #displacements between the points and relevent vertices
     face_unit = face_normal / np.expand_dims(LA.norm(face_normal, axis=1), axis=1) #unit vectors of the normals of the faces
 
-    dist = np.sum(vert_point_vect*face_unit, axis=1) #distances
+    dist = np.sum(vert_point_vect*face_unit, axis=1) * (-1) #distances
 
     return dist
 
@@ -149,10 +149,10 @@ def point_to_face_displacement(point: np.ndarray, vert: np.ndarray, face_normal:
     Returns:
         np.ndarray: displacements [shape = (n, 3)]
     '''
-    vert_point_vect = point - vert #displacements between the points and relevent vertices
+    vert_point_vect = vert - point #displacements between the points and relevent vertices
     face_units = face_normal / np.expand_dims(LA.norm(face_normal, axis=1), axis=1) #unit vectors of the normals of the faces
 
-    disp = np.expand_dims(np.sum(vert_point_vect*face_units, axis=1), axis=1) * face_units *(-1) #displacements
+    disp = np.expand_dims(np.sum(vert_point_vect*face_units, axis=1), axis=1) * face_units #*(-1) #displacements
 
     return disp
 
@@ -425,7 +425,7 @@ def shortest_distance_to_surface (
 
     #arrays consisting of 1 or -1, and used to determine if a point is inside the polyhedron
     vert_inside_mult = np.diag(np.all((shp.vertex_zones["constraint"] @ np.transpose(shp.vertex_normals+shp.vertices)) <= np.expand_dims(shp.vertex_zones["bounds"], axis=2), axis=1)).astype(int)*2 -1
-    edge_inside_mult = np.diag(np.all((shp.edge_zones["constraint"] @ np.transpose(shp.edge_normals+shp.vertices[shp.edges[:,0]])) <= np.expand_dims(shp.edge_zones["bounds"], axis=2), axis=1)).astype(int)*2 -1
+    edge_inside_mult = np.diag(np.all((shp.edge_zones["constraint"] @ np.transpose(shp.edge_normals+0.5*(shp.vertices[shp.edges[:,0]]+shp.vertices[shp.edges[:,1]]))) <= np.expand_dims(shp.edge_zones["bounds"], axis=2), axis=1)).astype(int)*2 -1
 
 
     #Updating bounds with the position of the polyhedron
@@ -435,29 +435,47 @@ def shortest_distance_to_surface (
 
     points_trans = np.transpose(points) #Have to take the transpose so that 'constraint @ points_trans' returns the right shape and values
     max_value = 3*np.max(LA.norm(points - (translation_vector+shp.vertices[0]), axis=1)) #Placeholder value, it is large so that it is not chosen when taking the min of the distances
-    min_dist_arr = np.ones((len(points),1))*max_value #Initial min_dist_arr
+    # min_dist_arr = np.ones((len(points),1))*max_value #Initial min_dist_arr
 
-    #Solving for the distances between the points and any relevant vertices
-    vert_bool = np.all((shp.vertex_zones["constraint"] @ points_trans) <= np.expand_dims(vert_bounds, axis=2), axis=1) #<--- shape = (n_verts, n_points)
-    if np.any(vert_bool):
 
-        #v--- shape = (number of True in vert_bool,) ---v
-        vert_used = np.transpose(np.tile(np.arange(0,n_verts,1), (n_points,1)))[vert_bool] #Contains the indices of the vertices that hold True for vert_bool
-        v_points_used = np.tile(np.arange(0,n_points,1), (n_verts,1))[vert_bool] #Contains the indices of the points that hold True for vert_bool
+
+    #Calculating the distances
+
+
+    vert_dist=LA.norm(np.repeat(np.expand_dims(points, axis=1),n_verts, axis=1) - np.expand_dims(shp.vertices + translation_vector, axis=0), axis=2)*np.expand_dims(vert_inside_mult, axis=0) #Distances between two points
+    # vert_dist = np.transpose(vert_dist) #<--- shape = (n_points, n_verts)
+
+    #Taking the minimum of the distances for each point
+    vert_dist_arg = np.expand_dims(np.argmin(abs(vert_dist), axis=1), axis=1)
+    min_dist_arr = np.take_along_axis(vert_dist, vert_dist_arg, axis=1)
+
+
+    # print(min_dist_arr)
+    atol = 1e-8
+
+
+    # Solving for the distances between the points and any relevant vertices
+    # vert_bool = np.all((shp.vertex_zones["constraint"] @ points_trans) <= (np.expand_dims(vert_bounds, axis=2)+atol), axis=1) #<--- shape = (n_verts, n_points)
+    # if np.any(vert_bool):
+
+    #     #v--- shape = (number of True in vert_bool,) ---v
+    #     vert_used = np.transpose(np.tile(np.arange(0,n_verts,1), (n_points,1)))[vert_bool] #Contains the indices of the vertices that hold True for vert_bool
+    #     v_points_used = np.tile(np.arange(0,n_points,1), (n_verts,1))[vert_bool] #Contains the indices of the points that hold True for vert_bool
         
-        #Calculating the distances
-        vert_dist = np.ones((n_verts,n_points))*max_value
-        vert_dist[vert_bool]=LA.norm(points[v_points_used] - (shp.vertices[vert_used] + translation_vector), axis=1)*vert_inside_mult[vert_used] #Distances between two points
-        vert_dist = np.transpose(vert_dist) #<--- shape = (n_points, n_verts)
+    #     #Calculating the distances
+    #     vert_dist = np.ones((n_verts,n_points))*max_value
+    #     vert_dist[vert_bool]=LA.norm(points[v_points_used] - (shp.vertices[vert_used] + translation_vector), axis=1)*vert_inside_mult[vert_used] #Distances between two points
+    #     vert_dist = np.transpose(vert_dist) #<--- shape = (n_points, n_verts)
 
-        #Taking the minimum of the distances for each point
-        vert_dist_arg = np.expand_dims(np.argmin(abs(vert_dist), axis=1), axis=1)
-        vert_dist = np.take_along_axis(vert_dist, vert_dist_arg, axis=1)
+    #     #Taking the minimum of the distances for each point
+    #     vert_dist_arg = np.expand_dims(np.argmin(abs(vert_dist), axis=1), axis=1)
+    #     vert_dist = np.take_along_axis(vert_dist, vert_dist_arg, axis=1)
 
-        min_dist_arr = np.concatenate((min_dist_arr, vert_dist), axis=1)
+    #     min_dist_arr = np.concatenate((min_dist_arr, vert_dist), axis=1)
 
     #Solving for the distances between the points and any relevant edges
-    edge_bool = np.all((shp.edge_zones["constraint"] @ points_trans) <= np.expand_dims(edge_bounds, axis=2), axis=1) #<--- shape = (n_edges, n_points)
+    edge_bool = np.all((shp.edge_zones["constraint"] @ points_trans) <= (np.expand_dims(edge_bounds, axis=2)+atol), axis=1) #<--- shape = (n_edges, n_points)
+    # edge_bool = edge_bool + np.allclose((shp.edge_zones["constraint"] @ points_trans), np.expand_dims(edge_bounds, axis=2), atol=1e-6)
     if np.any(edge_bool):
 
         #v--- shape = (number of True in edge_bool,) ---v
@@ -478,7 +496,8 @@ def shortest_distance_to_surface (
         min_dist_arr = np.concatenate((min_dist_arr, edge_dist), axis=1)
 
     #Solving for the distances between the points and any relevant faces
-    face_bool = np.all((shp.face_zones["constraint"] @ points_trans) <= np.expand_dims(face_bounds, axis=2), axis=1) #<--- shape = (n_tri_faces, n_points)
+    face_bool = np.all((shp.face_zones["constraint"] @ points_trans) <= (np.expand_dims(face_bounds, axis=2)+atol), axis=1) #<--- shape = (n_tri_faces, n_points)
+    # face_bool = face_bool + np.allclose((shp.face_zones["constraint"] @ points_trans), np.expand_dims(face_bounds, axis=2), atol=1e-6)
     if np.any(face_bool):
 
         #v--- shape = (number of True in face_bool,) ---v
@@ -549,26 +568,36 @@ def shortest_displacement_to_surface (
 
     coord_trans = np.transpose(points) #Have to take the transpose so that 'constraint @ coord_trans' returns the right shape and values
     max_value = 3*np.max(LA.norm(points - (translation_vector+shp.vertices[0]), axis=1)) #Placeholder value, it is large so that it is not chosen when taking the min of the distances
-    min_disp_arr = np.ones((n_points,1, 3))*max_value #Initial min_disp_arr
+    # min_disp_arr = np.ones((n_points,1, 3))*max_value #Initial min_disp_arr
+
+
+    #Calculating the displacements
+    vert_disp=(-1*np.repeat(np.expand_dims(points, axis=1),n_verts, axis=1)) + np.expand_dims(shp.vertices + translation_vector, axis=0) #Displacements between two points
+    # vert_disp = np.transpose(vert_disp, (1,0,2)) #<--- shape = (n_points, n_verts, 3)
+    
+    #Taking the minimum of the displacements for each point
+    vert_disp_min = np.expand_dims(np.argmin( LA.norm(vert_disp, axis=2), axis=1), axis=(1,2))
+    min_disp_arr = np.take_along_axis(vert_disp, vert_disp_min, axis=1)
+
 
     #Solving for the displacements between the points and any relevant vertices
-    vert_bool = np.all((shp.vertex_zones["constraint"] @ coord_trans) <= np.expand_dims(vert_bounds, axis=2), axis=1) #<--- shape = (n_verts, n_points)
-    if np.any(vert_bool):
+    # vert_bool = np.all((shp.vertex_zones["constraint"] @ coord_trans) <= np.expand_dims(vert_bounds, axis=2), axis=1) #<--- shape = (n_verts, n_points)
+    # if np.any(vert_bool):
 
-        #v--- shape = (number of True in vert_bool,) ---v
-        vert_used = np.transpose(np.tile(np.arange(0,n_verts,1), (n_points,1)))[vert_bool] #Contains the indices of the vertices that hold True for vert_bool
-        vcoords_used = np.tile(np.arange(0,n_points,1), (n_verts,1))[vert_bool] #Contains the indices of the points that hold True for vert_bool
+    #     #v--- shape = (number of True in vert_bool,) ---v
+    #     vert_used = np.transpose(np.tile(np.arange(0,n_verts,1), (n_points,1)))[vert_bool] #Contains the indices of the vertices that hold True for vert_bool
+    #     vcoords_used = np.tile(np.arange(0,n_points,1), (n_verts,1))[vert_bool] #Contains the indices of the points that hold True for vert_bool
         
-        #Calculating the displacements
-        vert_disp = np.ones((n_verts,n_points,3))*max_value
-        vert_disp[vert_bool]=(shp.vertices[vert_used] + translation_vector) - points[vcoords_used] #Displacements between two points
-        vert_disp = np.transpose(vert_disp, (1,0,2)) #<--- shape = (n_points, n_verts, 3)
+    #     #Calculating the displacements
+    #     vert_disp = np.ones((n_verts,n_points,3))*max_value
+    #     vert_disp[vert_bool]=(shp.vertices[vert_used] + translation_vector) - points[vcoords_used] #Displacements between two points
+    #     vert_disp = np.transpose(vert_disp, (1,0,2)) #<--- shape = (n_points, n_verts, 3)
         
-        #Taking the minimum of the displacements for each point
-        vert_disp_min = np.expand_dims(np.argmin( LA.norm(vert_disp, axis=2), axis=1), axis=(1,2))
-        vert_disp = np.take_along_axis(vert_disp, vert_disp_min, axis=1)
+    #     #Taking the minimum of the displacements for each point
+    #     vert_disp_min = np.expand_dims(np.argmin( LA.norm(vert_disp, axis=2), axis=1), axis=(1,2))
+    #     vert_disp = np.take_along_axis(vert_disp, vert_disp_min, axis=1)
 
-        min_disp_arr = np.concatenate((min_disp_arr, vert_disp), axis=1)
+    #     min_disp_arr = np.concatenate((min_disp_arr, vert_disp), axis=1)
 
     #Solving for the displacements between the points and any relevant edges
     edge_bool = np.all((shp.edge_zones["constraint"] @ coord_trans) <= np.expand_dims(edge_bounds, axis=2), axis=1) #<--- shape = (n_edges, n_points)

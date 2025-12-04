@@ -954,3 +954,185 @@ def test_to_hoomd(poly):
 
     for i, face in enumerate(poly.faces):
         assert np.allclose(face, hoomd_dict["faces"][i])
+
+
+#TODO: 
+# - test on convex cube [DONE]
+# - test on concave shapes (pyramid-pointed, prism-pointed, indented)
+# - test on general convex shape, compare with scipy.minimize distance
+# - (maybe? probably not) test on general concave shape made from tetrahedrons, compare with scipy.minimize distance
+
+def test_shortest_distance_convex():
+
+    cube_verts = np.array([[1,1,1], [-1,1,1], [1,-1,1], [1,1,-1], [-1,-1,1], [-1,1,-1],[1,-1,-1],[-1,-1,-1]])
+    cube = ConvexPolyhedron(vertices=cube_verts)#, faces=[[1,5,7,4],[0,2,6,3],[2,4,7,6],[3,6,7,5],[0,1,4,2],[1,0,3,5]])
+
+    x_points = np.array([[3,3,3],[3,3,5],[5,5,1],[5,4,2],[3,5,5],[3,4,5],[3,3,6]])
+
+    distances = cube.shortest_distance_to_surface(x_points, translation_vector=np.array([3,3,3]))
+    displacements = cube.shortest_displacement_to_surface(x_points, translation_vector=np.array([3,3,3]))
+
+    true_distances = np.array([-1, 1, np.sqrt(3), 1, np.sqrt(2), 1, 2])
+    true_displacements = np.array([[0,0,-1], [-1,-1,1], [-1,0,0], [0,-1,-1], [0,0,-1], [0,0,-2]])
+
+    np.testing.assert_allclose(distances, true_distances)
+    np.testing.assert_allclose(displacements[1:], true_displacements)
+
+
+def test_shortest_distance_concave():
+    
+    x_points = np.array([[5,5,1],[5,4,2],[3,5,5],[3,4,5],[3,3,6],[3.5,2.5,3],[4.5,3,5],[3,3,3],[3,3.5,3.5],[3,3,2.25]])
+
+    #--- PYRAMID Point on Cube Case ---
+    pyramidcube_verts = np.array([[1,1,1],[-1,1,1],[1,-1,1],[1,1,-1],[-1,-1,1],[-1,1,-1],[1,-1,-1],[-1,-1,-1],[0,0,3],[0,3,0]])
+    pyramid_faces = [[0,1,8],[1,4,8],[4,2,8],[2,0,8],[1,0,9],[5,1,9],[3,5,9],[0,3,9],[1,5,7,4],[0,2,6,3],[2,4,7,6],[3,6,7,5]]
+    pyramidcube = Polyhedron(vertices=pyramidcube_verts, faces=pyramid_faces)
+
+    pyramid_distances = pyramidcube.shortest_distance_to_surface(x_points, translation_vector=np.array([3,3,3]))
+    pyramid_displacements = pyramidcube.shortest_displacement_to_surface(x_points, translation_vector=np.array([3,3,3]))
+
+    np.testing.assert_allclose(np.abs(pyramid_distances), np.linalg.norm(pyramid_displacements, axis=1))
+    pyramid_surface = pyramidcube.shortest_distance_to_surface(x_points + pyramid_displacements, translation_vector=np.array([3,3,3]))
+    np.testing.assert_allclose(pyramid_surface, np.zeros((len(x_points))))
+
+    pyramid_true_distances = np.array([np.sqrt(3), 1, 3/np.sqrt(5), 1/np.sqrt(5), 0, -0.5, 2/np.sqrt(5), -1, -1*np.sqrt(0.5), -0.25])
+
+    np.testing.assert_allclose(pyramid_distances, pyramid_true_distances)
+
+    #--- PRISM Point on Cube Case ---
+    prismcube_verts = np.array([[1,1,1],[-1,1,1],[1,-1,1],[1,1,-1],[-1,-1,1],[-1,1,-1],[1,-1,-1],[-1,-1,-1],[1,0,3],[-1,0,3],[1,3,0],[-1,3,0]])
+    prism_faces = [[0,1,9,8],[2,8,9,4],[2,4,7,6],[3,6,7,5],[3,5,11,10],[1,0,10,11],[0,8,2,6,3,10],[1,11,5,7,4,9]]
+    prismcube = Polyhedron(vertices=prismcube_verts, faces=prism_faces)
+
+    prism_distances = prismcube.shortest_distance_to_surface(x_points, translation_vector=np.array([3,3,3]))
+    prism_displacements = prismcube.shortest_displacement_to_surface(x_points, translation_vector=np.array([3,3,3]))
+
+    np.testing.assert_allclose(np.abs(prism_distances), np.linalg.norm(prism_displacements, axis=1))
+    prism_surface = prismcube.shortest_distance_to_surface(x_points + prism_displacements, translation_vector=np.array([3,3,3]))
+    np.testing.assert_allclose(prism_surface, np.zeros((len(x_points))))
+
+    prism_true_distances = np.array([np.sqrt(70)/5, 1, 3/np.sqrt(5), 1/np.sqrt(5), 0, -0.5, 0.5, -1, -1*np.sqrt(0.5), -0.25])
+
+    np.testing.assert_allclose(prism_distances, prism_true_distances)
+
+    #--- INDENTED Cube Case ---
+    indented_cube_verts = np.array([[1,1,1],[-1,1,1],[1,-1,1],[1,1,-1],[-1,-1,1],[-1,1,-1],[1,-1,-1],[-1,-1,-1],[0,0,-0.5]])
+    indented_faces = [[0,3,5,1],[0,2,6,3],[1,5,7,4],[2,4,7,6],[3,6,7,5],[0,1,8],[0,8,2],[2,8,4],[1,4,8]]
+    indented_cube = Polyhedron(vertices=indented_cube_verts, faces=indented_faces)
+
+    indented_distances = indented_cube.shortest_distance_to_surface(x_points, translation_vector=np.array([3,3,3]))
+    indented_displacements = indented_cube.shortest_displacement_to_surface(x_points, translation_vector=np.array([3,3,3]))
+
+    np.testing.assert_allclose(np.abs(indented_distances), np.linalg.norm(indented_displacements, axis=1))
+    indented_surface = indented_cube.shortest_distance_to_surface(x_points + indented_displacements, translation_vector=np.array([3,3,3]))
+    np.testing.assert_allclose(indented_surface, np.zeros((len(x_points))), atol=2e-10)
+
+    indented_true_distances = np.array([np.sqrt(3), 1, np.sqrt(2), 1, np.sqrt(5), -0.1714985851, np.sqrt(1.25), 1/np.sqrt(13), 0.5/np.sqrt(13), -0.25])
+
+    np.testing.assert_allclose(indented_distances, indented_true_distances)
+
+
+
+#Do displacements by checking that (x_points + displacements) gives 0 distance to the surface
+#scipy for inside points
+#scipy for outside points
+#add scipy_outside and -1*scipy_inside together to get distances?
+
+#TODO: Tests not working... something is wrong
+def test_shortest_distance_convex_general():
+    '''
+    3 does NOT work
+    2 does NOT work
+    1 does work
+
+    Magnitudes are right, but min_dist is treating some points as inside even tho they are actually outside...
+    RESOLVED: midpoint of edges had to be used for the edge_inside_mult instead of just one of the end vertices
+#################################
+
+    6 does NOT work
+    4, 5 works
+    3 works
+    2 works
+    1 works
+
+    Points+displacements does not always return zero distance to surface:
+    RESOLVED: a tolerance needed to be added for the zone bools
+    '''
+    # np.random.seed(6)
+    random_theta = np.random.rand(20)*np.pi #theta
+    random_phi = np.random.rand(20)*2*np.pi #phi
+    # sorted_angles = np.sort(random_angles)
+    # random_dist = np.random.rand(1)*10 #from origin
+    radius = np.random.rand(1)*5 
+
+    vertices = np.zeros((20,3))
+    vertices[:,0] = radius * np.sin(random_theta) * np.cos(random_phi) #x
+    vertices[:,1] = radius * np.sin(random_theta) * np.sin(random_phi) #y
+    vertices[:,2] = radius * np.cos(random_theta)
+
+    poly = ConvexPolyhedron(vertices=vertices)
+
+    points = np.random.rand(150, 3)*20 -10
+
+    distances = poly.shortest_distance_to_surface(points)
+    displacements = poly.shortest_displacement_to_surface(points) #displacements are correct, issue with the distance calculation of points on the surface
+    poly_surface = poly.shortest_distance_to_surface(points+displacements)
+
+
+    # import matplotlib.pyplot as plt
+    # fig = plt.figure()
+    # ax = fig.add_subplot(projection='3d')
+    # poly.plot(ax=ax, plot_verts=True)#, label_verts=True)
+    # ax.scatter3D(xs=(points[7]+displacements[7])[0],ys=(points[7]+displacements[7])[1],zs=(points[7]+displacements[7])[2], color='k')
+    # # plt.show()
+
+    np.testing.assert_allclose(np.abs(distances), np.linalg.norm(displacements, axis=1))
+    np.testing.assert_allclose(poly_surface, np.zeros((len(points))), atol=2e-8)
+
+
+    def scipy_closest_point(point, surface_constraint, surface_bounds):
+        from scipy.optimize import LinearConstraint, minimize
+
+        tri_min_point = minimize(
+            fun=lambda pt: np.linalg.norm(pt - point),  # Function to optimize
+            x0=np.zeros(3),  # Initial guess
+            constraints=[LinearConstraint(surface_constraint, -np.inf, surface_bounds)],
+            tol=1e-12
+            )
+        # tmps.append(tri_min_point.x)
+        distance = np.linalg.norm(tri_min_point.x - point)
+        displacement = tri_min_point.x - point
+
+        # ax.scatter(*tmps[np.argmin(all_tri_distances)][:2], c = "r", marker="x")
+        return distance, displacement
+    
+
+    outside_surface_constraint = poly.normals
+    outside_surface_bounds = np.sum(outside_surface_constraint * poly.face_centroids, axis=1)
+   
+    inside_surface_constraint = -1*poly.normals
+    inside_surface_bounds = np.sum(inside_surface_constraint * poly.face_centroids, axis=1)
+
+    scipy_distances = []
+    scipy_displacements = []
+    for point in points:
+        outside_distance, outside_displacement = scipy_closest_point(point, outside_surface_constraint, outside_surface_bounds)
+        # inside_distance, inside_displacement = scipy_closest_point(point, inside_surface_constraint, inside_surface_bounds)
+
+        scipy_distances.append( outside_distance)#-1* inside_distance) #outside_distance)#
+        scipy_displacements.append(outside_displacement )#+ inside_displacement)
+
+    scipy_distances = np.asarray(scipy_distances)
+    scipy_displacements = np.asarray(scipy_displacements)
+
+    is_zero_bool = distances <= 0
+
+    zero_inside_distances = distances
+    zero_inside_distances[is_zero_bool] = 0
+
+    zero_inside_displacements = displacements
+    zero_inside_displacements[is_zero_bool] = np.array([0,0,0])
+
+
+    np.testing.assert_allclose(zero_inside_distances, scipy_distances, atol=2e-8)
+    np.testing.assert_allclose(zero_inside_displacements, scipy_displacements, atol=2e-5)

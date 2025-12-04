@@ -318,6 +318,36 @@ class ConvexSpheropolygon(Shape2D):
         return hoomd_dict
 
 
+
+
+
+    #TODO: Make internal??
+
+    @property
+    def edges(self):
+        """:class:`numpy.ndarray`: Get the polygon's edges.
+
+        Results returned as vertex index pairs `in counterclockwise order`. In contrast
+        to the same method for polyhedra, results are not sorted `i<j`.
+        """
+        edges = np.column_stack(
+            [
+                np.arange(self.num_vertices),
+                np.arange(1, self.num_vertices + 1) % self.num_vertices,
+            ]
+        )
+        edges.flags.writeable = False
+
+        return edges
+
+    @property
+    def edge_vectors(self):
+        """:class:`numpy.ndarray`: Get the polygon's edges as vectors.
+
+        :code:`edge_vectors` are returned in the same order as in :attr:`edges`.
+        """
+        return self.vertices[self.edges[:, 1]] - self.vertices[self.edges[:, 0]]
+
     @property
     def vertex_zones(self):
         """dict: Get the constraints and bounds needed to partition the
