@@ -648,7 +648,7 @@ def test_shortest_distance_convex():
     tri_verts = np.array([[0, 0.5], [-0.25*np.sqrt(3), -0.25], [0.25*np.sqrt(3), -0.25]])
     triangle = ConvexPolygon(vertices=tri_verts)
 
-    x_points = np.array([[3.5,3.25,0], [3,3.75,0], [3,3.25,0], [3,3,1], [3.25,3.5, -1]])#, [3+0.25*np.sqrt(3),4,0]])
+    x_points = np.array([[3.5,3.25,0], [3,3.75,0], [3,3.25,0], [3,3,1], [3.25,3.5, -1]])
 
     distances = triangle.shortest_distance_to_surface(x_points, translation_vector=np.array([3,3,0]))
     displacements = triangle.shortest_displacement_to_surface(x_points, translation_vector=np.array([3,3,0]))
@@ -671,17 +671,11 @@ def test_shortest_distance_concave():
     true_distances = np.array([abs(0.25*np.sqrt(3)-0.5), np.sqrt(0.0125), 0, 1, 1, 0.25])
     true_displacements = np.array([[0.25*np.sqrt(3)-0.5,0,0],[-0.1,-0.05,0],[0,0,0],[0,0,1],[0,0,1],[0,-0.25,0]])
 
-    print('true:', true_displacements)
-    print('test:', displacements)
-
     np.testing.assert_allclose(distances, true_distances)
     np.testing.assert_allclose(displacements, true_displacements)
 
 def test_shortest_distance_general():
-    """
-    seed 2 works
-    seed 3 is flipped about [-1,1,1]
-    """
+    #Creating a random polygon (nonconvex usually)
     # np.random.seed(3)
     random_angles = np.random.rand(15)*2*np.pi #angles
     sorted_angles = np.sort(random_angles)
@@ -693,20 +687,8 @@ def test_shortest_distance_general():
 
     poly = Polygon(vertices=vertices, normal=[0,0,1])
 
-    # print('calc normal:', np.cross((poly.vertices[2, :] - poly.vertices[1, :]), (poly.vertices[0, :] - poly.vertices[1, :])))
-    
-    # print('other calc normal:', np.cross((poly.vertices[1, :] - poly.vertices[0, :]), (poly.vertices[int(poly.num_vertices/2), :] - poly.vertices[0, :])))
-
     points2d = np.random.rand(100,2)*20-10
     points3d = np.random.rand(150, 3)*20 -10
-
-    # points2d = points2d[~poly.is_inside(points2d)]
-
-    # import matplotlib.pyplot as plt
-    # fig, ax = plt.subplots()
-    # poly.plot(ax=ax)
-    
-    # print('vertices:',vertices)
 
     distances2d = poly.shortest_distance_to_surface(points2d)
     distances3d = poly.shortest_distance_to_surface(points3d)
@@ -722,25 +704,9 @@ def test_shortest_distance_general():
     
     triangle_verts = np.asarray(triangle_verts)
 
-    #debugging
-    # n=0
-    # vertex_bool = np.zeros((13,3))
-    # for vertex in vertices:
-    #     vertex = np.append(vertex, [0])
-    #     print(n)
-    #     print(np.all(triangle_verts==vertex, axis=2))
-    #     vertex_bool = vertex_bool + np.all(triangle_verts==vertex, axis=2).astype(int)
-    #     n+=1
-    # print(vertex_bool)
-
-    # for t in triangle_verts:
-    #     ax.plot(*(np.array([*t, t[0]]) )[:, :2].T, c="k", alpha=0.5, linestyle="dashed")
-
 
     tri_edges = np.append(triangle_verts[:,1:], np.expand_dims(triangle_verts[:,0], axis=1), axis=1) - triangle_verts #edges point counterclockwise
 
-    # print('normal:',poly.normal)
-    
     edges_90 = np.cross(tri_edges, poly.normal) #point outwards (n_triangles, 3, 3)
     upper_bounds = np.sum(edges_90*triangle_verts, axis=2) #(n_triangles, 3)
 
@@ -750,20 +716,16 @@ def test_shortest_distance_general():
         all_tri_displacements = []
         tmps = []
         for triangle in zip(edges_90, upper_bounds, strict=True):
-            # print(np.append(triangle[0].squeeze(), [[0,0,1], [0,0,-1]], axis=0).shape)
-            # print(np.append(triangle[1].squeeze(), [0,0]).shape)
             tri_min_point = minimize(
                 fun=lambda pt: np.linalg.norm(pt - point),  # Function to optimize
                 x0=np.zeros(3),  # Initial guess
                 constraints=[LinearConstraint(np.append(triangle[0].squeeze(), [[0,0,1], [0,0,-1]], axis=0), -np.inf, np.append(triangle[1].squeeze(), [0,0]))],
                 tol=1e-11
                 )
-            # tmps.append(tri_min_point.x)
             triangle_distance = np.linalg.norm(tri_min_point.x - point)
             all_tri_distances.append(triangle_distance)
             all_tri_displacements.append(tri_min_point.x - point)
 
-        # ax.scatter(*tmps[np.argmin(all_tri_distances)][:2], c = "r", marker="x")
         return np.min(all_tri_distances), all_tri_displacements[np.argmin(all_tri_distances)]
     
     scipy_distances2d = []
@@ -787,9 +749,7 @@ def test_shortest_distance_general():
     scipy_displacements2d = np.asarray(scipy_displacements2d)
     scipy_distances3d = np.asarray(scipy_distances3d)
     scipy_displacements3d = np.asarray(scipy_displacements3d)
-    # ax.scatter(*((displacements3d+ points3d)[:, :2]).T,c="b")
-    # ax.scatter(*((displacements2d[:, :2] + points2d)).T,c="b")
-    # plt.show()
+
     np.testing.assert_allclose(distances2d, scipy_distances2d, atol=2e-8)
     np.testing.assert_allclose(displacements2d, scipy_displacements2d, atol=2e-5)
     np.testing.assert_allclose(distances3d, scipy_distances3d, atol=2e-8)

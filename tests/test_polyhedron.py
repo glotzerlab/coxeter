@@ -956,14 +956,8 @@ def test_to_hoomd(poly):
         assert np.allclose(face, hoomd_dict["faces"][i])
 
 
-#TODO: 
-# - test on convex cube [DONE]
-# - test on concave shapes (pyramid-pointed, prism-pointed, indented) [DONE]
-# - test on general convex shape, compare with scipy.minimize distance [DONE]
-# - (maybe? probably not) test on general concave shape made from tetrahedrons, compare with scipy.minimize distance
 
 def test_shortest_distance_convex():
-
     cube_verts = np.array([[1,1,1], [-1,1,1], [1,-1,1], [1,1,-1], [-1,-1,1], [-1,1,-1],[1,-1,-1],[-1,-1,-1]])
     cube = ConvexPolyhedron(vertices=cube_verts)#, faces=[[1,5,7,4],[0,2,6,3],[2,4,7,6],[3,6,7,5],[0,1,4,2],[1,0,3,5]])
 
@@ -1045,24 +1039,7 @@ def test_shortest_distance_concave():
 
 
 def test_shortest_distance_convex_general():
-    '''
-    3 does NOT work
-    2 does NOT work
-    1 does work
-
-    Magnitudes are right, but min_dist is treating some points as inside even tho they are actually outside...
-    RESOLVED: midpoint of edges had to be used for the edge_inside_mult instead of just one of the end vertices
-#################################
-
-    6 does NOT work
-    4, 5 works
-    3 works
-    2 works
-    1 works
-
-    Points+displacements does not always return zero distance to surface:
-    RESOLVED: a tolerance needed to be added for the zone bools
-    '''
+    #Creating a random convex polyhedron
     # np.random.seed(6)
     random_theta = np.random.rand(20)*np.pi 
     random_phi = np.random.rand(20)*2*np.pi 
@@ -1078,10 +1055,11 @@ def test_shortest_distance_convex_general():
     points = np.random.rand(1500, 3)*20 -10
 
     distances = poly.shortest_distance_to_surface(points)
-    displacements = poly.shortest_displacement_to_surface(points) #displacements are correct, issue with the distance calculation of points on the surface
+    displacements = poly.shortest_displacement_to_surface(points)
     
     np.testing.assert_allclose(np.abs(distances), np.linalg.norm(displacements, axis=1))
     
+    #Verifying that the displacements will move the points onto the surface
     poly_surface_distance = poly.shortest_distance_to_surface(points+displacements)
     poly_surface_displacement = poly.shortest_displacement_to_surface(points+displacements)
 
@@ -1119,6 +1097,7 @@ def test_shortest_distance_convex_general():
     scipy_distances = np.asarray(scipy_distances)
     scipy_displacements = np.asarray(scipy_displacements)
 
+    #Setting points inside the polyhedron to have 0 distance
     is_zero_bool = distances <= 0
 
     zero_inside_distances = distances

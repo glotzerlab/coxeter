@@ -390,96 +390,6 @@ class ConvexSpheropolyhedron(Shape3D):
         return hoomd_dict
 
 
-
-
-
-
-    '''@property
-    def edge_face_neighbors(self):
-        """:class:`numpy.ndarray`: Get the indices of the faces that
-        are adjacent to each edge.
-        
-        For a given edge vector oriented pointing upwards and from
-        an outside perspective of the convex spheropolyhedron, the
-        index of the face to the left of the edge is given by the
-        first column, and the index of the face to the right of
-        the edge is given by the second column.
-        """
-        if self._edge_face_neighbors is None:
-            self._edge_face_neighbors = get_edge_face_neighbors(self)
-        return self._edge_face_neighbors
-    
-    @property
-    def vertex_zones(self):
-        """dict: Get the constraints and bounds needed to partition
-        the volume surrounding a convex spheropolyhedron into zones
-        where the shortest distance from any point that is within a
-        vertex zone is the distance between the point and the
-        corresponding vertex.
-        """
-        if self._vertex_zones is None:
-            self._vertex_zones = get_vert_zones(self)
-        return self._vertex_zones
-    
-    @property
-    def edge_zones(self):
-        """dict: Get the constraints and bounds needed to partition
-        the volume surrounding a convex spheropolyhedron into zones
-        where the shortest distance from any point that is within an
-        edge zone is the distance between the point and the
-        corresponding edge.
-        """
-        if self._edge_zones is None:
-            self._edge_zones = get_edge_zones(self)
-        return self._edge_zones
-    
-    @property
-    def face_zones(self):
-        """dict: Get the constraints and bounds needed to partition
-        the volume surrounding a convex spheropolyhedron into zones
-        where the shortest distance from any point that is within a
-        triangulated face zone is the distance between the point
-        and the corresponding triangulated face.
-        """
-        if self._face_zones is None:
-            self._face_zones = get_face_zones(self)
-        return self._face_zones
-    
-    @property
-    def vertex_normals(self):
-        """:class:`numpy.ndarray`: Get the unit vector normals of vertices
-        
-        The normals point outwards from the convex spheropolyhedron.
-        """
-        if self._vertex_normals is None:
-            self._vertex_normals = get_vert_normals(self)
-        return self._vertex_normals
-    
-    @property
-    def edge_normals(self):
-        """:class:`numpy.ndarray`: Get the unit vector normals of edges
-        
-        The normals point outwards from the convex spheropolyhedron.
-        """
-        if self._edge_normals is None:
-            self._edge_normals = get_edge_normals(self)
-        return self._edge_normals
-    
-    @property
-    def weighted_vertex_normals(self):
-        """:class:`numpy.ndarray`: Get the weighted normals of vertices
-        
-        The normals point outwards from the polyhedron.
-        """
-        return get_weighted_vert_normals(self)
-
-    @property
-    def weighted_edge_normals(self):
-        """:class:`numpy.ndarray`: Get the weighted normals of edges
-        
-        The normals point outwards from the polyhedron.
-        """
-        return get_weighted_edge_normals(self)'''
     
     def shortest_distance_to_surface(self, points, translation_vector=np.array([0,0,0])):
         """
@@ -542,17 +452,6 @@ class ConvexSpheropolyhedron(Shape3D):
                 the shortest displacement of each point to the surface
                 [shape = (n_points, 3)]
         """
-        # displacement = shortest_displacement_to_surface(self._polyhedron, points, translation_vector)
-
-        # #TODO: if statement for displacement==[0,0,0]
-        # unit_displacement = displacement / np.expand_dims(np.linalg.norm(displacement, axis=1),axis=1)
-
-        # is_outside = np.expand_dims((shortest_distance_to_surface(self._polyhedron, points, translation_vector) < 0).astype(int) *2 -1, axis=1)
-        # #(-1) if outside, (+1) if inside
-
-        # print('initial',displacement)
-        # print('subtracted (-)', -1*self.radius*unit_displacement)
-
         return spheropolyhedron_shortest_displacement_to_surface(self._polyhedron, self.radius, points, translation_vector)
-    #displacement + is_outside*self.radius*unit_displacement
+
 

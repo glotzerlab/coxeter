@@ -1,9 +1,8 @@
 import numpy as np
 import numpy.linalg as LA
 
-#TODO: update docstrings
+#TODO: update docstrings?
 
-#good?
 def get_edge_face_neighbors (shape) -> np.ndarray:
     '''
     Gets the indices of the faces that are adjacent to each edge.
@@ -60,7 +59,6 @@ def get_edge_face_neighbors (shape) -> np.ndarray:
 
     return ef_neighbor
 
-#good?
 def point_to_edge_distance (point: np.ndarray, vert: np.ndarray, edge_vector: np.ndarray) -> np.ndarray:
     '''
     Calculates the distances between several points and several varying lines.
@@ -83,7 +81,6 @@ def point_to_edge_distance (point: np.ndarray, vert: np.ndarray, edge_vector: np
     dist = LA.norm(((vert - point) - (np.expand_dims(np.sum((vert-point)*edge_unit, axis=1),axis=1) *edge_unit)), axis=1) #distances
     return dist
 
-#good?
 def point_to_edge_displacement (point: np.ndarray, vert: np.ndarray, edge_vector: np.ndarray) -> np.ndarray:
     '''
     Calculates the displacements between several points and several varying lines.
@@ -106,7 +103,6 @@ def point_to_edge_displacement (point: np.ndarray, vert: np.ndarray, edge_vector
     disp = ((vert - point) - (np.expand_dims(np.sum((vert-point)*edge_unit, axis=1),axis=1) *edge_unit)) #displacements
     return disp
 
-#good?
 def point_to_face_distance(point: np.ndarray, vert: np.ndarray, face_normal: np.ndarray) -> np.ndarray:
     '''
     Calculates the distances between several points and several varying planes.
@@ -131,7 +127,6 @@ def point_to_face_distance(point: np.ndarray, vert: np.ndarray, face_normal: np.
 
     return dist
 
-#good?
 def point_to_face_displacement(point: np.ndarray, vert: np.ndarray, face_normal: np.ndarray) -> np.ndarray:
     '''
     Calculates the displacements between several points and several varying planes.
@@ -156,7 +151,6 @@ def point_to_face_displacement(point: np.ndarray, vert: np.ndarray, face_normal:
 
     return disp
 
-#good?
 def get_vert_zones (shape):
     '''
     Gets the constraints and bounds needed to partition the volume surrounding a polyhedron into zones 
@@ -200,7 +194,6 @@ def get_vert_zones (shape):
 
     return {"constraint":vert_constraint, "bounds":vert_bounds}
 
-#good?
 def get_edge_zones (shape):
     '''
     Gets the constraints and bounds needed to partition the volume surrounding a polyhedron into zones 
@@ -236,7 +229,6 @@ def get_edge_zones (shape):
 
     return {"constraint":edge_constraint, "bounds":edge_bounds}
 
-#good?
 def get_face_zones (shape):
     '''
     Gets the constraints and bounds needed to partition the volume surrounding a polyhedron into zones 
@@ -278,7 +270,6 @@ def get_face_zones (shape):
 
     return {"constraint":face_constraint, "bounds":face_bounds, "face_points":face_one_vertex, "normals": tri_face_normals}
 
-#good?
 def get_edge_normals(shape) -> np.ndarray:
     '''
     Gets the analogous normals of the edges of the polyhedron. The normals point outwards from the polyhedron 
@@ -299,7 +290,6 @@ def get_edge_normals(shape) -> np.ndarray:
     #returning the unit vectors of the edge normals
     return edge_normals / np.expand_dims(LA.norm(edge_normals, axis=1), axis=1)
 
-#good?
 def get_vert_normals(shape) -> np.ndarray:
     '''
     Gets the analogous normals of the vertices of the polyhedron. The normals point outwards from the polyhedron 
@@ -382,7 +372,6 @@ def get_weighted_vert_normals(shape) -> np.ndarray:
 
 
 
-#good input
 def shortest_distance_to_surface (
         shp,
         points: np.ndarray,
@@ -494,7 +483,6 @@ def shortest_distance_to_surface (
 
     return true_min_dist
 
-#good input
 def shortest_displacement_to_surface (
         shp,
         points: np.ndarray,
@@ -597,7 +585,6 @@ def shortest_displacement_to_surface (
     true_min_disp = np.squeeze(np.take_along_axis(min_disp_arr, disp_arr_bool, axis=1), axis=1)
 
     return true_min_disp
-
 
 def spheropolyhedron_shortest_displacement_to_surface (
         shp,

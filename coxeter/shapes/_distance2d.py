@@ -1,8 +1,8 @@
 import numpy as np
 import numpy.linalg as LA
 
-# --- "Hidden" Functions ---
-#good?
+#TODO: update docstrings?
+
 def point_to_edge_distance (point: np.ndarray, vert: np.ndarray, edge_vector: np.ndarray) -> np.ndarray:
     '''
     Calculates the distances between several points and several varying lines.
@@ -25,7 +25,6 @@ def point_to_edge_distance (point: np.ndarray, vert: np.ndarray, edge_vector: np
     dist = LA.norm(((vert - point) - (np.expand_dims(np.sum((vert-point)*edge_unit, axis=1),axis=1) *edge_unit)), axis=1) #distances
     return dist
 
-#good?
 def point_to_edge_displacement (point: np.ndarray, vert: np.ndarray, edge_vector: np.ndarray) -> np.ndarray:
     '''
     Calculates the displacements between several points and several varying lines.
@@ -48,7 +47,6 @@ def point_to_edge_displacement (point: np.ndarray, vert: np.ndarray, edge_vector
     disp = ((vert - point) - (np.expand_dims(np.sum((vert-point)*edge_unit, axis=1),axis=1) *edge_unit)) #displacements
     return disp
 
-#good?
 def point_to_face_distance(point: np.ndarray, vert: np.ndarray, face_normal: np.ndarray) -> np.ndarray:
     '''
     Calculates the distances between a single point and the plane of the polygon.
@@ -68,7 +66,6 @@ def point_to_face_distance(point: np.ndarray, vert: np.ndarray, face_normal: np.
 
     return dist
 
-#good?
 def point_to_face_displacement(point: np.ndarray, vert: np.ndarray, face_normal: np.ndarray) -> np.ndarray:
     '''
     Calculates the displacements between a single point and the plane of the polygon.
@@ -87,7 +84,6 @@ def point_to_face_displacement(point: np.ndarray, vert: np.ndarray, face_normal:
 
     return disp
 
-#good input
 def get_vert_zones (shape):
     '''
     Gets the constraints and bounds needed to partition the volume surrounding a polygon into zones 
@@ -109,7 +105,6 @@ def get_vert_zones (shape):
 
     return {"constraint": vert_constraint, "bounds":vert_bounds}
 
-#good input
 def get_edge_zones (shape):
     '''
     Gets the constraints and bounds needed to partition the volume surrounding a polygon into zones 
@@ -137,7 +132,6 @@ def get_edge_zones (shape):
 
     return {"constraint":edge_constraint, "bounds":edge_bounds}
 
-#good input
 def get_face_zones (shape):
     '''
     Gets the constraints and bounds needed to partition the volume surrounding a polygon into zones 
@@ -175,8 +169,6 @@ def get_face_zones (shape):
     return {"constraint":face_constraint, "bounds":face_bounds}
 
 
-# --- User Available Functions ---
-#good input
 def shortest_distance_to_surface (
         shape,
         points: np.ndarray,
@@ -286,7 +278,6 @@ def shortest_distance_to_surface (
 
     return true_min_dist
 
-#good input
 def shortest_displacement_to_surface (
         shape,
         points: np.ndarray,
@@ -393,8 +384,6 @@ def shortest_displacement_to_surface (
 
     return true_min_disp
 
-
-#think it is right/will work correctly?
 def spheropolygon_shortest_displacement_to_surface (
         shape,
         radius,

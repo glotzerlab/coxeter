@@ -237,9 +237,6 @@ def test_to_hoomd(unit_rounded_square):
 
 
 
-#TODO:
-# - test for specific case [DONE]
-# - test for general case [2D - DONE] [3D - DONE]
 
 
 def test_shortest_distance_convex():
@@ -260,6 +257,7 @@ def test_shortest_distance_convex():
 
 
 def test_shortest_distance_general():
+    #Creating a random convex spheropolygon
     # np.random.seed(3)
     random_angles = np.random.rand(10)*2*np.pi #angles
     sorted_angles = np.sort(random_angles)
@@ -272,23 +270,8 @@ def test_shortest_distance_general():
 
     poly = ConvexSpheropolygon(vertices=vertices, radius=radius, normal=[0,0,1])
 
-    # print('calc normal:', np.cross((poly.vertices[2, :] - poly.vertices[1, :]), (poly.vertices[0, :] - poly.vertices[1, :])))
-    
-    # print('other calc normal:', np.cross((poly.vertices[1, :] - poly.vertices[0, :]), (poly.vertices[int(poly.num_vertices/2), :] - poly.vertices[0, :])))
-
     points2d = np.random.rand(100,2)*20-10
     points3d = np.random.rand(150, 3)*20 -10
-
-    # points2d = points2d[~poly.is_inside(points2d)]
-
-    # import matplotlib.pyplot as plt
-    # from coxeter.shapes import ConvexPolygon
-    # polypoly = ConvexPolygon(vertices=vertices, normal=[0,0,1])
-
-    # fig, ax = plt.subplots()
-    # polypoly.plot(ax=ax)
-    
-    # print('vertices:',vertices)
 
     distances2d = poly.shortest_distance_to_surface(points2d)
     distances3d = poly.shortest_distance_to_surface(points3d)
@@ -297,33 +280,8 @@ def test_shortest_distance_general():
 
     np.testing.assert_allclose(distances2d, np.linalg.norm(displacements2d, axis=1))
     np.testing.assert_allclose(distances3d, np.linalg.norm(displacements3d, axis=1))
-
-    # triangle_verts =[]
-    # for tri in poly._triangulation():
-    #     triangle_verts.append(list(tri))
     
-    # triangle_verts = np.asarray(triangle_verts)
-
-    #debugging
-    # n=0
-    # vertex_bool = np.zeros((13,3))
-    # for vertex in vertices:
-    #     vertex = np.append(vertex, [0])
-    #     print(n)
-    #     print(np.all(triangle_verts==vertex, axis=2))
-    #     vertex_bool = vertex_bool + np.all(triangle_verts==vertex, axis=2).astype(int)
-    #     n+=1
-    # print(vertex_bool)
-
-    # for t in triangle_verts:
-    #     ax.plot(*(np.array([*t, t[0]]) )[:, :2].T, c="k", alpha=0.5, linestyle="dashed")
-
-
-    # tri_edges = np.append(triangle_verts[:,1:], np.expand_dims(triangle_verts[:,0], axis=1), axis=1) - triangle_verts #edges point counterclockwise
-
-    # print('normal:',poly.normal)
-    
-    edges_90 = np.cross(poly.edge_vectors, poly.normal) #point outwards (10, 3)
+    edges_90 = np.cross(poly._polygon.edge_vectors, poly.normal) #point outwards (10, 3)
     upper_bounds = np.sum(edges_90*poly.vertices, axis=1) #(10,)
 
     def scipy_closest_point(point, edges_90, upper_bounds):
@@ -335,11 +293,10 @@ def test_shortest_distance_general():
             constraints=[LinearConstraint(np.append(edges_90, [[0,0,1], [0,0,-1]], axis=0), -np.inf, np.append(upper_bounds, [0,0]))],
             tol=1e-10
             )
-        # tmps.append(tri_min_point.x)
+
         distance = np.linalg.norm(tri_min_point.x - point)
         displacement = tri_min_point.x - point
 
-        # ax.scatter(*tmps[np.argmin(all_tri_distances)][:2], c = "r", marker="x")
         return distance, displacement
     
     #--- 2D ---
@@ -377,11 +334,6 @@ def test_shortest_distance_general():
     scipy_displacements2d = np.asarray(scipy_displacements2d) 
     scipy_displacements2d = scipy_displacements2d - (radius * scipy_displacements2d / np.expand_dims(np.linalg.norm(scipy_displacements2d, axis=1),axis=1))
     scipy_displacements2d[is_zero2d] = np.array([0,0,0])
-  
-    # scipy_distances3d = np.asarray(scipy_distances3d)
-    # ax.scatter(*((displacements3d+ points3d)[:, :2]).T,c="b")
-    # ax.scatter(*((displacements2d[:, :2] + points2d)).T,c="b")
-    # plt.show()
 
     np.testing.assert_allclose(distances2d, scipy_distances2d, atol=2e-8)
     np.testing.assert_allclose(displacements2d, scipy_displacements2d, atol=2e-5)

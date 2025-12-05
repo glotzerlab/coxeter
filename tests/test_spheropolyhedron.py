@@ -190,7 +190,7 @@ def test_shortest_distance_convex():
 
 
 def test_shortest_distance_convex_general():
-
+    #Creating a random convex spheropolyhedron
     # np.random.seed(6)
     random_theta = np.random.rand(20)*np.pi 
     random_phi = np.random.rand(20)*2*np.pi 
@@ -207,10 +207,11 @@ def test_shortest_distance_convex_general():
     points = np.random.rand(1500, 3)*20 -10
 
     distances = poly.shortest_distance_to_surface(points)
-    displacements = poly.shortest_displacement_to_surface(points) #displacements are correct, issue with the distance calculation of points on the surface
+    displacements = poly.shortest_displacement_to_surface(points)
     
     np.testing.assert_allclose(np.abs(distances), np.linalg.norm(displacements, axis=1))
     
+    #Verifying that the displacements will move the points onto the surface
     poly_surface_distance = poly.shortest_distance_to_surface(points+displacements)
     poly_surface_displacement = poly.shortest_displacement_to_surface(points+displacements)
 

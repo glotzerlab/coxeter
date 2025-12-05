@@ -318,69 +318,6 @@ class ConvexSpheropolygon(Shape2D):
         return hoomd_dict
 
 
-
-
-
-    #TODO: Make internal??
-
-    @property
-    def edges(self):
-        """:class:`numpy.ndarray`: Get the polygon's edges.
-
-        Results returned as vertex index pairs `in counterclockwise order`. In contrast
-        to the same method for polyhedra, results are not sorted `i<j`.
-        """
-        edges = np.column_stack(
-            [
-                np.arange(self.num_vertices),
-                np.arange(1, self.num_vertices + 1) % self.num_vertices,
-            ]
-        )
-        edges.flags.writeable = False
-
-        return edges
-
-    @property
-    def edge_vectors(self):
-        """:class:`numpy.ndarray`: Get the polygon's edges as vectors.
-
-        :code:`edge_vectors` are returned in the same order as in :attr:`edges`.
-        """
-        return self.vertices[self.edges[:, 1]] - self.vertices[self.edges[:, 0]]
-
-    @property
-    def vertex_zones(self):
-        """dict: Get the constraints and bounds needed to partition the
-        volume surrounding a polygon into zones where the shortest
-        distance from any point that is within a vertex zone is the
-        distance between the point and the corresponding vertex.
-        """
-        if self._vertex_zones is None:
-            self._vertex_zones = get_vert_zones(self)
-        return self._vertex_zones
-    
-    @property
-    def edge_zones(self):
-        """dict: Get the constraints and bounds needed to partition
-        the volume surrounding a polygon into zones where the
-        shortest distance from any point that is within an edge zone
-        is the distance between the point and the corresponding edge.
-        """
-        if self._edge_zones is None:
-            self._edge_zones = get_edge_zones(self)
-        return self._edge_zones
-    
-    @property
-    def face_zones(self):
-        """dict: Get the constraints and bounds needed to partition
-        the volume surrounding a polygon into zones where the shortest
-        distance from any point that is within the face zone
-        is the distance between the point and the face of the polygon.
-        """
-        if self._face_zones is None:
-            self._face_zones = get_face_zones(self)
-        return self._face_zones
-    
     def shortest_distance_to_surface(self, points, translation_vector=np.array([0,0,0])):
         """
         Solves for the shortest distance (magnitude) between points and 
