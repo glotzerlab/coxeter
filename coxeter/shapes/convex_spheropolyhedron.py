@@ -23,7 +23,8 @@ from ._distance3d import (
     get_weighted_vert_normals,
     get_weighted_edge_normals,
     shortest_displacement_to_surface,
-    shortest_distance_to_surface
+    shortest_distance_to_surface,
+    spheropolyhedron_shortest_displacement_to_surface
 )
 
 
@@ -81,6 +82,7 @@ class ConvexSpheropolyhedron(Shape3D):
     def __init__(self, vertices, radius):
         self._polyhedron = ConvexPolyhedron(vertices)
         self.radius = radius
+
         self._edge_face_neighbors = None
         self._vertex_zones = None
         self._edge_zones = None
@@ -388,7 +390,11 @@ class ConvexSpheropolyhedron(Shape3D):
         return hoomd_dict
 
 
-    @property
+
+
+
+
+    '''@property
     def edge_face_neighbors(self):
         """:class:`numpy.ndarray`: Get the indices of the faces that
         are adjacent to each edge.
@@ -473,7 +479,7 @@ class ConvexSpheropolyhedron(Shape3D):
         
         The normals point outwards from the polyhedron.
         """
-        return get_weighted_edge_normals(self)
+        return get_weighted_edge_normals(self)'''
     
     def shortest_distance_to_surface(self, points, translation_vector=np.array([0,0,0])):
         """
@@ -505,7 +511,7 @@ class ConvexSpheropolyhedron(Shape3D):
                 the shortest distance of each point to the surface
                 [shape = (n_points,)]
         """
-        return shortest_distance_to_surface(self, points, translation_vector) - self.radius
+        return shortest_distance_to_surface(self._polyhedron, points, translation_vector) - self.radius
     
     def shortest_displacement_to_surface(self, points, translation_vector=np.array([0,0,0])):
         """
@@ -536,7 +542,17 @@ class ConvexSpheropolyhedron(Shape3D):
                 the shortest displacement of each point to the surface
                 [shape = (n_points, 3)]
         """
-        displacement = shortest_displacement_to_surface(self, points, translation_vector)
-        unit_displacement = displacement / np.linalg.norm(displacement, axis=1)
-        return displacement - self.radius*unit_displacement
+        # displacement = shortest_displacement_to_surface(self._polyhedron, points, translation_vector)
+
+        # #TODO: if statement for displacement==[0,0,0]
+        # unit_displacement = displacement / np.expand_dims(np.linalg.norm(displacement, axis=1),axis=1)
+
+        # is_outside = np.expand_dims((shortest_distance_to_surface(self._polyhedron, points, translation_vector) < 0).astype(int) *2 -1, axis=1)
+        # #(-1) if outside, (+1) if inside
+
+        # print('initial',displacement)
+        # print('subtracted (-)', -1*self.radius*unit_displacement)
+
+        return spheropolyhedron_shortest_displacement_to_surface(self._polyhedron, self.radius, points, translation_vector)
+    #displacement + is_outside*self.radius*unit_displacement
 

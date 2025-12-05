@@ -397,6 +397,7 @@ def shortest_displacement_to_surface (
 #think it is right/will work correctly?
 def spheropolygon_shortest_displacement_to_surface (
         shape,
+        radius,
         points: np.ndarray,
         translation_vector: np.ndarray,
 ) -> np.ndarray:
@@ -467,8 +468,8 @@ def spheropolygon_shortest_displacement_to_surface (
 
         #for spheropolygon
         vert_projection = np.squeeze(vert_disp - np.expand_dims(vert_disp @ (shape.normal/np.linalg.norm(shape.normal)), axis=1) * (shape.normal/np.linalg.norm(shape.normal)), axis=1)
-        v_projection_bool = np.linalg.norm(vert_projection, axis=1) > shape.radius
-        vert_projection[v_projection_bool] = shape.radius * vert_projection[v_projection_bool]/np.expand_dims(np.linalg.norm(vert_projection[v_projection_bool], axis=1), axis=1)
+        v_projection_bool = np.linalg.norm(vert_projection, axis=1) > radius
+        vert_projection[v_projection_bool] = radius * vert_projection[v_projection_bool]/np.expand_dims(np.linalg.norm(vert_projection[v_projection_bool], axis=1), axis=1)
         vert_disp = vert_disp - vert_projection
 
         min_disp_arr = np.concatenate((min_disp_arr, vert_disp), axis=1)
@@ -494,8 +495,8 @@ def spheropolygon_shortest_displacement_to_surface (
 
         #for spheropolygon
         edge_projection = np.squeeze(edge_disp - np.expand_dims(edge_disp @ (shape.normal/np.linalg.norm(shape.normal)), axis=1) * (shape.normal/np.linalg.norm(shape.normal)), axis=1)
-        e_projection_bool = np.linalg.norm(edge_projection, axis=1) > shape.radius
-        edge_projection[e_projection_bool] = shape.radius * edge_projection[e_projection_bool]/np.expand_dims(np.linalg.norm(edge_projection[e_projection_bool], axis=1), axis=1)
+        e_projection_bool = np.linalg.norm(edge_projection, axis=1) > radius
+        edge_projection[e_projection_bool] = radius * edge_projection[e_projection_bool]/np.expand_dims(np.linalg.norm(edge_projection[e_projection_bool], axis=1), axis=1)
         edge_disp = edge_disp - edge_projection
 
         min_disp_arr = np.concatenate((min_disp_arr, edge_disp), axis=1)

@@ -410,7 +410,7 @@ class ConvexSpheropolygon(Shape2D):
                 the shortest distance of each point to the surface
                 [shape = (n_points,)]
         """
-        return np.linalg.norm(spheropolygon_shortest_displacement_to_surface(self, points, translation_vector), axis=1)
+        return np.linalg.norm(spheropolygon_shortest_displacement_to_surface(self._polygon, self.radius, points, translation_vector), axis=1)
     
     def shortest_displacement_to_surface(self, points, translation_vector=np.array([0,0,0])):
         """
@@ -441,4 +441,4 @@ class ConvexSpheropolygon(Shape2D):
                 the shortest displacement of each point to the surface
                 [shape = (n_points, 3)]
         """
-        return spheropolygon_shortest_displacement_to_surface(self, points, translation_vector)
+        return spheropolygon_shortest_displacement_to_surface(self._polygon, self.radius, points, translation_vector)
