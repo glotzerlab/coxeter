@@ -2,7 +2,7 @@
 #    uv pip compile --python-version=3.13 requirements.in tests/requirements.in --output-file=.github/requirements3.13.txt
 contourpy==1.3.3
     # via matplotlib
-coverage==7.12.0
+coverage==7.13.0
     # via pytest-cov
 cycler==0.12.1
     # via matplotlib
@@ -12,13 +12,13 @@ execnet==2.1.2
     # via pytest-xdist
 fonttools==4.61.0
     # via matplotlib
-hypothesis==6.148.6
+hypothesis==6.148.7
     # via -r tests/requirements.in
 iniconfig==2.3.0
     # via pytest
 kiwisolver==1.4.9
     # via matplotlib
-matplotlib==3.10.7
+matplotlib==3.10.8
     # via -r tests/requirements.in
 miniball==1.2.0
     # via -r tests/requirements.in
@@ -49,7 +49,7 @@ pygments==2.19.2
     # via pytest
 pyparsing==3.2.5
     # via matplotlib
-pytest==9.0.1
+pytest==9.0.2
     # via
     #   -r tests/requirements.in
     #   pytest-cov
