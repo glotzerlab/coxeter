@@ -10,6 +10,13 @@ import rowan
 
 from ..extern.bentley_ottmann import poly_point_isect
 from ..extern.polytri import polytri
+from ._distance2d import (
+    get_edge_zones,
+    get_face_zones,
+    get_vert_zones,
+    shortest_displacement_to_surface,
+    shortest_distance_to_surface,
+)
 from .base_classes import Shape2D
 from .circle import Circle
 from .utils import (
@@ -18,14 +25,6 @@ from .utils import (
     _map_dict_keys,
     rotate_order2_tensor,
     translate_inertia_tensor,
-)
-
-from ._distance2d import (
-    get_vert_zones,
-    get_edge_zones,
-    get_face_zones,
-    shortest_displacement_to_surface,
-    shortest_distance_to_surface
 )
 
 try:
@@ -434,11 +433,17 @@ class Polygon(Shape2D):
         self._vertices += np.asarray(value) - self.centroid
 
         if self._vertex_zones is not None:
-            self._vertex_zones["bounds"] += self._vertex_zones["constraint"] @ (np.asarray(value) - self.centroid)
+            self._vertex_zones["bounds"] += self._vertex_zones["constraint"] @ (
+                np.asarray(value) - self.centroid
+            )
         if self._edge_zones is not None:
-            self._edge_zones["bounds"] += self._edge_zones["constraint"] @ (np.asarray(value) - self.centroid)
+            self._edge_zones["bounds"] += self._edge_zones["constraint"] @ (
+                np.asarray(value) - self.centroid
+            )
         if self._face_zones is not None:
-            self._face_zones["bounds"] += self._face_zones["constraint"] @ (np.asarray(value) - self.centroid)
+            self._face_zones["bounds"] += self._face_zones["constraint"] @ (
+                np.asarray(value) - self.centroid
+            )
 
     @property
     def edges(self):
@@ -861,7 +866,6 @@ class Polygon(Shape2D):
         self.centroid = old_centroid
         return hoomd_dict
 
-
     @property
     def vertex_zones(self):
         """dict: Get the constraints and bounds needed to partition the
@@ -872,7 +876,7 @@ class Polygon(Shape2D):
         if self._vertex_zones is None:
             self._vertex_zones = get_vert_zones(self)
         return self._vertex_zones
-    
+
     @property
     def edge_zones(self):
         """dict: Get the constraints and bounds needed to partition
@@ -883,7 +887,7 @@ class Polygon(Shape2D):
         if self._edge_zones is None:
             self._edge_zones = get_edge_zones(self)
         return self._edge_zones
-    
+
     @property
     def face_zones(self):
         """dict: Get the constraints and bounds needed to partition
@@ -894,10 +898,12 @@ class Polygon(Shape2D):
         if self._face_zones is None:
             self._face_zones = get_face_zones(self)
         return self._face_zones
-    
-    def shortest_distance_to_surface(self, points, translation_vector=np.array([0,0,0])):
+
+    def shortest_distance_to_surface(
+        self, points, translation_vector=np.array([0, 0, 0])
+    ):
         """
-        Solves for the shortest distance (magnitude) between points and 
+        Solves for the shortest distance (magnitude) between points and
         the surface of a polygon.
 
         This function calculates the shortest distance by partitioning
@@ -925,8 +931,10 @@ class Polygon(Shape2D):
                 [shape = (n_points,)]
         """
         return shortest_distance_to_surface(self, points, translation_vector)
-    
-    def shortest_displacement_to_surface(self, points, translation_vector=np.array([0,0,0])):
+
+    def shortest_displacement_to_surface(
+        self, points, translation_vector=np.array([0, 0, 0])
+    ):
         """
         Solves for the shortest displacement (vector) between points and
         the surface of a polygon.

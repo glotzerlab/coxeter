@@ -9,23 +9,13 @@ polyhedron and a sphere of some radius.
 
 import numpy as np
 
+from ._distance3d import (
+    shortest_distance_to_surface,
+    spheropolyhedron_shortest_displacement_to_surface,
+)
 from .base_classes import Shape3D
 from .convex_polyhedron import ConvexPolyhedron
 from .utils import _hoomd_dict_mapping, _map_dict_keys
-
-from ._distance3d import (
-    get_edge_face_neighbors,
-    get_vert_zones,
-    get_edge_zones,
-    get_face_zones,
-    get_vert_normals,
-    get_edge_normals,
-    get_weighted_vert_normals,
-    get_weighted_edge_normals,
-    shortest_displacement_to_surface,
-    shortest_distance_to_surface,
-    spheropolyhedron_shortest_displacement_to_surface
-)
 
 
 class ConvexSpheropolyhedron(Shape3D):
@@ -389,12 +379,12 @@ class ConvexSpheropolyhedron(Shape3D):
         self._polyhedron.centroid = old_centroid
         return hoomd_dict
 
-
-    
-    def shortest_distance_to_surface(self, points, translation_vector=np.array([0,0,0])):
+    def shortest_distance_to_surface(
+        self, points, translation_vector=np.array([0, 0, 0])
+    ):
         """
-        Solves for the shortest distance (magnitude) between points and 
-        the surface of a spheropolyhedron. If the point lies inside the 
+        Solves for the shortest distance (magnitude) between points and
+        the surface of a spheropolyhedron. If the point lies inside the
         spheropolyhedron, the distance is negative.
 
         This function calculates the shortest distance by partitioning
@@ -421,9 +411,14 @@ class ConvexSpheropolyhedron(Shape3D):
                 the shortest distance of each point to the surface
                 [shape = (n_points,)]
         """
-        return shortest_distance_to_surface(self._polyhedron, points, translation_vector) - self.radius
-    
-    def shortest_displacement_to_surface(self, points, translation_vector=np.array([0,0,0])):
+        return (
+            shortest_distance_to_surface(self._polyhedron, points, translation_vector)
+            - self.radius
+        )
+
+    def shortest_displacement_to_surface(
+        self, points, translation_vector=np.array([0, 0, 0])
+    ):
         """
         Solves for the shortest displacement (vector) between points and
         the surface of a spheropolyhedron.
@@ -452,6 +447,6 @@ class ConvexSpheropolyhedron(Shape3D):
                 the shortest displacement of each point to the surface
                 [shape = (n_points, 3)]
         """
-        return spheropolyhedron_shortest_displacement_to_surface(self._polyhedron, self.radius, points, translation_vector)
-
-
+        return spheropolyhedron_shortest_displacement_to_surface(
+            self._polyhedron, self.radius, points, translation_vector
+        )

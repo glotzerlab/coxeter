@@ -9,17 +9,13 @@ a circle of some radius.
 
 import numpy as np
 
+from ._distance2d import (
+    spheropolygon_shortest_displacement_to_surface,
+)
 from .base_classes import Shape2D
 from .convex_polygon import ConvexPolygon, _is_convex
 from .polygon import _align_points_by_normal
 from .utils import _hoomd_dict_mapping, _map_dict_keys
-
-from ._distance2d import (
-    get_vert_zones,
-    get_edge_zones,
-    get_face_zones,
-    spheropolygon_shortest_displacement_to_surface
-)
 
 
 class ConvexSpheropolygon(Shape2D):
@@ -63,7 +59,7 @@ class ConvexSpheropolygon(Shape2D):
         self._polygon = ConvexPolygon(vertices, normal)
         if not _is_convex(self.vertices, self._polygon.normal):
             raise ValueError("The vertices do not define a convex polygon.")
-        
+
         self._vertex_zones = None
         self._edge_zones = None
         self._face_zones = None
@@ -317,10 +313,11 @@ class ConvexSpheropolygon(Shape2D):
         self._polygon.centroid = old_centroid
         return hoomd_dict
 
-
-    def shortest_distance_to_surface(self, points, translation_vector=np.array([0,0,0])):
+    def shortest_distance_to_surface(
+        self, points, translation_vector=np.array([0, 0, 0])
+    ):
         """
-        Solves for the shortest distance (magnitude) between points and 
+        Solves for the shortest distance (magnitude) between points and
         the surface of a polygon.
 
         This function calculates the shortest distance by partitioning
@@ -347,9 +344,16 @@ class ConvexSpheropolygon(Shape2D):
                 the shortest distance of each point to the surface
                 [shape = (n_points,)]
         """
-        return np.linalg.norm(spheropolygon_shortest_displacement_to_surface(self._polygon, self.radius, points, translation_vector), axis=1)
-    
-    def shortest_displacement_to_surface(self, points, translation_vector=np.array([0,0,0])):
+        return np.linalg.norm(
+            spheropolygon_shortest_displacement_to_surface(
+                self._polygon, self.radius, points, translation_vector
+            ),
+            axis=1,
+        )
+
+    def shortest_displacement_to_surface(
+        self, points, translation_vector=np.array([0, 0, 0])
+    ):
         """
         Solves for the shortest displacement (vector) between points and
         the surface of a polygon.
@@ -378,4 +382,6 @@ class ConvexSpheropolygon(Shape2D):
                 the shortest displacement of each point to the surface
                 [shape = (n_points, 3)]
         """
-        return spheropolygon_shortest_displacement_to_surface(self._polygon, self.radius, points, translation_vector)
+        return spheropolygon_shortest_displacement_to_surface(
+            self._polygon, self.radius, points, translation_vector
+        )

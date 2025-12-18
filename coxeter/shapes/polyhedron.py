@@ -12,6 +12,18 @@ from scipy.sparse.csgraph import connected_components
 
 from .. import io
 from ..extern.polytri import polytri
+from ._distance3d import (
+    get_edge_face_neighbors,
+    get_edge_normals,
+    get_edge_zones,
+    get_face_zones,
+    get_vert_normals,
+    get_vert_zones,
+    get_weighted_edge_normals,
+    get_weighted_vert_normals,
+    shortest_displacement_to_surface,
+    shortest_distance_to_surface,
+)
 from .base_classes import Shape3D
 from .convex_polygon import ConvexPolygon, _is_convex
 from .polygon import Polygon, _is_simple
@@ -22,19 +34,6 @@ from .utils import (
     _map_dict_keys,
     _set_3d_axes_equal,
     translate_inertia_tensor,
-)
-
-from ._distance3d import (
-    get_edge_face_neighbors,
-    get_vert_zones,
-    get_edge_zones,
-    get_face_zones,
-    get_vert_normals,
-    get_edge_normals,
-    get_weighted_edge_normals,
-    get_weighted_vert_normals,
-    shortest_displacement_to_surface,
-    shortest_distance_to_surface
 )
 
 try:
@@ -614,11 +613,17 @@ class Polyhedron(Shape3D):
         self._find_equations()
 
         if self._vertex_zones is not None:
-            self._vertex_zones["bounds"] += self._vertex_zones["constraint"] @ (np.asarray(value) - self.centroid)
+            self._vertex_zones["bounds"] += self._vertex_zones["constraint"] @ (
+                np.asarray(value) - self.centroid
+            )
         if self._edge_zones is not None:
-            self._edge_zones["bounds"] += self._edge_zones["constraint"] @ (np.asarray(value) - self.centroid)
+            self._edge_zones["bounds"] += self._edge_zones["constraint"] @ (
+                np.asarray(value) - self.centroid
+            )
         if self._face_zones is not None:
-            self._face_zones["bounds"] += self._face_zones["constraint"] @ (np.asarray(value) - self.centroid)
+            self._face_zones["bounds"] += self._face_zones["constraint"] @ (
+                np.asarray(value) - self.centroid
+            )
 
     @property
     def bounding_sphere(self):
@@ -1087,34 +1092,32 @@ class Polyhedron(Shape3D):
                 "STL, PLY, VTK, X3D, HTML"
             )
 
-
-
     @property
     def edge_face_neighbors(self):
         """:class:`numpy.ndarray`: Get the indices of the faces that
         are adjacent to each edge.
-        
+
         For a given edge vector oriented pointing upwards and from
         an outside perspective of the polyhedron, the index of the
         face to the left of the edge is given by the first column,
-        and the index of the face to the right of the edge is 
+        and the index of the face to the right of the edge is
         given by the second column.
         """
         if self._edge_face_neighbors is None:
             self._edge_face_neighbors = get_edge_face_neighbors(self)
         return self._edge_face_neighbors
-    
+
     @property
     def vertex_zones(self):
-        """dict: Get the constraints and bounds needed to partition the 
-        volume surrounding a polyhedron into zones where the shortest 
-        distance from any point that is within a vertex zone is the 
+        """dict: Get the constraints and bounds needed to partition the
+        volume surrounding a polyhedron into zones where the shortest
+        distance from any point that is within a vertex zone is the
         distance between the point and the corresponding vertex.
         """
         if self._vertex_zones is None:
             self._vertex_zones = get_vert_zones(self)
         return self._vertex_zones
-    
+
     @property
     def edge_zones(self):
         """dict: Get the constraints and bounds needed to partition
@@ -1125,7 +1128,7 @@ class Polyhedron(Shape3D):
         if self._edge_zones is None:
             self._edge_zones = get_edge_zones(self)
         return self._edge_zones
-    
+
     @property
     def face_zones(self):
         """dict: Get the constraints and bounds needed to partition
@@ -1137,31 +1140,31 @@ class Polyhedron(Shape3D):
         if self._face_zones is None:
             self._face_zones = get_face_zones(self)
         return self._face_zones
-    
+
     @property
     def vertex_normals(self):
         """:class:`numpy.ndarray`: Get the unit vector normals of vertices.
-        
+
         The normals point outwards from the polyhedron.
         """
         if self._vertex_normals is None:
             self._vertex_normals = get_vert_normals(self)
         return self._vertex_normals
-    
+
     @property
     def edge_normals(self):
         """:class:`numpy.ndarray`: Get the unit vector normals of edges.
-        
+
         The normals point outwards from the polyhedron.
         """
         if self._edge_normals is None:
             self._edge_normals = get_edge_normals(self)
         return self._edge_normals
-    
+
     @property
     def weighted_vertex_normals(self):
         """:class:`numpy.ndarray`: Get the weighted normals of vertices.
-        
+
         The normals point outwards from the polyhedron.
         """
         return get_weighted_vert_normals(self)
@@ -1169,16 +1172,17 @@ class Polyhedron(Shape3D):
     @property
     def weighted_edge_normals(self):
         """:class:`numpy.ndarray`: Get the weighted normals of edges.
-        
+
         The normals point outwards from the polyhedron.
         """
         return get_weighted_edge_normals(self)
-    
 
-    def shortest_distance_to_surface(self, points, translation_vector=np.array([0,0,0])):
+    def shortest_distance_to_surface(
+        self, points, translation_vector=np.array([0, 0, 0])
+    ):
         """
-        Solves for the shortest distance (magnitude) between points and 
-        the surface of a polyhedron. If the point lies inside the 
+        Solves for the shortest distance (magnitude) between points and
+        the surface of a polyhedron. If the point lies inside the
         polyhedron, the distance is negative.
 
         This function calculates the shortest distance by partitioning
@@ -1206,8 +1210,10 @@ class Polyhedron(Shape3D):
                 [shape = (n_points,)]
         """
         return shortest_distance_to_surface(self, points, translation_vector)
-    
-    def shortest_displacement_to_surface(self, points, translation_vector=np.array([0,0,0])):
+
+    def shortest_displacement_to_surface(
+        self, points, translation_vector=np.array([0, 0, 0])
+    ):
         """
         Solves for the shortest displacement (vector) between points and
         the surface of a polyhedron.
@@ -1237,4 +1243,3 @@ class Polyhedron(Shape3D):
                 [shape = (n_points, 3)]
         """
         return shortest_displacement_to_surface(self, points, translation_vector)
-
