@@ -166,20 +166,20 @@ def test_shortest_distance_convex():
     verts = np.array([[1,1,1], [-1,1,1], [1,-1,1], [1,1,-1], [-1,-1,1], [-1,1,-1],[1,-1,-1],[-1,-1,-1]])
     poly = ConvexSpheropolyhedron(vertices=verts, radius = radius)
 
-    x_points = np.array([[3,3,3],[3,3,5],[5,5,1],[5,4,2],[3,5,5],[3,4,5],[3,3,6],[4,4,4],[4,4,3],[4,3,3]])
+    test_points = np.array([[3,3,3],[3,3,5],[5,5,1],[5,4,2],[3,5,5],[3,4,5],[3,3,6],[4,4,4],[4,4,3],[4,3,3]])
 
-    distances = poly.shortest_distance_to_surface(x_points, translation_vector=np.array([3,3,3]))
-    displacements = poly.shortest_displacement_to_surface(x_points, translation_vector=np.array([3,3,3]))
+    distances = poly.shortest_distance_to_surface(test_points, translation_vector=np.array([3,3,3]))
+    displacements = poly.shortest_displacement_to_surface(test_points, translation_vector=np.array([3,3,3]))
 
     print(distances)
     print(displacements)
 
     np.testing.assert_allclose(np.abs(distances), np.linalg.norm(displacements, axis=1))
 
-    poly_surface_distance = poly.shortest_distance_to_surface(x_points + displacements, translation_vector=np.array([3,3,3]))
-    poly_surface_displacement = poly.shortest_displacement_to_surface(x_points + displacements, translation_vector=np.array([3,3,3]))
-    np.testing.assert_allclose(poly_surface_distance, np.zeros((len(x_points))), atol=1e-10)
-    np.testing.assert_allclose(poly_surface_displacement, np.zeros((len(x_points),3)), atol=1e-10)
+    poly_surface_distance = poly.shortest_distance_to_surface(test_points + displacements, translation_vector=np.array([3,3,3]))
+    poly_surface_displacement = poly.shortest_displacement_to_surface(test_points + displacements, translation_vector=np.array([3,3,3]))
+    np.testing.assert_allclose(poly_surface_distance, np.zeros((len(test_points))), atol=1e-10)
+    np.testing.assert_allclose(poly_surface_displacement, np.zeros((len(test_points),3)), atol=1e-10)
 
     true_distances = np.array([-1, 1, np.sqrt(3), 1, np.sqrt(2), 1, 2, 0, 0, 0]) - radius
     true_displacements = np.array([[0,0,-1], [-1,-1,1], [-1,0,0], [0,-1,-1], [0,0,-1], [0,0,-2]])

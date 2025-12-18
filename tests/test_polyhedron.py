@@ -961,16 +961,16 @@ def test_shortest_distance_convex():
     cube_verts = np.array([[1,1,1], [-1,1,1], [1,-1,1], [1,1,-1], [-1,-1,1], [-1,1,-1],[1,-1,-1],[-1,-1,-1]])
     cube = ConvexPolyhedron(vertices=cube_verts)#, faces=[[1,5,7,4],[0,2,6,3],[2,4,7,6],[3,6,7,5],[0,1,4,2],[1,0,3,5]])
 
-    x_points = np.array([[3,3,3],[3,3,5],[5,5,1],[5,4,2],[3,5,5],[3,4,5],[3,3,6]])
+    test_points = np.array([[3,3,3],[3,3,5],[5,5,1],[5,4,2],[3,5,5],[3,4,5],[3,3,6]])
 
-    distances = cube.shortest_distance_to_surface(x_points, translation_vector=np.array([3,3,3]))
-    displacements = cube.shortest_displacement_to_surface(x_points, translation_vector=np.array([3,3,3]))
+    distances = cube.shortest_distance_to_surface(test_points, translation_vector=np.array([3,3,3]))
+    displacements = cube.shortest_displacement_to_surface(test_points, translation_vector=np.array([3,3,3]))
     np.testing.assert_allclose(np.abs(distances), np.linalg.norm(displacements, axis=1))
 
-    cube_surface_distance = cube.shortest_distance_to_surface(x_points + displacements, translation_vector=np.array([3,3,3]))
-    cube_surface_displacement = cube.shortest_displacement_to_surface(x_points + displacements, translation_vector=np.array([3,3,3]))
-    np.testing.assert_allclose(cube_surface_distance, np.zeros((len(x_points))))
-    np.testing.assert_allclose(cube_surface_displacement, np.zeros((len(x_points),3)))
+    cube_surface_distance = cube.shortest_distance_to_surface(test_points + displacements, translation_vector=np.array([3,3,3]))
+    cube_surface_displacement = cube.shortest_displacement_to_surface(test_points + displacements, translation_vector=np.array([3,3,3]))
+    np.testing.assert_allclose(cube_surface_distance, np.zeros((len(test_points))))
+    np.testing.assert_allclose(cube_surface_displacement, np.zeros((len(test_points),3)))
 
     true_distances = np.array([-1, 1, np.sqrt(3), 1, np.sqrt(2), 1, 2])
     true_displacements = np.array([[0,0,-1], [-1,-1,1], [-1,0,0], [0,-1,-1], [0,0,-1], [0,0,-2]])
@@ -981,21 +981,21 @@ def test_shortest_distance_convex():
 
 def test_shortest_distance_concave():
     
-    x_points = np.array([[5,5,1],[5,4,2],[3,5,5],[3,4,5],[3,3,6],[3.5,2.5,3],[4.5,3,5],[3,3,3],[3,3.5,3.5],[3,3,2.25]])
+    test_points = np.array([[5,5,1],[5,4,2],[3,5,5],[3,4,5],[3,3,6],[3.5,2.5,3],[4.5,3,5],[3,3,3],[3,3.5,3.5],[3,3,2.25]])
 
     #--- PYRAMID Point on Cube Case ---
     pyramidcube_verts = np.array([[1,1,1],[-1,1,1],[1,-1,1],[1,1,-1],[-1,-1,1],[-1,1,-1],[1,-1,-1],[-1,-1,-1],[0,0,3],[0,3,0]])
     pyramid_faces = [[0,1,8],[1,4,8],[4,2,8],[2,0,8],[1,0,9],[5,1,9],[3,5,9],[0,3,9],[1,5,7,4],[0,2,6,3],[2,4,7,6],[3,6,7,5]]
     pyramidcube = Polyhedron(vertices=pyramidcube_verts, faces=pyramid_faces)
 
-    pyramid_distances = pyramidcube.shortest_distance_to_surface(x_points, translation_vector=np.array([3,3,3]))
-    pyramid_displacements = pyramidcube.shortest_displacement_to_surface(x_points, translation_vector=np.array([3,3,3]))
+    pyramid_distances = pyramidcube.shortest_distance_to_surface(test_points, translation_vector=np.array([3,3,3]))
+    pyramid_displacements = pyramidcube.shortest_displacement_to_surface(test_points, translation_vector=np.array([3,3,3]))
     np.testing.assert_allclose(np.abs(pyramid_distances), np.linalg.norm(pyramid_displacements, axis=1))
 
-    pyramid_surface_distance = pyramidcube.shortest_distance_to_surface(x_points + pyramid_displacements, translation_vector=np.array([3,3,3]))
-    pyramid_surface_displacement = pyramidcube.shortest_displacement_to_surface(x_points + pyramid_displacements, translation_vector=np.array([3,3,3]))
-    np.testing.assert_allclose(pyramid_surface_distance, np.zeros((len(x_points))))
-    np.testing.assert_allclose(pyramid_surface_displacement, np.zeros((len(x_points),3)))
+    pyramid_surface_distance = pyramidcube.shortest_distance_to_surface(test_points + pyramid_displacements, translation_vector=np.array([3,3,3]))
+    pyramid_surface_displacement = pyramidcube.shortest_displacement_to_surface(test_points + pyramid_displacements, translation_vector=np.array([3,3,3]))
+    np.testing.assert_allclose(pyramid_surface_distance, np.zeros((len(test_points))))
+    np.testing.assert_allclose(pyramid_surface_displacement, np.zeros((len(test_points),3)))
 
     pyramid_true_distances = np.array([np.sqrt(3), 1, 3/np.sqrt(5), 1/np.sqrt(5), 0, -0.5, 2/np.sqrt(5), -1, -1*np.sqrt(0.5), -0.25])
 
@@ -1006,14 +1006,14 @@ def test_shortest_distance_concave():
     prism_faces = [[0,1,9,8],[2,8,9,4],[2,4,7,6],[3,6,7,5],[3,5,11,10],[1,0,10,11],[0,8,2,6,3,10],[1,11,5,7,4,9]]
     prismcube = Polyhedron(vertices=prismcube_verts, faces=prism_faces)
 
-    prism_distances = prismcube.shortest_distance_to_surface(x_points, translation_vector=np.array([3,3,3]))
-    prism_displacements = prismcube.shortest_displacement_to_surface(x_points, translation_vector=np.array([3,3,3]))
+    prism_distances = prismcube.shortest_distance_to_surface(test_points, translation_vector=np.array([3,3,3]))
+    prism_displacements = prismcube.shortest_displacement_to_surface(test_points, translation_vector=np.array([3,3,3]))
     np.testing.assert_allclose(np.abs(prism_distances), np.linalg.norm(prism_displacements, axis=1))
 
-    prism_surface_distance = prismcube.shortest_distance_to_surface(x_points + prism_displacements, translation_vector=np.array([3,3,3]))
-    prism_surface_displacement = prismcube.shortest_displacement_to_surface(x_points + prism_displacements, translation_vector=np.array([3,3,3]))
-    np.testing.assert_allclose(prism_surface_distance, np.zeros((len(x_points))))
-    np.testing.assert_allclose(prism_surface_displacement, np.zeros((len(x_points),3)))
+    prism_surface_distance = prismcube.shortest_distance_to_surface(test_points + prism_displacements, translation_vector=np.array([3,3,3]))
+    prism_surface_displacement = prismcube.shortest_displacement_to_surface(test_points + prism_displacements, translation_vector=np.array([3,3,3]))
+    np.testing.assert_allclose(prism_surface_distance, np.zeros((len(test_points))))
+    np.testing.assert_allclose(prism_surface_displacement, np.zeros((len(test_points),3)))
 
     prism_true_distances = np.array([np.sqrt(70)/5, 1, 3/np.sqrt(5), 1/np.sqrt(5), 0, -0.5, 0.5, -1, -1*np.sqrt(0.5), -0.25])
 
@@ -1024,14 +1024,14 @@ def test_shortest_distance_concave():
     indented_faces = [[0,3,5,1],[0,2,6,3],[1,5,7,4],[2,4,7,6],[3,6,7,5],[0,1,8],[0,8,2],[2,8,4],[1,4,8]]
     indented_cube = Polyhedron(vertices=indented_cube_verts, faces=indented_faces)
 
-    indented_distances = indented_cube.shortest_distance_to_surface(x_points, translation_vector=np.array([3,3,3]))
-    indented_displacements = indented_cube.shortest_displacement_to_surface(x_points, translation_vector=np.array([3,3,3]))
+    indented_distances = indented_cube.shortest_distance_to_surface(test_points, translation_vector=np.array([3,3,3]))
+    indented_displacements = indented_cube.shortest_displacement_to_surface(test_points, translation_vector=np.array([3,3,3]))
     np.testing.assert_allclose(np.abs(indented_distances), np.linalg.norm(indented_displacements, axis=1))
     
-    indented_surface_distance = indented_cube.shortest_distance_to_surface(x_points + indented_displacements, translation_vector=np.array([3,3,3]))
-    indented_surface_displacement = indented_cube.shortest_displacement_to_surface(x_points + indented_displacements, translation_vector=np.array([3,3,3]))
-    np.testing.assert_allclose(indented_surface_distance, np.zeros((len(x_points))), atol=2e-10)
-    np.testing.assert_allclose(indented_surface_displacement, np.zeros((len(x_points),3)), atol=2e-10)
+    indented_surface_distance = indented_cube.shortest_distance_to_surface(test_points + indented_displacements, translation_vector=np.array([3,3,3]))
+    indented_surface_displacement = indented_cube.shortest_displacement_to_surface(test_points + indented_displacements, translation_vector=np.array([3,3,3]))
+    np.testing.assert_allclose(indented_surface_distance, np.zeros((len(test_points))), atol=2e-10)
+    np.testing.assert_allclose(indented_surface_displacement, np.zeros((len(test_points),3)), atol=2e-10)
 
     indented_true_distances = np.array([np.sqrt(3), 1, np.sqrt(2), 1, np.sqrt(5), -0.1714985851, np.sqrt(1.25), 1/np.sqrt(13), 0.5/np.sqrt(13), -0.25])
 

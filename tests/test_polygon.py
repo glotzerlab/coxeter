@@ -648,10 +648,10 @@ def test_shortest_distance_convex():
     tri_verts = np.array([[0, 0.5], [-0.25*np.sqrt(3), -0.25], [0.25*np.sqrt(3), -0.25]])
     triangle = ConvexPolygon(vertices=tri_verts)
 
-    x_points = np.array([[3.5,3.25,0], [3,3.75,0], [3,3.25,0], [3,3,1], [3.25,3.5, -1]])
+    test_points = np.array([[3.5,3.25,0], [3,3.75,0], [3,3.25,0], [3,3,1], [3.25,3.5, -1]])
 
-    distances = triangle.shortest_distance_to_surface(x_points, translation_vector=np.array([3,3,0]))
-    displacements = triangle.shortest_displacement_to_surface(x_points, translation_vector=np.array([3,3,0]))
+    distances = triangle.shortest_distance_to_surface(test_points, translation_vector=np.array([3,3,0]))
+    displacements = triangle.shortest_displacement_to_surface(test_points, translation_vector=np.array([3,3,0]))
 
     true_distances = np.array([0.3080127018, 0.25, 0, 1, 1.0231690965])
     true_displacements = np.array([[-0.2667468246, -0.1540063509, 0], [0,-0.25,0], [0,0,0],[0,0,-1],[-0.1875, -0.1082531755, 1]])
@@ -663,10 +663,10 @@ def test_shortest_distance_concave():
     verts = np.array([[0,0.5],[-0.125,0.75],[-0.25*np.sqrt(3), -0.25], [0.25*np.sqrt(3), -0.25],[0.25*np.sqrt(3),0.75]])
     concave_poly = Polygon(vertices=verts)
 
-    x_points = np.array([[3.5, 3.25,0],[3,3.75,0],[3,3.25,0],[3,3,-1],[3.25,3.5,-1],[3+0.25*np.sqrt(3),4,0]])
+    test_points = np.array([[3.5, 3.25,0],[3,3.75,0],[3,3.25,0],[3,3,-1],[3.25,3.5,-1],[3+0.25*np.sqrt(3),4,0]])
 
-    distances = concave_poly.shortest_distance_to_surface(x_points, translation_vector=np.array([3,3,0]))
-    displacements = concave_poly.shortest_displacement_to_surface(x_points, translation_vector=np.array([3,3,0]))
+    distances = concave_poly.shortest_distance_to_surface(test_points, translation_vector=np.array([3,3,0]))
+    displacements = concave_poly.shortest_displacement_to_surface(test_points, translation_vector=np.array([3,3,0]))
 
     true_distances = np.array([abs(0.25*np.sqrt(3)-0.5), np.sqrt(0.0125), 0, 1, 1, 0.25])
     true_displacements = np.array([[0.25*np.sqrt(3)-0.5,0,0],[-0.1,-0.05,0],[0,0,0],[0,0,1],[0,0,1],[0,-0.25,0]])

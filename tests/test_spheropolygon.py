@@ -243,10 +243,10 @@ def test_shortest_distance_convex():
     tri_verts = np.array([[0, 0.5], [-0.25*np.sqrt(3), -0.25], [0.25*np.sqrt(3), -0.25]])
     triangle = ConvexSpheropolygon(vertices=tri_verts, radius = 0.25)
 
-    x_points = np.array([[3.5,3.25,0], [3,3.75,0], [3,3.25,0], [3,3,1], [3.25,3.5, -1], [3.5,3.75,1], [3-0.25*np.sqrt(3), 2.65,0], [3,4,-1]])
+    test_points = np.array([[3.5,3.25,0], [3,3.75,0], [3,3.25,0], [3,3,1], [3.25,3.5, -1], [3.5,3.75,1], [3-0.25*np.sqrt(3), 2.65,0], [3,4,-1]])
 
-    distances = triangle.shortest_distance_to_surface(x_points, translation_vector=np.array([3,3,0]))
-    displacements = triangle.shortest_displacement_to_surface(x_points, translation_vector=np.array([3,3,0]))
+    distances = triangle.shortest_distance_to_surface(test_points, translation_vector=np.array([3,3,0]))
+    displacements = triangle.shortest_displacement_to_surface(test_points, translation_vector=np.array([3,3,0]))
 
     true_distances = np.array([0.0580127018, 0, 0, 1, 1, 1.0463612304, 0, 1.0307764064])
     true_displacements = np.array([[-0.0502404735, -0.0290063509, 0], [0,0,0], [0,0,0], [0,0,-1], [0,0,1], [-0.2667468244, -0.1540063509, -1], [0,0,0], [0,-0.25,1]])
