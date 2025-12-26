@@ -79,7 +79,7 @@ scipy==1.13.1
     # via
     #   -r requirements.in
     #   plato-draw
-setuptools==80.9.0
+setuptools==78.1.1
     # via -r tests/requirements.in
 six==1.17.0
     # via python-dateutil

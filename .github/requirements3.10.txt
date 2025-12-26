@@ -14,7 +14,7 @@ exceptiongroup==1.3.1
     #   pytest
 execnet==2.1.2
     # via pytest-xdist
-fonttools==4.61.1
+fonttools==4.60.2
     # via matplotlib
 hypothesis==6.148.8
     # via -r tests/requirements.in
@@ -75,7 +75,7 @@ scipy==1.15.3
     # via
     #   -r requirements.in
     #   plato-draw
-setuptools==80.9.0
+setuptools==78.1.1
     # via -r tests/requirements.in
 six==1.17.0
     # via python-dateutil
