@@ -158,3 +158,142 @@ def test_to_hoomd(poly, r):
     hoomd_dict = poly.to_hoomd()
     for key, val in zip(dict_keys, dict_vals):
         assert np.allclose(hoomd_dict[key], val), f"{key}"
+
+
+def test_shortest_distance_convex():
+    radius = 0.5  # np.random.rand(1)
+    verts = np.array(
+        [
+            [1, 1, 1],
+            [-1, 1, 1],
+            [1, -1, 1],
+            [1, 1, -1],
+            [-1, -1, 1],
+            [-1, 1, -1],
+            [1, -1, -1],
+            [-1, -1, -1],
+        ]
+    )
+    poly = ConvexSpheropolyhedron(vertices=verts, radius=radius)
+
+    test_points = np.array(
+        [
+            [3, 3, 3],
+            [3, 3, 5],
+            [5, 5, 1],
+            [5, 4, 2],
+            [3, 5, 5],
+            [3, 4, 5],
+            [3, 3, 6],
+            [4, 4, 4],
+            [4, 4, 3],
+            [4, 3, 3],
+        ]
+    )
+
+    distances = poly.shortest_distance_to_surface(
+        test_points, translation_vector=np.array([3, 3, 3])
+    )
+    displacements = poly.shortest_displacement_to_surface(
+        test_points, translation_vector=np.array([3, 3, 3])
+    )
+
+    print(distances)
+    print(displacements)
+
+    np.testing.assert_allclose(np.abs(distances), np.linalg.norm(displacements, axis=1))
+
+    poly_surface_distance = poly.shortest_distance_to_surface(
+        test_points + displacements, translation_vector=np.array([3, 3, 3])
+    )
+    poly_surface_displacement = poly.shortest_displacement_to_surface(
+        test_points + displacements, translation_vector=np.array([3, 3, 3])
+    )
+    np.testing.assert_allclose(
+        poly_surface_distance, np.zeros(len(test_points)), atol=1e-10
+    )
+    np.testing.assert_allclose(
+        poly_surface_displacement, np.zeros((len(test_points), 3)), atol=1e-10
+    )
+
+    true_distances = (
+        np.array([-1, 1, np.sqrt(3), 1, np.sqrt(2), 1, 2, 0, 0, 0]) - radius
+    )
+    true_displacements = np.array(
+        [[0, 0, -1], [-1, -1, 1], [-1, 0, 0], [0, -1, -1], [0, 0, -1], [0, 0, -2]]
+    )
+    true_displacements = true_displacements - radius * (
+        true_displacements
+        / np.expand_dims(np.linalg.norm(true_displacements, axis=1), axis=1)
+    )
+
+    np.testing.assert_allclose(distances, true_distances)
+    np.testing.assert_allclose(displacements[1:7], true_displacements)
+
+
+def test_shortest_distance_convex_general():
+    # Creating a random convex spheropolyhedron
+    # np.random.seed(6)
+    random_theta = np.random.rand(20) * np.pi
+    random_phi = np.random.rand(20) * 2 * np.pi
+    radius = np.random.rand(1) * 5  # radius for the convex polyhedron
+    sph_poly_radius = np.random.rand(1) * 2  # radius for the spheropolyhedron
+
+    vertices = np.zeros((20, 3))
+    vertices[:, 0] = radius * np.sin(random_theta) * np.cos(random_phi)  # x
+    vertices[:, 1] = radius * np.sin(random_theta) * np.sin(random_phi)  # y
+    vertices[:, 2] = radius * np.cos(random_theta)
+
+    poly = ConvexSpheropolyhedron(vertices=vertices, radius=sph_poly_radius)
+
+    points = np.random.rand(1500, 3) * 20 - 10
+
+    distances = poly.shortest_distance_to_surface(points)
+    displacements = poly.shortest_displacement_to_surface(points)
+
+    np.testing.assert_allclose(np.abs(distances), np.linalg.norm(displacements, axis=1))
+
+    # Verifying that the displacements will move the points onto the surface
+    poly_surface_distance = poly.shortest_distance_to_surface(points + displacements)
+    poly_surface_displacement = poly.shortest_displacement_to_surface(
+        points + displacements
+    )
+
+    np.testing.assert_allclose(poly_surface_distance, np.zeros(len(points)), atol=2e-8)
+    np.testing.assert_allclose(
+        poly_surface_displacement, np.zeros((len(points), 3)), atol=2e-8
+    )
+
+    def scipy_closest_point(point, surface_constraint, surface_bounds):
+        from scipy.optimize import LinearConstraint, minimize
+
+        tri_min_point = minimize(
+            fun=lambda pt: np.linalg.norm(pt - point),  # Function to optimize
+            x0=np.zeros(3),  # Initial guess
+            constraints=[LinearConstraint(surface_constraint, -np.inf, surface_bounds)],
+            tol=1e-12,
+        )
+
+        distance = np.linalg.norm(tri_min_point.x - point)
+
+        return distance
+
+    poly_constraint = poly._polyhedron.normals
+    poly_bounds = np.sum(poly_constraint * poly._polyhedron.face_centroids, axis=1)
+
+    scipy_distances = []
+    for point in points:
+        outside_distance = scipy_closest_point(point, poly_constraint, poly_bounds)
+
+        scipy_distances.append(outside_distance)
+
+    scipy_distances = np.asarray(scipy_distances) - sph_poly_radius
+    scipy_zero = scipy_distances < 0
+    scipy_distances[scipy_zero] = 0
+
+    is_zero_bool = distances <= 0
+
+    zero_inside_distances = distances
+    zero_inside_distances[is_zero_bool] = 0
+
+    np.testing.assert_allclose(zero_inside_distances, scipy_distances, atol=2e-8)
