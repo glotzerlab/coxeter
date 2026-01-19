@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.abspath("../../"))
 # -- Project information -----------------------------------------------------
 
 project = "coxeter"
-copyright = "2015-2021, The Regents of the University of Michigan"
+copyright = "2015-2026, The Regents of the University of Michigan"
 author = "Vyas Ramasubramani"
 
 # The full version, including alpha/beta/rc tags
