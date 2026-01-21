@@ -21,7 +21,7 @@ from .utils import (
 )
 
 try:
-    import miniball
+    import cyminiball
 
     MINIBALL = True
 except ImportError:
@@ -515,13 +515,13 @@ class Polygon(Shape2D):
         """:class:`~.Circle`: Get the minimal bounding circle."""
         if not MINIBALL:
             raise ImportError(
-                "The miniball module must be installed. It can "
+                "The cyminiball module must be installed. It can "
                 "be installed as an extra with coxeter (e.g. "
                 "with pip install coxeter[bounding_sphere], or "
-                "directly from PyPI using pip install miniball."
+                "directly from PyPI using pip install cyminiball."
             )
 
-        # The algorithm in miniball involves solving a linear system and
+        # The algorithm in cyminiball involves solving a linear system and
         # can therefore occasionally be somewhat unstable. Applying a
         # random rotation will usually fix the issue.
         max_attempts = 10
@@ -531,7 +531,7 @@ class Polygon(Shape2D):
         while attempt < max_attempts:
             attempt += 1
             try:
-                center, r2 = miniball.get_bounding_ball(vertices)
+                center, r2 = cyminiball.compute(vertices)
                 break
             except np.linalg.LinAlgError:
                 current_rotation = rowan.random.rand(1)
