@@ -37,6 +37,7 @@ packaging==25.0
     #   matplotlib
     #   pytest
     #   pytest-doctestplus
+    #   wheel
 pillow==12.1.0
     # via matplotlib
 plato-draw==1.12.0
@@ -77,5 +78,5 @@ six==1.17.0
     # via python-dateutil
 sortedcontainers==2.4.0
     # via hypothesis
-wheel==0.45.1
+wheel==0.46.2
     # via -r tests/requirements.in
