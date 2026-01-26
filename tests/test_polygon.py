@@ -641,3 +641,183 @@ def test_edge_lengths(poly):
         np.diff(poly.vertices[expected_edges], axis=1).squeeze(), axis=1
     )
     np.testing.assert_allclose(poly.edge_lengths, lengths)
+
+
+def test_shortest_distance_convex():
+    tri_verts = np.array(
+        [[0, 0.5], [-0.25 * np.sqrt(3), -0.25], [0.25 * np.sqrt(3), -0.25]]
+    )
+    triangle = ConvexPolygon(vertices=tri_verts)
+
+    test_points = np.array(
+        [[3.5, 3.25, 0], [3, 3.75, 0], [3, 3.25, 0], [3, 3, 1], [3.25, 3.5, -1]]
+    )
+
+    distances = triangle.shortest_distance_to_surface(
+        test_points, translation_vector=np.array([3, 3, 0])
+    )
+    displacements = triangle.shortest_displacement_to_surface(
+        test_points, translation_vector=np.array([3, 3, 0])
+    )
+
+    true_distances = np.array([0.3080127018, 0.25, 0, 1, 1.0231690965])
+    true_displacements = np.array(
+        [
+            [-0.2667468246, -0.1540063509, 0],
+            [0, -0.25, 0],
+            [0, 0, 0],
+            [0, 0, -1],
+            [-0.1875, -0.1082531755, 1],
+        ]
+    )
+
+    np.testing.assert_allclose(distances, true_distances)
+    np.testing.assert_allclose(displacements, true_displacements)
+
+
+def test_shortest_distance_concave():
+    verts = np.array(
+        [
+            [0, 0.5],
+            [-0.125, 0.75],
+            [-0.25 * np.sqrt(3), -0.25],
+            [0.25 * np.sqrt(3), -0.25],
+            [0.25 * np.sqrt(3), 0.75],
+        ]
+    )
+    concave_poly = Polygon(vertices=verts)
+
+    test_points = np.array(
+        [
+            [3.5, 3.25, 0],
+            [3, 3.75, 0],
+            [3, 3.25, 0],
+            [3, 3, -1],
+            [3.25, 3.5, -1],
+            [3 + 0.25 * np.sqrt(3), 4, 0],
+        ]
+    )
+
+    distances = concave_poly.shortest_distance_to_surface(
+        test_points, translation_vector=np.array([3, 3, 0])
+    )
+    displacements = concave_poly.shortest_displacement_to_surface(
+        test_points, translation_vector=np.array([3, 3, 0])
+    )
+
+    true_distances = np.array(
+        [abs(0.25 * np.sqrt(3) - 0.5), np.sqrt(0.0125), 0, 1, 1, 0.25]
+    )
+    true_displacements = np.array(
+        [
+            [0.25 * np.sqrt(3) - 0.5, 0, 0],
+            [-0.1, -0.05, 0],
+            [0, 0, 0],
+            [0, 0, 1],
+            [0, 0, 1],
+            [0, -0.25, 0],
+        ]
+    )
+
+    np.testing.assert_allclose(distances, true_distances)
+    np.testing.assert_allclose(displacements, true_displacements)
+
+
+def test_shortest_distance_general():
+    # Creating a random polygon (nonconvex usually)
+    # np.random.seed(3)
+    random_angles = np.random.rand(15) * 2 * np.pi  # angles
+    sorted_angles = np.sort(random_angles)
+    random_dist = np.random.rand(15) * 10  # from origin
+
+    vertices = np.zeros((15, 2))
+    vertices[:, 0] = random_dist * np.cos(sorted_angles)  # x
+    vertices[:, 1] = random_dist * np.sin(sorted_angles)  # y
+
+    poly = Polygon(vertices=vertices, normal=[0, 0, 1])
+
+    points2d = np.random.rand(100, 2) * 20 - 10
+    points3d = np.random.rand(150, 3) * 20 - 10
+
+    distances2d = poly.shortest_distance_to_surface(points2d)
+    distances3d = poly.shortest_distance_to_surface(points3d)
+    displacements2d = poly.shortest_displacement_to_surface(points2d)
+    displacements3d = poly.shortest_displacement_to_surface(points3d)
+
+    np.testing.assert_allclose(distances2d, np.linalg.norm(displacements2d, axis=1))
+    np.testing.assert_allclose(distances3d, np.linalg.norm(displacements3d, axis=1))
+
+    triangle_verts = []
+    for tri in poly._triangulation():
+        triangle_verts.append(list(tri))
+
+    triangle_verts = np.asarray(triangle_verts)
+
+    tri_edges = (
+        np.append(
+            triangle_verts[:, 1:], np.expand_dims(triangle_verts[:, 0], axis=1), axis=1
+        )
+        - triangle_verts
+    )  # edges point counterclockwise
+
+    edges_90 = np.cross(tri_edges, poly.normal)  # point outwards (n_triangles, 3, 3)
+    upper_bounds = np.sum(edges_90 * triangle_verts, axis=2)  # (n_triangles, 3)
+
+    def scipy_closest_point(point, edges_90, upper_bounds):
+        from scipy.optimize import LinearConstraint, minimize
+
+        all_tri_distances = []
+        all_tri_displacements = []
+        tmps = []
+        for triangle in zip(edges_90, upper_bounds, strict=True):
+            tri_min_point = minimize(
+                fun=lambda pt: np.linalg.norm(pt - point),  # Function to optimize
+                x0=np.zeros(3),  # Initial guess
+                constraints=[
+                    LinearConstraint(
+                        np.append(
+                            triangle[0].squeeze(), [[0, 0, 1], [0, 0, -1]], axis=0
+                        ),
+                        -np.inf,
+                        np.append(triangle[1].squeeze(), [0, 0]),
+                    )
+                ],
+                tol=1e-11,
+            )
+            triangle_distance = np.linalg.norm(tri_min_point.x - point)
+            all_tri_distances.append(triangle_distance)
+            all_tri_displacements.append(tri_min_point.x - point)
+
+        return np.min(all_tri_distances), all_tri_displacements[
+            np.argmin(all_tri_distances)
+        ]
+
+    scipy_distances2d = []
+    scipy_displacements2d = []
+    for point in points2d:
+        point = np.append(point, [0])
+
+        scipy_dist2d, scipy_displace2d = scipy_closest_point(
+            point, edges_90, upper_bounds
+        )
+        scipy_distances2d.append(scipy_dist2d)
+        scipy_displacements2d.append(scipy_displace2d)
+
+    scipy_distances3d = []
+    scipy_displacements3d = []
+    for point in points3d:
+        scipy_dist3d, scipy_displace3d = scipy_closest_point(
+            point, edges_90, upper_bounds
+        )
+        scipy_distances3d.append(scipy_dist3d)
+        scipy_displacements3d.append(scipy_displace3d)
+
+    scipy_distances2d = np.asarray(scipy_distances2d)
+    scipy_displacements2d = np.asarray(scipy_displacements2d)
+    scipy_distances3d = np.asarray(scipy_distances3d)
+    scipy_displacements3d = np.asarray(scipy_displacements3d)
+
+    np.testing.assert_allclose(distances2d, scipy_distances2d, atol=2e-8)
+    np.testing.assert_allclose(displacements2d, scipy_displacements2d, atol=2e-5)
+    np.testing.assert_allclose(distances3d, scipy_distances3d, atol=2e-8)
+    np.testing.assert_allclose(displacements3d, scipy_displacements3d, atol=2e-5)

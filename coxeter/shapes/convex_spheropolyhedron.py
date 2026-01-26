@@ -9,6 +9,10 @@ polyhedron and a sphere of some radius.
 
 import numpy as np
 
+from ._distance3d import (
+    shortest_distance_to_surface,
+    spheropolyhedron_shortest_displacement_to_surface,
+)
 from .base_classes import Shape3D
 from .convex_polyhedron import ConvexPolyhedron
 from .utils import _hoomd_dict_mapping, _map_dict_keys
@@ -69,6 +73,13 @@ class ConvexSpheropolyhedron(Shape3D):
         self._polyhedron = ConvexPolyhedron(vertices)
         self.radius = radius
 
+        self._edge_face_neighbors = None
+        self._vertex_zones = None
+        self._edge_zones = None
+        self._face_zones = None
+        self._vertex_normals = None
+        self._edge_normals = None
+
     @property
     def gsd_shape_spec(self):
         """dict: Get a :ref:`complete GSD specification <gsd:shapes>`."""  # noqa: D401
@@ -97,6 +108,9 @@ class ConvexSpheropolyhedron(Shape3D):
         """
         self.polyhedron._rescale(scale)
         self.radius *= scale
+        self._vertex_zones = None
+        self._edge_zones = None
+        self._face_zones = None
 
     @property
     def volume(self):
@@ -364,3 +378,75 @@ class ConvexSpheropolyhedron(Shape3D):
 
         self._polyhedron.centroid = old_centroid
         return hoomd_dict
+
+    def shortest_distance_to_surface(
+        self, points, translation_vector=np.array([0, 0, 0])
+    ):
+        """
+        Solves for the shortest distance (magnitude) between points and
+        the surface of a spheropolyhedron. If the point lies inside the
+        spheropolyhedron, the distance is negative.
+
+        This function calculates the shortest distance by partitioning
+        the space around a spheropolyhedron into zones: vertex, edge, and face.
+        Determining the zone(s) a point lies in, determines the distance
+        calculation(s) done. For a vertex zone,the distance is calculated
+        between a point and the vertex. For an edge zone, the distance is
+        calculated between a point and the edge. For a face zone, the
+        distance is calculated between a point and the face. Zones are
+        allowed to overlap, and points can be in more than one zone. By
+        taking the minimum of all the calculated distances, the shortest
+        distances are found.
+
+        Args:
+            points (list or :class:`numpy.ndarray`):
+                positions of the points [shape = (n_points, 3)]
+            translation_vector (list or :class:`numpy.ndarray`):
+                translation vector of the spheropolyhedron [shape = (3,)]
+                (Default value: [0,0,0])
+
+        Returns
+        -------
+            :class:`numpy.ndarray`:
+                the shortest distance of each point to the surface
+                [shape = (n_points,)]
+        """
+        return (
+            shortest_distance_to_surface(self._polyhedron, points, translation_vector)
+            - self.radius
+        )
+
+    def shortest_displacement_to_surface(
+        self, points, translation_vector=np.array([0, 0, 0])
+    ):
+        """
+        Solves for the shortest displacement (vector) between points and
+        the surface of a spheropolyhedron.
+
+        This function calculates the shortest displacement by partitioning
+        the space around a spheropolyhedron into zones: vertex, edge, and face.
+        Determining the zone(s) a point lies in, determines the displacement
+        calculation(s) done. For a vertex zone, the displacement is
+        calculated between a point and the vertex. For an edge zone, the
+        displacement is calculated between a point and the edge. For a face
+        zone, the displacement is calculated between a point and the face.
+        Zones are allowed to overlap, and points can be in more than one
+        zone. By taking the minimum of all the distances of the calculated
+        displacements, the shortest displacements are found.
+
+        Args:
+            points (list or :class:`numpy.ndarray`):
+                positions of the points [shape = (n_points, 3)]
+            translation_vector (list or :class:`numpy.ndarray`):
+                translation vector of the spheropolyhedron [shape = (3,)]
+                (Default value: [0,0,0])
+
+        Returns
+        -------
+            :class:`numpy.ndarray`:
+                the shortest displacement of each point to the surface
+                [shape = (n_points, 3)]
+        """
+        return spheropolyhedron_shortest_displacement_to_surface(
+            self._polyhedron, self.radius, points, translation_vector
+        )
