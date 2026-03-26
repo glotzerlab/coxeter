@@ -368,7 +368,7 @@ def from_obj(filename):
             # A vertex line starts with 'v' and has 3 or more components
             # separated by spaces. We only use the first 3 components, since
             # those are guaranteed to be x, y, and z.
-            if len(line) > 0 and line[0] == "v":
+            if len(line) > 0 and line[:2] == "v ":
                 component_str = line.rsplit("v ")[1]
                 vertices.append(
                     tuple(float(i) for i in component_str.split(" ")[:3])
