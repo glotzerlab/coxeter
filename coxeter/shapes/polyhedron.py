@@ -1022,40 +1022,38 @@ class Polyhedron(Shape3D):
         self.centroid = old_centroid
         return hoomd_dict
 
-    def save(self, filetype, filename):
+    def save(self, filename):
         """Save the polyhedron object to a file using methods from ``coxeter.io``.
 
         Args:
-            filetype (str):
-                The file format to export polyhedron to. Must be one of the following:
-                OBJ, OFF, STL, PLY, VTK, X3D, HTML.
-
             filename (str, pathlib.Path, or os.PathLike):
-                The name or path of the output file, including the extension.
+                The name or path of the output file. The extension must be one
+                of the following: OBJ, OFF, STL, PLY, VTK, X3D, HTML.
 
         Raises
         ------
             ValueError: If filetype is not one of the required strings.
             OSError: If open() encounters a problem.
         """
-        if filetype == "OBJ":
+        filetype = str(filename).split(".")[-1].lower()
+        if filetype == "obj":
             io.to_obj(self, filename)
-        elif filetype == "OFF":
+        elif filetype == "off":
             io.to_off(self, filename)
-        elif filetype == "STL":
+        elif filetype == "stl":
             io.to_stl(self, filename)
-        elif filetype == "PLY":
+        elif filetype == "ply":
             io.to_ply(self, filename)
-        elif filetype == "VTK":
+        elif filetype == "vtk":
             io.to_vtk(self, filename)
-        elif filetype == "X3D":
+        elif filetype == "x3d":
             io.to_x3d(self, filename)
-        elif filetype == "HTML":
+        elif filetype == "html":
             io.to_html(self, filename)
         else:
             raise ValueError(
-                "filetype must be one of the following: OBJ, OFF, "
-                "STL, PLY, VTK, X3D, HTML"
+                "filetype must be one of the following: obj, off, "
+                "stl, ply, vtk, x3d, html"
             )
 
     @classmethod
