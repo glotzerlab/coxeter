@@ -17,6 +17,7 @@ from xml.etree import ElementTree
 import numpy as np
 
 from coxeter import __version__
+from coxeter.shapes import Polyhedron
 
 
 def to_obj(shape, filename):
@@ -355,3 +356,36 @@ def to_html(shape, filename):
     with open(filename, "w") as file:
         file.write("<!DOCTYPE html>")
         file.write(ElementTree.tostring(html, encoding="unicode"))
+
+def from_obj(filename):
+    """Create a Polyhedron from a Wavefront OBJ file."""
+    vertices = []
+    faces = []
+    with open(filename, "r") as f:
+        for line in f:
+            line = line.strip()
+            
+            # A vertex line starts with 'v' and has 3 or more components
+            # separated by spaces. We only use the first 3 components, since
+            # those are guaranteed to be x, y, and z.
+            if len(line) > 0 and line[0] == "v":
+                component_str = line.rsplit("v ")[1]
+                vertices.append(
+                    tuple(float(i) for i in component_str.split(" ")[:3])
+                )
+            
+            # A face line starts with 'f' and has 3 or more components
+            # separated by spaces. A component may consist of multiple indices
+            # separated by '/'. The first index in a component is always the
+            # vertex index, while the other indices are used for vertex normals
+            # and texture mapping. Indexing is 1-based.
+            elif len(line) > 0 and line[0] == "f":
+                indices_str = line.rsplit("f ")[1]
+
+                vertex_indices = []
+                for substr in indices_str.split(" "):
+                    vertex_indices.append(int(substr.split("/")[0]) - 1)
+                
+                faces.append(vertex_indices)
+    
+    return Polyhedron(vertices=vertices, faces=faces)

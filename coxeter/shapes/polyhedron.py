@@ -1057,3 +1057,13 @@ class Polyhedron(Shape3D):
                 "filetype must be one of the following: OBJ, OFF, "
                 "STL, PLY, VTK, X3D, HTML"
             )
+
+    @classmethod
+    def from_obj(cls, filename):
+        """Create a Polyhedron from a Wavefront OBJ file.
+        
+        Args:
+            filename (str, pathlib.Path, or os.PathLike):
+                The name or path of the OBJ file.
+        """
+        return io.from_obj(filename)
