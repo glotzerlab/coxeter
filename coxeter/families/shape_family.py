@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2025 The Regents of the University of Michigan.
+# Copyright (c) 2015-2026 The Regents of the University of Michigan.
 # This file is from the coxeter project, released under the BSD 3-Clause License.
 
 """Define the abstract base class for all shape families.
