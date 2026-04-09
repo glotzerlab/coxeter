@@ -2,7 +2,6 @@
 # This file is from the coxeter project, released under the BSD 3-Clause License.
 
 import numpy as np
-import numpy.linalg as la
 
 
 def point_to_edge_distance(
@@ -29,10 +28,10 @@ def point_to_edge_distance(
         np.ndarray: distances [shape = (n,)]
     """
     edge_unit = edge_vector / np.expand_dims(
-        la.norm(edge_vector, axis=1), axis=1
+        np.linalg.norm(edge_vector, axis=1), axis=1
     )  # unit vectors of the edges
 
-    dist = la.norm(
+    dist = np.linalg.norm(
         (
             (vert - point)
             - (
@@ -69,7 +68,7 @@ def point_to_edge_displacement(
         np.ndarray: displacements [shape = (n, 3)]
     """
     edge_unit = edge_vector / np.expand_dims(
-        la.norm(edge_vector, axis=1), axis=1
+        np.linalg.norm(edge_vector, axis=1), axis=1
     )  # unit vectors of the edges
 
     disp = (vert - point) - (
@@ -95,7 +94,7 @@ def point_to_face_distance(
         np.ndarray: distances [shape = (n_points,)]
     """
     vert_point_vect = vert - point
-    face_unit = face_normal / la.norm(
+    face_unit = face_normal / np.linalg.norm(
         face_normal
     )  # unit vector of the normal of the polygon
     dist = abs(vert_point_vect @ np.transpose(face_unit))
@@ -120,7 +119,7 @@ def point_to_face_displacement(
         np.ndarray: displacements (n_points, 3)
     """
     vert_point_vect = vert - point
-    face_unit = face_normal / la.norm(
+    face_unit = face_normal / np.linalg.norm(
         face_normal
     )  # unit vector of the normal of the polygon
     disp = (
@@ -352,7 +351,7 @@ def shortest_distance_to_surface(
     points_trans = np.transpose(points)
 
     max_value = 3 * np.max(
-        la.norm(points - (translation_vector + shape.vertices[0]), axis=1)
+        np.linalg.norm(points - (translation_vector + shape.vertices[0]), axis=1)
     )
 
     min_dist_arr = np.ones((len(points), 1)) * max_value
@@ -375,7 +374,7 @@ def shortest_distance_to_surface(
         ]  # Contains the indices of the points that hold True for vert_bool
 
         vert_dist = np.ones((shape.num_vertices, n_points)) * max_value
-        vert_dist[vert_bool] = la.norm(
+        vert_dist[vert_bool] = np.linalg.norm(
             points[v_points_used] - (shape.vertices[vert_used] + translation_vector),
             axis=1,
         )  # Distances between two points
@@ -512,7 +511,7 @@ def shortest_displacement_to_surface(
     points_trans = np.transpose(points)
 
     max_value = 3 * np.max(
-        la.norm(points - (translation_vector + shape.vertices[0]), axis=1)
+        np.linalg.norm(points - (translation_vector + shape.vertices[0]), axis=1)
     )
 
     min_disp_arr = np.ones((n_points, 1, 3)) * max_value
@@ -541,7 +540,7 @@ def shortest_displacement_to_surface(
         )  # <--- shape = (n_points, n_verts, 3)
 
         vert_disp_min = np.expand_dims(
-            np.argmin(la.norm(vert_disp, axis=2), axis=1), axis=(1, 2)
+            np.argmin(np.linalg.norm(vert_disp, axis=2), axis=1), axis=(1, 2)
         )
         vert_disp = np.take_along_axis(vert_disp, vert_disp_min, axis=1)
 
@@ -581,7 +580,7 @@ def shortest_displacement_to_surface(
         )  # <--- shape = (n_points, n_edges, 3)
 
         edge_disp_arg = np.expand_dims(
-            np.argmin(la.norm(edge_disp, axis=2), axis=1), axis=(1, 2)
+            np.argmin(np.linalg.norm(edge_disp, axis=2), axis=1), axis=(1, 2)
         )
         edge_disp = np.take_along_axis(edge_disp, edge_disp_arg, axis=1)
 
@@ -608,7 +607,7 @@ def shortest_displacement_to_surface(
             (min_disp_arr, np.expand_dims(face_disp, axis=1)), axis=1
         )
 
-    disp_list_bool = np.argmin((la.norm(min_disp_arr, axis=2)), axis=1).reshape(
+    disp_list_bool = np.argmin((np.linalg.norm(min_disp_arr, axis=2)), axis=1).reshape(
         n_points, 1, 1
     )
     true_min_disp = np.squeeze(
@@ -689,7 +688,7 @@ def spheropolygon_shortest_displacement_to_surface(
     points_trans = np.transpose(points)
 
     max_value = 3 * np.max(
-        la.norm(points - (translation_vector + shape.vertices[0]), axis=1)
+        np.linalg.norm(points - (translation_vector + shape.vertices[0]), axis=1)
     )
 
     min_disp_arr = np.ones((n_points, 1, 3)) * max_value
@@ -718,7 +717,7 @@ def spheropolygon_shortest_displacement_to_surface(
         )  # <--- shape = (n_points, n_verts, 3)
 
         vert_disp_min = np.expand_dims(
-            np.argmin(la.norm(vert_disp, axis=2), axis=1), axis=(1, 2)
+            np.argmin(np.linalg.norm(vert_disp, axis=2), axis=1), axis=(1, 2)
         )
         vert_disp = np.take_along_axis(vert_disp, vert_disp_min, axis=1)
 
@@ -777,7 +776,7 @@ def spheropolygon_shortest_displacement_to_surface(
         )  # <--- shape = (n_points, n_edges, 3)
 
         edge_disp_arg = np.expand_dims(
-            np.argmin(la.norm(edge_disp, axis=2), axis=1), axis=(1, 2)
+            np.argmin(np.linalg.norm(edge_disp, axis=2), axis=1), axis=(1, 2)
         )
         edge_disp = np.take_along_axis(edge_disp, edge_disp_arg, axis=1)
 
@@ -823,7 +822,7 @@ def spheropolygon_shortest_displacement_to_surface(
             (min_disp_arr, np.expand_dims(face_disp, axis=1)), axis=1
         )
 
-    disp_list_bool = np.argmin((la.norm(min_disp_arr, axis=2)), axis=1).reshape(
+    disp_list_bool = np.argmin((np.linalg.norm(min_disp_arr, axis=2)), axis=1).reshape(
         n_points, 1, 1
     )
     true_min_disp = np.squeeze(
