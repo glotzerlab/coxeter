@@ -31,7 +31,7 @@ def point_to_edge_distance(
         np.linalg.norm(edge_vector, axis=1), axis=1
     )  # unit vectors of the edges
 
-    dist = np.linalg.norm(
+    return np.linalg.norm(
         (
             (vert - point)
             - (
@@ -41,7 +41,6 @@ def point_to_edge_distance(
         ),
         axis=1,
     )  # distances
-    return dist
 
 
 def point_to_edge_displacement(
@@ -71,10 +70,9 @@ def point_to_edge_displacement(
         np.linalg.norm(edge_vector, axis=1), axis=1
     )  # unit vectors of the edges
 
-    disp = (vert - point) - (
+    return (vert - point) - (
         np.expand_dims(np.sum((vert - point) * edge_unit, axis=1), axis=1) * edge_unit
-    )  # displacements
-    return disp
+    )
 
 
 def point_to_face_distance(
@@ -97,9 +95,7 @@ def point_to_face_distance(
     face_unit = face_normal / np.linalg.norm(
         face_normal
     )  # unit vector of the normal of the polygon
-    dist = abs(vert_point_vect @ np.transpose(face_unit))
-
-    return dist
+    return abs(vert_point_vect @ np.transpose(face_unit))  # distances
 
 
 def point_to_face_displacement(
@@ -122,11 +118,9 @@ def point_to_face_displacement(
     face_unit = face_normal / np.linalg.norm(
         face_normal
     )  # unit vector of the normal of the polygon
-    disp = (
+    return (
         np.expand_dims(np.sum(vert_point_vect * face_unit, axis=1), axis=1) * face_unit
-    )  # *(-1)
-
-    return disp
+    )
 
 
 def get_vert_zones(shape):
@@ -319,7 +313,7 @@ def shortest_distance_to_surface(
     if len(points.shape) == 1:
         points = np.expand_dims(points, axis=0)
 
-    n_points = len(points)  # number of inputted points
+    n_points = len(points)  # number of input points
 
     if points.shape[1] == 2:
         points = np.append(points, np.zeros((n_points, 1)), axis=1)
@@ -477,7 +471,7 @@ def shortest_displacement_to_surface(
     if points.shape == (3,) or points.shape == (2,):
         points = np.expand_dims(points, axis=0)
 
-    n_points = len(points)  # number of inputted points
+    n_points = len(points)  # number of input points
     n_verts = shape.num_vertices  # number of vertices = number of vertex zones
     n_edges = n_verts  # number of edges = number of edge zones
 
@@ -654,7 +648,7 @@ def spheropolygon_shortest_displacement_to_surface(
     if points.shape == (3,) or points.shape == (2,):
         points = np.expand_dims(points, axis=0)
 
-    n_points = len(points)  # number of inputted points
+    n_points = len(points)  # number of input points
     n_verts = shape.num_vertices  # number of vertices = number of vertex zones
     n_edges = n_verts  # number of edges = number of edge zones
 

@@ -623,7 +623,7 @@ def shortest_distance_to_surface(
         points = points.reshape(1, 3)
 
     atol = 1e-8
-    n_points = len(points)  # number of inputted points
+    n_points = len(points)  # number of input points
     n_verts = len(shp.vertices)  # number of vertices = number of vertex zones
     n_edges = len(shp.edges)  # number of edges = number of edge zones
     n_tri_faces = len(
@@ -818,7 +818,7 @@ def shortest_displacement_to_surface(
         points = points.reshape(1, 3)
 
     atol = 1e-8
-    n_points = len(points)  # number of inputted points
+    n_points = len(points)  # number of input points
     n_verts = len(shp.vertices)  # number of vertices = number of vertex zones
     n_edges = len(shp.edges)  # number of edges = number of edge zones
     n_tri_faces = len(
@@ -982,7 +982,7 @@ def spheropolyhedron_shortest_displacement_to_surface(
         points = points.reshape(1, 3)
 
     atol = 1e-8
-    n_points = len(points)  # number of inputted points
+    n_points = len(points)  # number of input points
     n_verts = len(shp.vertices)  # number of vertices = number of vertex zones
     n_edges = len(shp.edges)  # number of edges = number of edge zones
     n_tri_faces = len(
