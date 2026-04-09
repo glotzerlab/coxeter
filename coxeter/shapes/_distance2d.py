@@ -329,7 +329,7 @@ def shortest_distance_to_surface(
     if translation_vector.shape[0] == 2:
         translation_vector = np.append(translation_vector, [0])
 
-    # Updating bounds with the position of the polyhedron
+    # Updating bounds with the position of the polygon
     vert_bounds = shape.vertex_zones["bounds"] + (
         shape.vertex_zones["constraint"] @ translation_vector
     )
@@ -489,7 +489,7 @@ def shortest_displacement_to_surface(
     if translation_vector.shape[0] == 2:
         translation_vector = np.append(translation_vector, [0])
 
-    # Updating bounds with the position of the polyhedron
+    # Updating bounds with the position of the polygon
     vert_bounds = shape.vertex_zones["bounds"] + (
         shape.vertex_zones["constraint"] @ translation_vector
     )
@@ -666,7 +666,7 @@ def spheropolygon_shortest_displacement_to_surface(
     if translation_vector.shape[0] == 2:
         translation_vector = np.append(translation_vector, [0])
 
-    # Updating bounds with the position of the polyhedron
+    # Updating bounds with the position of the polygon
     vert_bounds = shape.vertex_zones["bounds"] + (
         shape.vertex_zones["constraint"] @ translation_vector
     )
