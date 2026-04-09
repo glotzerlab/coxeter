@@ -3,6 +3,8 @@
 
 import numpy as np
 
+_TOLERANCE = 5e-6
+
 
 def point_to_edge_distance(
     point: np.ndarray, vert: np.ndarray, edge_vector: np.ndarray
@@ -241,7 +243,7 @@ def get_face_zones(shape):
     # If not, the polygon is nonconvex.
     if not np.all(
         face_constraint @ np.transpose(shape.vertices)
-        <= np.expand_dims(face_bounds, axis=1) + 5e-6
+        <= np.expand_dims(face_bounds, axis=1) + _TOLERANCE
     ):
         # --Polygon is nonconvex and needs to be triangulated--
         triangle_verts = []

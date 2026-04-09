@@ -3,6 +3,8 @@
 
 import numpy as np
 
+_ZONE_ATOL = 1e-8
+
 
 def get_edge_face_neighbors(shape) -> np.ndarray:
     """
@@ -49,7 +51,7 @@ def get_edge_face_neighbors(shape) -> np.ndarray:
     find_num_edges = fe_mat_inds[
         (fe_mat_inds == 0) + (np.any(face_edge_mat == -1, axis=1))
     ]
-    find_num_edges[:][0] = -1
+    find_num_edges[0] = -1
     find_num_edges = find_num_edges.reshape(faces_len, 2)
     face_num_edges = find_num_edges[:, 1] - find_num_edges[:, 0] - 1
 
@@ -617,7 +619,7 @@ def shortest_distance_to_surface(
     if points.shape == (3,):
         points = points.reshape(1, 3)
 
-    atol = 1e-8
+    atol = _ZONE_ATOL
     n_points = len(points)  # number of input points
     n_verts = len(shp.vertices)  # number of vertices = number of vertex zones
     n_edges = len(shp.edges)  # number of edges = number of edge zones
@@ -812,7 +814,7 @@ def shortest_displacement_to_surface(
     if points.shape == (3,):
         points = points.reshape(1, 3)
 
-    atol = 1e-8
+    atol = _ZONE_ATOL
     n_points = len(points)  # number of input points
     n_verts = len(shp.vertices)  # number of vertices = number of vertex zones
     n_edges = len(shp.edges)  # number of edges = number of edge zones
@@ -976,7 +978,7 @@ def spheropolyhedron_shortest_displacement_to_surface(
     if points.shape == (3,):
         points = points.reshape(1, 3)
 
-    atol = 1e-8
+    atol = _ZONE_ATOL
     n_points = len(points)  # number of input points
     n_verts = len(shp.vertices)  # number of vertices = number of vertex zones
     n_edges = len(shp.edges)  # number of edges = number of edge zones
