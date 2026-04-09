@@ -198,7 +198,7 @@ def point_to_face_distance(
     """
     vert_point_vect = (
         vert - point
-    )  # displacements between the points and relevent vertices
+    )  # displacements between the points and relevant vertices
     face_unit = face_normal / np.expand_dims(
         np.linalg.norm(face_normal, axis=1), axis=1
     )  # unit vectors of the normals of the faces
@@ -232,7 +232,7 @@ def point_to_face_displacement(
     """
     vert_point_vect = (
         vert - point
-    )  # displacements between the points and relevent vertices
+    )  # displacements between the points and relevant vertices
     face_units = face_normal / np.expand_dims(
         np.linalg.norm(face_normal, axis=1), axis=1
     )  # unit vectors of the normals of the faces
@@ -610,7 +610,7 @@ def shortest_distance_to_surface(
 
     if translation_vector.shape[0] != 3 or len(translation_vector.shape) > 1:
         raise ValueError(
-            "Expected the shape of the polygon's position to be (3,), instead it"
+            "Expected the shape of the polyhedron's position to be (3,), instead it"
             + f"got {translation_vector.shape}"
         )
 
@@ -805,7 +805,7 @@ def shortest_displacement_to_surface(
 
     if translation_vector.shape[0] != 3 or len(translation_vector.shape) > 1:
         raise ValueError(
-            "Expected the shape of the polygon's position to be (3,), instead"
+            "Expected the shape of the polyhedron's position to be (3,), instead"
             + f"it got {translation_vector.shape}"
         )
 
@@ -969,7 +969,7 @@ def spheropolyhedron_shortest_displacement_to_surface(
 
     if translation_vector.shape[0] != 3 or len(translation_vector.shape) > 1:
         raise ValueError(
-            "Expected the shape of the polygon's position to be (3,), instead"
+            "Expected the shape of the polyhedron's position to be (3,), instead"
             + f"it got {translation_vector.shape}"
         )
 
