@@ -379,15 +379,13 @@ class ConvexSpheropolyhedron(Shape3D):
         self._polyhedron.centroid = old_centroid
         return hoomd_dict
 
-    def shortest_distance_to_surface(
-        self, points, translation_vector=np.array([0, 0, 0])
-    ):
+    def shortest_distance_to_surface(self, points, translation_vector=None):
         """
-        Solves for the shortest distance (magnitude) between points and
-        the surface of a spheropolyhedron. If the point lies inside the
-        spheropolyhedron, the distance is negative.
+        Solve for the shortest distance between points and the surface.
 
-        This function calculates the shortest distance by partitioning
+        If the point lies inside the spheropolyhedron, the distance is negative.
+
+        This function calculates the shortest distance (magnitude) by partitioning
         the space around a spheropolyhedron into zones: vertex, edge, and face.
         Determining the zone(s) a point lies in, determines the distance
         calculation(s) done. For a vertex zone,the distance is calculated
@@ -416,14 +414,11 @@ class ConvexSpheropolyhedron(Shape3D):
             - self.radius
         )
 
-    def shortest_displacement_to_surface(
-        self, points, translation_vector=np.array([0, 0, 0])
-    ):
+    def shortest_displacement_to_surface(self, points, translation_vector=None):
         """
-        Solves for the shortest displacement (vector) between points and
-        the surface of a spheropolyhedron.
+        Solve for the shortest displacement between points and the surface.
 
-        This function calculates the shortest displacement by partitioning
+        This function calculates the shortest displacement (vector) by partitioning
         the space around a spheropolyhedron into zones: vertex, edge, and face.
         Determining the zone(s) a point lies in, determines the displacement
         calculation(s) done. For a vertex zone, the displacement is

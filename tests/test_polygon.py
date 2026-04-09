@@ -768,7 +768,6 @@ def test_shortest_distance_general():
 
         all_tri_distances = []
         all_tri_displacements = []
-        tmps = []
         for triangle in zip(edges_90, upper_bounds, strict=True):
             tri_min_point = minimize(
                 fun=lambda pt: np.linalg.norm(pt - point),  # Function to optimize

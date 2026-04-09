@@ -1,27 +1,29 @@
-# Copyright (c) 2015-2025 The Regents of the University of Michigan.
+# Copyright (c) 2015-2026 The Regents of the University of Michigan.
 # This file is from the coxeter project, released under the BSD 3-Clause License.
 
 import numpy as np
-import numpy.linalg as LA
-
-# TODO: update docstrings?
+import numpy.linalg as la
 
 
 def get_edge_face_neighbors(shape) -> np.ndarray:
     """
-    Gets the indices of the faces that are adjacent to each edge.
+    Get the indices of the faces that are adjacent to each edge.
 
     Args:
-        shape (Polyhedron): the polyhedron that is being looked at (can be convex or concave)
+        shape (Polyhedron): the polyhedron that is being looked at
+            (can be convex or concave)
 
     Returns
     -------
-        np.ndarray: the indices of the nearest faces for each edge [shape = (n_edges, 2)]
+        np.ndarray: the indices of the nearest faces for each edge
+            [shape = (n_edges, 2)]
     """
     faces_len = shape.num_faces
     num_edges = shape.num_edges
 
-    # appending the vertex list of each face and a -1 to the end of each list of vertices, then flattening the awkward array (the -1 indicates a change in face)
+    # appending the vertex list of each face and a -1 to the end of
+    # each list of vertices, then flattening the awkward array
+    # (the -1 indicates a change in face)
     faces_flat = []
 
     for face in shape.faces:
@@ -32,7 +34,9 @@ def get_edge_face_neighbors(shape) -> np.ndarray:
 
     faces_flat = np.asarray(faces_flat)
 
-    # creating a matrix where each row corresponds to an edge that contains the indices of its two corresponding vertices (a -1 index indicates a change in face)
+    # creating a matrix where each row corresponds to an edge that
+    # contains the indices of its two corresponding vertices
+    # (a -1 index indicates a change in face)
     list_len = len(faces_flat)
     face_edge_mat = np.block(
         [
@@ -50,10 +54,12 @@ def get_edge_face_neighbors(shape) -> np.ndarray:
     find_num_edges = find_num_edges.reshape(faces_len, 2)
     face_num_edges = find_num_edges[:, 1] - find_num_edges[:, 0] - 1
 
-    # repeating each face index for the number of edges that are associated with it; length equals num_edges * 2
+    # repeating each face index for the number of edges that are
+    # associated with it; length equals num_edges * 2
     face_correspond_inds = np.repeat(np.arange(0, faces_len, 1), face_num_edges)
 
-    # shape.edges lists the indices of the edge vertices lowest to highest. edges1_reshape lists the indices of the edge vertices highest to lowest
+    # shape.edges lists the indices of the edge vertices lowest to highest.
+    # edges1_reshape lists the indices of the edge vertices highest to lowest
     edges1_reshape = np.hstack(
         (
             np.expand_dims(shape.edges[:, 1], axis=1),
@@ -61,7 +67,9 @@ def get_edge_face_neighbors(shape) -> np.ndarray:
         )
     )
 
-    # For the new_edge_ind_bool: rows correspond with the face_correspond_inds and columns correpond with the edge index; finding the neighboring faces for each edge
+    # For the new_edge_ind_bool: rows correspond with the face_correspond_inds
+    # and columns correpond with the edge index; finding the neighboring faces
+    # for each edge
     true_face_edge_mat = np.tile(
         np.expand_dims(face_edge_mat[np.all(face_edge_mat != -1, axis=1)], axis=1),
         (1, num_edges, 1),
@@ -73,7 +81,8 @@ def get_edge_face_neighbors(shape) -> np.ndarray:
         true_face_edge_mat == np.expand_dims(edges1_reshape, axis=0), axis=2
     ).astype(int)  # faces to the RIGHT of edges if edges are oriented pointing upwards
 
-    # tiling face_correspond_inds so it can be multiplied to the new_edge_ind_bool0 and new_edge_ind_bool1
+    # tiling face_correspond_inds so it can be multiplied to the new_edge_ind_bool0
+    # and new_edge_ind_bool1
     new_face_corr_inds = np.tile(
         np.expand_dims(face_correspond_inds, axis=1), (1, num_edges)
     )
@@ -94,27 +103,31 @@ def point_to_edge_distance(
     point: np.ndarray, vert: np.ndarray, edge_vector: np.ndarray
 ) -> np.ndarray:
     """
-    Calculates the distances between several points and several varying lines.
+    Calculate the distances between several points and several varying lines.
 
-    n is the total number of distance calculations that are being made. For example, let's say
-    we have points: A, B, C & D, and edges: U, V & W, and we want to calculate the distances between:
+    n is the total number of distance calculations that are being made. For
+    example, let's say we have points: A, B, C & D, and edges: U, V & W, and
+    we want to calculate the distances between:
     - A & U, A & W, B & U, C & V, C & W, D & U, D & V, and D & W
-    n = 8 for this example, and point = [A,A,B,C,C,D,D,D] and edge_vector = [U,W,U,V,W,U,V,W]
+    n = 8 for this example, and point = [A,A,B,C,C,D,D,D],
+    and edge_vector = [U,W,U,V,W,U,V,W]
 
     Args:
         point (np.ndarray): the positions of the points [shape = (n, 3)]
-        vert (np.ndarray): positions of the points that lie on each corresponding line [shape = (n, 3)]
-        edge_vector (np.ndarray): the vectors that describe each line [shape = (n, 3)]
+        vert (np.ndarray): positions of the points that lie on each
+            corresponding line [shape = (n, 3)]
+        edge_vector (np.ndarray): the vectors that describe each line
+            [shape = (n, 3)]
 
     Returns
     -------
         np.ndarray: distances [shape = (n,)]
     """
     edge_unit = edge_vector / np.expand_dims(
-        LA.norm(edge_vector, axis=1), axis=1
+        la.norm(edge_vector, axis=1), axis=1
     )  # unit vectors of the edges
 
-    dist = LA.norm(
+    dist = la.norm(
         (
             (vert - point)
             - (
@@ -131,24 +144,28 @@ def point_to_edge_displacement(
     point: np.ndarray, vert: np.ndarray, edge_vector: np.ndarray
 ) -> np.ndarray:
     """
-    Calculates the displacements between several points and several varying lines.
+    Calculate the displacements between several points and several varying lines.
 
-    n is the total number of displacement calculations that are being made. For example, let's say
-    we have points: A, B, C & D, and edges: U, V & W, and we want to calculate the displacements between:
+    n is the total number of displacement calculations that are being made. For
+    example, let's say we have points: A, B, C & D, and edges: U, V & W, and we
+    want to calculate the displacements between:
     - A & U, A & W, B & U, C & V, C & W, D & U, D & V, and D & W
-    n = 8 for this example, and point = [A,A,B,C,C,D,D,D] and edge_vector = [U,W,U,V,W,U,V,W]
+    n = 8 for this example, and point = [A,A,B,C,C,D,D,D],
+    and edge_vector = [U,W,U,V,W,U,V,W]
 
     Args:
         point (np.ndarray): the positions of the points [shape = (n, 3)]
-        vert (np.ndarray): positions of the points that lie on each corresponding line [shape = (n, 3)]
-        edge_vector (np.ndarray): the vectors that describe each line [shape = (n, 3)]
+        vert (np.ndarray): positions of the points that lie on each corresponding
+            line [shape = (n, 3)]
+        edge_vector (np.ndarray): the vectors that describe each line
+            [shape = (n, 3)]
 
     Returns
     -------
         np.ndarray: displacements [shape = (n, 3)]
     """
     edge_unit = edge_vector / np.expand_dims(
-        LA.norm(edge_vector, axis=1), axis=1
+        la.norm(edge_vector, axis=1), axis=1
     )  # unit vectors of the edges
 
     disp = (vert - point) - (
@@ -161,17 +178,21 @@ def point_to_face_distance(
     point: np.ndarray, vert: np.ndarray, face_normal: np.ndarray
 ) -> np.ndarray:
     """
-    Calculates the distances between several points and several varying planes.
+    Calculate the distances between several points and several varying planes.
 
-    n is the total number of distance calculations that are being made. For example, let's say
-    we have points: A, B, C & D, and faces: P, Q & R, and we want to calculate the distances between:
+    n is the total number of distance calculations that are being made. For example,
+    let's say we have points: A, B, C & D, and faces: P, Q & R, and we want to
+    calculate the distances between:
     - A & P, A & R, B & P, C & Q, C & R, D & P, D & Q, and D & R
-    n = 8 for this example, and point = [A,A,B,C,C,D,D,D] and edge_vector = [P,R,P,Q,R,P,Q.R]
+    n = 8 for this example, and point = [A,A,B,C,C,D,D,D],
+    and edge_vector = [P,R,P,Q,R,P,Q.R]
 
     Args:
         point (np.ndarray): the positions of the points [shape = (n, 3)]
-        vert (np.ndarray): points that lie on each corresponding plane [shape = (n, 3)]
-        face_normal (np.ndarray): the normals that describe each plane [shape = (n, 3)]
+        vert (np.ndarray): points that lie on each corresponding plane
+            [shape = (n, 3)]
+        face_normal (np.ndarray): the normals that describe each plane
+            [shape = (n, 3)]
 
     Returns
     -------
@@ -181,7 +202,7 @@ def point_to_face_distance(
         vert - point
     )  # displacements between the points and relevent vertices
     face_unit = face_normal / np.expand_dims(
-        LA.norm(face_normal, axis=1), axis=1
+        la.norm(face_normal, axis=1), axis=1
     )  # unit vectors of the normals of the faces
 
     dist = np.sum(vert_point_vect * face_unit, axis=1) * (-1)  # distances
@@ -193,17 +214,21 @@ def point_to_face_displacement(
     point: np.ndarray, vert: np.ndarray, face_normal: np.ndarray
 ) -> np.ndarray:
     """
-    Calculates the displacements between several points and several varying planes.
+    Calculate the displacements between several points and several varying planes.
 
-    n is the total number of displacement calculations that are being made. For example, let's say
-    we have points: A, B, C & D, and faces: P, Q & R, and we want to calculate the displacements between:
+    n is the total number of displacement calculations that are being made. For
+    example, let's say we have points: A, B, C & D, and faces: P, Q & R, and we
+    want to calculate the displacements between:
     - A & P, A & R, B & P, C & Q, C & R, D & P, D & Q, and D & R
-    n = 8 for this example, and point = [A,A,B,C,C,D,D,D] and edge_vector = [P,R,P,Q,R,P,Q.R]
+    n = 8 for this example, and point = [A,A,B,C,C,D,D,D],
+    and edge_vector = [P,R,P,Q,R,P,Q.R]
 
     Args:
         point (np.ndarray): the positions of the points [shape = (n, 3)]
-        vert (np.ndarray): points that lie on each corresponding plane [shape = (n, 3)]
-        face_normal (np.ndarray): the normals that describe each plane [shape = (n, 3)]
+        vert (np.ndarray): points that lie on each corresponding plane
+            [shape = (n, 3)]
+        face_normal (np.ndarray): the normals that describe each plane
+            [shape = (n, 3)]
 
     Returns
     -------
@@ -213,7 +238,7 @@ def point_to_face_displacement(
         vert - point
     )  # displacements between the points and relevent vertices
     face_units = face_normal / np.expand_dims(
-        LA.norm(face_normal, axis=1), axis=1
+        la.norm(face_normal, axis=1), axis=1
     )  # unit vectors of the normals of the faces
 
     disp = (
@@ -226,22 +251,34 @@ def point_to_face_displacement(
 
 def get_vert_zones(shape):
     """
-    Gets the constraints and bounds needed to partition the volume surrounding a polyhedron into zones
-    where the shortest distance from any point that is within a vertex zone is the distance between the
-    point and the corresponding vertex.
+    Get the constraints and bounds associated with the vertices.
+
+    The constraints and bounds are needed to partition the volume surrounding a
+    polyhedron into zones where the shortest distance from any point that is
+    within a vertex zone is the distance between the point and the corresponding
+    vertex.
 
     Args:
-        shape (Polyhedron): the polyhedron that is being looked at (can be convex or concave)
+        shape (Polyhedron): the polyhedron that is being looked at
+            (can be convex or concave)
 
     Returns
     -------
-        dict: "constraint": np.ndarray [shape = (n_verts, n_edges, 3)], "bounds": np.ndarray [shape = (n_verts, n_edges)]
+        dict:
+            "constraint": np.ndarray [shape = (n_verts, n_edges, 3)],
+            "bounds": np.ndarray [shape = (n_verts, n_edges)]
     """
-    # For a generalized shape, we cannot assume that every vertex has the same number of edges connected to it
-    # (EX:vertices in a cube have 3 connected edges each, and for an icosahedron, vertices have 5 conncected edges).
-    # This would result in a ragged list for the constraint and bounds, which is not ideal.
+    # For a generalized shape, we cannot assume that every vertex has the same number
+    # of edges connected to it
 
-    # v--- This `for`` loop is used to build and fill that ragged list with zeros, so that it makes an easy to work with array. ---v
+    # (EX:vertices in a cube have 3 connected edges each, and for an icosahedron,
+    # vertices have 5 conncected edges).
+
+    # This would result in a ragged list for the constraint and bounds, which is not
+    # ideal.
+
+    # v--- This `for`` loop is used to build and fill that ragged list with zeros,
+    # so that it makes an easy to work with array. ---v
     for v_i in range(len(shape.vertices)):
         pos_adj_edges = shape.edge_vectors[
             shape.edges[:, 0] == v_i
@@ -256,18 +293,19 @@ def get_vert_zones(shape):
 
         else:
             difference = len(adjacent_edges) - vert_constraint.shape[1]
-            # ^---difference between the # of edges v_i has and the max # of edges from a previous vertex
+            # ^---difference between the # of edges v_i has and the max # of edges
+            # from a previous vertex
 
-            if (
-                difference < 0
-            ):  # adjacent_edges needs to be filled with zeros to match the length of axis=1 for vert_constraint
+            if difference < 0:
+                # adjacent_edges needs to be filled with zeros to match the length of
+                # axis=1 for vert_constraint
                 adjacent_edges = np.append(
                     adjacent_edges, np.zeros((abs(difference), 3)), axis=0
                 )
 
-            if (
-                difference > 0
-            ):  # vert_constraint needs to be filled with zeros to match the # of edges for v_i
+            if difference > 0:
+                # vert_constraint needs to be filled with zeros to match the # of edges
+                # for v_i
                 vert_constraint = np.append(
                     vert_constraint,
                     np.zeros((len(vert_constraint), difference, 3)),
@@ -287,16 +325,21 @@ def get_vert_zones(shape):
 
 def get_edge_zones(shape):
     """
-    Gets the constraints and bounds needed to partition the volume surrounding a polyhedron into zones
-    where the shortest distance from any point that is within an edge zone is the distance between the
-    point and the corresponding edge.
+    Get the constraints and bounds associated with the edges.
+
+    The constraints and bounds are needed to partition the volume surrounding a
+    polyhedron into zones where the shortest distance from any point that is within
+    an edge zone is the distance between the point and the corresponding edge.
 
     Args:
-        shape (Polyhedron): the polyhedron that is being looked at (can be convex or concave)
+        shape (Polyhedron): the polyhedron that is being looked at
+            (can be convex or concave)
 
     Returns
     -------
-        dict: "constraint": np.ndarray [shape = (n_edges, 4, 3)], "bounds": np.ndarray [shape = (n_edges, 4)]
+        dict:
+            "constraint": np.ndarray [shape = (n_edges, 4, 3)],
+            "bounds": np.ndarray [shape = (n_edges, 4)]
     """
     # Set up
     edge_constraint = np.zeros((shape.num_edges, 4, 3))
@@ -328,26 +371,33 @@ def get_edge_zones(shape):
 
 def get_face_zones(shape):
     """
-    Gets the constraints and bounds needed to partition the volume surrounding a polyhedron into zones
-    where the shortest distance from any point that is within a triangulated face zone is the distance between the
-    point and the corresponding triangulated face.
+    Get the constraints and bounds associated with the faces.
+
+    The constraints and bounds are needed to partition the volume surrounding a
+    polyhedron into zones where the shortest distance from any point that is within a
+    triangulated face zone is the distance between the point and the corresponding
+    triangulated face.
 
     Args:
-        shape (Polyhedron): the polyhedron that is being looked at (can be convex or concave)
+        shape (Polyhedron): the polyhedron that is being looked at
+            (can be convex or concave)
 
     Returns
     -------
-        dict: "constraint": np.ndarray [shape = (n_tri_faces, 3, 3)], "bounds": np.ndarray [shape = (n_tri_faces, 3)],
-            "face_points": np.ndarray [shape= (n_tri_faces, 3)], "normals": np.ndarray [shape=(n_tri_faces, 3)]
+        dict:
+            "constraint": np.ndarray [shape = (n_tri_faces, 3, 3)],
+            "bounds": np.ndarray [shape = (n_tri_faces, 3)],
+            "face_points": np.ndarray [shape= (n_tri_faces, 3)],
+            "normals": np.ndarray [shape=(n_tri_faces, 3)]
     """
     # ----- Triangulating the surface of the shape -----
     try:
         # checking to see if faces are already triangulated
-        something = np.asarray(shape.faces).reshape(shape.num_faces, 3)
+        np.asarray(shape.faces).reshape(shape.num_faces, 3)
 
-    except:
-        # triangulating faces
+    except Exception:
         triangle_verts = []
+        # triangulating faces
         for triangle in shape._surface_triangulation():
             triangle_verts.append(list(triangle))
 
@@ -401,18 +451,21 @@ def get_face_zones(shape):
 
 def get_edge_normals(shape) -> np.ndarray:
     """
-    Gets the analogous normals of the edges of the polyhedron. The normals point outwards from the polyhedron
-    and are used to determine whether an edge zone is outside or inside the polyhedron.
+    Get the analogous normals of the edges of the polyhedron.
+
+    The normals point outwards from the polyhedron and are used to determine whether
+    an edge zone is outside or inside the polyhedron.
 
     Args:
-        shape (Polyhedron): the polyhedron that is being looked at (can be convex or concave)
+        shape (Polyhedron): the polyhedron that is being looked at
+            (can be convex or concave)
 
     Returns
     -------
         np.ndarray: analogous edge normals [shape = (n_edges, 3)]
     """
     face_unit = shape.normals / np.expand_dims(
-        LA.norm(shape.normals, axis=1), axis=1
+        la.norm(shape.normals, axis=1), axis=1
     )  # unit vectors of the face normals
     face_unit1 = face_unit[shape.edge_face_neighbors[:, 0]]
     face_unit2 = face_unit[shape.edge_face_neighbors[:, 1]]
@@ -422,16 +475,19 @@ def get_edge_normals(shape) -> np.ndarray:
     )  # sum of the adjacent face normals for each edge
 
     # returning the unit vectors of the edge normals
-    return edge_normals / np.expand_dims(LA.norm(edge_normals, axis=1), axis=1)
+    return edge_normals / np.expand_dims(la.norm(edge_normals, axis=1), axis=1)
 
 
 def get_vert_normals(shape) -> np.ndarray:
     """
-    Gets the analogous normals of the vertices of the polyhedron. The normals point outwards from the polyhedron
-    and are used to determine whether a vertex zone is outside or inside the polyhedron.
+    Get the analogous normals of the vertices of the polyhedron.
+
+    The normals point outwards from the polyhedron and are used to determine whether
+    a vertex zone is outside or inside the polyhedron.
 
     Args:
-        shape (Polyhedron): the polyhedron that is being looked at (can be convex or concave)
+        shape (Polyhedron): the polyhedron that is being looked at
+            (can be convex or concave)
 
     Returns
     -------
@@ -460,15 +516,18 @@ def get_vert_normals(shape) -> np.ndarray:
     )  # sum of the adjacent edge normals for each vertex
 
     # returning the unit vectors of the vertex normals
-    return vert_normals / np.expand_dims(LA.norm(vert_normals, axis=1), axis=1)
+    return vert_normals / np.expand_dims(la.norm(vert_normals, axis=1), axis=1)
 
 
 def get_weighted_edge_normals(shape) -> np.ndarray:
     """
-    Gets the weighted normals of the edges of the polyhedron. The normals point outwards from the polyhedron.
+    Get the weighted normals of the edges of the polyhedron.
+
+    The normals point outwards from the polyhedron.
 
     Args:
-        shape (Polyhedron): the polyhedron that is being looked at (can be convex or concave)
+        shape (Polyhedron): the polyhedron that is being looked at
+            (can be convex or concave)
 
     Returns
     -------
@@ -484,10 +543,13 @@ def get_weighted_edge_normals(shape) -> np.ndarray:
 
 def get_weighted_vert_normals(shape) -> np.ndarray:
     """
-    Gets the weighted normals of the vertices of the polyhedron. The normals point outwards from the polyhedron.
+    Get the weighted normals of the vertices of the polyhedron.
+
+    The normals point outwards from the polyhedron.
 
     Args:
-        shape (Polyhedron): the polyhedron that is being looked at (can be convex or concave)
+        shape (Polyhedron): the polyhedron that is being looked at
+            (can be convex or concave)
 
     Returns
     -------
@@ -524,7 +586,8 @@ def shortest_distance_to_surface(
     translation_vector: np.ndarray,
 ) -> np.ndarray:
     """
-    Solves for the shortest distance between points and the surface of a polyhedron.
+    Solve for the shortest distance between points and the surface of a polyhedron.
+
     If the point lies inside the polyhedron, the distance is negative.
 
     This function calculates the shortest distance by partitioning the space around
@@ -532,24 +595,29 @@ def shortest_distance_to_surface(
     point lies in, determines the distance calculation(s) done. For a vertex zone,
     the distance is calculated between a point and the vertex. For an edge zone, the
     distance is calculated between a point and the edge. For a face zone, the distance
-    is calculated between a point and the face. Zones are allowed to overlap, and points
-    can be in more than one zone. By taking the minimum of all the calculated distances,
-    the shortest distances are found.
+    is calculated between a point and the face. Zones are allowed to overlap, and
+    points can be in more than one zone. By taking the minimum of all the calculated
+    distances, the shortest distances are found.
 
     Args:
         points (list or np.ndarray): positions of the points [shape = (n_points, 3)]
-        translation_vector (list or np.ndarray): translation vector of the polyhedron [shape = (3,)]
+        translation_vector (list or np.ndarray): translation vector of the polyhedron
+            [shape = (3,)]
 
     Returns
     -------
         np.ndarray: shortest distances [shape = (n_points,)]
     """
+    if translation_vector is None:
+        translation_vector = np.array([0, 0, 0])
+
     points = np.asarray(points)
     translation_vector = np.asarray(translation_vector)
 
     if translation_vector.shape[0] != 3 or len(translation_vector.shape) > 1:
         raise ValueError(
-            f"Expected the shape of the polygon's position to be (3,), instead it got {translation_vector.shape}"
+            "Expected the shape of the polygon's position to be (3,), instead it"
+            + f"got {translation_vector.shape}"
         )
 
     if points.shape == (3,):
@@ -563,7 +631,8 @@ def shortest_distance_to_surface(
         shp.face_zones["bounds"]
     )  # number of triangulated faces = number of triangulated face zones
 
-    # arrays consisting of 1 or -1, and used to determine if a point is inside the polyhedron
+    # arrays consisting of 1 or -1, and used to determine if a point is inside the
+    # polyhedron
     vert_inside_mult = (
         np.diag(
             np.all(
@@ -601,9 +670,6 @@ def shortest_distance_to_surface(
     )
 
     # Updating bounds with the position of the polyhedron
-    vert_bounds = shp.vertex_zones["bounds"] + (
-        shp.vertex_zones["constraint"] @ translation_vector
-    )
     edge_bounds = shp.edge_zones["bounds"] + (
         shp.edge_zones["constraint"] @ translation_vector
     )
@@ -611,17 +677,20 @@ def shortest_distance_to_surface(
         shp.face_zones["constraint"] @ translation_vector
     )
 
-    points_trans = np.transpose(
-        points
-    )  # Have to take the transpose so that 'constraint @ points_trans' returns the right shape and values
-    max_value = (
-        3 * np.max(LA.norm(points - (translation_vector + shp.vertices[0]), axis=1))
-    )  # Placeholder value, it is large so that it is not chosen when taking the min of the distances
+    # Have to take the transpose so that 'constraint @ points_trans' returns the
+    # right shape and values
+    points_trans = np.transpose(points)
+
+    # Placeholder value, it is large so that it is not chosen when taking the min of
+    # the distances
+    max_value = 3 * np.max(
+        la.norm(points - (translation_vector + shp.vertices[0]), axis=1)
+    )
 
     # Calculating the distances
 
     # Solving for the distances between the points and any relevant vertices
-    vert_dist = LA.norm(
+    vert_dist = la.norm(
         np.repeat(np.expand_dims(points, axis=1), n_verts, axis=1)
         - np.expand_dims(shp.vertices + translation_vector, axis=0),
         axis=2,
@@ -637,7 +706,7 @@ def shortest_distance_to_surface(
         <= (np.expand_dims(edge_bounds, axis=2) + atol),
         axis=1,
     )  # <--- shape = (n_edges, n_points)
-    # edge_bool = edge_bool + np.allclose((shp.edge_zones["constraint"] @ points_trans), np.expand_dims(edge_bounds, axis=2), atol=1e-6)
+
     if np.any(edge_bool):
         # v--- shape = (number of True in edge_bool,) ---v
         edge_used = np.transpose(np.tile(np.arange(0, n_edges, 1), (n_points, 1)))[
@@ -673,12 +742,13 @@ def shortest_distance_to_surface(
         <= (np.expand_dims(face_bounds, axis=2) + atol),
         axis=1,
     )  # <--- shape = (n_tri_faces, n_points)
-    # face_bool = face_bool + np.allclose((shp.face_zones["constraint"] @ points_trans), np.expand_dims(face_bounds, axis=2), atol=1e-6)
+
     if np.any(face_bool):
         # v--- shape = (number of True in face_bool,) ---v
         face_used = np.transpose(np.tile(np.arange(0, n_tri_faces, 1), (n_points, 1)))[
             face_bool
-        ]  # Contains the indices of the triangulated faces that hold True for face_bool
+        ]
+        # ^--Contains the indices of the triangulated faces that hold True for face_bool
         f_points_used = np.tile(np.arange(0, n_points, 1), (n_tri_faces, 1))[
             face_bool
         ]  # Contains the indices of the points that hold True for face_bool
@@ -712,31 +782,37 @@ def shortest_displacement_to_surface(
     shp, points: np.ndarray, translation_vector: np.ndarray
 ) -> np.ndarray:
     """
-    Solves for the shortest displacement between points and the surface of a polyhedron.
+    Solve for the shortest displacement between points and the surface of a polyhedron.
 
-    This function calculates the shortest displacement by partitioning the space around
-    a polyhedron into zones: vertex, edge, and face. Determining the zone(s) a
+    This function calculates the shortest displacement by partitioning the space
+    around a polyhedron into zones: vertex, edge, and face. Determining the zone(s) a
     point lies in, determines the displacement calculation(s) done. For a vertex zone,
-    the displacement is calculated between a point and the vertex. For an edge zone, the
-    displacement is calculated between a point and the edge. For a face zone, the
-    displacement is calculated between a point and the face. Zones are allowed to overlap,
-    and points can be in more than one zone. By taking the minimum of all the distances of
-    the calculated displacements, the shortest displacements are found.
+    the displacement is calculated between a point and the vertex. For an edge zone,
+    the displacement is calculated between a point and the edge. For a face zone, the
+    displacement is calculated between a point and the face. Zones are allowed to
+    overlap, and points can be in more than one zone. By taking the minimum of all
+    the distances of the calculated displacements, the shortest displacements are
+    found.
 
     Args:
         points (list or np.ndarray): positions of the points [shape = (n_points, 3)]
-        translation_vector (list or np.ndarray): translation vector of the polyhedron [shape = (3,)]
+        translation_vector (list or np.ndarray): translation vector of the polyhedron
+            [shape = (3,)]
 
     Returns
     -------
         np.ndarray: shortest displacements [shape = (n_points, 3)]
     """
+    if translation_vector is None:
+        translation_vector = np.array([0, 0, 0])
+
     points = np.asarray(points)
     translation_vector = np.asarray(translation_vector)
 
     if translation_vector.shape[0] != 3 or len(translation_vector.shape) > 1:
         raise ValueError(
-            f"Expected the shape of the polygon's position to be (3,), instead it got {translation_vector.shape}"
+            "Expected the shape of the polygon's position to be (3,), instead"
+            + f"it got {translation_vector.shape}"
         )
 
     if points.shape == (3,):
@@ -751,9 +827,6 @@ def shortest_displacement_to_surface(
     )  # number of triangulated faces = number of triangulated face zones
 
     # Updating bounds with the position of the polyhedron
-    vert_bounds = shp.vertex_zones["bounds"] + (
-        shp.vertex_zones["constraint"] @ translation_vector
-    )
     edge_bounds = shp.edge_zones["bounds"] + (
         shp.edge_zones["constraint"] @ translation_vector
     )
@@ -761,12 +834,15 @@ def shortest_displacement_to_surface(
         shp.face_zones["constraint"] @ translation_vector
     )
 
-    coord_trans = np.transpose(
-        points
-    )  # Have to take the transpose so that 'constraint @ coord_trans' returns the right shape and values
-    max_value = (
-        3 * np.max(LA.norm(points - (translation_vector + shp.vertices[0]), axis=1))
-    )  # Placeholder value, it is large so that it is not chosen when taking the min of the distances
+    # Have to take the transpose so that 'constraint @ coord_trans' returns the right
+    # shape and values
+    coord_trans = np.transpose(points)
+
+    # Placeholder value, it is large so that it is not chosen when taking the min of
+    # the distances
+    max_value = 3 * np.max(
+        la.norm(points - (translation_vector + shp.vertices[0]), axis=1)
+    )
 
     # Calculating the displacements
 
@@ -779,7 +855,7 @@ def shortest_displacement_to_surface(
 
     # Taking the minimum of the displacements for each point
     vert_disp_min = np.expand_dims(
-        np.argmin(LA.norm(vert_disp, axis=2), axis=1), axis=(1, 2)
+        np.argmin(la.norm(vert_disp, axis=2), axis=1), axis=(1, 2)
     )
     min_disp_arr = np.take_along_axis(vert_disp, vert_disp_min, axis=1)
 
@@ -813,7 +889,7 @@ def shortest_displacement_to_surface(
 
         # Taking the minimum of the displacements for each point
         edge_disp_arg = np.expand_dims(
-            np.argmin(LA.norm(edge_disp, axis=2), axis=1), axis=(1, 2)
+            np.argmin(la.norm(edge_disp, axis=2), axis=1), axis=(1, 2)
         )
         edge_disp = np.take_along_axis(edge_disp, edge_disp_arg, axis=1)
 
@@ -829,7 +905,8 @@ def shortest_displacement_to_surface(
         # v--- shape = (number of True in face_bool,) ---v
         face_used = np.transpose(np.tile(np.arange(0, n_tri_faces, 1), (n_points, 1)))[
             face_bool
-        ]  # Contains the indices of the triangulated faces that hold True for face_bool
+        ]
+        # ^--Contains the indices of the triangulated faces that hold True for face_bool
         fcoords_used = np.tile(np.arange(0, n_points, 1), (n_tri_faces, 1))[
             face_bool
         ]  # Contains the indices of the points that hold True for face_bool
@@ -849,14 +926,14 @@ def shortest_displacement_to_surface(
 
         # Taking the minimum of the displacements for each point
         face_disp_arg = np.expand_dims(
-            np.argmin(LA.norm(face_disp, axis=2), axis=1), axis=(1, 2)
+            np.argmin(la.norm(face_disp, axis=2), axis=1), axis=(1, 2)
         )
         face_disp = np.take_along_axis(face_disp, face_disp_arg, axis=1)
 
         min_disp_arr = np.concatenate((min_disp_arr, face_disp), axis=1)
 
     disp_arr_bool = np.expand_dims(
-        np.argmin((LA.norm(min_disp_arr, axis=2)), axis=1), axis=(1, 2)
+        np.argmin((la.norm(min_disp_arr, axis=2)), axis=1), axis=(1, 2)
     )  # determining the displacements that are shortest
     true_min_disp = np.squeeze(
         np.take_along_axis(min_disp_arr, disp_arr_bool, axis=1), axis=1
@@ -869,31 +946,37 @@ def spheropolyhedron_shortest_displacement_to_surface(
     shp, radius, points: np.ndarray, translation_vector: np.ndarray
 ) -> np.ndarray:
     """
-    Solves for the shortest displacement between points and the surface of a polyhedron.
+    Solve for the shortest displacement between points and the surface of a polyhedron.
 
-    This function calculates the shortest displacement by partitioning the space around
-    a polyhedron into zones: vertex, edge, and face. Determining the zone(s) a
+    This function calculates the shortest displacement by partitioning the space
+    around a polyhedron into zones: vertex, edge, and face. Determining the zone(s) a
     point lies in, determines the displacement calculation(s) done. For a vertex zone,
-    the displacement is calculated between a point and the vertex. For an edge zone, the
-    displacement is calculated between a point and the edge. For a face zone, the
-    displacement is calculated between a point and the face. Zones are allowed to overlap,
-    and points can be in more than one zone. By taking the minimum of all the distances of
-    the calculated displacements, the shortest displacements are found.
+    the displacement is calculated between a point and the vertex. For an edge zone,
+    the displacement is calculated between a point and the edge. For a face zone, the
+    displacement is calculated between a point and the face. Zones are allowed to
+    overlap, and points can be in more than one zone. By taking the minimum of all
+    the distances of the calculated displacements, the shortest displacements are
+    found.
 
     Args:
         points (list or np.ndarray): positions of the points [shape = (n_points, 3)]
-        translation_vector (list or np.ndarray): translation vector of the polyhedron [shape = (3,)]
+        translation_vector (list or np.ndarray): translation vector of the polyhedron
+            [shape = (3,)]
 
     Returns
     -------
         np.ndarray: shortest displacements [shape = (n_points, 3)]
     """
+    if translation_vector is None:
+        translation_vector = np.array([0, 0, 0])
+
     points = np.asarray(points)
     translation_vector = np.asarray(translation_vector)
 
     if translation_vector.shape[0] != 3 or len(translation_vector.shape) > 1:
         raise ValueError(
-            f"Expected the shape of the polygon's position to be (3,), instead it got {translation_vector.shape}"
+            "Expected the shape of the polygon's position to be (3,), instead"
+            + f"it got {translation_vector.shape}"
         )
 
     if points.shape == (3,):
@@ -918,12 +1001,15 @@ def spheropolyhedron_shortest_displacement_to_surface(
         shp.face_zones["constraint"] @ translation_vector
     )
 
-    coord_trans = np.transpose(
-        points
-    )  # Have to take the transpose so that 'constraint @ coord_trans' returns the right shape and values
-    max_value = (
-        3 * np.max(LA.norm(points - (translation_vector + shp.vertices[0]), axis=1))
-    )  # Placeholder value, it is large so that it is not chosen when taking the min of the distances
+    # Have to take the transpose so that 'constraint @ coord_trans' returns the right
+    # shape and values
+    coord_trans = np.transpose(points)
+
+    # Placeholder value, it is large so that it is not chosen when taking the min of
+    # the distances
+    max_value = 3 * np.max(
+        la.norm(points - (translation_vector + shp.vertices[0]), axis=1)
+    )
     min_disp_arr = np.ones((n_points, 1, 3)) * max_value  # Initial min_disp_arr
 
     # Calculating the displacements
@@ -952,7 +1038,6 @@ def spheropolyhedron_shortest_displacement_to_surface(
             vert_disp, (1, 0, 2)
         )  # <--- shape = (n_points, n_verts, 3)
 
-        # TODO: subtract radius*unit_displacement -- unless displacement is zero, then subtract radius*vert_normal
         vert_zero_disp_bool = np.all(vert_disp == 0, axis=2)
         vert_disp[vert_zero_disp_bool] = (
             vert_disp[vert_zero_disp_bool]
@@ -975,7 +1060,7 @@ def spheropolyhedron_shortest_displacement_to_surface(
 
         # Taking the minimum of the displacements for each point
         vert_disp_min = np.expand_dims(
-            np.argmin(LA.norm(vert_disp, axis=2), axis=1), axis=(1, 2)
+            np.argmin(la.norm(vert_disp, axis=2), axis=1), axis=(1, 2)
         )
         vert_disp = np.take_along_axis(vert_disp, vert_disp_min, axis=1)
 
@@ -1009,7 +1094,6 @@ def spheropolyhedron_shortest_displacement_to_surface(
             edge_disp, (1, 0, 2)
         )  # <--- shape = (n_points, n_edges, 3)
 
-        # TODO: subtract radius*unit_displacement -- unless displacement is zero, then subtract radius*vert_normal
         edge_zero_disp_bool = np.all(edge_disp == 0, axis=2)
         edge_disp[edge_zero_disp_bool] = (
             edge_disp[edge_zero_disp_bool]
@@ -1032,7 +1116,7 @@ def spheropolyhedron_shortest_displacement_to_surface(
 
         # Taking the minimum of the displacements for each point
         edge_disp_arg = np.expand_dims(
-            np.argmin(LA.norm(edge_disp, axis=2), axis=1), axis=(1, 2)
+            np.argmin(la.norm(edge_disp, axis=2), axis=1), axis=(1, 2)
         )
         edge_disp = np.take_along_axis(edge_disp, edge_disp_arg, axis=1)
 
@@ -1048,7 +1132,8 @@ def spheropolyhedron_shortest_displacement_to_surface(
         # v--- shape = (number of True in face_bool,) ---v
         face_used = np.transpose(np.tile(np.arange(0, n_tri_faces, 1), (n_points, 1)))[
             face_bool
-        ]  # Contains the indices of the triangulated faces that hold True for face_bool
+        ]
+        # ^--Contains the indices of the triangulated faces that hold True for face_bool
         fcoords_used = np.tile(np.arange(0, n_points, 1), (n_tri_faces, 1))[
             face_bool
         ]  # Contains the indices of the points that hold True for face_bool
@@ -1063,8 +1148,6 @@ def spheropolyhedron_shortest_displacement_to_surface(
             points[fcoords_used], vert_on_face, shp.face_zones["normals"][face_used]
         )  # Displacements between a point and a plane
 
-        # TODO: subtract radius*unit_displacement -- unless displacement is zero, then subtract radius*vert_normal
-        # TODO: if point is inside, add radius*unit_displacement instead
         point_inside = (-1) * np.ones((n_tri_faces, n_points))
         point_inside[face_bool] = (
             point_to_face_distance(
@@ -1111,14 +1194,14 @@ def spheropolyhedron_shortest_displacement_to_surface(
         )  # <--- shape = (n_points, n_tri_faces, 3)
         # Taking the minimum of the displacements for each point
         face_disp_arg = np.expand_dims(
-            np.argmin(LA.norm(face_disp, axis=2), axis=1), axis=(1, 2)
+            np.argmin(la.norm(face_disp, axis=2), axis=1), axis=(1, 2)
         )
         face_disp = np.take_along_axis(face_disp, face_disp_arg, axis=1)
 
         min_disp_arr = np.concatenate((min_disp_arr, face_disp), axis=1)
 
     disp_arr_bool = np.expand_dims(
-        np.argmin((LA.norm(min_disp_arr, axis=2)), axis=1), axis=(1, 2)
+        np.argmin((la.norm(min_disp_arr, axis=2)), axis=1), axis=(1, 2)
     )  # determining the displacements that are shortest
     true_min_disp = np.squeeze(
         np.take_along_axis(min_disp_arr, disp_arr_bool, axis=1), axis=1

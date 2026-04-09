@@ -868,7 +868,9 @@ class Polygon(Shape2D):
 
     @property
     def vertex_zones(self):
-        """dict: Get the constraints and bounds needed to partition the
+        """dict: Get the constraints and bounds associated with the vertices.
+
+        The constraints and bounds are needed to partition the
         volume surrounding a polygon into zones where the shortest
         distance from any point that is within a vertex zone is the
         distance between the point and the corresponding vertex.
@@ -879,7 +881,9 @@ class Polygon(Shape2D):
 
     @property
     def edge_zones(self):
-        """dict: Get the constraints and bounds needed to partition
+        """dict: Get the constraints and bounds associated with the edges.
+
+        The constraints and bounds are needed to partition
         the volume surrounding a polygon into zones where the
         shortest distance from any point that is within an edge zone
         is the distance between the point and the corresponding edge.
@@ -890,7 +894,9 @@ class Polygon(Shape2D):
 
     @property
     def face_zones(self):
-        """dict: Get the constraints and bounds needed to partition
+        """dict: Get the constraints and bounds associated with the faces.
+
+        The constraints and bounds are needed to partition
         the volume surrounding a polygon into zones where the shortest
         distance from any point that is within the face zone
         is the distance between the point and the face of the polygon.
@@ -899,14 +905,11 @@ class Polygon(Shape2D):
             self._face_zones = get_face_zones(self)
         return self._face_zones
 
-    def shortest_distance_to_surface(
-        self, points, translation_vector=np.array([0, 0, 0])
-    ):
+    def shortest_distance_to_surface(self, points, translation_vector=None):
         """
-        Solves for the shortest distance (magnitude) between points and
-        the surface of a polygon.
+        Solve for the shortest distance between points and surface of a polygon.
 
-        This function calculates the shortest distance by partitioning
+        This function calculates the shortest distance (magnitude) by partitioning
         the space around a polygon into zones: vertex, edge, and face.
         Determining the zone(s) a point lies in, determines the distance
         calculation(s) done. For a vertex zone,the distance is calculated
@@ -932,14 +935,11 @@ class Polygon(Shape2D):
         """
         return shortest_distance_to_surface(self, points, translation_vector)
 
-    def shortest_displacement_to_surface(
-        self, points, translation_vector=np.array([0, 0, 0])
-    ):
+    def shortest_displacement_to_surface(self, points, translation_vector=None):
         """
-        Solves for the shortest displacement (vector) between points and
-        the surface of a polygon.
+        Solve for the shortest displacement between points and surface of a polygon.
 
-        This function calculates the shortest displacement by partitioning
+        This function calculates the shortest displacement (vector) by partitioning
         the space around a polygon into zones: vertex, edge, and face.
         Determining the zone(s) a point lies in, determines the displacement
         calculation(s) done. For a vertex zone, the displacement is

@@ -1094,8 +1094,7 @@ class Polyhedron(Shape3D):
 
     @property
     def edge_face_neighbors(self):
-        """:class:`numpy.ndarray`: Get the indices of the faces that
-        are adjacent to each edge.
+        """:class:`numpy.ndarray`: Get the face indices that are adjacent to each edge.
 
         For a given edge vector oriented pointing upwards and from
         an outside perspective of the polyhedron, the index of the
@@ -1109,7 +1108,9 @@ class Polyhedron(Shape3D):
 
     @property
     def vertex_zones(self):
-        """dict: Get the constraints and bounds needed to partition the
+        """dict: Get the constraints and bounds associated with the vertices.
+
+        The constraints and bounds are needed to partition the
         volume surrounding a polyhedron into zones where the shortest
         distance from any point that is within a vertex zone is the
         distance between the point and the corresponding vertex.
@@ -1120,7 +1121,9 @@ class Polyhedron(Shape3D):
 
     @property
     def edge_zones(self):
-        """dict: Get the constraints and bounds needed to partition
+        """dict: Get the constraints and bounds associated with the edges.
+
+        The constraints and bounds are needed to partition
         the volume surrounding a polyhedron into zones where the
         shortest distance from any point that is within an edge zone
         is the distance between the point and the corresponding edge.
@@ -1131,7 +1134,9 @@ class Polyhedron(Shape3D):
 
     @property
     def face_zones(self):
-        """dict: Get the constraints and bounds needed to partition
+        """dict: Get the constraints and bounds associated with the faces.
+
+        The constraints and bounds are needed to partition
         the volume surrounding a polyhedron into zones where the shortest
         distance from any point that is within a triangulated face zone
         is the distance between the point and the corresponding
@@ -1177,15 +1182,13 @@ class Polyhedron(Shape3D):
         """
         return get_weighted_edge_normals(self)
 
-    def shortest_distance_to_surface(
-        self, points, translation_vector=np.array([0, 0, 0])
-    ):
+    def shortest_distance_to_surface(self, points, translation_vector=None):
         """
-        Solves for the shortest distance (magnitude) between points and
-        the surface of a polyhedron. If the point lies inside the
-        polyhedron, the distance is negative.
+        Solves for the shortest distance between points and surface of a polyhedron.
 
-        This function calculates the shortest distance by partitioning
+        If the point lies inside the polyhedron, the distance is negative.
+
+        This function calculates the shortest distance (magnitude) by partitioning
         the space around a polyhedron into zones: vertex, edge, and face.
         Determining the zone(s) a point lies in, determines the distance
         calculation(s) done. For a vertex zone,the distance is calculated
@@ -1211,14 +1214,11 @@ class Polyhedron(Shape3D):
         """
         return shortest_distance_to_surface(self, points, translation_vector)
 
-    def shortest_displacement_to_surface(
-        self, points, translation_vector=np.array([0, 0, 0])
-    ):
+    def shortest_displacement_to_surface(self, points, translation_vector=None):
         """
-        Solves for the shortest displacement (vector) between points and
-        the surface of a polyhedron.
+        Solves for the shortest displacement between points and the surface.
 
-        This function calculates the shortest displacement by partitioning
+        This function calculates the shortest displacement (vector) by partitioning
         the space around a polyhedron into zones: vertex, edge, and face.
         Determining the zone(s) a point lies in, determines the displacement
         calculation(s) done. For a vertex zone, the displacement is
