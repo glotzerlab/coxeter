@@ -167,10 +167,9 @@ def point_to_edge_displacement(
         np.linalg.norm(edge_vector, axis=1), axis=1
     )  # unit vectors of the edges
 
-    disp = (vert - point) - (
+    return (vert - point) - (
         np.expand_dims(np.sum((vert - point) * edge_unit, axis=1), axis=1) * edge_unit
     )  # displacements
-    return disp
 
 
 def point_to_face_distance(
@@ -204,9 +203,7 @@ def point_to_face_distance(
         np.linalg.norm(face_normal, axis=1), axis=1
     )  # unit vectors of the normals of the faces
 
-    dist = np.sum(vert_point_vect * face_unit, axis=1) * (-1)  # distances
-
-    return dist
+    return np.sum(vert_point_vect * face_unit, axis=1) * (-1)  # distances
 
 
 def point_to_face_displacement(
@@ -240,12 +237,10 @@ def point_to_face_displacement(
         np.linalg.norm(face_normal, axis=1), axis=1
     )  # unit vectors of the normals of the faces
 
-    disp = (
+    return (
         np.expand_dims(np.sum(vert_point_vect * face_units, axis=1), axis=1)
         * face_units
-    )  # *(-1) #displacements
-
-    return disp
+    )  # displacements
 
 
 def get_vert_zones(shape):
@@ -271,7 +266,7 @@ def get_vert_zones(shape):
     # of edges connected to it
 
     # (EX:vertices in a cube have 3 connected edges each, and for an icosahedron,
-    # vertices have 5 conncected edges).
+    # vertices have 5 connected edges).
 
     # This would result in a ragged list for the constraint and bounds, which is not
     # ideal.
