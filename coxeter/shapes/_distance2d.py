@@ -296,7 +296,7 @@ def shortest_distance_to_surface(
     Args:
         points (list or np.ndarray): positions of the points
         translation_vector (list or np.ndarray): translation vector of the
-            polyhedron [shape = (3,) or (2,)]
+            polygon [shape = (3,) or (2,)]
 
     Returns
     -------
@@ -454,7 +454,7 @@ def shortest_displacement_to_surface(
     Args:
         points (list or np.ndarray): positions of the points
         translation_vector (list or np.ndarray): translation vector of the
-            polyhedron [shape = (3,) or (2,)]
+            polygon [shape = (3,) or (2,)]
 
     Returns
     -------
@@ -631,7 +631,7 @@ def spheropolygon_shortest_displacement_to_surface(
     Args:
         points (list or np.ndarray): positions of the points
         translation_vector (list or np.ndarray): translation vector of the
-            polyhedron [shape = (3,) or (2,)]
+            spheropolygon [shape = (3,) or (2,)]
 
     Returns
     -------
