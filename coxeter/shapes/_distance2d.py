@@ -165,7 +165,7 @@ def get_edge_zones(shape):
     """
     Get the constraints and bounds associated with the edges.
 
-    The constrains and bounds are needed to partition the volume surrounding a
+    The constraints and bounds are needed to partition the volume surrounding a
     polygon into zones where the shortest distance from any point that is within
     an edge zone is the distance between the point and the corresponding edge.
 
@@ -218,7 +218,7 @@ def get_face_zones(shape):
     """
     Get the constraints and bounds associated with the faces.
 
-    The constrains and bounds are needed to partition the volume surrounding a
+    The constraints and bounds are needed to partition the volume surrounding a
     polygon into zones where the shortest distance from any point that is within
     a triangulated face zone is the distance between the point and the
     corresponding triangulated face.
@@ -284,10 +284,8 @@ def shortest_distance_to_surface(
     """
     Solve for the shortest distance between points and the surface of a polygon.
 
-    If the point lies inside the polyhedron, the distance is negative.
-
     This function calculates the shortest distance by partitioning the space
-    around a polyhedron into zones: vertex, edge, and face. Determining the
+    around a polygon into zones: vertex, edge, and face. Determining the
     zone(s) a point lies in, determines the distance calculation(s) done. For a
     vertex zone, the distance is calculated between a point and the vertex. For
     an edge zone, the distance is calculated between a point and the edge. For
@@ -444,7 +442,7 @@ def shortest_displacement_to_surface(
     Solve for the shortest displacement between points and surface of a polygon.
 
     This function calculates the shortest displacement by partitioning the space
-    around a polyhedron into zones: vertex, edge, and face. Determining the
+    around a polygon into zones: vertex, edge, and face. Determining the
     zone(s) a point lies in, determines the displacement calculation(s) done. For
     a vertex zone, the displacement is calculated between a point and the vertex.
     For an edge zone, the displacement is calculated between a point and the edge.
@@ -621,7 +619,7 @@ def spheropolygon_shortest_displacement_to_surface(
     Solve for the shortest displacement between points and surface of a spheropolygon.
 
     This function calculates the shortest displacement by partitioning the space
-    around a polyhedron into zones: vertex, edge, and face. Determining the
+    around a spheropolygon into zones: vertex, edge, and face. Determining the
     zone(s) a point lies in, determines the displacement calculation(s) done.
     For a vertex zone, the displacement is calculated between a point and the
     vertex. For an edge zone, the displacement is calculated between a point and
