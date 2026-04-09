@@ -397,16 +397,10 @@ def shortest_distance_to_surface(
         vert_on_edge = (
             shape.vertices[shape.edges[edge_used][:, 0]] + translation_vector
         )  # Vertices that lie on the needed edges
-        edge_vectors = (
-            np.append(
-                shape.vertices[1:], np.expand_dims(shape.vertices[0], axis=0), axis=0
-            )
-            - shape.vertices
-        )
 
         edge_dist = np.ones((shape.num_vertices, n_points)) * max_value
         edge_dist[edge_bool] = point_to_edge_distance(
-            points[e_points_used], vert_on_edge, edge_vectors[edge_used]
+            points[e_points_used], vert_on_edge, shape.edge_vectors[edge_used]
         )  # Distances between a point and a line
         edge_dist = np.transpose(edge_dist)  # <--- shape = (n_points, n_edges)
 
@@ -558,16 +552,10 @@ def shortest_displacement_to_surface(
         vert_on_edge = (
             shape.vertices[shape.edges[edge_used][:, 0]] + translation_vector
         )  # Vertices that lie on the needed edges
-        edge_vectors = (
-            np.append(
-                shape.vertices[1:], np.expand_dims(shape.vertices[0], axis=0), axis=0
-            )
-            - shape.vertices
-        )
 
         edge_disp = np.ones((n_edges, n_points, 3)) * max_value
         edge_disp[edge_bool] = point_to_edge_displacement(
-            points[e_points_used], vert_on_edge, edge_vectors[edge_used]
+            points[e_points_used], vert_on_edge, shape.edge_vectors[edge_used]
         )  # Displacements between a point and a line
         edge_disp = np.transpose(
             edge_disp, (1, 0, 2)
@@ -754,16 +742,10 @@ def spheropolygon_shortest_displacement_to_surface(
         vert_on_edge = (
             shape.vertices[shape.edges[edge_used][:, 0]] + translation_vector
         )  # Vertices that lie on the needed edges
-        edge_vectors = (
-            np.append(
-                shape.vertices[1:], np.expand_dims(shape.vertices[0], axis=0), axis=0
-            )
-            - shape.vertices
-        )
 
         edge_disp = np.ones((n_edges, n_points, 3)) * max_value
         edge_disp[edge_bool] = point_to_edge_displacement(
-            points[e_points_used], vert_on_edge, edge_vectors[edge_used]
+            points[e_points_used], vert_on_edge, shape.edge_vectors[edge_used]
         )  # Displacements between a point and a line
         edge_disp = np.transpose(
             edge_disp, (1, 0, 2)
