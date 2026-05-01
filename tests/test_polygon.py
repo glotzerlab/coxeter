@@ -19,6 +19,7 @@ from conftest import (
     regular_polygons,
     sphere_isclose,
 )
+from coxeter.families import RegularNGonFamily
 from coxeter.shapes import Circle, ConvexPolygon, Polygon
 
 
@@ -644,10 +645,12 @@ def test_edge_lengths(poly):
 
 
 def test_shortest_distance_convex():
-    tri_verts = np.array(
-        [[0, 0.5], [-0.25 * np.sqrt(3), -0.25], [0.25 * np.sqrt(3), -0.25]]
+    triangle = RegularNGonFamily.get_shape(3)
+    scale_factor = 0.5 / triangle.circumcircle_radius
+    rotation_quaternion = rowan.from_axis_angle([0, 0, 1], np.pi / 2)
+    triangle = ConvexPolygon(
+        rowan.rotate(rotation_quaternion, triangle.vertices * scale_factor)
     )
-    triangle = ConvexPolygon(vertices=tri_verts)
 
     test_points = np.array(
         [[3.5, 3.25, 0], [3, 3.75, 0], [3, 3.25, 0], [3, 3, 1], [3.25, 3.5, -1]]

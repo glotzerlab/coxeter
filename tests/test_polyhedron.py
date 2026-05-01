@@ -957,21 +957,8 @@ def test_to_hoomd(poly):
 
 
 def test_shortest_distance_convex():
-    cube_verts = np.array(
-        [
-            [1, 1, 1],
-            [-1, 1, 1],
-            [1, -1, 1],
-            [1, 1, -1],
-            [-1, -1, 1],
-            [-1, 1, -1],
-            [1, -1, -1],
-            [-1, -1, -1],
-        ]
-    )
-    cube = ConvexPolyhedron(
-        vertices=cube_verts
-    )  # , faces=[[1,5,7,4],[0,2,6,3],[2,4,7,6],[3,6,7,5],[0,1,4,2],[1,0,3,5]])
+    cube = PlatonicFamily.get_shape("Cube")
+    cube.volume = 8
 
     test_points = np.array(
         [[3, 3, 3], [3, 3, 5], [5, 5, 1], [5, 4, 2], [3, 5, 5], [3, 4, 5], [3, 3, 6]]

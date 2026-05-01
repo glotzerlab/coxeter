@@ -7,6 +7,7 @@ from hypothesis import given, settings
 from hypothesis.strategies import floats
 
 from conftest import make_sphero_cube
+from coxeter.families import PlatonicFamily
 from coxeter.shapes import ConvexSpheropolyhedron
 
 
@@ -160,21 +161,11 @@ def test_to_hoomd(poly, r):
         assert np.allclose(hoomd_dict[key], val), f"{key}"
 
 
-def test_shortest_distance_convex():
-    radius = 0.5  # np.random.rand(1)
-    verts = np.array(
-        [
-            [1, 1, 1],
-            [-1, 1, 1],
-            [1, -1, 1],
-            [1, 1, -1],
-            [-1, -1, 1],
-            [-1, 1, -1],
-            [1, -1, -1],
-            [-1, -1, -1],
-        ]
-    )
-    poly = ConvexSpheropolyhedron(vertices=verts, radius=radius)
+@pytest.mark.parametrize("radius", [0.0, 0.1, 0.5, 1.0])
+def test_shortest_distance_convex(radius):
+    poly = ConvexSpheropolyhedron(
+        vertices=PlatonicFamily.get_shape("Cube").vertices * 2, radius=radius
+    )  # A cube of side length 2.
 
     test_points = np.array(
         [

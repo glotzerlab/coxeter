@@ -15,6 +15,7 @@ from conftest import (
     assert_distance_to_surface_2d,
     regular_polygons,
 )
+from coxeter.families import RegularNGonFamily
 from coxeter.shapes import ConvexSpheropolygon
 
 
@@ -237,10 +238,13 @@ def test_to_hoomd(unit_rounded_square):
 
 
 def test_shortest_distance_convex():
-    tri_verts = np.array(
-        [[0, 0.5], [-0.25 * np.sqrt(3), -0.25], [0.25 * np.sqrt(3), -0.25]]
+    triangle = RegularNGonFamily.get_shape(3)
+    scale_factor = 0.5 / triangle.circumcircle_radius
+    rotation_quaternion = rowan.from_axis_angle([0, 0, 1], np.pi / 2)
+    triangle = ConvexSpheropolygon(
+        vertices=rowan.rotate(rotation_quaternion, triangle.vertices * scale_factor),
+        radius=0.25,
     )
-    triangle = ConvexSpheropolygon(vertices=tri_verts, radius=0.25)
 
     test_points = np.array(
         [
