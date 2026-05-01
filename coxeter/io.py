@@ -45,8 +45,13 @@ def to_obj(shape, filename):
 
     content += "\n"
 
-    for f in shape.faces:
-        content += f"f {' '.join([str(v_index + 1) for v_index in f])}\n"
+    if shape.__getattribute__("faces"):
+        for f in shape.faces:
+            content += f"f {' '.join([str(v_index + 1) for v_index in f])}\n"
+    elif shape.__getattribute__("faces"):
+        content += f"f {' '.join([str(i + 1) for i in range(shape.num_vertices)])}\n"
+    else:
+        raise TypeError(f"Unsupported shape type `{type(shape)}` was provided.")
 
     content = content[:-1]
 
