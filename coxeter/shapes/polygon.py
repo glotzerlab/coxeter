@@ -838,3 +838,22 @@ class Polygon(Shape2D):
 
         self.centroid = old_centroid
         return hoomd_dict
+
+    def save(self, filename):
+        """Save the polyhedron object to a file using methods from ``coxeter.io``.
+
+        Args:
+            filename (str, pathlib.Path, or os.PathLike):
+                The name or path of the output file, including the extension which must
+                be one of the following: .obj, .off, .stl, .ply, .vtk, .x3d, or .html
+
+        Raises
+        ------
+            ValueError: If the file type does not match one of the valid outputs.
+            OSError: If open() encounters a problem.
+        """
+        filetype = Path(filename).suffix.lstrip(".").capitalize()
+        if filetype == "OBJ":
+            io.to_obj(self, filename)
+        else:
+            raise ValueError("filetype must be one of the following: .obj")
