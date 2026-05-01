@@ -5,6 +5,7 @@
 
 import warnings
 from functools import cached_property
+from pathlib import Path
 
 import numpy as np
 import rowan
@@ -1022,22 +1023,20 @@ class Polyhedron(Shape3D):
         self.centroid = old_centroid
         return hoomd_dict
 
-    def save(self, filetype, filename):
+    def save(self, filename):
         """Save the polyhedron object to a file using methods from ``coxeter.io``.
 
         Args:
-            filetype (str):
-                The file format to export polyhedron to. Must be one of the following:
-                OBJ, OFF, STL, PLY, VTK, X3D, HTML.
-
             filename (str, pathlib.Path, or os.PathLike):
-                The name or path of the output file, including the extension.
+                The name or path of the output file, including the extension which must
+                be one of the following: .obj, .off, .stl, .ply, .vtk, .x3d, or .html
 
         Raises
         ------
-            ValueError: If filetype is not one of the required strings.
+            ValueError: If the file type does not match one of the valid outputs.
             OSError: If open() encounters a problem.
         """
+        filetype = Path(filename).suffix.lstrip(".").capitalize()
         if filetype == "OBJ":
             io.to_obj(self, filename)
         elif filetype == "OFF":
@@ -1054,6 +1053,6 @@ class Polyhedron(Shape3D):
             io.to_html(self, filename)
         else:
             raise ValueError(
-                "filetype must be one of the following: OBJ, OFF, "
-                "STL, PLY, VTK, X3D, HTML"
+                "filetype must be one of the following: .obj, .off, .stl, .ply, .vtk, "
+                ".x3d, or .html"
             )
