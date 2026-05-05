@@ -176,6 +176,8 @@ def test_shortest_distance_convex(radius):
             [3, 5, 5],
             [3, 4, 5],
             [3, 3, 6],
+            [3.5, 3, 3],
+            [3.5, 3.75, 3],
             [4, 4, 4],
             [4, 4, 3],
             [4, 3, 3],
@@ -208,18 +210,30 @@ def test_shortest_distance_convex(radius):
     )
 
     true_distances = (
-        np.array([-1, 1, np.sqrt(3), 1, np.sqrt(2), 1, 2, 0, 0, 0]) - radius
+        np.array([-1, 1, np.sqrt(3), 1, np.sqrt(2), 1, 2, -0.5, -0.25, 0, 0, 0])
+        - radius
     )
     true_displacements = np.array(
-        [[0, 0, -1], [-1, -1, 1], [-1, 0, 0], [0, -1, -1], [0, 0, -1], [0, 0, -2]]
+        [
+            [0, 0, -1],
+            [-1, -1, 1],
+            [-1, 0, 0],
+            [0, -1, -1],
+            [0, 0, -1],
+            [0, 0, -2],
+            [0.5, 0, 0],
+            [0, 0.25, 0],
+        ]
     )
     true_displacements = true_displacements - radius * (
         true_displacements
         / np.expand_dims(np.linalg.norm(true_displacements, axis=1), axis=1)
-    )
+    ) * np.expand_dims(np.array([1, 1, 1, 1, 1, 1, -1, -1]), axis=1)
+
+    print(true_displacements)
 
     np.testing.assert_allclose(distances, true_distances)
-    np.testing.assert_allclose(displacements[1:7], true_displacements)
+    np.testing.assert_allclose(displacements[1:9], true_displacements)
 
 
 def test_shortest_distance_convex_general():
