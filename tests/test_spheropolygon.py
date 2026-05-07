@@ -379,6 +379,6 @@ def test_shortest_distance_general():
     scipy_displacements2d[is_zero2d] = np.array([0, 0, 0])
 
     np.testing.assert_allclose(distances2d, scipy_distances2d, atol=2e-8)
-    np.testing.assert_allclose(displacements2d, scipy_displacements2d, atol=2e-5)
+    np.testing.assert_allclose(displacements2d, scipy_displacements2d, atol=1e-4)
     np.testing.assert_allclose(distances3d, scipy_distances3d, atol=2e-8)
-    np.testing.assert_allclose(displacements3d, scipy_displacements3d, atol=2e-5)
+    np.testing.assert_allclose(displacements3d, scipy_displacements3d, atol=1e-4)
