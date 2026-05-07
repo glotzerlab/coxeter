@@ -653,7 +653,14 @@ def test_shortest_distance_convex():
     )
 
     test_points = np.array(
-        [[3.5, 3.25, 0], [3, 3.75, 0], [3, 3.25, 0], [3, 3, 1], [3.25, 3.5, -1]]
+        [
+            [3.5, 3.25, 0],
+            [3, 3.75, 0],
+            [3, 3.25, 0],
+            [3, 3, 1],
+            [3.25, 3.5, -1],
+            [3.75, 2.5, -1],
+        ]
     )
 
     distances = triangle.shortest_distance_to_surface(
@@ -663,7 +670,7 @@ def test_shortest_distance_convex():
         test_points, translation_vector=np.array([3, 3, 0])
     )
 
-    true_distances = np.array([0.3080127018, 0.25, 0, 1, 1.0231690965])
+    true_distances = np.array([0.3080127018, 0.25, 0, 1, 1.0231690965, 1.07841594])
     true_displacements = np.array(
         [
             [-0.2667468246, -0.1540063509, 0],
@@ -671,6 +678,7 @@ def test_shortest_distance_convex():
             [0, 0, 0],
             [0, 0, -1],
             [-0.1875, -0.1082531755, 1],
+            [-0.3169873, 0.25, 1],
         ]
     )
 
@@ -693,11 +701,14 @@ def test_shortest_distance_concave():
     test_points = np.array(
         [
             [3.5, 3.25, 0],
+            [3.5, 3.25, 1],
             [3, 3.75, 0],
             [3, 3.25, 0],
             [3, 3, -1],
             [3.25, 3.5, -1],
+            [3.25, 3.5, 0],
             [3 + 0.25 * np.sqrt(3), 4, 0],
+            [3.75, 2.5, -1],
         ]
     )
 
@@ -709,16 +720,29 @@ def test_shortest_distance_concave():
     )
 
     true_distances = np.array(
-        [abs(0.25 * np.sqrt(3) - 0.5), np.sqrt(0.0125), 0, 1, 1, 0.25]
+        [
+            abs(0.25 * np.sqrt(3) - 0.5),
+            1.00224114,
+            np.sqrt(0.0125),
+            0,
+            1,
+            1,
+            0,
+            0.25,
+            1.07841594,
+        ]
     )
     true_displacements = np.array(
         [
             [0.25 * np.sqrt(3) - 0.5, 0, 0],
+            [0.25 * np.sqrt(3) - 0.5, 0, -1],
             [-0.1, -0.05, 0],
             [0, 0, 0],
             [0, 0, 1],
             [0, 0, 1],
+            [0, 0, 0],
             [0, -0.25, 0],
+            [-0.3169873, 0.25, 1],
         ]
     )
 

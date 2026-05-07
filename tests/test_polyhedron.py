@@ -961,7 +961,16 @@ def test_shortest_distance_convex():
     cube.volume = 8
 
     test_points = np.array(
-        [[3, 3, 3], [3, 3, 5], [5, 5, 1], [5, 4, 2], [3, 5, 5], [3, 4, 5], [3, 3, 6]]
+        [
+            [3, 3, 3],
+            [3, 3, 5],
+            [5, 5, 1],
+            [5, 4, 2],
+            [3, 5, 5],
+            [3, 4, 5],
+            [3, 3, 6],
+            [3, 3, 3.5],
+        ]
     )
 
     distances = cube.shortest_distance_to_surface(
@@ -983,9 +992,17 @@ def test_shortest_distance_convex():
         cube_surface_displacement, np.zeros((len(test_points), 3))
     )
 
-    true_distances = np.array([-1, 1, np.sqrt(3), 1, np.sqrt(2), 1, 2])
+    true_distances = np.array([-1, 1, np.sqrt(3), 1, np.sqrt(2), 1, 2, -0.5])
     true_displacements = np.array(
-        [[0, 0, -1], [-1, -1, 1], [-1, 0, 0], [0, -1, -1], [0, 0, -1], [0, 0, -2]]
+        [
+            [0, 0, -1],
+            [-1, -1, 1],
+            [-1, 0, 0],
+            [0, -1, -1],
+            [0, 0, -1],
+            [0, 0, -2],
+            [0, 0, 0.5],
+        ]
     )
 
     np.testing.assert_allclose(distances, true_distances)
@@ -1005,6 +1022,8 @@ def test_shortest_distance_concave():
             [3, 3, 3],
             [3, 3.5, 3.5],
             [3, 3, 2.25],
+            [3.5, 3, 4],
+            [3, 1, 1],
         ]
     )
 
@@ -1072,6 +1091,8 @@ def test_shortest_distance_concave():
             -1,
             -1 * np.sqrt(0.5),
             -0.25,
+            -1 / np.sqrt(5),
+            np.sqrt(2),
         ]
     )
 
@@ -1139,6 +1160,8 @@ def test_shortest_distance_concave():
             -1,
             -1 * np.sqrt(0.5),
             -0.25,
+            -0.5,
+            np.sqrt(2),
         ]
     )
 
@@ -1206,6 +1229,8 @@ def test_shortest_distance_concave():
             1 / np.sqrt(13),
             0.5 / np.sqrt(13),
             -0.25,
+            1.5 / np.sqrt(13),
+            np.sqrt(2),
         ]
     )
 
