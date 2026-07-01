@@ -733,32 +733,32 @@ class ConvexPolyhedron(Polyhedron):
         """
         return np.all(self._point_plane_distances(points) <= 0, axis=1)
 
-    @property
-    def insphere_from_center(self):
-        """:class:`~.Sphere`: Get the largest concentric inscribed sphere."""
-        warnings.warn(
-            "The insphere_from_center property is deprecated, use "
-            "maximal_centered_bounded_sphere instead",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        return self.maximal_centered_bounded_sphere
+    # @property
+    # def insphere_from_center(self):
+    #     """:class:`~.Sphere`: Get the largest concentric inscribed sphere."""
+    #     warnings.warn(
+    #         "The insphere_from_center property is deprecated, use "
+    #         "maximal_centered_bounded_sphere instead",
+    #         DeprecationWarning,
+    #         stacklevel=2,
+    #     )
+    #     return self.maximal_centered_bounded_sphere
 
-    @property
-    def circumsphere_from_center(self):
-        """:class:`~.Sphere`: Get the smallest circumscribed sphere centered at the centroid.
+    # @property
+    # def circumsphere_from_center(self):
+    #     """:class:`~.Sphere`: Get the smallest circumscribed sphere centered at the centroid.
 
-        The requirement that the sphere be centered at the centroid of the
-        shape distinguishes this sphere from most typical circumsphere
-        calculations.
-        """  # noqa: E501
-        warnings.warn(
-            "The circumsphere_from_center property is deprecated, use "
-            "minimal_centered_bounding_sphere instead",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        return self.minimal_centered_bounding_sphere
+    #     The requirement that the sphere be centered at the centroid of the
+    #     shape distinguishes this sphere from most typical circumsphere
+    #     calculations.
+    #     """  # noqa: E501
+    #     warnings.warn(
+    #         "The circumsphere_from_center property is deprecated, use "
+    #         "minimal_centered_bounding_sphere instead",
+    #         DeprecationWarning,
+    #         stacklevel=2,
+    #     )
+    #     return self.minimal_centered_bounding_sphere
 
     @property
     def minimal_centered_bounding_sphere(self):
