@@ -764,11 +764,11 @@ class ConvexPolyhedron(Polyhedron):
     def minimal_centered_bounding_sphere(self):
         """:class:`~.Sphere`: Get the smallest bounding concentric sphere.
         
-        This is the smallest concentric sphere that contains the
-        convex polyhedron. All polyhedrons have a minimal centered
-        bounding sphere, and for convex polyhedrons that have a
-        circumsphere that is centered at the centroid, the minimal
-        centered bounding sphere is this circumsphere.
+        This is the smallest sphere that contains the convex polyhedron
+        whose center coincides with the center of the shape. All
+        polyhedrons have a minimal centered bounding sphere, and for
+        convex polyhedrons that have a circumsphere that is centered at the
+        centroid, the minimal centered bounding sphere is this circumsphere.
         """
         # The radius is determined by the furthest vertex from the center.
         return Sphere(
@@ -779,11 +779,11 @@ class ConvexPolyhedron(Polyhedron):
     def maximal_centered_bounded_sphere(self):
         """:class:`~.Sphere`: Get the largest bounded concentric sphere.
         
-        This is the largest concentric sphere that is inside the
-        convex polyhedron. All convex polyhedrons have a maximal
-        centered bounded sphere, and for convex polyhedrons that
-        have an insphere, the maximal centered bounded sphere is
-        the insphere.
+        This property gives the largest sphere that fits in the shape whose
+        center also coincides with the center of the shape. All convex
+        polyhedrons have a maximal centered bounded sphere, and for convex
+        polyhedrons that have an insphere, the maximal centered bounded
+        sphere is the insphere.
         """
         # The radius is determined by the furthest vertex from the center.
         center = self.center
