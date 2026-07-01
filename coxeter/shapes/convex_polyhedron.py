@@ -733,36 +733,43 @@ class ConvexPolyhedron(Polyhedron):
         """
         return np.all(self._point_plane_distances(points) <= 0, axis=1)
 
-    @property
-    def insphere_from_center(self):
-        """:class:`~.Sphere`: Get the largest concentric inscribed sphere."""
-        warnings.warn(
-            "The insphere_from_center property is deprecated, use "
-            "maximal_centered_bounded_sphere instead",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        return self.maximal_centered_bounded_sphere
+    # @property
+    # def insphere_from_center(self):
+    #     """:class:`~.Sphere`: Get the largest concentric inscribed sphere."""
+    #     warnings.warn(
+    #         "The insphere_from_center property is deprecated, use "
+    #         "maximal_centered_bounded_sphere instead",
+    #         DeprecationWarning,
+    #         stacklevel=2,
+    #     )
+    #     return self.maximal_centered_bounded_sphere
 
-    @property
-    def circumsphere_from_center(self):
-        """:class:`~.Sphere`: Get the smallest circumscribed sphere centered at the centroid.
+    # @property
+    # def circumsphere_from_center(self):
+    #     """:class:`~.Sphere`: Get the smallest circumscribed sphere centered at the centroid.
 
-        The requirement that the sphere be centered at the centroid of the
-        shape distinguishes this sphere from most typical circumsphere
-        calculations.
-        """  # noqa: E501
-        warnings.warn(
-            "The circumsphere_from_center property is deprecated, use "
-            "minimal_centered_bounding_sphere instead",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        return self.minimal_centered_bounding_sphere
+    #     The requirement that the sphere be centered at the centroid of the
+    #     shape distinguishes this sphere from most typical circumsphere
+    #     calculations.
+    #     """  # noqa: E501
+    #     warnings.warn(
+    #         "The circumsphere_from_center property is deprecated, use "
+    #         "minimal_centered_bounding_sphere instead",
+    #         DeprecationWarning,
+    #         stacklevel=2,
+    #     )
+    #     return self.minimal_centered_bounding_sphere
 
     @property
     def minimal_centered_bounding_sphere(self):
-        """:class:`~.Sphere`: Get the smallest bounding concentric sphere."""
+        """:class:`~.Sphere`: Get the smallest bounding concentric sphere.
+        
+        This is the smallest sphere that contains the convex polyhedron
+        whose center coincides with the center of the shape. All
+        polyhedrons have a minimal centered bounding sphere, and for
+        convex polyhedrons that have a circumsphere that is centered at the
+        centroid, the minimal centered bounding sphere is this circumsphere.
+        """
         # The radius is determined by the furthest vertex from the center.
         return Sphere(
             np.linalg.norm(self.vertices - self.center, axis=-1).max(), self.center
@@ -770,7 +777,14 @@ class ConvexPolyhedron(Polyhedron):
 
     @property
     def maximal_centered_bounded_sphere(self):
-        """:class:`~.Sphere`: Get the largest bounded concentric sphere."""
+        """:class:`~.Sphere`: Get the largest bounded concentric sphere.
+        
+        This property gives the largest sphere that fits in the shape whose
+        center also coincides with the center of the shape. All convex
+        polyhedrons have a maximal centered bounded sphere, and for convex
+        polyhedrons that have an insphere, the maximal centered bounded
+        sphere is the insphere.
+        """
         # The radius is determined by the furthest vertex from the center.
         center = self.center
         distances = self._point_plane_distances(center).squeeze()
