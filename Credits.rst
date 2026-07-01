@@ -141,6 +141,11 @@ Joseph Burkhart
 * Created the interactive "Pre-Defined Shapes" documentation.
 * Fixed errors in reference data.
 
+Ryn Oliphant
+
+* Created and implemented a novel algorithm for evaluating the distance between faceted
+  (possibly sphero)-polytopes and a set of points.
+
 Source code
 -----------
 
