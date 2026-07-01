@@ -765,10 +765,10 @@ class ConvexPolyhedron(Polyhedron):
         """:class:`~.Sphere`: Get the smallest bounding concentric sphere.
         
         This is the smallest concentric sphere that contains the
-        convex polyhedron. All convex polyhedrons have a minimal
-        centered bounding sphere, and for convex polyhedrons that
-        have a circumsphere, the minimal centered bounding sphere
-        is the circumsphere.
+        convex polyhedron. All polyhedrons have a minimal centered
+        bounding sphere, and for convex polyhedrons that have a
+        circumsphere that is centered at the centroid, the minimal
+        centered bounding sphere is this circumsphere.
         """
         # The radius is determined by the furthest vertex from the center.
         return Sphere(
