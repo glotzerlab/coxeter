@@ -519,17 +519,17 @@ class Shape3D(Shape):
     #         "The maximal bounded sphere calculation is not implemented for this shape."
     #     )
 
-    @property
-    def maximal_bounded_sphere_radius(self):
-        """float: Get or set the radius of the maximal bounded sphere.
+    # @property
+    # def maximal_bounded_sphere_radius(self):
+    #     """float: Get or set the radius of the maximal bounded sphere.
 
-        See :meth:`~.maximal_bounded_sphere` for more information.
-        """
-        return self.maximal_bounded_sphere.radius
+    #     See :meth:`~.maximal_bounded_sphere` for more information.
+    #     """
+    #     return self.maximal_bounded_sphere.radius
 
-    @maximal_bounded_sphere_radius.setter
-    def maximal_bounded_sphere_radius(self, value):
-        self._rescale(value / self.maximal_bounded_sphere_radius)
+    # @maximal_bounded_sphere_radius.setter
+    # def maximal_bounded_sphere_radius(self, value):
+    #     self._rescale(value / self.maximal_bounded_sphere_radius)
 
     @property
     def maximal_centered_bounded_sphere(self):
