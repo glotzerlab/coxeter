@@ -357,6 +357,10 @@ def to_html(shape, filename):
         file.write("<!DOCTYPE html>")
         file.write(ElementTree.tostring(html, encoding="unicode"))
 
+
+def from_stl(filename, merge_coplanar_faces=True):
+    pass
+
 def from_obj(filename):
     """Create a Polyhedron from a Wavefront OBJ file."""
     vertices = []
