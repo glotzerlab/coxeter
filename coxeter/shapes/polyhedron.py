@@ -591,21 +591,28 @@ class Polyhedron(Shape3D):
         self._vertices += np.asarray(value) - self.centroid
         self._find_equations()
 
-    @property
-    def bounding_sphere(self):
-        """:class:`~.Sphere`: Get the polyhedron's bounding sphere."""
-        warnings.warn(
-            "The bounding_sphere property is deprecated, use "
-            "minimal_bounding_sphere instead",
-            DeprecationWarning,
-            stacklevel=2,
-        )
+    # @property
+    # def bounding_sphere(self):
+    #     """:class:`~.Sphere`: Get the polyhedron's bounding sphere."""
+    #     warnings.warn(
+    #         "The bounding_sphere property is deprecated, use "
+    #         "minimal_bounding_sphere instead",
+    #         DeprecationWarning,
+    #         stacklevel=2,
+    #     )
 
-        return self.minimal_bounding_sphere
+    #     return self.minimal_bounding_sphere
 
     @property
     def minimal_bounding_sphere(self):
-        """:class:`~.Sphere`: Get the polyhedron's bounding sphere."""
+        """:class:`~.Sphere`: Get the polyhedron's smallest bounding sphere.
+        
+        This is the smallest sphere that contains the polyhedron.
+        Note that the center of this sphere does not have to be
+        the same as the centroid of the polyhedron. For polyhedrons
+        that have a circumsphere, the minimal bounding sphere is
+        the circumsphere.
+        """
         if not MINIBALL:
             raise ImportError(
                 "The miniball module must be installed. It can "
