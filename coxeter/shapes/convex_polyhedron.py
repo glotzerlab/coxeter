@@ -766,8 +766,9 @@ class ConvexPolyhedron(Polyhedron):
         
         This is the smallest concentric sphere that contains the
         convex polyhedron. All convex polyhedrons have a minimal
-        centered bounding sphere, and for some convex polyhedrons,
-        the minimal centered bounding sphere equals the circumsphere.
+        centered bounding sphere, and for convex polyhedrons that
+        have a circumsphere, the minimal centered bounding sphere
+        is the circumsphere.
         """
         # The radius is determined by the furthest vertex from the center.
         return Sphere(
@@ -780,8 +781,9 @@ class ConvexPolyhedron(Polyhedron):
         
         This is the largest concentric sphere that is inside the
         convex polyhedron. All convex polyhedrons have a maximal
-        centered bounded sphere, and for some convex polyhedrons,
-        the maximal centered bounded sphere equals the insphere.
+        centered bounded sphere, and for convex polyhedrons that
+        have an insphere, the maximal centered bounded sphere is
+        the insphere.
         """
         # The radius is determined by the furthest vertex from the center.
         center = self.center
