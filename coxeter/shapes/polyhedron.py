@@ -609,7 +609,7 @@ class Polyhedron(Shape3D):
         
         This is the smallest sphere that contains the polyhedron.
         Note that the center of this sphere does not have to be
-        the same as the centroid of the polyhedron. For polyhedrons
+        equal to the centroid of the polyhedron. For polyhedrons
         that have a circumsphere, the minimal bounding sphere is
         the circumsphere.
         """
