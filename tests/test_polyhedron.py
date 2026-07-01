@@ -818,6 +818,35 @@ def test_form_factor(cube):
     )
 
 
+def compute_form_factor_mc(shape, q, num_samples=1000000):
+    mins = np.min(shape.vertices, axis=0)
+    maxs = np.max(shape.vertices, axis=0)
+    points = np.random.uniform(mins, maxs, (num_samples, 3))
+    inside = shape.is_inside(points).squeeze()
+    points_inside = points[inside]
+    box_vol = np.prod(maxs - mins)
+    return np.sum(np.exp(-1j * np.dot(points_inside, q.T)), axis=0) * (box_vol / num_samples)
+
+
+
+
+def test_form_factor_octahedron():
+    """Validate the form factor of a regular octahedron against Monte Carlo integration."""
+    octahedron = PlatonicFamily.get_shape("Octahedron")
+    octahedron.center = (0, 0, 0)
+
+    np.random.seed(0)
+    q = np.random.rand(10, 3) * 10 - 5
+
+    expected = compute_form_factor_mc(octahedron, q)
+
+    np.testing.assert_allclose(
+        octahedron.compute_form_factor_amplitude(q),
+        expected,
+        atol=1e-2,
+    )
+
+
 @named_solids_mark
 @pytest.mark.xfail(
     reason=(
