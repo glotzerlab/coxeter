@@ -30,7 +30,6 @@ from coxeter.families import (
     DOI_SHAPE_REPOSITORIES,
     ArchimedeanFamily,
     PlatonicFamily,
-    UniformPyramidFamily,
 )
 from coxeter.shapes import ConvexPolyhedron, Polyhedron
 from coxeter.shapes.utils import rotate_order2_tensor, translate_inertia_tensor
@@ -822,25 +821,52 @@ def test_form_factor(cube):
         atol=1e-7,
     )
 
-def test_pyramid_form_factor():
+
+def test_form_factor_pyramid():
     """Validate the form factor of an pyramid.
 
     At the moment this is primarily a regression test, and should be expanded for more
     rigorous validation.
     """
-    pyramid = UniformPyramidFamily.get_shape(4)
-    pyramid.center = (0, 0, 0)
-    pyramid.volume = 4.0 / 3.0
+    verts = np.array(
+        [
+            [1.0, 1.0, 0.0],
+            [-1.0, 1.0, 0.0],
+            [-1.0, -1.0, 0.0],
+            [1.0, -1.0, 0.0],
+            [0.0, 0.0, 1.0],
+        ]
+    )
+    faces = [
+        [3, 2, 1, 0],
+        [1, 4, 0],
+        [2, 4, 1],
+        [3, 4, 2],
+        [0, 4, 3],
+    ]  # outward-facing winding
+    pyramid = Polyhedron(vertices=verts, faces=faces)
+    pyramid.center = (0, 0, 0.25)
 
     ks = np.array(
-        [[1.0, 1.0, 1.0], [0.5, 1.5, 2.0]],
+        [
+            [1.0, 1.0, 1.0],
+            [0.5, 1.5, 2.0],
+            [np.sqrt(2), np.sqrt(2), 2.0],
+            [np.sqrt(2), np.sqrt(2), -1.0],
+        ],
         dtype=float,
     )
     np.testing.assert_allclose(
         pyramid.compute_form_factor_amplitude(ks),
-        [1.03152606 + 0.281762627j, 0.817218712 + 0.487957462j],
+        [
+            1.03152606 - 0.281762727j,
+            0.817218714 - 0.487957462j,
+            0.691457809 - 0.440465272j,
+            0.837201344 + 0.246602632j,
+        ],
         atol=1e-7,
     )
+
 
 def compute_form_factor_mc(shape, q, num_samples=1000000):
     mins = np.min(shape.vertices, axis=0)
@@ -849,13 +875,14 @@ def compute_form_factor_mc(shape, q, num_samples=1000000):
     inside = shape.is_inside(points).squeeze()
     points_inside = points[inside]
     box_vol = np.prod(maxs - mins)
-    return np.sum(np.exp(-1j * np.dot(points_inside, q.T)), axis=0) * (box_vol / num_samples)
-
-
+    return np.sum(np.exp(-1j * np.dot(points_inside, q.T)), axis=0) * (
+        box_vol / num_samples
+    )
 
 
 def test_form_factor_octahedron():
-    """Validate the form factor of a regular octahedron against Monte Carlo integration."""
+    """Validate the form factor of a regular octahedron against Monte Carlo
+    integration."""
     octahedron = PlatonicFamily.get_shape("Octahedron")
     octahedron.center = (0, 0, 0)
 
