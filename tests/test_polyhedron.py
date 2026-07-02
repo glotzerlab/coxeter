@@ -26,7 +26,12 @@ from conftest import (
     named_solids_mark,
     sphere_isclose,
 )
-from coxeter.families import DOI_SHAPE_REPOSITORIES, ArchimedeanFamily, PlatonicFamily
+from coxeter.families import (
+    DOI_SHAPE_REPOSITORIES,
+    ArchimedeanFamily,
+    PlatonicFamily,
+    UniformPyramidFamily,
+)
 from coxeter.shapes import ConvexPolyhedron, Polyhedron
 from coxeter.shapes.utils import rotate_order2_tensor, translate_inertia_tensor
 from utils import compute_centroid_mc, compute_inertia_mc
@@ -814,6 +819,27 @@ def test_form_factor(cube):
             0.13823585 + 0.04022749j,
             -0.11671542 - 0.0068248j,
         ],
+        atol=1e-7,
+    )
+
+
+def test_pyramid_form_factor():
+    """Validate the form factor of an pyramid.
+
+    At the moment this is primarily a regression test, and should be expanded for more
+    rigorous validation.
+    """
+    pyramid = UniformPyramidFamily.get_shape(4)
+    pyramid.center = (0, 0, 0)
+    pyramid.volume = 4.0 / 3.0
+
+    ks = np.array(
+        [[1.0, 1.0, 1.0], [0.5, 1.5, 2.0]],
+        dtype=float,
+    )
+    np.testing.assert_allclose(
+        pyramid.compute_form_factor_amplitude(ks),
+        [1.03152606 + 0.281762627j, 0.817218712 + 0.487957462j],
         atol=1e-7,
     )
 
