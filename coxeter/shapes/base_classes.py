@@ -505,31 +505,31 @@ class Shape3D(Shape):
     def minimal_centered_bounding_sphere_radius(self, value):
         self._rescale(value / self.minimal_centered_bounding_sphere_radius)
 
-    @property
-    def maximal_bounded_sphere(self):
-        """:class:`~.Sphere`: Get the largest bounded sphere.
+    # @property
+    # def maximal_bounded_sphere(self):
+    #     """:class:`~.Sphere`: Get the largest bounded sphere.
 
-        The largest sphere contained in a shape is referred to by a range of
-        ambiguous names. To avoid conflicts with the most common naming choices
-        of other properties in the literature (particularly the
-        :attr:`~coxeter.shapes.Polygon.insphere` of a polyhedron), this property is
-        named as an explicit analog to :attr:`~.minimal_bounding_sphere`.
-        """
-        raise NotImplementedError(
-            "The maximal bounded sphere calculation is not implemented for this shape."
-        )
+    #     The largest sphere contained in a shape is referred to by a range of
+    #     ambiguous names. To avoid conflicts with the most common naming choices
+    #     of other properties in the literature (particularly the
+    #     :attr:`~coxeter.shapes.Polygon.insphere` of a polyhedron), this property is
+    #     named as an explicit analog to :attr:`~.minimal_bounding_sphere`.
+    #     """
+    #     raise NotImplementedError(
+    #         "The maximal bounded sphere calculation is not implemented for this shape."
+    #     )
 
-    @property
-    def maximal_bounded_sphere_radius(self):
-        """float: Get or set the radius of the maximal bounded sphere.
+    # @property
+    # def maximal_bounded_sphere_radius(self):
+    #     """float: Get or set the radius of the maximal bounded sphere.
 
-        See :meth:`~.maximal_bounded_sphere` for more information.
-        """
-        return self.maximal_bounded_sphere.radius
+    #     See :meth:`~.maximal_bounded_sphere` for more information.
+    #     """
+    #     return self.maximal_bounded_sphere.radius
 
-    @maximal_bounded_sphere_radius.setter
-    def maximal_bounded_sphere_radius(self, value):
-        self._rescale(value / self.maximal_bounded_sphere_radius)
+    # @maximal_bounded_sphere_radius.setter
+    # def maximal_bounded_sphere_radius(self, value):
+    #     self._rescale(value / self.maximal_bounded_sphere_radius)
 
     @property
     def maximal_centered_bounded_sphere(self):
