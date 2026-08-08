@@ -9,6 +9,9 @@ Added
 ~~~~~
 
 - ``edges``, ``edge_vectors``, and ``edge_lengths`` properties to ``Polygon``
+- ``shortest_distance_to_surface`` and ``shortest_displacement_to_surface`` methods for
+  ``ConvexPolyhedron``, ``ConvexSpheropolyhedron``, ``Polyhedron``, ``ConvexPolygon``,
+  ``ConvexSpheropolygon``, and ``Polygon`` types
 
 Changed
 ~~~~~~~
