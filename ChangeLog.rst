@@ -5,10 +5,17 @@ This project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html
 v0.x.x - 20xx-xx-xx
 -------------------
 
+v0.11.0 - 2026-09-11
+--------------------
+
 Added
 ~~~~~
 
 - ``edges``, ``edge_vectors``, and ``edge_lengths`` properties to ``Polygon``
+- New ``coxeter.shapemoves`` subpackage implementing Conway and Hart shape-move operators (``vertex_truncate``, ``dual``, ``kis``).
+- New ``CanonicalTrapezohedronFamily`` and ``TetragonalDisphenoidFamily`` shape families.
+- ``Polygon`` objects can now be saved as OBJ files via the new ``save`` method.
+- Support for Python 3.14
 
 Changed
 ~~~~~~~
@@ -18,6 +25,8 @@ Changed
 - Vertices of shapes in the ``Families`` module now have greater precision.
 - A specific test now ensures that shapes O15-O20 have the correct numbers of faces.
 - "Dürer's Solid" is now spelled correctly.
+- The ``save`` method now infers the file type from the file extension and no longer accepts a separate ``filetype`` argument.
+- ``ConvexPolyhedron`` now validates the shape of its vertices array and raises ``ValueError`` if it is not an ``(N, 3)`` array.
 
 Fixed
 ~~~~~
