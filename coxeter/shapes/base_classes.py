@@ -14,12 +14,25 @@ from abc import ABC, abstractmethod
 import numpy as np
 
 
+def _no_default_implementation(func):
+    """Tag a base-class stub that raises :code:`NotImplementedError`.
+
+    The Sphinx build (see :code:`doc/source/conf.py`) omits tagged members
+    from the documentation of subclasses that do not implement them, along
+    with any property (e.g. a :code:`*_radius`) that delegates to them.
+    Tagged members remain documented on the class that defines them, which
+    is the canonical definition of the property.
+    """
+    func.__unimplemented__ = True
+    return func
+
+
 class Shape(ABC):
     """An abstract representation of a shape in N dimensions."""
 
     @property
     def center(self):
-        """:math:`(3, )` :class:`numpy.ndarray` of float: Alias for :attr:`~.centroid`."""  # noqa: E501
+        """:math:`(3, )` :class:`numpy.ndarray` of float: Alias for :attr:`~coxeter.shapes.Shape.centroid`."""  # noqa: E501
         return self.centroid
 
     @center.setter
@@ -27,6 +40,7 @@ class Shape(ABC):
         self.centroid = value
 
     @property
+    @_no_default_implementation
     def centroid(self):
         """:math:`(3, )` :class:`numpy.ndarray` of float: Get or set the centroid of the shape."""  # noqa: E501
         raise NotImplementedError
@@ -42,10 +56,12 @@ class Shape(ABC):
         pass
 
     @property
+    @_no_default_implementation
     def gsd_shape_spec(self):
         """dict: Get a :ref:`complete GSD specification <gsd:shapes>`."""  # noqa: D401
         raise NotImplementedError
 
+    @_no_default_implementation
     def is_inside(self, points):
         """Determine whether points are contained in this shape.
 
@@ -64,10 +80,12 @@ class Shape(ABC):
         """
         raise NotImplementedError
 
+    @_no_default_implementation
     def inertia_tensor(self):
         """:math:`(3, 3)` :class:`numpy.ndarray`: Get the inertia tensor."""
         raise NotImplementedError
 
+    @_no_default_implementation
     def compute_form_factor_amplitude(self, q):
         r"""Calculate the form factor intensity.
 
@@ -104,6 +122,7 @@ class Shape(ABC):
             "The form factor calculation is not implemented for this shape."
         )
 
+    @_no_default_implementation
     def distance_to_surface(self, angles):
         r"""Compute the distance to the surface of the shape at the given angles.
 
@@ -128,6 +147,7 @@ class Shape(ABC):
             "The distance to surface calculation is not implemented for this shape."
         )
 
+    @_no_default_implementation
     def plot(self):
         """Plot the shape."""
         raise NotImplementedError("Plotting is not implemented for this shape.")
@@ -238,6 +258,7 @@ class Shape2D(Shape):
         pass
 
     @property
+    @_no_default_implementation
     def planar_moments_inertia(self):
         r"""list[float, float, float]: Get the planar and product moments of inertia.
 
@@ -295,6 +316,7 @@ class Shape2D(Shape):
         return 4 * np.pi * self.area / (self.perimeter**2)
 
     @property
+    @_no_default_implementation
     def minimal_bounding_circle(self):
         """:class:`~.Circle`: Get the smallest bounding circle.
 
@@ -322,6 +344,7 @@ class Shape2D(Shape):
         self._rescale(value / self.minimal_bounding_circle_radius)
 
     @property
+    @_no_default_implementation
     def minimal_centered_bounding_circle(self):
         """:class:`~.Circle`: Get the smallest bounding concentric circle.
 
@@ -351,6 +374,7 @@ class Shape2D(Shape):
         self._rescale(value / self.minimal_centered_bounding_circle_radius)
 
     @property
+    @_no_default_implementation
     def maximal_bounded_circle(self):
         """:class:`~.Circle`: Get the largest bounded circle.
 
@@ -377,6 +401,7 @@ class Shape2D(Shape):
         self._rescale(value / self.maximal_bounded_circle_radius)
 
     @property
+    @_no_default_implementation
     def maximal_centered_bounded_circle(self):
         """:class:`~.Circle`: Get the largest concentric bounded circle.
 
@@ -445,6 +470,7 @@ class Shape3D(Shape):
         return np.pi * 36 * self.volume**2 / (self.surface_area**3)
 
     @property
+    @_no_default_implementation
     def minimal_bounding_sphere(self):
         """:class:`~.Sphere`: Get a bounding sphere sharing the center of this shape.
 
@@ -473,6 +499,7 @@ class Shape3D(Shape):
         self._rescale(value / self.minimal_bounding_sphere_radius)
 
     @property
+    @_no_default_implementation
     def minimal_centered_bounding_sphere(self):
         """:class:`~.Sphere`: Get a bounding sphere sharing the center of this shape.
 
@@ -506,6 +533,7 @@ class Shape3D(Shape):
         self._rescale(value / self.minimal_centered_bounding_sphere_radius)
 
     @property
+    @_no_default_implementation
     def maximal_bounded_sphere(self):
         """:class:`~.Sphere`: Get the largest bounded sphere.
 
@@ -532,6 +560,7 @@ class Shape3D(Shape):
         self._rescale(value / self.maximal_bounded_sphere_radius)
 
     @property
+    @_no_default_implementation
     def maximal_centered_bounded_sphere(self):
         """:class:`~.Sphere`: Get the largest concentric bounded sphere.
 

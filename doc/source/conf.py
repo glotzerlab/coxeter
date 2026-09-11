@@ -87,3 +87,74 @@ html_theme_options = {
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
+
+
+def _is_stub(obj):
+    """Check whether a member is a base-class stub tagged as unimplemented.
+
+    Stubs are tagged in ``coxeter/shapes/base_classes.py`` by the
+    ``_no_default_implementation`` decorator, which sets ``__unimplemented__``
+    on the underlying function.
+    """
+    func = getattr(obj, "fget", None) or obj
+    return getattr(func, "__unimplemented__", False)
+
+
+# The autodoc-skip-member event receives bare member names with no reference
+# to the class being documented, so the class currently being documented is
+# recorded here while autodoc processes it. Sphinx passes every event argument
+# positionally, so the handlers below must accept the full event signatures
+# (unused parameters are prefixed with an underscore).
+_current_class = {}
+
+
+def _record_class(obj):
+    if isinstance(obj, type):
+        _current_class["cls"] = obj
+
+
+def _record_class_from_bases(_app, _name, obj, _options, _bases):
+    _record_class(obj)
+
+
+def _record_class_from_docstring(_app, obj_type, _name, obj, _options, _lines):
+    if obj_type == "class":
+        _record_class(obj)
+
+
+def skip_unimplemented(_app, what, name, obj, skip, _options):
+    """Omit unimplemented base-class members from the docs of subclasses.
+
+    The base shape classes define members that raise ``NotImplementedError``
+    for shapes that lack an implementation (e.g. the minimal bounding sphere
+    of a spheropolyhedron), which is misleading if shown on every subclass.
+    Such members are skipped wherever they are merely inherited, along with
+    any ``*_radius`` property delegating to an unimplemented member. They
+    remain documented on the class that defines them, which is the canonical
+    definition of the property.
+
+    See https://github.com/glotzerlab/coxeter/issues/184.
+    """
+    if what != "class" or skip:
+        return None
+    cls = _current_class.get("cls")
+    if cls is None:
+        # No class context available; fall back to the default behavior.
+        return None
+    if name in vars(cls):
+        # Defined by the documented class itself (an implementation or the
+        # canonical definition); always keep it.
+        return None
+    if _is_stub(obj):
+        return True
+    if name.endswith("_radius"):
+        core = getattr(cls, name[: -len("_radius")], None)
+        if core is not None and _is_stub(core):
+            return True
+    return None
+
+
+def setup(app):
+    app.connect("autodoc-process-bases", _record_class_from_bases)
+    app.connect("autodoc-process-docstring", _record_class_from_docstring)
+    app.connect("autodoc-skip-member", skip_unimplemented)
