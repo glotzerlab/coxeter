@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: 'v5.0.0'
+    rev: 'v6.0.0'
     hooks:
       - id: end-of-file-fixer
         exclude: '^tests/control/.*'
@@ -33,7 +33,7 @@ repos:
           - --add=This file is from the coxeter project, released under the BSD 3-Clause License.
           - --keep-before=#!
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.12.2
+    rev: v0.16.7
     hooks:
       # Run the linter.
       - id: ruff-check
