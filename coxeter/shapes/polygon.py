@@ -4,10 +4,12 @@
 """Defines a polygon."""
 
 import warnings
+from pathlib import Path
 
 import numpy as np
 import rowan
 
+from .. import io
 from ..extern.bentley_ottmann import poly_point_isect
 from ..extern.polytri import polytri
 from .base_classes import Shape2D
