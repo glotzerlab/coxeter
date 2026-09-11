@@ -5,6 +5,9 @@ This project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html
 v0.x.x - 20xx-xx-xx
 -------------------
 
+v0.11.0 - 2026-09-11
+--------------------
+
 Added
 ~~~~~
 
