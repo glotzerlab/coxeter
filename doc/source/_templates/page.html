@@ -1,5 +1,19 @@
 {% extends "furo/page.html" %}
 
+{%- block extrahead %}
+{#- Import map for the polyhedron viewer (doc/source/_static/js/polyhedron_models.js).
+    The three.js "fat line" addons import the bare specifier "three", so both
+    mappings must stay pinned to the same version and this block must remain
+    in <head> before any module script. -#}
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.186.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.186.0/examples/jsm/"
+  }
+}
+</script>
+{%- endblock %}
 {% block footer %}
 <div class="related-pages">
 {% if next -%}

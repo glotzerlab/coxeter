@@ -16,10 +16,25 @@
  * only what is actually visible costs anything.
  */
 
-/* three.js is loaded lazily from a CDN (the docs already rely on a CDN for
- * x3dom) and only on pages that actually contain models. Pin the version for
- * reproducible builds. */
-const THREE_URL = "https://cdn.jsdelivr.net/npm/three@0.186.0/build/three.module.js";
+/* three.js and its addons are loaded lazily (only on pages that actually
+ * contain models) and resolved through the import map that the page template
+ * injects into <head>. The import map pins the version for reproducible
+ * builds, so this bare specifier is all that is needed here. */
+const THREE_SPECIFIER = "three";
+const LINE_ADDONS = [
+  "three/addons/lines/LineSegments2.js",
+  "three/addons/lines/LineSegmentsGeometry.js",
+  "three/addons/lines/LineMaterial.js",
+];
+
+const FACE_COLOR = 0x71618d; // Base color of the polyhedra (#71618D).
+const EDGE_COLOR = 0x030519;
+/* WebGL renders classic GL lines at 1 pixel regardless of any requested
+ * width, so edges are drawn as screen-space quads instead.
+ * Their width is specified in pixels of the shared offscreen render target,
+ * which is then downscaled into the cell canvases; 4 units land at roughly
+ * 2 device pixels on screen at the default cell size. */
+const EDGE_LINEWIDTH = 4;
 
 const MODEL_SELECTOR = ".polyhedron-model";
 const DATA_SELECTOR = "script.polyhedron-data";
@@ -34,6 +49,9 @@ const state = {
   models: [],
   faceMaterial: null,
   edgeMaterial: null,
+  LineSegments2: null,
+  LineSegmentsGeometry: null,
+  LineMaterial: null,
   running: false,
   lastTime: 0,
 };
@@ -144,12 +162,12 @@ function buildModel(model) {
   geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
   geometry.computeVertexNormals();
   geometry.computeBoundingSphere();
-  const edges = new THREE.BufferGeometry();
-  edges.setAttribute("position", new THREE.Float32BufferAttribute(edgePositions, 3));
+  const edges = new state.LineSegmentsGeometry();
+  edges.setPositions(edgePositions);
 
   const group = new THREE.Group();
   group.add(new THREE.Mesh(geometry, state.faceMaterial));
-  group.add(new THREE.LineSegments(edges, state.edgeMaterial));
+  group.add(new state.LineSegments2(edges, state.edgeMaterial));
 
   const scene = new THREE.Scene();
   const key = new THREE.DirectionalLight(0xffffff, 2.8);
@@ -275,7 +293,13 @@ async function boot() {
     return;
   }
   try {
-    state.THREE = await import(THREE_URL);
+    state.THREE = await import(THREE_SPECIFIER);
+    const [{ LineSegments2 }, { LineSegmentsGeometry }, lineMaterial] = await Promise.all(
+      LINE_ADDONS.map((specifier) => import(specifier)),
+    );
+    state.LineSegments2 = LineSegments2;
+    state.LineSegmentsGeometry = LineSegmentsGeometry;
+    state.LineMaterial = lineMaterial.LineMaterial;
   } catch (error) {
     holders.forEach((holder) => fail(holder, `cannot load three.js (${error})`));
     return;
@@ -288,10 +312,18 @@ async function boot() {
     return;
   }
   state.faceMaterial = new THREE.MeshLambertMaterial({
-    color: 0x6495ed, // Cornflower blue, matching the previous X3D models.
+    color: FACE_COLOR,
     side: THREE.DoubleSide,
+    // Nudge faces slightly away from the camera so that the edge quads,
+    // which lie on top of coplanar faces, always win the depth test.
+    polygonOffset: true,
+    polygonOffsetFactor: 1,
+    polygonOffsetUnits: 1,
   });
-  state.edgeMaterial = new THREE.LineBasicMaterial({ color: 0x1a1a2e });
+  state.edgeMaterial = new state.LineMaterial({ color: EDGE_COLOR, linewidth: EDGE_LINEWIDTH });
+  // Fat line widths are expressed in pixels of the render target, whose
+  // size depends on the device pixel ratio.
+  state.edgeMaterial.resolution.copy(state.renderer.getDrawingBufferSize(new THREE.Vector2()));
 
   state.models = holders.map(createModel).filter(Boolean);
   if (state.models.length === 0) {
