@@ -370,7 +370,5 @@ data_filenames_mark = pytest.mark.parametrize(
         "archimedean",
         "catalan",
         "johnson",
-        "prism_antiprism",
-        "pyramid_dipyramid",
     ],
 )

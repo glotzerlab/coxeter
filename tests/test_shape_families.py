@@ -16,8 +16,6 @@ from coxeter.families import (
     Family523,
     JohnsonFamily,
     PlatonicFamily,
-    PrismAntiprismFamily,
-    PyramidDipyramidFamily,
     RegularNGonFamily,
     TabulatedGSDShapeFamily,
     TetragonalDisphenoidFamily,
@@ -291,78 +289,6 @@ def test_uniform_dipyramids(n):
     np.testing.assert_allclose(shape.volume, 1.0, atol=ATOL)
     np.testing.assert_allclose(shape.edge_lengths, shape.edge_lengths.mean(), atol=ATOL)
     np.testing.assert_allclose(vertices, shape.vertices)
-
-
-def generate_prism_antiprism_params():
-    # Map from numerical n to the string name
-    number_to_name = {
-        3: "Triangular",
-        4: "Square",
-        5: "Pentagonal",
-        6: "Hexagonal",
-        7: "Heptagonal",
-        8: "Octagonal",
-        9: "Nonagonal",
-        10: "Decagonal",
-    }
-
-    with pytest.warns(DeprecationWarning, match="deprecated in favor of"):
-        shape_map = {name: shape for name, shape in PrismAntiprismFamily}
-
-    for n in range(3, 11):
-        name_prefix = number_to_name.get(n)
-        if not name_prefix:
-            continue
-
-        prism_name = f"{name_prefix} Prism"
-        prism_shape = shape_map.get(prism_name)
-        if prism_shape:
-            yield pytest.param(prism_shape, n, "prism", id=prism_name)
-
-        antiprism_name = f"{name_prefix} Antiprism"
-        antiprism_shape = shape_map.get(antiprism_name)
-        if antiprism_shape:
-            yield pytest.param(antiprism_shape, n, "antiprism", id=antiprism_name)
-
-
-@pytest.mark.parametrize("shape, n, shape_type", generate_prism_antiprism_params())
-def test_new_prism_antiprism(shape, n, shape_type):
-    if shape_type == "antiprism":
-        comparative_shape = UniformAntiprismFamily.get_shape(n)
-        n_edges = 4 * n
-        n_faces = 2 + 2 * n
-    else:
-        comparative_shape = UniformPrismFamily.get_shape(n)
-        n_edges = 3 * n
-        n_faces = 2 + n
-
-    assert shape.num_edges == n_edges
-    assert shape.num_faces == n_faces
-    np.testing.assert_allclose(shape.volume, comparative_shape.volume, atol=ATOL)
-    np.testing.assert_allclose(
-        shape.edge_lengths, comparative_shape.edge_lengths, atol=ATOL
-    )
-
-
-def test_new_pyramid_dipyramid():
-    with pytest.warns(DeprecationWarning, match="deprecated in favor of"):
-        for i, nameshape in enumerate(PyramidDipyramidFamily):
-            name, shape = nameshape
-
-            if "Di" in name:
-                n = i + 3  # count + min_n
-                comparative_shape = UniformDipyramidFamily.get_shape(n)
-            else:
-                n = (i + 3) - 3  # count + min_n + n_pyramid
-                comparative_shape = UniformPyramidFamily.get_shape(n)
-
-            np.testing.assert_allclose(comparative_shape.centroid, 0.0, atol=ATOL)
-            np.testing.assert_allclose(
-                shape.volume, comparative_shape.volume, atol=ATOL
-            )
-            np.testing.assert_allclose(
-                shape.edge_lengths, comparative_shape.edge_lengths, atol=ATOL
-            )
 
 
 @given(
