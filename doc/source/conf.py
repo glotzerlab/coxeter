@@ -42,6 +42,7 @@ extensions = [
     "autodocsumm",
     "nbsphinx",
     "x3d_model_extension",
+    "polyhedron_table",
 ]
 
 # For sphincontrib.bibtex (as of v2.0).

@@ -30,6 +30,7 @@
    table-johnson
    table-other
    table-pyramid-dipyramid
+   table-prototype
 
 .. toctree::
    :maxdepth: 1
