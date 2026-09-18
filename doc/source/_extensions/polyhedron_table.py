@@ -1,3 +1,33 @@
+"""Sphinx extension for building interactive polyhedron tables from coxeter.
+
+Examples
+--------
+A table of all 92 Johnson solids on a single page:
+
+.. code-block:: rst
+
+   .. polyhedron-table::
+      :family: 10.1126/science.1220869
+
+      J01-J92
+
+A table from any (parametric) shape family:
+
+.. code-block:: rst
+
+   .. polyhedron-table::
+      :family: coxeter.families.UniformPrismFamily
+
+      3-8
+      10 | Decagonal Prism
+
+A single model embedded inline in text:
+
+.. code-block:: rst
+
+   :polyhedron:`coxeter.families.PlatonicFamily.get_shape("Cube")`
+"""
+
 import html
 import json
 import re
@@ -168,6 +198,7 @@ class PolyhedronTableDirective(Directive):
     option_spec = {
         "family": directives.unchanged_required,
         "columns": directives.unchanged,
+        "id-header": directives.unchanged,
         "size": directives.positive_int,
         "class": directives.class_option,
     }
@@ -289,9 +320,12 @@ class PolyhedronTableDirective(Directive):
             }
             rows.append([cells[column] for column in columns])
 
+        header_labels = [_COLUMNS[column] for column in columns]
+        if "id" in columns and self.options.get("id-header"):
+            header_labels[columns.index("id")] = self.options["id-header"]
         return [
             _build_table(
-                [_COLUMNS[column] for column in columns],
+                header_labels,
                 rows,
                 classes=list(self.options.get("class", [])),
                 wide=[column == "model" for column in columns],
