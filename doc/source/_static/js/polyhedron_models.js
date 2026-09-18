@@ -321,9 +321,6 @@ async function boot() {
     polygonOffsetUnits: 1,
   });
   state.edgeMaterial = new state.LineMaterial({ color: EDGE_COLOR, linewidth: EDGE_LINEWIDTH });
-  // Fat line widths are expressed in pixels of the render target, whose
-  // size depends on the device pixel ratio.
-  state.edgeMaterial.resolution.copy(state.renderer.getDrawingBufferSize(new THREE.Vector2()));
 
   state.models = holders.map(createModel).filter(Boolean);
   if (state.models.length === 0) {
