@@ -5,6 +5,18 @@ This project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html
 v0.x.x - 20xx-xx-xx
 -------------------
 
+Removed
+~~~~~~~
+
+- The deprecated ``PrismAntiprismFamily`` and ``PyramidDipyramidFamily`` shape families
+  have been removed. These were deprecated in favor of the ``UniformPrismFamily`` and
+  ``UniformAntiprismFamily`` / ``UniformPyramidFamily`` and ``UniformDipyramidFamily``,
+  which are faster, more consistent, and support the entire infinite family of shapes.
+  Migrate existing code to the Uniform families (for example, replace
+  ``PrismAntiprismFamily.get_shape("Square Prism")`` with
+  ``UniformPrismFamily.get_shape(4)``). The corresponding tabulated data files
+  (``prism_antiprism.json`` and ``pyramid_dipyramid.json``) have also been removed.
+
 v0.11.0 - 2026-09-11
 --------------------
 

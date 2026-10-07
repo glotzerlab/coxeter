@@ -5,9 +5,9 @@ There are 22 other useful polyhedra included in :cite:`Damasceno2012a`, each of 
 
 For implementation details see :py:data:`~coxeter.families.DOI_SHAPE_REPOSITORIES`.
 
-Shape information is listed in the following tables.
+Shape information is listed in the following table.
 
-.. toctree::
-   table-other-O01-O08
-   table-other-O09-O16
-   table-other-O17-O22
+.. polyhedron-table::
+   :family: 10.1126/science.1220869
+
+   O01-O22

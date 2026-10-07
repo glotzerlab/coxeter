@@ -8,18 +8,9 @@ There are 92 Johnson Solids, each of which can be instantiated in two ways:
 
 For implementation details see :py:class:`~coxeter.families.JohnsonFamily` and :py:data:`~coxeter.families.DOI_SHAPE_REPOSITORIES`.
 
-Shape information is listed in the following tables.
+Shape information is listed in the following table.
 
-.. toctree::
-   table-johnson-J01-J08
-   table-johnson-J09-J16
-   table-johnson-J17-J24
-   table-johnson-J25-J32
-   table-johnson-J33-J40
-   table-johnson-J41-J48
-   table-johnson-J49-J56
-   table-johnson-J57-J64
-   table-johnson-J65-J72
-   table-johnson-J73-J80
-   table-johnson-J81-J88
-   table-johnson-J89-J92
+.. polyhedron-table::
+   :family: 10.1126/science.1220869
+
+   J01-J92

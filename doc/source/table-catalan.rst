@@ -8,8 +8,9 @@ There are 13 Catalan Solids, each of which can be instantiated in two ways:
 
 For implementation details see :py:class:`~coxeter.families.CatalanFamily` and :py:data:`~coxeter.families.DOI_SHAPE_REPOSITORIES`.
 
-Shape information is listed in the following tables.
+Shape information is listed in the following table.
 
-.. toctree::
-   table-catalan-C01-C08
-   table-catalan-C09-C13
+.. polyhedron-table::
+   :family: 10.1126/science.1220869
+
+   C01-C13

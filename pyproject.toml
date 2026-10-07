@@ -56,7 +56,7 @@ exclude = '''
 
 [tool.ruff]
 include = ["*.py", "*.ipynb"]
-exclude = ["*/extern/*", "*/x3d_model_extension.py"]
+exclude = ["*/extern/*"]
 line-length = 88
 
 [tool.ruff.lint]

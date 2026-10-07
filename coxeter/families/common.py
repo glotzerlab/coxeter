@@ -4,8 +4,6 @@
 """Certain common shape families that can be analytically generated."""
 
 import os
-import warnings
-from functools import wraps
 from math import cos, sin, sqrt, tan
 
 import numpy as np
@@ -23,20 +21,6 @@ def csc(theta):
     :meta private:
     """
     return 1 / sin(theta)
-
-
-# Allows us to monkeypatch an existing method with our choice of warning
-def _deprecated_method(func, deprecated="", replacement="", reason=""):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        warnings.warn(
-            (f"{deprecated} has been deprecated in favor of {replacement}. {reason}"),
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        return func(*args, **kwargs)
-
-    return wrapper
 
 
 def sec(theta):
@@ -464,51 +448,4 @@ JohnsonFamily = TabulatedGSDShapeFamily._from_json_file(
 
     Options can be found in the :doc:`Johnson Solids Table<table-johnson>`.
 """,
-)
-
-PyramidDipyramidFamily = TabulatedGSDShapeFamily._from_json_file(
-    os.path.join(_DATA_FOLDER, "pyramid_dipyramid.json"),
-    classname="PyramidDipyramidFamily",
-    docstring="""The family of regular equilateral pyramids and dipyramids (6 total).
-
-    Options can be found in the :doc:`Pyramid-Dipyramid Table<table-pyramid-dipyramid>`.
-""",
-)
-
-PrismAntiprismFamily = TabulatedGSDShapeFamily._from_json_file(
-    os.path.join(_DATA_FOLDER, "prism_antiprism.json"),
-    classname="PrismAntiprismFamily",
-    docstring="""The family of uniform n-prisms and n-antiprisms with n∈[3,10] \
-    (16 total).
-
-
-    .. warning::
-
-        This class has been deprecated in favor of the :class:`~.UniformPrismFamily`
-        and :class:`~.UniformAntiprismFamily`, as the new classes have a simplified API
-        and support the entire infinite shape family. Please transfer existing code to
-        use the new classes.
-
-    Options for prisms can be found in the \
-    :doc:`Prism-Antiprism Table<table-prism-antiprism>`.
-""",
-)
-
-PrismAntiprismFamily.get_shape = _deprecated_method(
-    PrismAntiprismFamily.get_shape,
-    deprecated="PrismAntiprismFamily",
-    replacement="UniformPrismFamily and UniformAntiprismFamily",
-    reason=(
-        "These alternate classes have a simplified interface and support the "
-        "entire infinite family of geometries."
-    ),
-)
-PyramidDipyramidFamily.get_shape = _deprecated_method(
-    PyramidDipyramidFamily.get_shape,
-    deprecated="PyramidDipyramidFamily",
-    replacement="UniformPyramidFamily and UniformDipyramidFamily",
-    reason=(
-        "These alternate classes have a simplified interface and better match the "
-        "naming conventions of coxeter."
-    ),
 )

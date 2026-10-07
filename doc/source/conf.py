@@ -41,7 +41,7 @@ extensions = [
     "sphinxcontrib.bibtex",
     "autodocsumm",
     "nbsphinx",
-    "x3d_model_extension",
+    "polyhedron_table",
 ]
 
 # For sphincontrib.bibtex (as of v2.0).
@@ -53,7 +53,7 @@ templates_path = ["_templates"]
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = ["table-prism-antiprism.rst"]
+exclude_patterns = []
 
 
 intersphinx_mapping = {
